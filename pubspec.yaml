@@ -26,6 +26,7 @@ dependencies:
   # для поддержки text_theme
   google_fonts: ^2.0.0
   adaptive_breakpoints: ^0.1.0
+  get: any
 
 
   # The following adds the Cupertino Icons font to your application.

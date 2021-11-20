@@ -1,19 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:tasklist_lite/tasklist/fixture/task_fixtures.dart';
 
+/// shared state приложения, реализовано в соответствии с концепцией inherited widget
 /// https://medium.com/flutter/managing-flutter-application-state-with-inheritedwidgets-1140452befe1
 class ApplicationState {
-  const ApplicationState({this.themeMode});
+  const ApplicationState(
+      {required this.themeMode, required this.currentTaskFixture});
 
-  final ThemeMode? themeMode;
+  final ThemeMode themeMode;
+
+  final CurrentTaskFixture currentTaskFixture;
 
   @override
   bool operator ==(Object other) {
-    return other is ApplicationState && this.themeMode == other.themeMode;
+    return other is ApplicationState &&
+        this.themeMode == other.themeMode &&
+        this.currentTaskFixture == other.currentTaskFixture;
   }
 
   @override
-  // #TODO: вообще для одного параметра достаточно взять его hashCode
-  int get hashCode => hashValues(themeMode, themeMode);
+  int get hashCode => hashValues(themeMode, currentTaskFixture);
 
   static ApplicationState of(BuildContext context) {
     // тут реализацию пришлось подглядеть в GalleryOptions, т.к. каноничная дает ошибки компиляции
@@ -21,7 +27,6 @@ class ApplicationState {
     final scope =
         context.dependOnInheritedWidgetOfExactType<_ModelBindingScope>();
 
-    print("scope = " + scope.toString());
     // #TODO: в GalleryOptions без восклицательного знака
     return scope!.modelBindingState.currentModel;
   }
@@ -32,8 +37,11 @@ class ApplicationState {
     scope!.modelBindingState.updateModel(newModel);
   }
 
-  ApplicationState copyWith({ThemeMode? themeMode}) {
-    return ApplicationState(themeMode: themeMode ?? this.themeMode);
+  ApplicationState copyWith(
+      {ThemeMode? themeMode, CurrentTaskFixture? currentTaskFixture}) {
+    return ApplicationState(
+        themeMode: themeMode ?? this.themeMode,
+        currentTaskFixture: currentTaskFixture ?? this.currentTaskFixture);
   }
 }
 
@@ -49,7 +57,6 @@ class _ModelBindingScope extends InheritedWidget {
 
   final _ModelBindingState modelBindingState;
 
-  // #TODO:
   @override
   bool updateShouldNotify(_ModelBindingScope oldWidget) => true;
 }
@@ -60,7 +67,9 @@ class _ModelBindingScope extends InheritedWidget {
 class ModelBinding extends StatefulWidget {
   ModelBinding({
     Key? key,
-    this.initialModel = const ApplicationState(themeMode: ThemeMode.system),
+    this.initialModel = const ApplicationState(
+        themeMode: ThemeMode.system,
+        currentTaskFixture: CurrentTaskFixture.firstFixture),
     required this.child,
   })  : assert(initialModel != null),
         super(key: key);
@@ -72,7 +81,9 @@ class ModelBinding extends StatefulWidget {
 }
 
 class _ModelBindingState extends State<ModelBinding> {
-  ApplicationState currentModel = ApplicationState(themeMode: ThemeMode.system);
+  ApplicationState currentModel = ApplicationState(
+      themeMode: ThemeMode.system,
+      currentTaskFixture: CurrentTaskFixture.firstFixture);
 
   @override
   void initState() {
