@@ -34,9 +34,9 @@ class ExpansionRadioTileState<T> extends State<ExpansionRadioTile> {
 
   T? selectedObject;
 
-  Map<T, String> optionsMap;
+  final Map<T, String> optionsMap;
 
-  ValueChanged<T?> onChanged;
+  final ValueChanged<T?> onChanged;
 
   ExpansionRadioTileState(
       this.title, this.selectedObject, this.optionsMap, this.onChanged);

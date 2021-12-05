@@ -1,16 +1,21 @@
 import 'dart:collection';
 
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tasklist_lite/crazylib/expansion_radio_tile.dart';
+import 'package:tasklist_lite/crazylib/inspector_panel.dart';
+import 'package:tasklist_lite/layout/tasklist_multi_child_layout_delgate.dart';
 import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/tasklist/fixture/task_fixtures.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
 import 'package:tasklist_lite/tasklist/task_repository.dart';
-import 'package:tasklist_lite/themes/tasklist_theme_data.dart';
+import 'package:tasklist_lite/theme/tasklist_theme_data.dart';
 
 import 'crazylib/crazy_dialog.dart';
+import 'crazylib/task_card.dart';
+import 'layout/adaptive.dart';
 
 void main() {
   runApp(MyApp());
@@ -54,7 +59,7 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
+class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     ThemeData themeData = Theme.of(context);
@@ -73,72 +78,136 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     // в java это была бы просто группировка операций в единый блок, а здесь этим объявляется Set :/
     List<Text> taskDescs = taskList.map((task) => Text(task.name)).toList();
     return Scaffold(
-      appBar: AppBar(
-          title: Text(
-            widget.title,
-          ),
-          actions: <Widget>[
-            Align(
-              alignment: AlignmentDirectional.topEnd,
-              child: InkWell(
-                onTap: () {
-                  showCrazyDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return CrazyDialog(
-                          title: Text("Настройки"),
-                          child: ListView(
-                            shrinkWrap: true,
-                            children: [
-                              ExpansionRadioTile<ThemeMode>(
-                                  title: Text("Визуальная тема"),
-                                  selectedObject:
-                                      ApplicationState.of(context).themeMode,
-                                  optionsMap: LinkedHashMap.of({
-                                    ThemeMode.light: "Светлая",
-                                    ThemeMode.dark: "Темная",
-                                    ThemeMode.system: "По умолчанию"
-                                  }),
-                                  onChanged: (ThemeMode? newValue) {
-                                    ApplicationState.update(
-                                        context,
-                                        ApplicationState.of(context)
-                                            .copyWith(themeMode: newValue));
-                                  }),
-                              ExpansionRadioTile<CurrentTaskFixture>(
-                                  title: Text("Источник данных"),
-                                  selectedObject: ApplicationState.of(context)
-                                      .currentTaskFixture,
-                                  optionsMap: LinkedHashMap.of({
-                                    CurrentTaskFixture.firstFixture:
-                                        "Первая фикстура",
-                                    CurrentTaskFixture.secondFixture:
-                                        "Вторая фикстура",
-                                    CurrentTaskFixture.thirdFixture:
-                                        "Третья фикстура",
-                                    CurrentTaskFixture.noneFixture:
-                                        "Фикстура не выбрана (удаленный источник данных)"
-                                  }),
-                                  onChanged: (CurrentTaskFixture? newValue) {
-                                    ApplicationState.update(
-                                        context,
-                                        ApplicationState.of(context).copyWith(
-                                            currentTaskFixture: newValue));
-                                  }),
-                            ],
-                          ),
-                        );
-                      });
-                },
-                child: Icon(
-                  Icons.settings,
-                  color: themeData.colorScheme.onSurface,
-                  size: 50,
+        appBar: AppBar(
+            title: Text(
+              widget.title,
+            ),
+            actions: <Widget>[
+              Align(
+                alignment: AlignmentDirectional.topEnd,
+                child: InkWell(
+                  onTap: () {
+                    showCrazyDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return CrazyDialog(
+                            title: Text("Настройки"),
+                            child: ListView(
+                              shrinkWrap: true,
+                              children: [
+                                ExpansionRadioTile<ThemeMode>(
+                                    title: Text("Визуальная тема"),
+                                    selectedObject:
+                                        ApplicationState.of(context).themeMode,
+                                    optionsMap: LinkedHashMap.of({
+                                      ThemeMode.light: "Светлая",
+                                      ThemeMode.dark: "Темная",
+                                      ThemeMode.system: "По умолчанию"
+                                    }),
+                                    onChanged: (ThemeMode? newValue) {
+                                      ApplicationState.update(
+                                          context,
+                                          ApplicationState.of(context)
+                                              .copyWith(themeMode: newValue));
+                                    }),
+                                ExpansionRadioTile<CurrentTaskFixture>(
+                                    title: Text("Источник данных"),
+                                    selectedObject: ApplicationState.of(context)
+                                        .currentTaskFixture,
+                                    optionsMap: LinkedHashMap.of({
+                                      CurrentTaskFixture.firstFixture:
+                                          "Первая фикстура",
+                                      CurrentTaskFixture.secondFixture:
+                                          "Вторая фикстура",
+                                      CurrentTaskFixture.thirdFixture:
+                                          "Третья фикстура",
+                                      CurrentTaskFixture.noneFixture:
+                                          "Фикстура не выбрана (удаленный источник данных)"
+                                    }),
+                                    onChanged: (CurrentTaskFixture? newValue) {
+                                      ApplicationState.update(
+                                          context,
+                                          ApplicationState.of(context).copyWith(
+                                              currentTaskFixture: newValue));
+                                    }),
+                              ],
+                            ),
+                          );
+                        });
+                  },
+                  child: Icon(
+                    Icons.settings,
+                    color: themeData.colorScheme.onSurface,
+                    size: 50,
+                  ),
                 ),
               ),
+            ]),
+        body: Center(
+          child: Padding(
+            // #TODO: размер отступа должен зависеть от размера экрана
+            padding: EdgeInsets.all(8),
+            child: Container(
+              // должен реаизовать паттерн reflow https://material.io/archive/guidelines/layout/responsive-ui.html#responsive-ui-patterns
+              child: CustomMultiChildLayout(
+                delegate: TasklistMultiChildLayoutDelegate(context),
+                children: <Widget>[
+                  LayoutId(
+                    id: carouselLayoutId,
+                    child: Container(
+                      decoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          color: themeData.colorScheme.secondaryVariant),
+                      child: Center(
+                        child: CarouselSlider.builder(
+                          options: CarouselOptions(
+                              height: carouselHeight,
+                              // обеспечивает появление на экране сразу 1/viewportFraction item`ов
+                              viewportFraction:
+                                  isDisplayDesktop(context) ? 0.4 : 0.8),
+                          itemBuilder: (BuildContext context, int itemIndex,
+                              int pageViewIndex) {
+                            return Container(
+                              height: carouselHeight,
+                              width: 400,
+                              child: TaskCard(task: taskList[itemIndex]),
+                            );
+                          },
+                          itemCount: taskList.length,
+                        ),
+                      ),
+                    ),
+                  ),
+                  LayoutId(
+                      id: taskDetailsLayoutId,
+                      child: InspectorPanel(
+                        title: "Детальная информация о задаче",
+                        child: Text("Детальная информация о задаче"),
+                        // первый expand initially распахнут всегда. Остальные initially распахнуты,
+                        // только если большой экран (isDisplayDesktop), а иначе свернуты
+                        initiallyExpanded: true,
+                      )),
+                  LayoutId(
+                      id: taskFiltersLayoutId,
+                      child: InspectorPanel(
+                        title: "Панель фильтров списка задач",
+                        child: Text("Панель фильтров списка задач"),
+                        initiallyExpanded: isDisplayDesktop(context),
+                      )),
+                  LayoutId(
+                      id: taskExtrasLayoutId,
+                      child: InspectorPanel(
+                        title: "Дополнительная панель списка задач",
+                        child: Text("Дополнительная панель списка задач"),
+                        initiallyExpanded: isDisplayDesktop(context),
+                      )),
+                ],
+              ),
             ),
-          ]),
-      body: Center(
+          ),
+        )
+
+        /*Center(
         child: Stack(alignment: Alignment.center, children: <Widget>[
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -150,13 +219,13 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             ],
           ),
         ]),
-      ),
-      //#TODO: drop this
-      floatingActionButton: FloatingActionButton(
+      ),*/
+        //#TODO: drop this
+        /*floatingActionButton: FloatingActionButton(
         onPressed: () => {},
         tooltip: 'Increment',
         child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
+      ), */ // This trailing comma makes auto-formatting nicer for build methods.
+        );
   }
 }
