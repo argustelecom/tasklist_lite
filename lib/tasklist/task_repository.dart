@@ -11,10 +11,11 @@ class TaskRepository extends GetxService {
   List<Task> getTasks() {
     /// получим таски из backend`а по graphQL, а если ничего не получим,
     /// то из соответствующего (то есть выбранного в настройках) профиля фикстурки
-    List<Task> result = taskRemoteClient.getTasks();
+    // #TODO: пока не делаем это, надо отладить взаимодействие с сервером
+    /* List<Task> result = taskRemoteClient.getOpenedTasks();
     if (result.isNotEmpty) {
       return result;
-    }
+    }*/
     // прочитаем значение опции и используем соответствующую фикстуру
     ApplicationState applicationState = Get.find();
     TaskFixtures taskFixtures = Get.find();

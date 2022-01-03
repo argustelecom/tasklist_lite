@@ -18,9 +18,9 @@ class TaskListThemeData {
       appBarTheme: AppBarTheme(
         backgroundColor: colorScheme.background,
         elevation: 0,
-        iconTheme: IconThemeData(color: colorScheme.primary),
+        iconTheme: IconThemeData(color: colorScheme.onPrimary, size: 36),
       ),
-      iconTheme: IconThemeData(color: colorScheme.onPrimary),
+      iconTheme: IconThemeData(color: colorScheme.onPrimary, size: 30),
       canvasColor: colorScheme.background,
       scaffoldBackgroundColor: colorScheme.background,
       highlightColor: Colors.transparent,

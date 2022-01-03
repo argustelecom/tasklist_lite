@@ -29,6 +29,7 @@ dependencies:
   get: any
 
   carousel_slider: ^4.0.0
+  graphql_flutter: ^5.0.0
 
 
   # The following adds the Cupertino Icons font to your application.
