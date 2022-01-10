@@ -1,12 +1,12 @@
 /// Представление о задаче
 class Task {
-  int id;
+  final int id;
 
   /// "Номер"
-  String name;
+  final String name;
 
   /// "Название"
-  String? desc;
+  final String? desc;
 
   /// "Тип наряда"
   String? processTypeName;

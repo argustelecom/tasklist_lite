@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:substring_highlight/substring_highlight.dart';
+import 'package:tasklist_lite/state/tasklist_state.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
 
 /// визуальное представление задачи в списке задач
@@ -38,10 +40,13 @@ class TaskCard extends StatelessWidget {
                   // и все прекрсано, но хорошо бы ширину относительно получать, относительно ширины parent`а
                   SizedBox(
                     width: 300,
-                    child: Text(
-                      task.name,
-                      softWrap: true,
-                      style:
+                    child:
+                        // обеспечит подсветку текста, введенного в строку поиска, и присутствующего среди названий заадач
+                        SubstringHighlight(
+                      text: task.name,
+                      term: TaskListState.of(context).searchText ?? "",
+                      //softWrap: true,
+                      textStyle:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                     ),
                   ),
