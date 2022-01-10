@@ -28,6 +28,7 @@ class AlternativeTaskListPage extends StatefulWidget {
 }
 
 class _AlternativeTaskListPageState extends State<AlternativeTaskListPage> {
+  CarouselController buttonCarouselController = CarouselController();
   @override
   Widget build(BuildContext context) {
     ThemeData themeData = Theme.of(context);
@@ -128,6 +129,7 @@ class _AlternativeTaskListPageState extends State<AlternativeTaskListPage> {
                           color: themeData.colorScheme.secondaryVariant),
                       child: Center(
                         child: CarouselSlider.builder(
+                          carouselController: buttonCarouselController,
                           options: CarouselOptions(
                               height: carouselHeight,
                               // обеспечивает появление на экране сразу 1/viewportFraction item`ов
@@ -176,6 +178,14 @@ class _AlternativeTaskListPageState extends State<AlternativeTaskListPage> {
               ),
             ),
           ),
-        ));
+        ),
+      floatingActionButton:Align(
+          child: FloatingActionButton(
+            onPressed: () => buttonCarouselController.nextPage(
+                duration: Duration(milliseconds: 200), curve: Curves.linear),
+                child: Icon(Icons.keyboard_arrow_right),),
+                alignment: Alignment(1, -0.6)
+        ),
+    );
   }
 }
