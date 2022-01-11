@@ -17,9 +17,9 @@ class NotificationCard extends StatelessWidget {
     return Padding(
         padding: EdgeInsets.symmetric(horizontal: 0, vertical: 3),
       child: Container(
-        width: MediaQuery.of(context).size.width * 0.98,
+        width: MediaQuery.of(context).size.width,
         padding: EdgeInsets.symmetric(vertical: 5, horizontal: 0),
-        margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+        margin: EdgeInsets.symmetric(vertical: 5, horizontal: 0),
         child: ExpansionTile(
           title: Text(notify.time, style: TextStyle(fontStyle: FontStyle.italic)) ,
           subtitle: Text(notify.number),
