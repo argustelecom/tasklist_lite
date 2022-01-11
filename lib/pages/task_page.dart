@@ -61,10 +61,8 @@ class _TaskPageState extends State<TaskPage> {
                       textAlign: TextAlign.center,
                       decoration: InputDecoration(
                         alignLabelWithHint: true,
-                        label: Text(
-                          "КВ: 01.02.2022 10:00",
-                          style: TextStyle(color: Colors.green),
-                        ),
+                        labelText: "КВ: 01.02.2022 10:00",
+                        labelStyle: TextStyle(color: Colors.green),
                         fillColor: themeData.bottomAppBarColor,
                         border: InputBorder.none,
                         filled: true,

@@ -21,4 +21,30 @@ class TaskRepository extends GetxService {
     TaskFixtures taskFixtures = Get.find();
     return taskFixtures.getTasks(applicationState.currentTaskFixture);
   }
+
+  ///****************************************************************************
+  /// возвращает reactive поток с задачами для слоя представления.  Может получать
+  /// задачи как из бакенда на сервере, так и из фикстуры
+  ///****************************************************************************
+  Stream<List<Task>> streamOpenedTasks() {
+    ApplicationState applicationState = Get.find();
+    if (applicationState.currentTaskFixture != CurrentTaskFixture.noneFixture) {
+      TaskFixtures taskFixtures = Get.find();
+      return taskFixtures.streamTasks(applicationState.currentTaskFixture);
+    }
+    // #TODO: обращение к TaskRemoteClient еще не реализовано
+    TaskFixtures taskFixtures = Get.find();
+    return taskFixtures.streamTasks(CurrentTaskFixture.thirdFixture);
+  }
+
+  ///****************************************************************************
+  /// #TODO: пока это просто заглушка,
+  ///****************************************************************************
+  Stream<List<Task>> streamClosedTasks(DateTime day) async* {
+    while (true) {
+      List<Task> tasks = List.of({});
+      yield tasks;
+      await Future.delayed(Duration(seconds: 10));
+    }
+  }
 }
