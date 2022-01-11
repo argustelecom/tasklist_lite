@@ -1,0 +1,30 @@
+name: TaskList Lite Actions
+on:
+  pull_request:
+    branches:
+      - "**ci-**"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+      - name: Check out repository code
+        uses: actions/checkout@v1
+      - run: echo "The ${{ github.repository }} repository has been cloned to the runner."
+      - name: Setup java
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11.0.13+8'
+          distribution: 'liberica'
+      - run: echo "Installed java to the runner."
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: "stable"
+      - run: flutter pub get
+      - run: flutter build web
+      - run: flutter build apk --release
+
+     - uses: actions/upload-artifact@v1
+       with:
+         name: APK for QA
+         path: build\app\outputs\flutter-apk\app-release.apk
