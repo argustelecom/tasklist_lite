@@ -1,8 +1,10 @@
-name: TaskList Lite Actions
+name: TaskList Lite build APK
 on:
   pull_request:
     branches:
-      - "**ci-**"
+      - master
+  workflow_dispatch:
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -23,8 +25,8 @@ jobs:
       - run: flutter pub get
       - run: flutter build web
       - run: flutter build apk --release
-
-     - uses: actions/upload-artifact@v1
-       with:
-         name: APK for QA
-         path: build\app\outputs\flutter-apk\app-release.apk
+      
+      - uses: actions/upload-artifact@v2
+        with:
+          name: APK for QA
+          path: build\app\outputs\flutter-apk\app-release.apk
