@@ -1,0 +1,61 @@
+name: TaskList Lite build
+on:
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+  schedule:
+    - cron:  '0 5 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+      - name: Check out repository code
+        uses: actions/checkout@v1
+      - run: echo "The ${{ github.repository }} repository has been cloned to the runner."
+      - name: Setup java
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11.0.13+8'
+          distribution: 'liberica'
+      - run: echo "Installed java to the runner."
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: "stable"
+      - run: flutter pub get
+#      - name: Analyze code
+#        run: flutter analyze
+      - name: Build Web
+        run: flutter build web
+      - name: Build apk
+        run: flutter build apk --release
+
+      # Загрузка артефактов: apk, web, httpd-win32 + web
+      - uses: actions/upload-artifact@v2
+        with:
+          name: apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 7
+      - uses: actions/upload-artifact@v2
+        with:
+          name: web
+          path: build/web
+          retention-days: 7
+
+      - name: packing httpd + web in *.tar.gz file
+        run: |
+          curl https://www.apachelounge.com/download/VS16/binaries/httpd-2.4.52-win32-VS16.zip --output httpd-2.4.52.zip
+          unzip httpd-2.4.52.zip -d ./tmp
+          cp -r ./web/* ./tmp/Apache24/htdocs/
+          cd ./tmp
+          tar cvfz httpd-2.4-win32-tasklist-lite.tar.gz ./*
+        shell: bash
+        working-directory: build
+
+      - uses: actions/upload-artifact@v2
+        with: 
+          name: httpd-2.4-win32-tasklist-lite
+          path: build/tmp/httpd-2.4-win32-tasklist-lite.tar.gz
+          retention-days: 7
