@@ -37,7 +37,6 @@ jobs:
       - name: tar
         run: cd ./build || tar -cvf web.tar ./build/web
       - uses: actions/upload-artifact@v2
-	name: Web
         with:
           name: Web
           path: build/web
