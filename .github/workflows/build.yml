@@ -57,5 +57,5 @@ jobs:
       - uses: actions/upload-artifact@v2
         with: 
           name: httpd-2.4-win32-tasklist-lite
-          path: build/httpd-2.4-win32-tasklist-lite.tar.gz
+          path: build/tmp/httpd-2.4-win32-tasklist-lite.tar.gz
           retention-days: 7
