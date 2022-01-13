@@ -31,16 +31,29 @@ jobs:
       - run: flutter build web
       - run: flutter build apk --release
       
+      # Загрузка артефактов: apk, web, httpd-win32 + web
       - uses: actions/upload-artifact@v2
         with:
-          name: APK for QA
+          name: apk
           path: build/app/outputs/flutter-apk/app-release.apk
           retention-days: 7
-
-      - name: tar
-        run: cd ./build || tar -cvf web.tar ./build/web
       - uses: actions/upload-artifact@v2
         with:
-          name: Web
+          name: web
           path: build/web
+          retention-days: 7
+
+      - name: packing httpd + web in *.tar.gz file
+        run: |
+          curl https://www.apachelounge.com/download/VS16/binaries/httpd-2.4.52-win32-VS16.zip --output httpd-2.4.52.zip
+          unzip httpd-2.4.52.zip -d ./tmp
+          cp -r ./web/* ./tmp/Apache24/htdocs/
+          tar cvfz httpd-2.4-win32-tasklist-lite.tar.gz ./tmp
+        shell: bash
+        working-directory: build
+
+      - uses: actions/upload-artifact@v2
+        with: 
+          name: httpd-2.4-win32-tasklist-lite
+          path: build/httpd-2.4-win32-tasklist-lite.tar.gz
           retention-days: 7
