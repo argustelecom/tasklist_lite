@@ -30,3 +30,9 @@ jobs:
         with:
           name: APK for QA
           path: build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 7
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Web
+          path: build/web
+          retention-days: 7
