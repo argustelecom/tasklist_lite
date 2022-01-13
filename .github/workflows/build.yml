@@ -1,5 +1,8 @@
 name: TaskList Lite build
 on:
+  push:
+    branches:
+      - ci-for-tasklist_lite
   pull_request:
     branches:
       - master
