@@ -1,9 +1,11 @@
-name: TaskList Lite build APK
+name: TaskList Lite build
 on:
   pull_request:
     branches:
       - master
   workflow_dispatch:
+  schedule:
+    - cron:  '0 5 * * *'
 
 jobs:
   build:
@@ -31,7 +33,11 @@ jobs:
           name: APK for QA
           path: build/app/outputs/flutter-apk/app-release.apk
           retention-days: 7
+
+      - name: tar
+        run: cd ./build || tar -cvf web.tar ./build/web
       - uses: actions/upload-artifact@v2
+	name: Web
         with:
           name: Web
           path: build/web
