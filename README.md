@@ -4,10 +4,10 @@
 Кроссплатформенное адаптивное приложение.
 
 ## Сборка
-1. Настрой окружение как предлагается в инетах, https://docs.flutter.dev/get-started/install (пп. 1-2)
-2. Cделай `flutter pub get` в каталоге проекта, чтобы затянуть нужные зависимости
+1. Выполни настройку окружение как предлагается в интернете, https://docs.flutter.dev/get-started/install (пп. 1-2).
+2. Выполни `flutter pub get` в каталоге проекта, чтобы затянуть нужные зависимости.
 ### в IDE (Android Studio)
-1. ПК на проекте (tasklist_lite) -> module settings -> project -> выбери android SDK (не путай с JDK)
+1. ПКМ на проекте (tasklist_lite) -> module settings -> project -> выбери android SDK (не путай с JDK).
 2. В меню: file -> settings -> languages -> dart -> установи путь к dart SDK
 3. Аналогично п.2 выстави flutter SDK
 4. После этого можно собирать проект в IDE и запускать его (проверь запуск в хроме и в эмуле(но если у тебя виндовая
@@ -25,11 +25,29 @@ flutter build apk --release
 ```
 flutter build web
 ```
-Артефакты лежат в каталоге _build/web_ их можно просто загрузить (скопировать в катлоге) на любой доступный вам локальный web-сервер. Например Nginx или Apache httpd. 
+Артефакты лежат в каталоге _build/web_ их можно просто загрузить (скопировать в каталог) на любой доступный вам локальный web-сервер. Например dhttpd, Nginx или Apache httpd. 
+
+Комадой `flutter run lib\main.dart` можно запустить web-приложение, будет предоставлен выбор доступных устройств (браузеров) для запуска.
+
+Запуск также можно выполнить сразу с указанием device_id, например chrome:
+```
+flutter run lib\main.dart devices -d chrome
+```
+Посмотреть доступные устройства, на которых возможно запустить web-приложение:
+```
+flutter devices 
+```
 
 ### Артефакты из сборок
-Последние артефакты можно взять в Actions -> В табилце All workflows выбираешь последний запущенную сборку там доступны соотвествующие артефакты *QA for apk* и *Web.zip*
-#TODO: перенсти в другой место 
-Для развертования web достуны веб-сервер httpd и nginx на сетевом диске **A:\Интернет и сеть\webserver**
+Артефакты можно взять в **Actions** -> В табилце **All workflows** выбирать последнюю запущенную сборку [TaskList Lite build](https://github.com/argustelecom/tasklist_lite/actions/workflows/build.yml), в сборке доступны соответствующие артефакты:
+- apk - в архиве apk-файл для установки приложения на устройство с OS Android.
+- web - в архиве файлы web-версии приложения для размещения на web-сервере. Для развертования web достуны веб-сервер httpd и nginx на сетевом диске **A:\Интернет и сеть\webserver**
+- httpd-2.4-win32-tasklist-lite - в архиве httpd 2.4.52 для установки на OS Windows + файлы web-версии приложения.
+
+Дополнительно смотри [#TODO: инструкцию по настройке web-сервера httpd/nginx](https://github.com/argustelecom/tasklist_lite/blob/master/docs/install-web.md).
+
+
+
+
 
 
