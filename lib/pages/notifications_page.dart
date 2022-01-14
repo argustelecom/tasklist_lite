@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
+
 import 'package:tasklist_lite/crazylib/bottom_button_bar.dart';
 import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/tasklist/fixture/notification_fixtures.dart';
 import 'package:tasklist_lite/tasklist/model/notify.dart';
 import 'package:tasklist_lite/crazylib/notification_card.dart';
+import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
 
 
 class NotificationsPage extends StatefulWidget {
@@ -28,7 +30,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
   Widget build(BuildContext context) {
     ThemeData themeData = Theme.of(context);
     ApplicationState applicationState = ApplicationState.of(context);
-    return Scaffold(
+    return ReflowingScaffold(
         appBar: AppBar(
           title: new Text("Уведомления"),
         ),
@@ -81,6 +83,6 @@ class _NotificationsPageState extends State<NotificationsPage> {
             ],
           ),
           ),
-        bottomNavigationBar: BottomButtonBar());
+        );
   }
 }
