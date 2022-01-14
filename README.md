@@ -44,7 +44,7 @@ flutter devices
 - web - в архиве файлы web-версии приложения для размещения на web-сервере. Для развертования web достуны веб-сервер httpd и nginx на сетевом диске **A:\Интернет и сеть\webserver**
 - httpd-2.4-win32-tasklist-lite - в архиве httpd 2.4.52 для установки на OS Windows + файлы web-версии приложения.
 
-Дополнительно смотри [#TODO: инструкцию по настройке web-сервера httpd/nginx](https://github.com/argustelecom/tasklist_lite/blob/master/docs/install-web.md).
+Дополнительно смотри [инструкцию по настройке web-сервера httpd/nginx](https://github.com/argustelecom/tasklist_lite/blob/master/docs/install-web.md).
 
 
 
