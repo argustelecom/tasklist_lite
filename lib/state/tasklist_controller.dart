@@ -31,6 +31,18 @@ class TaskListController extends GetxController {
   /// значение в поле ввода текста. в getTasks отдаются только таски, содержащие в названии этот текст
   String _searchText = "";
 
+  /// значение, соответствующее значению переключателя "назначенные/неназначенные"
+  bool _assignedSwitch = true;
+
+  bool get assignedSwitch => _assignedSwitch;
+
+  set assignedSwitch(bool value) {
+    _assignedSwitch = value;
+    // #TODO: хорошо бы update выполнять с указанием id подлежащих обновлению кусков
+    // этим снизим потребление ресурсов на обновления.
+    update();
+  }
+
   String get searchText => _searchText;
 
   // в данном случае сеттер не только меняет внутренее состояние контрооллера, но и отвечает также за сигнал
@@ -40,18 +52,22 @@ class TaskListController extends GetxController {
     update();
   }
 
-  /// значение, соответствующее значению переключателя "назначенные/неназначенные"
-  bool assignedSwitch = false;
-
   /// #TODO: сюда просится автоматический тест
   /// задачи, которые должны отображаться в списке задач, с учетом фильтров
-  /// #TODO: учесть фильтр по
   List<Task> getTasks() {
     List<Task> resultList = List.of({});
     resultList.addAll(openedTasks);
     resultList.addAll(closedTasks);
     return List.of(
-        resultList.where((element) => element.name.contains(searchText)));
+        // фильтруем по наличию введенного (в поле поиска) текста в названии задачи
+        resultList
+            .where((element) => element.name.contains(searchText))
+            // фильтруем по признаку "назначенная/неназначенная"
+            //#TODO: пока костыль, только чтобы проверить: считаем назначенными задачи с assignee is null
+            // то есть все наоборот. Чтобы большинство задач в фикстурах (а щас у всех assigne is null) считались
+            // назначенными и отображались по умолчанию
+            .where((element) => ((assignedSwitch && element.assignee == null) ||
+                (!assignedSwitch && element.assignee != null))));
   }
 
   StreamSubscription? openedTasksSubscription;

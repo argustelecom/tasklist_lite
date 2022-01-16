@@ -26,10 +26,13 @@ class TaskFixtures {
 
   List<Task> secondTaskFixture = List.of({
     new Task(id: 2, name: "Papa Johns Ветеранов заказ 111"),
-    new Task(id: 3, name: "Papa Johns 111 доставка Зины Портновой 15")
+    new Task(
+        id: 3,
+        name: "Papa Johns 111 доставка Зины Портновой 15",
+        assignee: "developer")
   });
 
-  List<Task> secondTTaskFixtureAdditionalTasks = List.of({
+  List<Task> secondTaskFixtureAdditionalTasks = List.of({
     new Task(id: 11, name: "Pizza Hut Ветеранов заказ 15"),
     new Task(id: 12, name: "Pizza Hut доствка Ленинский 144")
   });
@@ -71,7 +74,7 @@ class TaskFixtures {
         if (currentTaskFixture == CurrentTaskFixture.firstFixture) {
           tasks.addAll(firstTaskFixtureAdditionalTasks);
         } else if (currentTaskFixture == CurrentTaskFixture.secondFixture) {
-          tasks.addAll(secondTTaskFixtureAdditionalTasks);
+          tasks.addAll(secondTaskFixtureAdditionalTasks);
         } else {
           tasks.addAll(thirdTaskFixtureAdditionalTasks);
         }

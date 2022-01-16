@@ -6,8 +6,7 @@ import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
 import 'package:tasklist_lite/crazylib/task_card.dart';
 import 'package:tasklist_lite/crazylib/top_user_bar.dart';
 import 'package:tasklist_lite/pages/task_page.dart';
-// #TODO: жуткий костыль, на время повторного изучения state management
-import 'package:tasklist_lite/state/application_state.dart' hide ModelBinding;
+import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/state/tasklist_controller.dart';
 
 class SearchBar extends StatelessWidget {
@@ -61,61 +60,69 @@ class TaskList extends StatelessWidget {
   }
 }
 
-class AssignedUnassignedSwitch extends StatelessWidget {
+class AssignedUnassignedSwitch extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => new AssignedUnassignedSwitchState();
+}
+
+class AssignedUnassignedSwitchState extends State<AssignedUnassignedSwitch>
+    with SingleTickerProviderStateMixin {
+  // пришлось громоздить весь этот state with SingleTickerProviderMixin только ради
+  // этого контроллера. А DefaultTabController не подходит, т.к. не позволит навесить
+  // listener на событие изменения выбранного tab`а
+  late final TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(() {
+      if (_tabController.indexIsChanging) {
+        TaskListController taskListController = Get.find();
+        taskListController.assignedSwitch = (_tabController.index == 0);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    // #TODO: это текущее значение фильтра назначенные/неназначенные.
-    // ессно, внутри метода build stateless widget`а работать не будет
-    double val = 1;
     return Padding(
-        padding: EdgeInsets.symmetric(vertical: 0, horizontal: 32),
-        child: Column(
-          children: [
-            //#TODO: сделать из этого компонент выбора
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 0, horizontal: 32),
-                  child: Text(
-                    "Назначенные ",
-                    style:
-                        TextStyle(color: Colors.deepPurpleAccent, fontSize: 18),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 0, horizontal: 32),
-                  child: Text(
-                    "Неназначенные ",
-                    style: TextStyle(color: Colors.blueGrey, fontSize: 16),
-                  ),
-                ),
-              ],
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 16, horizontal: 0),
-              child: SliderTheme(
-                child: Slider(
-                  value: val,
-                  onChanged: (value) {
-                    val = value;
-                  },
-                  activeColor: Colors.deepPurpleAccent,
-                  inactiveColor: Colors.blueGrey,
-                  min: 0,
-                  max: 2,
-                  divisions: 2,
-                  label: "value = $val",
-                ),
-                data: SliderTheme.of(context).copyWith(
-                    showValueIndicator: ShowValueIndicator.always,
-                    valueIndicatorShape: PaddleSliderValueIndicatorShape(),
-                    thumbShape: SliderComponentShape.noThumb,
-                    overlayShape: SliderComponentShape.noOverlay),
+      padding: EdgeInsets.symmetric(vertical: 0, horizontal: 32),
+      child: Stack(
+        fit: StackFit.passthrough,
+        alignment: Alignment.bottomCenter,
+        children: <Widget>[
+          Container(
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                    color: Theme.of(context).dividerColor, width: 2.0),
               ),
             ),
-          ],
-        ));
+          ),
+          TabBar(
+            // цвет у selected label должен быть такой же, как у индикатора
+            labelColor: Theme.of(context).indicatorColor,
+            labelStyle: TextStyle(fontSize: 18),
+            // а здесь пытаемся сохранить оригинальный неизменный цвет label
+            unselectedLabelColor: Theme.of(context).textTheme.headline1?.color,
+            tabs: [
+              Tab(
+                child: Text(
+                  "Назначенные",
+                ),
+              ),
+              Tab(
+                child: Text(
+                  'Неназначенные',
+                ),
+              ),
+            ],
+            controller: _tabController,
+          ),
+        ],
+      ),
+    );
   }
 }
 

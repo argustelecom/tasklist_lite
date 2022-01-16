@@ -79,43 +79,57 @@ class _TaskPageState extends State<TaskPage> {
           ),
         ),
         body: Column(children: [
-          SizedBox(
-            height: 40,
-            child: TabBar(
-              isScrollable: true,
-              indicatorColor: Colors.deepPurple,
-              //indicator: BoxDecoration(color: Colors.green, shape: BoxShape.rectangle),
-              tabs: [
-                Tab(
-                  child: Text(
-                    "Сведения",
-                    style: TextStyle(
-                        color: DefaultTabController.of(context)?.index == 1
-                            ? Colors.black
-                            : Colors.blueGrey,
-                        fontSize: 18),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 32),
+            // нужен чтобы ограничить высоту tabBar`а ниже
+            child: SizedBox(
+              height: 40,
+              // чтобы сделать indicator для unselected tabs в tabBar`е ниже, подложим под него Decoration с подчеркиванием,
+              // как предлагается https://stackoverflow.com/questions/52028730/how-to-create-unselected-indicator-for-tab-bar-in-flutter
+              child: Stack(
+                fit: StackFit.passthrough,
+                alignment: Alignment.bottomCenter,
+                children: <Widget>[
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                            color: themeData.dividerColor, width: 2.0),
+                      ),
+                    ),
                   ),
-                ),
-                Tab(
-                  child: Text(
-                    'Работы',
-                    style: TextStyle(color: Colors.blueGrey, fontSize: 18),
+                  TabBar(
+                    isScrollable: true,
+                    labelColor: themeData.textTheme.headline1?.color,
+                    labelStyle:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                    unselectedLabelStyle: TextStyle(fontSize: 18),
+                    tabs: [
+                      Tab(
+                        child: Text(
+                          "Сведения",
+                        ),
+                      ),
+                      Tab(
+                        child: Text(
+                          'Работы',
+                        ),
+                      ),
+                      Tab(
+                        child: Text(
+                          "Вложения",
+                        ),
+                      ),
+                      Tab(
+                        child: Text(
+                          "История",
+                        ),
+                      ),
+                    ],
+                    controller: DefaultTabController.of(context),
                   ),
-                ),
-                Tab(
-                  child: Text(
-                    "Вложения",
-                    style: TextStyle(color: Colors.blueGrey, fontSize: 18),
-                  ),
-                ),
-                Tab(
-                  child: Text(
-                    "История",
-                    style: TextStyle(color: Colors.blueGrey, fontSize: 18),
-                  ),
-                ),
-              ],
-              controller: DefaultTabController.of(context),
+                ],
+              ),
             ),
           ),
           SizedBox(
