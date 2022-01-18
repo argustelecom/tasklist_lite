@@ -14,10 +14,10 @@ class DateRow extends StatelessWidget{
   Widget build(BuildContext context) {
 
     ThemeData themeData = Theme.of(context);
-    if(date == DateFormat('dd MMMM yyyy', "ru_RU").format(DateTime.now()) ){
+    if(date == DateFormat('dd MMMM yyyy', "ru_RU").format(DateTime.now())){
       return Container(
         width: MediaQuery.of(context).size.width,
-        child: Text("СЕГОДНЯ - $date",
+        child: Text("СЕГОДНЯ - ${DateFormat('dd MMMM yyyy', "ru_RU").format(date)}",
           textAlign:  TextAlign.center,), //Сюда выводим сегодняшнюю
         decoration: BoxDecoration(
             color: themeData.cardColor,
@@ -27,10 +27,11 @@ class DateRow extends StatelessWidget{
         margin: EdgeInsets.symmetric(vertical: 10, horizontal: 0),
       );
     }
-    else if (date == DateFormat('dd MMMM yyyy', "ru_RU").format(DateTime.now().subtract(Duration(days:1)))){
+    else {
+      if (date == DateFormat('dd MMMM yyyy', "ru_RU").format(DateTime.now().subtract(Duration(days:1)))){
       return Container(
         width: MediaQuery.of(context).size.width,
-        child: Text("ВЧЕРА - $date",
+        child: Text("ВЧЕРА - ${DateFormat('dd MMMM yyyy', "ru_RU").format(date)}",
           textAlign:  TextAlign.center,), //Сюда выводим вчерашнюю дату
         decoration: BoxDecoration(
             color: themeData.cardColor,
@@ -43,7 +44,7 @@ class DateRow extends StatelessWidget{
     else {
       return Container(
         width: MediaQuery.of(context).size.width,
-        child: Text("$date",
+        child: Text("${DateFormat('dd MMMM yyyy', "ru_RU").format(date)}",
           textAlign:  TextAlign.center,), //Сюда выводим любую дату
         decoration: BoxDecoration(
             color: themeData.cardColor,
@@ -52,6 +53,7 @@ class DateRow extends StatelessWidget{
         padding: EdgeInsets.symmetric(vertical: 5, horizontal: 0),
         margin: EdgeInsets.symmetric(vertical: 10, horizontal: 0),
       );
+    }
     }
   }
 

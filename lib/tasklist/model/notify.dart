@@ -14,6 +14,9 @@ class Notify {
   /// "Номер задачи"
   String number;
 
+  /// Дата оповещения
+  DateTime date;
+
   /// "Прочитано уведомление"
   bool isReaded;
 
@@ -23,6 +26,7 @@ class Notify {
         required this.text,
         required this.task,
         required this.number,
+        required this.date,
         this.isReaded = false
         });
 }

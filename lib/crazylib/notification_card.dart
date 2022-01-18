@@ -1,19 +1,21 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:tasklist_lite/tasklist/model/notify.dart';
+import 'package:tasklist_lite/tasklist/model/task.dart';
 
-/// визуальное представление уведомления на странице уведомлений
-/// #TODO: также используется и в старой карусели в AlternativeTaskListPage, но никто даже не смотрел, как оно там выглядит
+/// Визуальное представление уведомления
+
 class NotificationCard extends StatelessWidget {
   final Notify notify;
-  //final String taskPageRoutName;
-  const NotificationCard ({Key? key, required this.notify })
+  final String taskPageRoutName;
+  final Task task;
+
+  const NotificationCard ({Key? key, required this.notify, required this.task, required this.taskPageRoutName})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     ThemeData themeData = Theme.of(context);
-    // размеры сознательно здесь не заданы, чтобы можно было масштабировать карточку снаружи, по размерам parent`а
     return Padding(
         padding: EdgeInsets.symmetric(horizontal: 0, vertical: 3),
       child: Container(
@@ -22,7 +24,23 @@ class NotificationCard extends StatelessWidget {
         margin: EdgeInsets.symmetric(vertical: 5, horizontal: 0),
         child: ExpansionTile(
           title: Text(notify.time, style: TextStyle(fontStyle: FontStyle.italic)) ,
-          subtitle: Text(notify.number),
+          subtitle: Padding(
+            //Кликабельная ссылка на таск. Такой странный паддинг нужен чтобы не было мисклика когда раскрываешь ExpansionTile
+            padding: EdgeInsets.only(right: 150),
+             child : GestureDetector(
+               child: Text(task.name, style: TextStyle(
+                color: Colors.blue
+                )
+              ),
+              onTap: () {
+                Navigator.pushNamed(
+                  context,
+                  this.taskPageRoutName,
+                  arguments: this.task,
+                );
+              },
+            ),
+            ),
           children: [
             ListTile(
                 title: Text(notify.text)
