@@ -50,8 +50,8 @@ class TaskCard extends StatelessWidget {
                     children: [
                       // #TODO: sized box и softwrap здесь нужны для переноса
                       // и все прекрсано, но хорошо бы ширину относительно получать, относительно ширины parent`а
-                      SizedBox(
-                        width: 300,
+                      //Был SizedBox стал Expanded т.к. ловили overflow на карточе с шириной больше 300
+                      Expanded(
                         child:
                             // обеспечит подсветку текста, введенного в строку поиска, и присутствующего среди названий заадач
                             SubstringHighlight(
