@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:intl/intl.dart';
-
-import 'package:tasklist_lite/crazylib/bottom_button_bar.dart';
-import 'package:tasklist_lite/state/application_state.dart';
-import 'package:tasklist_lite/tasklist/fixture/notification_fixtures.dart';
-import 'package:tasklist_lite/tasklist/model/notify.dart';
-import 'package:tasklist_lite/crazylib/notification_card.dart';
+import 'package:get/get.dart';
 import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
+import 'package:tasklist_lite/tasklist/fixture/task_fixtures.dart';
+import 'package:tasklist_lite/crazylib/notification_card.dart';
+import 'package:tasklist_lite/tasklist/model/task.dart';
+import 'package:tasklist_lite/state/notification_controller.dart';
+import 'package:tasklist_lite/crazylib/date_row.dart';
 
 
 class NotificationsPage extends StatefulWidget {
@@ -22,67 +21,99 @@ class NotificationsPage extends StatefulWidget {
 
 class _NotificationsPageState extends State<NotificationsPage> {
 
-  List<Notify> test1 = new NotificationFixtures().getNotify();
-  final dt = new  DateFormat('dd MMMM yyyy', "ru_RU").format(DateTime.now());
-  final dt1 = new DateFormat('dd MMMM yyyy', "ru_RU").format(DateTime.now().subtract(Duration(days:1)));
+  List <Task> taskstest = new TaskFixtures().thirdTaskFixture;
 
   @override
   Widget build(BuildContext context) {
     ThemeData themeData = Theme.of(context);
-    ApplicationState applicationState = ApplicationState.of(context);
-    return ReflowingScaffold(
-        appBar: AppBar(
-          title: new Text("Уведомления"),
-        ),
-        body:Padding(
-          padding: EdgeInsets.symmetric(vertical: 0, horizontal: 32),
-          child: Column(
-            children: [
-              Container(
-                width: MediaQuery.of(context).size.width,
-                child: Text("СЕГОДНЯ - $dt",
-                  textAlign:  TextAlign.center,), //Сюда выводим вчерашнюю дату
-                decoration: BoxDecoration(
-                    color: themeData.cardColor,
-                    shape: BoxShape.rectangle
+
+    return GetBuilder<NotificationController>(
+        init: NotificationController(),
+        builder:(controller) {
+      // Если нет уведомлений показываем сообщение, что не на что смотреть
+      if (controller.getNotification().length == 0) {
+        return ReflowingScaffold(
+            appBar: AppBar(
+              title: new Text("Уведомления"),
+              leading: IconButton(
+                icon: Icon(Icons.chevron_left_outlined),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+            body: Padding(
+              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 32),
+              child: Text("У Вас нет непрочитанных уведомлений", textAlign: TextAlign.left)
+              ),
+            );
+            // bottomNavigationBar: BottomButtonBar());
+      }
+
+      else {
+        return ReflowingScaffold(
+            appBar: AppBar(
+              title: new Text("Уведомления"),
+              leading: IconButton(
+                icon: Icon(Icons.chevron_left_outlined),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+            body: Padding(
+              padding: EdgeInsets.symmetric(vertical: 0, horizontal: 32),
+              child: SizedBox(
+                width: 600,
+                child:ListView(
+                  shrinkWrap: true,
+                  children: [
+                    DateRow(date: DateTime.now()),
+                    ListView.separated(
+                      // Делаем разделитель
+                      separatorBuilder: (BuildContext context, int index)  {
+                        // Достаем плашку, когда дата следующего оповещения отличается от текущей
+                        // Для корректной работы на вход ожидается отсортированный по дате список уведомлений
+                        // #TODO: Надо сортировать список уведомлений на уровне контроллера
+                        if (controller.getNotification()[index].date != controller.getNotification()[index+1].date){
+                          return DateRow(date:controller.getNotification()[index+1].date);
+                        }
+                        // Если нет плашки, то выкладываем разделитель.
+                        // Без него крашится, сделал пока бесцеветным-незаметным
+                        return Divider(color: themeData.highlightColor);
+                      },
+                      shrinkWrap: true,
+                      itemCount: controller.getNotification().length,
+                      itemBuilder: (BuildContext context, int index) {
+                        // если смахнуть в любую сторону уведомление, то считаем его прочитанным и оно из UI пропадает
+                        return Dismissible(
+                          key: UniqueKey(),
+                          child: NotificationCard(
+                              notify: controller.getNotification()[index],
+                              task: taskstest[index],
+                              taskPageRouteName: 'task'),
+                          onDismissed: (direction) {
+                            // Когда смахиваем уведомление, добавляем его в DeadNotifications и удаляем его из aliveNotifications.
+                            // Возможно DeadNotifications пригодится в будущем для истории уведомлений
+                            setState(() {
+                              controller.addDeadNotifications(controller.getNotification()[index]);
+                              controller.removeAliveNotification(controller.getNotification()[index]);
+                            });
+                          },
+                        );
+
+                      },
+                    )
+                  ],
                 ),
-                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 0),
-                margin: EdgeInsets.symmetric(vertical: 10, horizontal: 0),
+              )
+
+
               ),
-              SizedBox(
-                height: 350.0,// #TODO: Если высоту не указать, не сможет создать виджет.
-                child: ListView.builder(
-                  shrinkWrap: false,
-                  itemCount: test1.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return NotificationCard(notify: test1[index]);
-                  },
-                ),
-              ),
-              Container(
-                    width: MediaQuery.of(context).size.width,
-                    child: Text("ВЧЕРА - $dt1",
-                          textAlign:  TextAlign.center,), //Сюда выводим вчерашнюю дату
-                    decoration: BoxDecoration(
-                    color: themeData.cardColor,
-                    shape: BoxShape.rectangle
-                    ),
-                    padding: EdgeInsets.symmetric(vertical: 5, horizontal: 0),
-                    margin: EdgeInsets.symmetric(vertical: 10, horizontal: 0),
-              ),
-              SizedBox(
-                height: 350.0,// #TODO: Если высоту не указать, не сможет создать виджет.
-                child: ListView.builder(
-                  shrinkWrap: false,
-                  itemCount: test1.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return NotificationCard(notify: test1[index]);
-                  },
-                ),
-              ),
-            ],
-          ),
-          ),
-        );
+              );
+      }
+    }
+      );
+
+    }
   }
-}

@@ -43,9 +43,7 @@ class TaskList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<TaskListController>(builder: (controller) {
-      return SizedBox(
-          // ListView с неизвестным заранее числом элементов не  может посчитать свой размер по вертикали, поэтому должны ограничивать его явно
-          height: 600.0,
+      return Expanded(
           child: ListView.builder(
               padding: EdgeInsets.symmetric(vertical: 0, horizontal: 32),
               shrinkWrap: true,

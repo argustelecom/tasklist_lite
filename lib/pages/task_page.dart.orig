@@ -2,7 +2,6 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
-
 import 'package:tasklist_lite/crazylib/crazy_button.dart';
 import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
 import 'package:tasklist_lite/state/application_state.dart';
@@ -50,9 +49,16 @@ class _TaskPageState extends State<TaskPage> {
                 Navigator.pop(context);
               },
             ),
+<<<<<<< HEAD
             centerTitle: true,
             toolbarHeight: 75,
             title: Column(
+=======
+          ),
+          //Заменил SizedBox на Expanded, чтобы не ругался на bottom overflow
+          Expanded(
+            child: TabBarView(
+>>>>>>> origin/master
               children: [
                 Padding(
                   padding: EdgeInsets.only(top: 2),
@@ -90,6 +96,7 @@ class _TaskPageState extends State<TaskPage> {
               ],
             ),
           ),
+<<<<<<< HEAD
           body: Column(children: [
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 32),
@@ -142,12 +149,33 @@ class _TaskPageState extends State<TaskPage> {
                     ),
                   ],
                 ),
+=======
+          Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  CrazyButton(
+                    title: "Вернуть группе",
+                    onPressed: () => {},
+                    padding:
+                    EdgeInsets.only(bottom: 8, top: 8, left: 32, right: 8),
+                  ),
+                  CrazyButton(
+                    title: "+ Простой",
+                    onPressed: () => {},
+                    padding:
+                    EdgeInsets.only(bottom: 8, top: 8, left: 8, right: 32),
+                  ),
+                ],
+>>>>>>> origin/master
               ),
             ),
-          //Заменил SizedBox на Expanded, чтобы не ругался на bottom overflow
-          Expanded(
+            SizedBox(
+              height: 690,
               child: TabBarView(
                 children: [
+<<<<<<< HEAD
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 32),
                     child: Card(
@@ -250,7 +278,6 @@ class _TaskPageState extends State<TaskPage> {
                 )
               ],
             )
-
           ]),
         ),
       );
@@ -311,5 +338,20 @@ class AttribValueRow extends StatelessWidget {
         child: Table(children: [
           TableRow(children: [Text("$attrKey:   $attrValue")])
         ]));
+=======
+                  CrazyButton(
+                      title: "Выезд на объект (КС: 10h 5м)",
+                      onPressed: () => {},
+                      padding:
+                      EdgeInsets.symmetric(vertical: 8, horizontal: 32)),
+                ],
+              )
+            ],
+          )
+
+        ]),
+      ),
+    );
+>>>>>>> origin/master
   }
 }
