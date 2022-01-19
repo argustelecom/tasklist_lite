@@ -40,9 +40,9 @@ class ReflowingScaffold extends StatelessWidget {
               mainAxisSize: MainAxisSize.max,
               children: [
                 WideScreenNavigationDrawer(),
-                SizedBox(
+                // Тут поменял SizedBox на Expanded, чтобы не было щели
+                Expanded(
                     // #TODO: хардкодная ширина списка (отчасти оправданно, но выглядит мерзко)
-                    width: 600,
                     // Material здесь нужен по двум причинам:
                     // -- он дает фон (такой же как Scaffold)
                     // -- некоторые компоненты, например, Slider или TextField, должны иметь Material в родителях

@@ -31,7 +31,6 @@ class _NotificationsPageState extends State<NotificationsPage> {
         init: NotificationController(),
         builder:(controller) {
       // Если нет уведомлений показываем сообщение, что не на что смотреть
-      print(controller.aliveNotifications);
       if (controller.getNotification().length == 0) {
         return ReflowingScaffold(
             appBar: AppBar(
@@ -44,13 +43,9 @@ class _NotificationsPageState extends State<NotificationsPage> {
               ),
             ),
             body: Padding(
-              padding: EdgeInsets.symmetric(vertical: 0, horizontal: 32),
-              child: Row(
-                children: [
-                  Text("Тут не на что смотреть", textAlign: TextAlign.center)
-                ],
+              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 32),
+              child: Text("У Вас нет непрочитанных уведомлений", textAlign: TextAlign.left)
               ),
-            ),
             );
             // bottomNavigationBar: BottomButtonBar());
       }
@@ -69,9 +64,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
             body: Padding(
               padding: EdgeInsets.symmetric(vertical: 0, horizontal: 32),
               child: SizedBox(
-                height: 800,
+                width: 600,
                 child:ListView(
-
                   shrinkWrap: true,
                   children: [
                     DateRow(date: DateTime.now()),
@@ -97,7 +91,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                           child: NotificationCard(
                               notify: controller.getNotification()[index],
                               task: taskstest[index],
-                              taskPageRoutName: 'task'),
+                              taskPageRouteName: 'task'),
                           onDismissed: (direction) {
                             // Когда смахиваем уведомление, добавляем его в DeadNotifications и удаляем его из aliveNotifications.
                             // Возможно DeadNotifications пригодится в будущем для истории уведомлений

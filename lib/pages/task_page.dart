@@ -132,8 +132,8 @@ class _TaskPageState extends State<TaskPage> {
               ),
             ),
           ),
-          SizedBox(
-            height: 690,
+          //Заменил SizedBox на Expanded, чтобы не ругался на bottom overflow
+          Expanded(
             child: TabBarView(
               children: [
                 Padding(
@@ -177,13 +177,13 @@ class _TaskPageState extends State<TaskPage> {
                     title: "Вернуть группе",
                     onPressed: () => {},
                     padding:
-                        EdgeInsets.only(bottom: 8, top: 8, left: 32, right: 8),
+                    EdgeInsets.only(bottom: 8, top: 8, left: 32, right: 8),
                   ),
                   CrazyButton(
                     title: "+ Простой",
                     onPressed: () => {},
                     padding:
-                        EdgeInsets.only(bottom: 8, top: 8, left: 8, right: 32),
+                    EdgeInsets.only(bottom: 8, top: 8, left: 8, right: 32),
                   ),
                 ],
               ),
@@ -193,11 +193,12 @@ class _TaskPageState extends State<TaskPage> {
                       title: "Выезд на объект (КС: 10h 5м)",
                       onPressed: () => {},
                       padding:
-                          EdgeInsets.symmetric(vertical: 8, horizontal: 32)),
+                      EdgeInsets.symmetric(vertical: 8, horizontal: 32)),
                 ],
               )
             ],
           )
+
         ]),
       ),
     );

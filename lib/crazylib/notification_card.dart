@@ -7,10 +7,10 @@ import 'package:tasklist_lite/tasklist/model/task.dart';
 
 class NotificationCard extends StatelessWidget {
   final Notify notify;
-  final String taskPageRoutName;
+  final String taskPageRouteName;
   final Task task;
 
-  const NotificationCard ({Key? key, required this.notify, required this.task, required this.taskPageRoutName})
+  const NotificationCard ({Key? key, required this.notify, required this.task, required this.taskPageRouteName})
       : super(key: key);
 
   @override
@@ -35,7 +35,7 @@ class NotificationCard extends StatelessWidget {
               onTap: () {
                 Navigator.pushNamed(
                   context,
-                  this.taskPageRoutName,
+                  this.taskPageRouteName,
                   arguments: this.task,
                 );
               },

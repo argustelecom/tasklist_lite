@@ -11,6 +11,14 @@ class NotificationController extends GetxController {
   /// Список уведомлений, которые уже прочитаны. Их пока просто храним.
   List <Notify> deadNotifications = List.of({});
 
+  /// Для тех кто хочет знать, есть ли у нас сейчас живые уведомления
+  haveNotification(){
+    if (aliveNotifications.length>0){
+      return true;
+    }
+    else {
+      return false;}
+  }
 
   /// Метод для добавления нового уведомления в список живых уведомлений. Пока нигде не применяется
   addAliveNotification(Notify notify){
