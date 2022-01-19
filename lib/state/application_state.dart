@@ -69,7 +69,7 @@ class ModelBinding extends StatefulWidget {
     Key? key,
     this.initialModel = const ApplicationState(
         themeMode: ThemeMode.system,
-        currentTaskFixture: CurrentTaskFixture.firstFixture),
+        currentTaskFixture: CurrentTaskFixture.thirdFixture),
     required this.child,
   })  : assert(initialModel != null),
         super(key: key);
@@ -83,7 +83,7 @@ class ModelBinding extends StatefulWidget {
 class _ModelBindingState extends State<ModelBinding> {
   ApplicationState currentModel = ApplicationState(
       themeMode: ThemeMode.system,
-      currentTaskFixture: CurrentTaskFixture.firstFixture);
+      currentTaskFixture: CurrentTaskFixture.thirdFixture);
 
   @override
   void initState() {

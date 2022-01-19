@@ -1,15 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:substring_highlight/substring_highlight.dart';
 import 'package:tasklist_lite/state/tasklist_controller.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
+import 'package:tasklist_lite/pages/tasklist_page.dart';
 
 /// визуальное представление задачи в списке задач
 /// #TODO: также используется и в старой карусели в AlternativeTaskListPage, но никто даже не смотрел, как оно там выглядит
 class TaskCard extends StatelessWidget {
   final Task task;
   final String taskPageRoutName;
+
   const TaskCard({Key? key, required this.task, required this.taskPageRoutName})
       : super(key: key);
 
@@ -34,7 +37,7 @@ class TaskCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Text(
-                          "Назначение наряда бригаде",
+                          task.taskType ?? "",
                           // #TODO: почему не работает?
                           textAlign: TextAlign.end,
                         ),
@@ -52,15 +55,14 @@ class TaskCard extends StatelessWidget {
                         child:
                             // обеспечит подсветку текста, введенного в строку поиска, и присутствующего среди названий заадач
                             SubstringHighlight(
-                          text: task.name,
+                          text: task.desc ?? task.name,
                           term: controller.searchText,
                           //softWrap: true,
                           textStyle: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 18),
                         ),
                       ),
-
-                      Text(task.dueDate ?? "11:00"),
+                      Text(task.getDueTimeText()),
                       IconButton(
                           iconSize: 40,
                           tooltip: 'Форма задачи',
@@ -85,8 +87,7 @@ class TaskCard extends StatelessWidget {
                       SizedBox(
                         width: 250,
                         child: Text(
-                          task.address ??
-                              "Курганская обл., г.Курган, ул.Гайдара, д.53",
+                          task.getAddressDescription(),
                           softWrap: true,
                         ),
                       ),
@@ -99,7 +100,6 @@ class TaskCard extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text("СКВ: 1ч"),
                       TextButton(
                         style: ButtonStyle(
                           backgroundColor:
@@ -117,6 +117,8 @@ class TaskCard extends StatelessWidget {
                         ),
                         onPressed: () => {print("login")},
                       ),
+                      Text(task.getTimeLeftText(),
+                          style: TextStyle(fontWeight: FontWeight.bold)),
                     ],
                   ),
                 ),

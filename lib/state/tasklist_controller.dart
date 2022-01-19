@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
 import 'package:tasklist_lite/tasklist/task_repository.dart';
@@ -16,7 +17,7 @@ class TaskListController extends GetxController {
   /// выбранный в календаре день
   /// если не выбран, считается "сегодня" (тут есть тех. сложности, т.к. для inherited widget нужно, чтобы
   /// конструктор initialState был константным, а DateTime.now() никак не константный)
-  DateTime _currentDate = DateTime.now();
+  DateTime _currentDate = DateUtils.dateOnly(DateTime.now());
 
   DateTime get currentDate => _currentDate;
 
@@ -63,11 +64,8 @@ class TaskListController extends GetxController {
         resultList
             .where((element) => element.name.contains(searchText))
             // фильтруем по признаку "назначенная/неназначенная"
-            //#TODO: пока костыль, только чтобы проверить: считаем назначенными задачи с assignee is null
-            // то есть все наоборот. Чтобы большинство задач в фикстурах (а щас у всех assigne is null) считались
-            // назначенными и отображались по умолчанию
-            .where((element) => ((assignedSwitch && element.assignee == null) ||
-                (!assignedSwitch && element.assignee != null))));
+            .where((element) => ((assignedSwitch && element.assignee != null) ||
+                (!assignedSwitch && element.assignee == null))));
   }
 
   StreamSubscription? openedTasksSubscription;

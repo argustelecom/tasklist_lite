@@ -1,3 +1,9 @@
+import 'dart:collection';
+
+import 'package:duration/duration.dart';
+import 'package:duration/locale.dart';
+import 'package:intl/intl.dart';
+
 /// Представление о задаче
 class Task {
   final int id;
@@ -11,33 +17,60 @@ class Task {
   /// "Тип наряда"
   String? processTypeName;
 
-  /// #TODO: тип поля и правильная нотация
-  String? dueDate;
+  /// "Тип задачи"
+  String? taskType;
 
-  int? priority;
+  /// TODO задачи или этапа? нужен ли еще один параметр?
+  /// "Контрольный срок"
+  DateTime? dueDate;
 
-  /// "кому назначено"
+  /// TODO: должен ли быть системным?
+  ///int? priority;
+
+  /// "Исполнители"
   String? assignee;
 
-  /// "объект работ"
-  String? objectName;
+  /// TODO: телефон, контактное лицо нужны?
 
-  /// "адрес работ"
+  /// TODO: должен ли быть системным?
+  /// "Объект работ"
+  ///String? objectName;
+
+  /// "Адрес работ"
   String? address;
 
-  /// "примечание"
+  /// "Адресное примечание"
+  String? addressComment;
+
+  /// "Широта"
+  String? latitude;
+
+  /// "Долгота"
+  String? longitude;
+
+  /// "Примечание"
   String? comment;
 
-  String? createDate;
+  /// "Дата создания задачи"
+  DateTime? createDate;
 
-  /// "задача визита"
+  /// "Дата завершения задачи"
+  DateTime? closeDate;
+
+  /// "Задача завершена"
+  bool isClosed;
+
+  /// "Является задачей визита"
   bool isVisit;
 
-  /// "задача должна быть запланирована"
+  /// "Задача должна быть запланирована"
   bool isPlanned;
 
-  /// "задача выезда"
+  /// "Является выездной задачей"
   bool isOutdoor;
+
+  /// Гибкие атрибуты
+  LinkedHashMap<String, Object?>? flexibleAttribs;
 
   // null safety: здесь null`ами не может быть только id, name (т.к. они обязательны) и булевы свойства (т.к. для них задан дефолт в дефолтном конструкторе)
   // что интересно, фигурные скобочки внутри объявления конструктора делают параметры именованными, их теперь можно задавать не по порядку, а по имени. Удобно.
@@ -46,14 +79,79 @@ class Task {
       required this.name,
       this.desc,
       this.processTypeName,
+      this.taskType,
       this.dueDate,
-      this.priority,
       this.assignee,
-      this.objectName,
       this.address,
+      this.addressComment,
+      this.latitude,
+      this.longitude,
       this.comment,
       this.createDate,
+      this.isClosed = false,
       this.isVisit = false,
       this.isPlanned = false,
-      this.isOutdoor = false});
+      this.isOutdoor = false,
+      this.flexibleAttribs});
+
+  Duration? getTimeLeft() {
+    if (dueDate != null)
+      return dueDate!.difference(DateTime.now());
+    else
+      return null;
+  }
+
+  String getTimeLeftText() {
+    Duration? timeLeft = getTimeLeft();
+    if (timeLeft != null)
+      return (timeLeft.isNegative ? "СКВ: " : "КВ: ") +
+          prettyDuration(timeLeft,
+              tersity: DurationTersity.minute,
+              abbreviated: true,
+              locale: RussianDurationLanguage());
+    else
+      return "";
+  }
+
+  String getAddressDescription() {
+    if (address != null)
+      return address!;
+    else if (latitude != null && longitude != null)
+      return "$latitude, $longitude";
+    else
+      return "Адрес не указан";
+  }
+
+  String getDueTimeText() {
+    if (dueDate == null)
+      return "";
+    else if (dueDate!.day == DateTime.now().day)
+      return DateFormat("HH:mm").format(dueDate!);
+    else
+      return DateFormat("d MMM HH:mm", "ru").format(dueDate!);
+  }
+
+  // LinkedHashSet выбран намеренно, чтобы выводить группы в том порядке, в котором получили
+  LinkedHashSet<String> getAttrGroups() {
+    LinkedHashSet<String> attrGroups = new LinkedHashSet<String>();
+    if (flexibleAttribs != null) {
+      flexibleAttribs?.keys.forEach((e) {
+        attrGroups.add(e.substring(0, e.indexOf("/")));
+      });
+    }
+    return attrGroups;
+  }
+
+  // LinkedHashMap выбран намеренно, чтобы выводить параметры в том порядке, в котором получили
+  LinkedHashMap<String, Object?> getAttrValuesByGroup(String group) {
+    LinkedHashMap<String, Object?> attrValues =
+        new LinkedHashMap<String, Object?>();
+    if (flexibleAttribs != null) {
+      flexibleAttribs?.forEach((key, value) {
+        if (key.startsWith("$group/"))
+          attrValues.addAll({key.substring(key.indexOf("/") + 1): value});
+      });
+    }
+    return attrValues;
+  }
 }
