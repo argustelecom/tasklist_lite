@@ -1,6 +1,5 @@
 import 'dart:collection';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 
 import 'package:tasklist_lite/crazylib/crazy_button.dart';
@@ -42,54 +41,7 @@ class _TaskPageState extends State<TaskPage> {
       return DefaultTabController(
         length: 4,
         child: ReflowingScaffold(
-          appBar: AppBar(
-            backgroundColor: Colors.blueAccent,
-            leading: IconButton(
-              icon: Icon(Icons.chevron_left_outlined),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-            centerTitle: true,
-            toolbarHeight: 75,
-            title: Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(top: 2),
-                  child: new Text(
-                    task.name,
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-                new Text(
-                  task.processTypeName ?? "",
-                  style: TextStyle(color: Colors.white),
-                ),
-                if (task.getTimeLeftText() != "")
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 2),
-                    child: Container(
-                      width: 200,
-                      child: TextField(
-                        textAlign: TextAlign.center,
-                        decoration: InputDecoration(
-                            alignLabelWithHint: true,
-                            labelText: task.getTimeLeftText(),
-                            labelStyle: TextStyle(color: Colors.green),
-                            fillColor: themeData.bottomAppBarColor,
-                            border: InputBorder.none,
-                            filled: true,
-                            enabled: false,
-                            // #TODO:
-                            isCollapsed: true,
-                            contentPadding: EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 4)),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          ),
+          appBar: TaskAppBar(task: task),
           body: Column(children: [
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 32),
@@ -144,51 +96,23 @@ class _TaskPageState extends State<TaskPage> {
                 ),
               ),
             ),
-          //Заменил SizedBox на Expanded, чтобы не ругался на bottom overflow
-          Expanded(
+            //Заменил SizedBox на Expanded, чтобы не ругался на bottom overflow
+            Expanded(
               child: TabBarView(
                 children: [
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 32),
                     child: Card(
                       child: SizedBox(
-                          height: 10 * 28,
-                          child: Column(children: [
-                            Container(
-                              margin: EdgeInsets.symmetric(vertical: 8),
-                            ),
-                            AttribValueRow(
-                                attribValue: new MapEntry<String, Object?>(
-                                    "Исполнители", task.assignee)),
-                            AttribValueRow(
-                                attribValue: new MapEntry<String, Object?>(
-                                    "Адрес", task.address)),
-                            AttribValueRow(
-                                attribValue: new MapEntry<String, Object?>(
-                                    "Адресное примечание",
-                                    task.addressComment)),
-                            AttribValueRow(
-                                attribValue: new MapEntry<String, Object?>(
-                                    "Широта", task.latitude)),
-                            AttribValueRow(
-                                attribValue: new MapEntry<String, Object?>(
-                                    "Долгота", task.longitude)),
-                            AttribValueRow(
-                                attribValue: new MapEntry<String, Object?>(
-                                    "Примечание", task.comment)),
-                            SizedBox(
-                                height: 400.0,
-                                child: ListView.builder(
-                                  shrinkWrap: false,
-                                  itemCount: attrGroups.length,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    return AttrGroup(
-                                        task: task!,
-                                        attrGroup: attrGroups.elementAt(index));
-                                  },
-                                ))
-                          ])),
+                          height: 400.0,
+                          child: ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: attrGroups.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return AttrGroup(
+                                    task: task!,
+                                    attrGroup: attrGroups.elementAt(index));
+                              })),
                       elevation: 5,
                     ),
                   ),
@@ -222,12 +146,20 @@ class _TaskPageState extends State<TaskPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    CrazyButton(
-                      title: "Вернуть группе",
-                      onPressed: () => {},
-                      padding: EdgeInsets.only(
-                          bottom: 8, top: 8, left: 32, right: 8),
-                    ),
+                    if (task.assignee != null)
+                      CrazyButton(
+                        title: "Вернуть группе",
+                        onPressed: () => {},
+                        padding: EdgeInsets.only(
+                            bottom: 8, top: 8, left: 32, right: 8),
+                      ),
+                    if (task.assignee == null)
+                      CrazyButton(
+                        title: "Взять себе",
+                        onPressed: () => {},
+                        padding: EdgeInsets.only(
+                            bottom: 8, top: 8, left: 32, right: 8),
+                      ),
                     CrazyButton(
                       title: "+ Простой",
                       onPressed: () => {},
@@ -239,10 +171,7 @@ class _TaskPageState extends State<TaskPage> {
                 Row(
                   children: [
                     CrazyButton(
-                        title: (task.taskType ?? "Выполнить задачу") +
-                            (task.getTimeLeftText() != ""
-                                ? " (" + task.getTimeLeftText() + ")"
-                                : ""),
+                        title: (task.taskType ?? "Выполнить задачу"),
                         onPressed: () => {},
                         padding:
                             EdgeInsets.symmetric(vertical: 8, horizontal: 32)),
@@ -250,12 +179,78 @@ class _TaskPageState extends State<TaskPage> {
                 )
               ],
             )
-
           ]),
         ),
       );
     }
   }
+}
+
+class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
+  final Task task;
+
+  const TaskAppBar({Key? key, required this.task}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 18, vertical: 0),
+        child: AppBar(
+            leading: IconButton(
+              iconSize: 40,
+              icon: Icon(Icons.chevron_left_outlined),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            titleSpacing: 0.0,
+            toolbarHeight: 100,
+            title: Column(
+              //crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                    padding: EdgeInsets.symmetric(vertical: 6),
+                    child: Row(children: [
+                      Text(
+                        task.processTypeName ?? " ",
+                        style: TextStyle(
+                            inherit: false,
+                            //fontWeight: FontWeight.normal,
+                            fontSize: 14),
+                        textAlign: TextAlign.left,
+                      )
+                    ])),
+                Padding(
+                    padding: EdgeInsets.symmetric(vertical: 2),
+                    child: Row(children: [
+                      Text(
+                        task.name,
+                        style: TextStyle(
+                            inherit: false,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18),
+                        textAlign: TextAlign.left,
+                      )
+                    ])),
+                Padding(
+                    padding: EdgeInsets.symmetric(vertical: 2),
+                    child: Row(children: [
+                      Text(
+                        "КС: " + task.getDueDateFullText(),
+                        style: TextStyle(
+                            inherit: false,
+                            fontWeight: FontWeight.normal,
+                            color: task.isOverdue() ? Colors.red : Colors.green,
+                            fontSize: 14),
+                        textAlign: TextAlign.left,
+                      )
+                    ])),
+              ],
+            )));
+  }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(80.0);
 }
 
 // Вывод группы параметров
@@ -273,19 +268,19 @@ class AttrGroup extends StatelessWidget {
 
     return Column(children: [
       Container(
-          margin: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
           child: Text(attrGroup,
               style: TextStyle(fontSize: 18, color: Colors.grey))),
       SizedBox(
-          height: attribValuesByGroup.length * 28,
           child: ListView.builder(
-            shrinkWrap: false,
-            itemCount: attribValuesByGroup.length,
-            itemBuilder: (BuildContext context, int index) {
-              return AttribValueRow(
-                  attribValue: attribValuesByGroup.entries.elementAt(index));
-            },
-          ))
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        shrinkWrap: true,
+        itemCount: attribValuesByGroup.length,
+        itemBuilder: (BuildContext context, int index) {
+          return AttribValueRow(
+              attribValue: attribValuesByGroup.entries.elementAt(index));
+        },
+      ))
     ]);
   }
 }
@@ -306,10 +301,9 @@ class AttribValueRow extends StatelessWidget {
                 .format(DateTime.parse(attribValue.value.toString()))
             : attribValue.value.toString());
 
-    return Container(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        child: Table(children: [
-          TableRow(children: [Text("$attrKey:   $attrValue")])
-        ]));
+    return Expanded(
+        child: Container(
+            padding: EdgeInsets.symmetric(vertical: 6),
+            child: Text("$attrKey:   $attrValue")));
   }
 }

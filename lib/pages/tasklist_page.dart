@@ -15,7 +15,7 @@ class SearchBar extends StatelessWidget {
     ThemeData themeData = Theme.of(context);
     return GetBuilder<TaskListController>(builder: (controller) {
       return Padding(
-        padding: EdgeInsets.symmetric(vertical: 0, horizontal: 32),
+        padding: EdgeInsets.fromLTRB(36, 0, 36, 8),
         child: TextField(
           textAlign: TextAlign.center,
           decoration: InputDecoration(

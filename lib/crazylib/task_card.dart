@@ -1,11 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:substring_highlight/substring_highlight.dart';
 import 'package:tasklist_lite/state/tasklist_controller.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
-import 'package:tasklist_lite/pages/tasklist_page.dart';
 
 /// визуальное представление задачи в списке задач
 /// #TODO: также используется и в старой карусели в AlternativeTaskListPage, но никто даже не смотрел, как оно там выглядит
@@ -50,8 +48,7 @@ class TaskCard extends StatelessWidget {
                     children: [
                       // #TODO: sized box и softwrap здесь нужны для переноса
                       // и все прекрсано, но хорошо бы ширину относительно получать, относительно ширины parent`а
-                      SizedBox(
-                        width: 300,
+                      Expanded(
                         child:
                             // обеспечит подсветку текста, введенного в строку поиска, и присутствующего среди названий заадач
                             SubstringHighlight(
@@ -62,7 +59,7 @@ class TaskCard extends StatelessWidget {
                               fontWeight: FontWeight.bold, fontSize: 18),
                         ),
                       ),
-                      Text(task.getDueTimeText()),
+                      Text(task.getDueDateShortText()),
                       IconButton(
                           iconSize: 40,
                           tooltip: 'Форма задачи',
