@@ -301,9 +301,11 @@ class AttribValueRow extends StatelessWidget {
                 .format(DateTime.parse(attribValue.value.toString()))
             : attribValue.value.toString());
 
-    return Expanded(
-        child: Container(
-            padding: EdgeInsets.symmetric(vertical: 6),
-            child: Text("$attrKey:   $attrValue")));
+    return Row(children: [
+      Expanded(
+          child: Container(
+              padding: EdgeInsets.symmetric(vertical: 6),
+              child: Text("$attrKey:   $attrValue")))
+    ]);
   }
 }
