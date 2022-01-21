@@ -109,7 +109,7 @@ class TaskCard extends StatelessWidget {
                               EdgeInsets.all(2)),
                         ),
                         child: Text(
-                          "Взять себе",
+                          "Вернуть группе",
                           style: TextStyle(
                             color: Colors.black,
                           ),
@@ -126,7 +126,7 @@ class TaskCard extends StatelessWidget {
                               EdgeInsets.all(2)),
                         ),
                         child: Text(
-                          "Вернуть группе",
+                          "Взять себе",
                           style: TextStyle(
                             color: Colors.black,
                           ),
