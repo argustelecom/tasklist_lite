@@ -14,7 +14,7 @@ class DateRow extends StatelessWidget{
   Widget build(BuildContext context) {
 
     ThemeData themeData = Theme.of(context);
-    if(date == DateFormat('dd MMMM yyyy', "ru_RU").format(DateTime.now())){
+    if(DateFormat('dd MMMM yyyy', "ru_RU").format(date) == DateFormat('dd MMMM yyyy', "ru_RU").format(DateTime.now())){
       return Container(
         width: MediaQuery.of(context).size.width,
         child: Text("СЕГОДНЯ - ${DateFormat('dd MMMM yyyy', "ru_RU").format(date)}",
@@ -28,7 +28,7 @@ class DateRow extends StatelessWidget{
       );
     }
     else {
-      if (date == DateFormat('dd MMMM yyyy', "ru_RU").format(DateTime.now().subtract(Duration(days:1)))){
+      if (DateFormat('dd MMMM yyyy', "ru_RU").format(date) == DateFormat('dd MMMM yyyy', "ru_RU").format(DateTime.now().subtract(Duration(days:1)))){
       return Container(
         width: MediaQuery.of(context).size.width,
         child: Text("ВЧЕРА - ${DateFormat('dd MMMM yyyy', "ru_RU").format(date)}",
