@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 ///
 /// представляет собой item внутри listView, который умеет expansion(то есть разворачиваться) и
