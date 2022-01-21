@@ -5,6 +5,7 @@ import 'package:substring_highlight/substring_highlight.dart';
 import 'package:tasklist_lite/state/tasklist_controller.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
 
+
 /// визуальное представление задачи в списке задач
 /// #TODO: также используется и в старой карусели в AlternativeTaskListPage, но никто даже не смотрел, как оно там выглядит
 class TaskCard extends StatelessWidget {
@@ -98,12 +99,29 @@ class TaskCard extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      TextButton(
+                      if (task.assignee != null) TextButton(
                         style: ButtonStyle(
                           backgroundColor:
                               // #TODO: зачем это: https://stackoverflow.com/questions/66476548/flutter-textbutton-padding  ??
                               MaterialStateProperty.all<Color>(
                                   Colors.yellowAccent),
+                          padding: MaterialStateProperty.all<EdgeInsets>(
+                              EdgeInsets.all(2)),
+                        ),
+                        child: Text(
+                          "Взять себе",
+                          style: TextStyle(
+                            color: Colors.black,
+                          ),
+                        ),
+                        onPressed: () => {print("login")},
+                      ),
+                      if (task.assignee == null) TextButton(
+                        style: ButtonStyle(
+                          backgroundColor:
+                          // #TODO: зачем это: https://stackoverflow.com/questions/66476548/flutter-textbutton-padding  ??
+                          MaterialStateProperty.all<Color>(
+                              Colors.yellowAccent),
                           padding: MaterialStateProperty.all<EdgeInsets>(
                               EdgeInsets.all(2)),
                         ),

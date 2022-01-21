@@ -44,11 +44,11 @@ class TaskFixtures {
     new Task(
         id: 1,
         name: "АВР-24035",
-        desc: "АВР-24035 (ВЛГД0127)",
+        desc: "АВР-24035 (ВЛГ0127)",
         processTypeName: "Аварийно-восстановительные работы",
         taskType: "Выполнение работ",
         dueDate:
-            DateUtils.dateOnly(DateTime.now()).add(const Duration(hours: 17)),
+            DateUtils.dateOnly(DateTime.now()).add(const Duration(hours: 11)),
         assignee: "Богданова И.Л.",
         address: "г.Вологда, ул.Садовая, 101",
         latitude: "56.863148",
@@ -64,18 +64,18 @@ class TaskFixtures {
           "Наряд/Договор": "№464527",
           "Наряд/Приоритет": "2",
           "Объект/Тип объекта": "Базовая станция",
-          "Объект/Название": "ВЛГД0127",
+          "Объект/Название": "ВЛГ0127",
           "Объект/Пробег до объекта (км)": "9 км"
         })),
     new Task(
         id: 2,
         name: "РР-27089",
-        desc: "РР-27089 (ВОЛС Лаврики-Песочное)",
+        desc: "РР-27089 (ВОЛС Лосево-Песочное)",
         processTypeName: "Разовые работы",
-        taskType: "Назначение наряда бригаде",
+        taskType: "Выезд на объект",
         dueDate: DateUtils.dateOnly(DateTime.now())
-            .add(const Duration(hours: 22)),
-        assignee: null,
+            .add(const Duration(hours: 15)),
+        assignee: "Богданова И.Л., Смирнов С.А.",
         address: null,
         latitude: "56.888854",
         longitude: "60.612602",
@@ -90,22 +90,22 @@ class TaskFixtures {
           "Наряд/Договор": "№464527",
           "Наряд/Приоритет": "5",
           "Объект/Тип объекта": "ВОЛС",
-          "Объект/Название": "Лаврики-Песочное",
+          "Объект/Название": "Лосево-Песочное",
           "Объект/Пробег до объекта (км)": "73 км"
         })),
     new Task(
         id: 3,
         name: "РР-28050",
-        desc: "РР-28050 (МИ4032)",
+        desc: "РР-28050 (ВЛГ4032)",
         processTypeName: "Разовые работы",
         taskType: "Назначение наряда бригаде",
         dueDate: DateUtils.dateOnly(DateTime.now())
-            .add(const Duration(hours: 24 * 2 + 12)),
+            .add(const Duration(hours: 22)),
         assignee: null,
         address: "г.Вологда, ул.Лесопарковая, 9Б",
         latitude: null,
         longitude: null,
-        comment: "Муфта М172",
+        comment: "ТРЦ Радуга. Работы только в ночное время. Дежурный инженер Семенов И.С. +79501234567",
         createDate: DateUtils.dateOnly(DateTime.now())
             .add(const Duration(hours: 24 * 2 - 22)),
         isClosed: false,
@@ -116,17 +116,17 @@ class TaskFixtures {
           "Наряд/Договор": "№464527",
           "Наряд/Приоритет": "5",
           "Объект/Тип объекта": "Базовая станция",
-          "Объект/Название": "МИ4032",
+          "Объект/Название": "ВЛГ4032",
           "Объект/Пробег до объекта (км)": "5 км"
         })),
     new Task(
         id: 4,
         name: "ТО-19099",
-        desc: "ТО-19099 (ВЛГД0734)",
+        desc: "ТО-19099 (ВЛГ0734)",
         processTypeName: "Техническое обслуживание",
         taskType: "Назначение наряда бригаде",
         dueDate: DateUtils.dateOnly(DateTime.now())
-            .add(const Duration(hours: 24 * 7 + 20)),
+            .add(const Duration(hours: 24 * 1 + 16)),
         assignee: null,
         address: "г.Вологда, ул.Северная, 27",
         latitude: null,
@@ -142,19 +142,19 @@ class TaskFixtures {
           "Наряд/Договор": "№464527",
           "Наряд/Приоритет": "5",
           "Объект/Тип объекта": "Базовая станция",
-          "Объект/Название": "ВЛГД0734",
+          "Объект/Название": "ВЛГ0734",
           "Объект/Пробег до объекта (км)": "12 км"
         })),
     new Task(
         id: 5,
         name: "АВР-14569",
-        desc: "АВР-14569 (ВЛГД1077)",
+        desc: "АВР-14569 (ВЛГ1077)",
         processTypeName: "Аварийно-восстановительные работы",
-        taskType: "Выполнение работ",
+        taskType: "Назначение наряда бригаде",
         dueDate: DateUtils.dateOnly(DateTime.now())
-            .add(const Duration(hours: 15)),
-        assignee: "Богданова И.Л., Смирнов С.А.",
-        address: "г.Вологда, ул.Северная, 16",
+            .add(const Duration(hours: 24*3 + 15)),
+        assignee: null,
+        address: "г.Вологда, пр.Мира, 16",
         latitude: null,
         longitude: null,
         comment: "",
@@ -168,7 +168,7 @@ class TaskFixtures {
           "Наряд/Договор": "№464527",
           "Наряд/Приоритет": "3",
           "Объект/Тип объекта": "Базовая станция",
-          "Объект/Название": "ВЛГД1077",
+          "Объект/Название": "ВЛГ1077",
           "Объект/Пробег до объекта (км)": "21 км"
         }))
   });
@@ -177,17 +177,17 @@ class TaskFixtures {
     new Task(
         id: 11,
         name: "ТО-17051",
-        desc: "ТО-17051 (ВЛГД1024)",
+        desc: "ТО-17051 (ВЛГ1024)",
         processTypeName: "Техническое обслужавание",
         taskType: "Назначение наряда бригаде",
         dueDate: DateUtils.dateOnly(DateTime.now())
-            .add(const Duration(hours: 24 * 25 + 14)),
+            .add(const Duration(hours: 24 * 7 + 14)),
         assignee: null,
         address: "г.Вологда, пр.Космонавтов, 23a",
         latitude: null,
         longitude: null,
         comment:
-            "ТЦ Работы только в ночное время. Дежурный инженер Семенов И.С. +79501234567",
+            "По вопросам доступа в диспетчерскую, вход с торца",
         createDate: DateUtils.dateOnly(DateTime.now())
             .add(const Duration(hours: 24 * 4 - 20)),
         isClosed: false,
