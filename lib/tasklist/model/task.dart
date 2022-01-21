@@ -101,12 +101,16 @@ class Task {
   }
 
   Duration? getTimeLeft() {
-    if (dueDate != null)
-      // DateTime#difference возвращает некорректные длительности, вычислим более надежным способом
-      return new Duration(
-          milliseconds: dueDate!.millisecondsSinceEpoch -
-              DateTime.now().millisecondsSinceEpoch);
-    else
+    if (dueDate != null) {
+      if (dueDate!.isAfter(DateTime.now())) {
+        return new Duration(
+            milliseconds: dueDate!.millisecondsSinceEpoch -
+                DateTime.now().millisecondsSinceEpoch);
+      } else
+        return new Duration(
+            milliseconds: DateTime.now().millisecondsSinceEpoch -
+                dueDate!.millisecondsSinceEpoch);
+    } else
       return null;
   }
 
