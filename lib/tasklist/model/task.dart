@@ -115,7 +115,7 @@ class Task {
     if (timeLeft != null)
       return (isOverdue() ? "СКВ: " : "КВ: ") +
           prettyDuration(timeLeft,
-              tersity: DurationTersity.second,
+              tersity: DurationTersity.minute,
               abbreviated: true,
               delimiter: " ",
               spacer: "",
