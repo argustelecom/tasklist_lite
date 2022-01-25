@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
 import 'package:tasklist_lite/tasklist/task_repository.dart';
 
+/// содержит state списка задач и (возможно в будущем) формы задачи
 class TaskListController extends GetxController {
   /// открытые задачи. Их перечень не зависит от выбранного числа и обновляется только по необходимости
   /// (когда на сервере будут изменения)

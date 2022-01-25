@@ -5,21 +5,26 @@ import 'package:tasklist_lite/tasklist/fixture/task_fixtures.dart';
 /// https://medium.com/flutter/managing-flutter-application-state-with-inheritedwidgets-1140452befe1
 class ApplicationState {
   const ApplicationState(
-      {required this.themeMode, required this.currentTaskFixture});
+      {required this.themeMode,
+      required this.currentTaskFixture,
+      this.serverAddress});
 
   final ThemeMode themeMode;
 
   final CurrentTaskFixture currentTaskFixture;
 
+  final String? serverAddress;
+
   @override
   bool operator ==(Object other) {
     return other is ApplicationState &&
         this.themeMode == other.themeMode &&
-        this.currentTaskFixture == other.currentTaskFixture;
+        this.currentTaskFixture == other.currentTaskFixture &&
+        this.serverAddress == other.serverAddress;
   }
 
   @override
-  int get hashCode => hashValues(themeMode, currentTaskFixture);
+  int get hashCode => hashValues(themeMode, currentTaskFixture, serverAddress);
 
   static ApplicationState of(BuildContext context) {
     // тут реализацию пришлось подглядеть в GalleryOptions, т.к. каноничная дает ошибки компиляции
@@ -38,10 +43,13 @@ class ApplicationState {
   }
 
   ApplicationState copyWith(
-      {ThemeMode? themeMode, CurrentTaskFixture? currentTaskFixture}) {
+      {ThemeMode? themeMode,
+      CurrentTaskFixture? currentTaskFixture,
+      String? serverAddress}) {
     return ApplicationState(
         themeMode: themeMode ?? this.themeMode,
-        currentTaskFixture: currentTaskFixture ?? this.currentTaskFixture);
+        currentTaskFixture: currentTaskFixture ?? this.currentTaskFixture,
+        serverAddress: serverAddress);
   }
 }
 
@@ -69,10 +77,10 @@ class ModelBinding extends StatefulWidget {
     Key? key,
     this.initialModel = const ApplicationState(
         themeMode: ThemeMode.system,
-        currentTaskFixture: CurrentTaskFixture.thirdFixture),
+        currentTaskFixture: CurrentTaskFixture.thirdFixture,
+        serverAddress: null),
     required this.child,
-  })  : assert(initialModel != null),
-        super(key: key);
+  }) : super(key: key);
 
   final ApplicationState initialModel;
   final Widget child;
@@ -83,7 +91,8 @@ class ModelBinding extends StatefulWidget {
 class _ModelBindingState extends State<ModelBinding> {
   ApplicationState currentModel = ApplicationState(
       themeMode: ThemeMode.system,
-      currentTaskFixture: CurrentTaskFixture.thirdFixture);
+      currentTaskFixture: CurrentTaskFixture.firstFixture,
+      serverAddress: null);
 
   @override
   void initState() {
