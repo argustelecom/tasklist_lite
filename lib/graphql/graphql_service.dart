@@ -1,4 +1,3 @@
-import 'package:gql_http_link/gql_http_link.dart';
 import 'package:graphql/client.dart';
 
 /// copy-pasted from flutter_movie, https://github.com/o1298098/Flutter-Movie

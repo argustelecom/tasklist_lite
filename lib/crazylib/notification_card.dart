@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:tasklist_lite/tasklist/model/notify.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
