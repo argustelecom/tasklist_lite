@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:tasklist_lite/state/auth_controller.dart';
 
 import 'bottom_button_bar.dart';
 
@@ -19,8 +21,8 @@ class WideScreenNavigationDrawer extends StatelessWidget {
         ),
         body: Column(
           children: [
-            Expanded(
-              child: ListView(
+            Expanded(child: GetX<AuthController>(builder: (authController) {
+              return ListView(
                   padding: EdgeInsets.symmetric(vertical: 0, horizontal: 32),
                   shrinkWrap: true,
                   children: MenuAction.mainActionList
@@ -28,15 +30,18 @@ class WideScreenNavigationDrawer extends StatelessWidget {
                           onTap: e.callback,
                           child: Row(children: [
                             IconButton(
-                              onPressed: e.callback,
+                              onPressed: authController.isAuthenticated ||
+                                      (e.caption == MenuAction.settingsCaption)
+                                  ? e.callback
+                                  : null,
                               icon: Icon(e.iconData),
                               iconSize: IconTheme.of(context).size ?? 24,
                               tooltip: e.caption,
                             ),
                             Text(e.caption)
                           ])))
-                      .toList()),
-            ),
+                      .toList());
+            })),
           ],
         ),
       ),

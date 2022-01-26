@@ -105,6 +105,11 @@ class SettingsPageState extends State<SettingsPage> {
           },
         );
       } else {
+        // не забываем добавить новый текст в коллекцию suggestions
+        if (!serverAddressSuggestions
+            .contains(_serverAddressEditingController.text)) {
+          serverAddressSuggestions.add(_serverAddressEditingController.text);
+        }
         // пользователь не был залогинен, поэтому просто заменим адрес в настройках на новый
         ApplicationState.update(
             context,
@@ -150,7 +155,8 @@ class SettingsPageState extends State<SettingsPage> {
                       labelText: "В формате <доменное имя(ip):порт>"),
                 ),
                 suggestionsCallback: (String pattern) {
-                  return serverAddressSuggestions;
+                  return serverAddressSuggestions
+                      .where((element) => element.startsWith(pattern));
                 },
                 itemBuilder: (BuildContext context, suggestion) {
                   return ListTile(
