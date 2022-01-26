@@ -23,28 +23,34 @@ class TaskRepository extends GetxService {
   }
 
   ///****************************************************************************
-  /// возвращает reactive поток с задачами для слоя представления.  Может получать
+  /// Возвращает reactive поток с открытыми задачами для слоя представления. Может получать
   /// задачи как из бакенда на сервере, так и из фикстуры
   ///****************************************************************************
   Stream<List<Task>> streamOpenedTasks() {
     ApplicationState applicationState = Get.find();
     if (applicationState.currentTaskFixture != CurrentTaskFixture.noneFixture) {
       TaskFixtures taskFixtures = Get.find();
-      return taskFixtures.streamTasks(applicationState.currentTaskFixture);
+      return taskFixtures
+          .streamOpenedTasks(applicationState.currentTaskFixture);
     }
     // #TODO: обращение к TaskRemoteClient еще не реализовано
     TaskFixtures taskFixtures = Get.find();
-    return taskFixtures.streamTasks(CurrentTaskFixture.thirdFixture);
+    return taskFixtures.streamOpenedTasks(CurrentTaskFixture.thirdFixture);
   }
 
   ///****************************************************************************
-  /// #TODO: пока это просто заглушка,
+  /// Возвращает reactive поток с закрытыми задачами для слоя представления. Может получать
+  /// задачи как из бакенда на сервере, так и из фикстуры
   ///****************************************************************************
-  Stream<List<Task>> streamClosedTasks(DateTime day) async* {
-    while (true) {
-      List<Task> tasks = List.of({});
-      yield tasks;
-      await Future.delayed(Duration(seconds: 10));
+  Stream<List<Task>> streamClosedTasks(DateTime day) {
+    ApplicationState applicationState = Get.find();
+    if (applicationState.currentTaskFixture != CurrentTaskFixture.noneFixture) {
+      TaskFixtures taskFixtures = Get.find();
+      return taskFixtures.streamClosedTasks(
+          applicationState.currentTaskFixture, day);
     }
+    // #TODO: обращение к TaskRemoteClient еще не реализовано
+    TaskFixtures taskFixtures = Get.find();
+    return taskFixtures.streamClosedTasks(CurrentTaskFixture.thirdFixture, day);
   }
 }

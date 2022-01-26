@@ -11,7 +11,7 @@ class TopUserBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return GetX<AuthController>(builder: (authController) {
       return Padding(
-          padding: EdgeInsets.symmetric(vertical: 0, horizontal: 18),
+              padding: EdgeInsets.symmetric(vertical: 0, horizontal: 24),
           child: AppBar(
             leading: Icon(Icons.account_circle_outlined),
             titleSpacing: 0.0,

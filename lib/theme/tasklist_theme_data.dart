@@ -44,7 +44,7 @@ class TaskListThemeData {
     primaryVariant: Color(0xFF117378),
     secondary: Color(0xFFEFF3F3),
     secondaryVariant: Color(0xFFFAFBFB),
-    background: Color(0xFFE6EBEB),
+    background: Color(0xFFF2F2F2),
     surface: Color(0xFFFAFBFB),
     onBackground: Colors.white,
     error: Colors.black,
