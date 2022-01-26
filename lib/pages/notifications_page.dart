@@ -67,7 +67,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                 child:ListView(
                   shrinkWrap: true,
                   children: [
-                    DateRow(date: DateTime.now()),
+                    DateRow(date: controller.getNotification()[0].date),
                     ListView.separated(
                       // Делаем разделитель
                       separatorBuilder: (BuildContext context, int index)  {

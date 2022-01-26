@@ -73,8 +73,8 @@ class TaskFixtures {
         desc: "РР-27089 (ВОЛС Лосево-Песочное)",
         processTypeName: "Разовые работы",
         taskType: "Выезд на объект",
-        dueDate: DateUtils.dateOnly(DateTime.now())
-            .add(const Duration(hours: 15)),
+        dueDate:
+            DateUtils.dateOnly(DateTime.now()).add(const Duration(hours: 15)),
         assignee: "Богданова И.Л., Смирнов С.А.",
         address: null,
         latitude: "56.888854",
@@ -99,13 +99,14 @@ class TaskFixtures {
         desc: "РР-28050 (ВЛГ4032)",
         processTypeName: "Разовые работы",
         taskType: "Назначение наряда бригаде",
-        dueDate: DateUtils.dateOnly(DateTime.now())
-            .add(const Duration(hours: 22)),
+        dueDate:
+            DateUtils.dateOnly(DateTime.now()).add(const Duration(hours: 22)),
         assignee: null,
         address: "г.Вологда, ул.Лесопарковая, 9Б",
         latitude: null,
         longitude: null,
-        comment: "ТРЦ Радуга. Работы только в ночное время. Дежурный инженер Семенов И.С. +79501234567",
+        comment:
+            "ТРЦ Радуга. Работы только в ночное время. Дежурный инженер Семенов И.С. +79501234567",
         createDate: DateUtils.dateOnly(DateTime.now())
             .add(const Duration(hours: 24 * 2 - 22)),
         isClosed: false,
@@ -147,19 +148,19 @@ class TaskFixtures {
         })),
     new Task(
         id: 5,
-        name: "АВР-14569",
-        desc: "АВР-14569 (ВЛГ1077)",
-        processTypeName: "Аварийно-восстановительные работы",
+        name: "РР-14569",
+        desc: "РР-14569 (ВЛГ1077)",
+        processTypeName: "Разовые работы",
         taskType: "Назначение наряда бригаде",
         dueDate: DateUtils.dateOnly(DateTime.now())
-            .add(const Duration(hours: 24*3 + 15)),
+            .add(const Duration(hours: 24 * 3 + 15)),
         assignee: null,
         address: "г.Вологда, пр.Мира, 16",
         latitude: null,
         longitude: null,
         comment: "",
-        createDate: DateUtils.dateOnly(DateTime.now())
-            .add(const Duration(hours: -12)),
+        createDate:
+            DateUtils.dateOnly(DateTime.now()).add(const Duration(hours: -12)),
         isClosed: false,
         isOutdoor: true,
         flexibleAttribs: new LinkedHashMap.of({
@@ -170,6 +171,118 @@ class TaskFixtures {
           "Объект/Тип объекта": "Базовая станция",
           "Объект/Название": "ВЛГ1077",
           "Объект/Пробег до объекта (км)": "21 км"
+        })),
+    new Task(
+        id: 6,
+        name: "АВР-10357",
+        desc: "АВР-10357 (ВЛГ1379)",
+        processTypeName: "Аварийно-восстановительные работы",
+        taskType: "Закрыт",
+        dueDate: DateUtils.dateOnly(DateTime.now())
+            .add(const Duration(hours: -24 * 1 + 10)),
+        assignee: "Богданова И.Л.",
+        address: "г.Вологда, ул.Правды, 99",
+        latitude: null,
+        longitude: null,
+        comment: "",
+        createDate: DateUtils.dateOnly(DateTime.now())
+            .add(const Duration(hours: -24 * 4 + 12)),
+        closeDate: DateUtils.dateOnly(DateTime.now())
+            .add(const Duration(hours: -24 * 1 + 10)),
+        isClosed: true,
+        isOutdoor: true,
+        flexibleAttribs: new LinkedHashMap.of({
+          "Наряд/Оператор": "Tele2",
+          "Наряд/ID заявки оператора": "INT42748",
+          "Наряд/Договор": "№464527",
+          "Наряд/Приоритет": "3",
+          "Объект/Тип объекта": "Базовая станция",
+          "Объект/Название": "ВЛГ1379",
+          "Объект/Пробег до объекта (км)": "2 км"
+        })),
+    new Task(
+        id: 7,
+        name: "РР-10346",
+        desc: "РР-10346 (ВЛГ1027)",
+        processTypeName: "Разовые работы",
+        taskType: "Закрыт",
+        dueDate: DateUtils.dateOnly(DateTime.now())
+            .add(const Duration(hours: -24 * 1 + 13)),
+        assignee: "Богданова И.Л.",
+        address: "г.Вологда, ул.Нагорая, 17",
+        latitude: null,
+        longitude: null,
+        comment: "",
+        createDate: DateUtils.dateOnly(DateTime.now())
+            .add(const Duration(hours: -24 * 4 + 12)),
+        closeDate: DateUtils.dateOnly(DateTime.now())
+            .add(const Duration(hours: -24 * 1 + 14)),
+        isClosed: true,
+        isOutdoor: true,
+        flexibleAttribs: new LinkedHashMap.of({
+          "Наряд/Оператор": "Tele2",
+          "Наряд/ID заявки оператора": "INT34673",
+          "Наряд/Договор": "№464836",
+          "Наряд/Приоритет": "5",
+          "Объект/Тип объекта": "Базовая станция",
+          "Объект/Название": "ВЛГ1027",
+          "Объект/Пробег до объекта (км)": "14 км"
+        })),
+    new Task(
+        id: 8,
+        name: "РР-11542",
+        desc: "РР-11542 (ВЛГ2625)",
+        processTypeName: "Разовые работы",
+        taskType: "Закрыт",
+        dueDate: DateUtils.dateOnly(DateTime.now())
+            .add(const Duration(hours: -24 * 1 + 17)),
+        assignee: "Богданова И.Л.",
+        address: "г.Вологда, пер.Привокзальный, 3",
+        latitude: null,
+        longitude: null,
+        comment: "",
+        createDate: DateUtils.dateOnly(DateTime.now())
+            .add(const Duration(hours: -24 * 4 + 12)),
+        closeDate: DateUtils.dateOnly(DateTime.now())
+            .add(const Duration(hours: -24 * 1 + 16)),
+        isClosed: true,
+        isOutdoor: true,
+        flexibleAttribs: new LinkedHashMap.of({
+          "Наряд/Оператор": "Megafon",
+          "Наряд/ID заявки оператора": "INT38676",
+          "Наряд/Договор": "№734577",
+          "Наряд/Приоритет": "5",
+          "Объект/Тип объекта": "Базовая станция",
+          "Объект/Название": "ВЛГ2625",
+          "Объект/Пробег до объекта (км)": "2 км"
+        })),
+    new Task(
+        id: 9,
+        name: "РР-13678",
+        desc: "РР-13678 (ВЛГ2023)",
+        processTypeName: "Разовые работы",
+        taskType: "Закрыт",
+        dueDate: DateUtils.dateOnly(DateTime.now())
+            .add(const Duration(hours: -24 * 0 + 9)),
+        assignee: "Богданова И.Л., Синицын В.С.",
+        address: "г.Вологда, пр.Лесной, 113",
+        latitude: null,
+        longitude: null,
+        comment: "",
+        createDate: DateUtils.dateOnly(DateTime.now())
+            .add(const Duration(hours: -24 * 4 + 12)),
+        closeDate: DateUtils.dateOnly(DateTime.now())
+            .add(const Duration(hours: -24 * 0 + 9)),
+        isClosed: true,
+        isOutdoor: true,
+        flexibleAttribs: new LinkedHashMap.of({
+          "Наряд/Оператор": "Megafon",
+          "Наряд/ID заявки оператора": "INT33566",
+          "Наряд/Договор": "№734577",
+          "Наряд/Приоритет": "5",
+          "Объект/Тип объекта": "Базовая станция",
+          "Объект/Название": "ВЛГ2023",
+          "Объект/Пробег до объекта (км)": "10 км"
         }))
   });
 
@@ -186,8 +299,7 @@ class TaskFixtures {
         address: "г.Вологда, пр.Космонавтов, 23a",
         latitude: null,
         longitude: null,
-        comment:
-            "По вопросам доступа в диспетчерскую, вход с торца",
+        comment: "По вопросам доступа в диспетчерскую, вход с торца",
         createDate: DateUtils.dateOnly(DateTime.now())
             .add(const Duration(hours: 24 * 4 - 20)),
         isClosed: false,
@@ -200,6 +312,32 @@ class TaskFixtures {
           "Объект/Тип объекта": "Базовая станция",
           "Объект/Название": "ВЛГД1024",
           "Объект/Пробег до объекта (км)": "6 км"
+        })),
+    new Task(
+        id: 12,
+        name: "АВР-18364",
+        desc: "АВР-18364 (ВЛГ2937)",
+        processTypeName: "Аварийно-восстановительные работы",
+        taskType: "Выезд на объект",
+        dueDate: DateUtils.dateOnly(DateTime.now())
+            .add(const Duration(hours: -24 * 0 + 13)),
+        assignee: "Богданова И.Л.",
+        address: "г.Вологда, ул.Лермонтова, 11",
+        latitude: null,
+        longitude: null,
+        comment: "",
+        createDate: DateUtils.dateOnly(DateTime.now())
+            .add(const Duration(hours: -24 * 0 + 11)),
+        isClosed: false,
+        isOutdoor: true,
+        flexibleAttribs: new LinkedHashMap.of({
+          "Наряд/Оператор": "Tele2",
+          "Наряд/ID заявки оператора": "INT42748",
+          "Наряд/Договор": "№464527",
+          "Наряд/Приоритет": "1",
+          "Объект/Тип объекта": "Базовая станция",
+          "Объект/Название": "ВЛГ2937",
+          "Объект/Пробег до объекта (км)": "2 км"
         }))
   });
 
@@ -218,7 +356,8 @@ class TaskFixtures {
   ///***************************************************************************
   /// периодически подает список с разным набором задач, чтобы была возможность
   /// протестировать клиентскую часть без подписок graphql
-  Stream<List<Task>> streamTasks(CurrentTaskFixture currentTaskFixture) async* {
+  Stream<List<Task>> streamOpenedTasks(
+      CurrentTaskFixture currentTaskFixture) async* {
     while (true) {
       List<Task> tasks = getTasks(currentTaskFixture);
       // по четным минутам в возвращаемое значение подмешиваем additional задачи
@@ -231,7 +370,28 @@ class TaskFixtures {
           tasks.addAll(thirdTaskFixtureAdditionalTasks);
         }
       }
-      yield tasks;
+      yield tasks.where((e) => !e.isClosed).toList();
+
+      await Future.delayed(Duration(seconds: 10));
+    }
+  }
+
+  Stream<List<Task>> streamClosedTasks(
+      CurrentTaskFixture currentTaskFixture, DateTime day) async* {
+    while (true) {
+      List<Task> tasks = getTasks(currentTaskFixture);
+
+      if (DateTime.now().minute.isEven) {
+        if (currentTaskFixture == CurrentTaskFixture.firstFixture) {
+          tasks.addAll(firstTaskFixtureAdditionalTasks);
+        } else if (currentTaskFixture == CurrentTaskFixture.secondFixture) {
+          tasks.addAll(secondTaskFixtureAdditionalTasks);
+        } else {
+          tasks.addAll(thirdTaskFixtureAdditionalTasks);
+        }
+      }
+      List<Task> closedTasks = tasks.where((e) => e.isClosed).toList();
+      yield closedTasks;
 
       await Future.delayed(Duration(seconds: 10));
     }

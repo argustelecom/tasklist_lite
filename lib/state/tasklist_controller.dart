@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
 import 'package:tasklist_lite/tasklist/task_repository.dart';
 
+/// содержит state списка задач и (возможно в будущем) формы задачи
 class TaskListController extends GetxController {
   /// открытые задачи. Их перечень не зависит от выбранного числа и обновляется только по необходимости
   /// (когда на сервере будут изменения)
@@ -23,6 +24,11 @@ class TaskListController extends GetxController {
 
   set currentDate(DateTime value) {
     _currentDate = value;
+    closedTasksSubscription = resubscribe(closedTasksSubscription,
+        taskRepository.streamClosedTasks(this.currentDate), (event) {
+      this.closedTasks = event;
+      update();
+    });
     update();
   }
 
@@ -56,16 +62,28 @@ class TaskListController extends GetxController {
   /// #TODO: сюда просится автоматический тест
   /// задачи, которые должны отображаться в списке задач, с учетом фильтров
   List<Task> getTasks() {
+    /// хотим отображать сначала открытые, упорядоченные по КС (без КС в конце)...
     List<Task> resultList = List.of({});
+    openedTasks.sort((a, b) => a.dueDate == null
+        ? 1
+        : b.dueDate == null
+            ? -1
+            : a.dueDate!.compareTo(b.dueDate!));
     resultList.addAll(openedTasks);
+
+    /// ...затем закрытые, упорядоченные по дате закрытия
+    closedTasks.sort((a, b) => a.closeDate!.compareTo(b.closeDate!));
     resultList.addAll(closedTasks);
-    return List.of(
+    return List.of(resultList
         // фильтруем по наличию введенного (в поле поиска) текста в названии задачи
-        resultList
-            .where((element) => element.name.contains(searchText))
-            // фильтруем по признаку "назначенная/неназначенная"
-            .where((element) => ((assignedSwitch && element.assignee != null) ||
-                (!assignedSwitch && element.assignee == null))));
+        .where((element) => element.name.contains(searchText))
+        // фильтруем по признаку "назначенная/неназначенная"
+        .where((element) => ((assignedSwitch && element.assignee != null) ||
+            (!assignedSwitch && element.assignee == null)))
+        // фильтруем по попаданию даты закрытия в текущий день
+        .where((element) => ((!element.isClosed ||
+            DateUtils.dateOnly(element.closeDate!).millisecondsSinceEpoch ==
+                currentDate.millisecondsSinceEpoch))));
   }
 
   StreamSubscription? openedTasksSubscription;
@@ -110,10 +128,14 @@ class TaskListController extends GetxController {
   /// stream`ы taskRepository
   ///***************************************************************************
   void didChangeDependencies() {
-// фикстура затрагивает только открытые задачи, поэтому набор данных по закрытым не мог измениться
     openedTasksSubscription = resubscribe(
         openedTasksSubscription, taskRepository.streamOpenedTasks(), (event) {
       this.openedTasks = event;
+      update();
+    });
+    closedTasksSubscription = resubscribe(closedTasksSubscription,
+        taskRepository.streamClosedTasks(this.currentDate), (event) {
+      this.closedTasks = event;
       update();
     });
   }

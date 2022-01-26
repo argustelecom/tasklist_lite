@@ -17,20 +17,19 @@ class CrazyButton extends StatelessWidget {
       child: Padding(
         padding: this.padding,
         child: TextButton(
-          style: ButtonStyle(
-            elevation: MaterialStateProperty.all<double>(5),
-            // minimumSize: MaterialStateProperty.all<Size>(Size.fromWidth(200)),
-            backgroundColor:
-                // #TODO: зачем это: https://stackoverflow.com/questions/66476548/flutter-textbutton-padding  ??
-                MaterialStateProperty.all<Color>(Colors.yellowAccent),
-            padding: MaterialStateProperty.all<EdgeInsets>(EdgeInsets.all(2)),
-          ),
-          child: Text(
-            this.title,
-            style: TextStyle(color: Colors.black, fontSize: 18),
-          ),
-          onPressed: () => onPressed,
-        ),
+            style: ButtonStyle(
+              elevation: MaterialStateProperty.all<double>(5),
+              // minimumSize: MaterialStateProperty.all<Size>(Size.fromWidth(200)),
+              backgroundColor:
+                  // #TODO: зачем это: https://stackoverflow.com/questions/66476548/flutter-textbutton-padding  ??
+                  MaterialStateProperty.all<Color>(Colors.yellowAccent),
+              padding: MaterialStateProperty.all<EdgeInsets>(EdgeInsets.all(2)),
+            ),
+            child: Text(
+              this.title,
+              style: TextStyle(color: Colors.black, fontSize: 18),
+            ),
+            onPressed: onPressed),
       ),
     );
   }

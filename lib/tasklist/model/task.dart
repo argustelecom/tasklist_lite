@@ -89,6 +89,7 @@ class Task {
       this.longitude,
       this.comment,
       this.createDate,
+      this.closeDate,
       this.isClosed = false,
       this.isVisit = false,
       this.isPlanned = false,
@@ -96,11 +97,11 @@ class Task {
       this.flexibleAttribs});
 
   bool isOverdue() {
-    Duration? timeLeft = getTimeLeft();
-    return (timeLeft != null) && (dueDate!.isBefore((DateTime.now())));
+    return (dueDate != null) && (dueDate!.isBefore((DateTime.now())));
   }
 
-  Duration? getTimeLeft() {
+  // возвращает абсолютную величину интервала от/до КC задачи
+  Duration? getTimeLeftAbs() {
     if (dueDate != null) {
       if (dueDate!.isAfter(DateTime.now())) {
         return new Duration(
@@ -115,7 +116,7 @@ class Task {
   }
 
   String getTimeLeftText() {
-    Duration? timeLeft = getTimeLeft();
+    Duration? timeLeft = getTimeLeftAbs();
     if (timeLeft != null)
       return (isOverdue() ? "СКВ: " : "КВ: ") +
           prettyDuration(timeLeft,
@@ -145,12 +146,12 @@ class Task {
   }
 
   String getAddressDescription() {
-    if (address != null)
-      return address!;
-    else if (latitude != null && longitude != null)
+    if (addressComment != null) return addressComment!;
+    if (address != null) return address!;
+    if (latitude != null && longitude != null)
       return "$latitude, $longitude";
     else
-      return "Адрес не указан";
+      return "";
   }
 
   // LinkedHashSet выбран намеренно, чтобы выводить группы в том порядке, в котором получили
