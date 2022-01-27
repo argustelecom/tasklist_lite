@@ -42,6 +42,7 @@ class LoginPageState extends State<LoginPage> {
           children: [
             CrazyButton(
               title: "Войти",
+              key: ValueKey('login_button'),
               onPressed: () {
                 authController.login(isDemonstrationModeChecked);
                 NavigatorState navigatorState = Navigator.of(context);
@@ -60,6 +61,7 @@ class LoginPageState extends State<LoginPage> {
         Row(
           children: [
             Expanded(
+                key: ValueKey('demo_mode'),
                 child: CheckboxListTile(
               value: isDemonstrationModeChecked,
               onChanged: (value) {
