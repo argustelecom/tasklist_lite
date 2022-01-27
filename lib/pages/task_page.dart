@@ -1,10 +1,9 @@
 import 'dart:collection';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
-import 'package:tasklist_lite/crazylib/crazy_button.dart';
-import 'package:tasklist_lite/crazylib/idle_time_manager_dialog.dart';
+//import 'package:tasklist_lite/crazylib/idle_time_manager_dialog.dart';
 import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
 import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
