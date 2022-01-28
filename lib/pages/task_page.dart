@@ -201,7 +201,7 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
                   height: 30,
                   margin: EdgeInsets.only(right: 18),
                   decoration: BoxDecoration(
-                      color: Color(0xFFFBC22F),
+                      color: Colors.yellow.shade700,
                       borderRadius: BorderRadius.circular(4),
                       boxShadow: const [
                         BoxShadow(

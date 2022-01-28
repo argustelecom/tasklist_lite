@@ -22,7 +22,7 @@ class CrazyButton extends StatelessWidget {
               // minimumSize: MaterialStateProperty.all<Size>(Size.fromWidth(200)),
               backgroundColor:
                   // #TODO: зачем это: https://stackoverflow.com/questions/66476548/flutter-textbutton-padding  ??
-                  MaterialStateProperty.all<Color>(Colors.yellowAccent),
+                  MaterialStateProperty.all<Color>(Colors.yellow.shade700),
               padding: MaterialStateProperty.all<EdgeInsets>(EdgeInsets.all(2)),
             ),
             child: Text(
