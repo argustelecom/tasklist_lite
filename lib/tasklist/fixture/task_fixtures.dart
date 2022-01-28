@@ -209,7 +209,7 @@ class TaskFixtures {
         dueDate: DateUtils.dateOnly(DateTime.now())
             .add(const Duration(hours: -24 * 1 + 13)),
         assignee: "Богданова И.Л.",
-        address: "г.Вологда, ул.Нагорая, 17",
+        address: "г.Вологда, ул.Нагорная, 17",
         latitude: null,
         longitude: null,
         comment: "",
