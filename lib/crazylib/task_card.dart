@@ -26,7 +26,7 @@ class TaskCard extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 0, vertical: 3),
             // размеры сознательно здесь не заданы, чтобы можно было масштабировать карточку снаружи, по размерам parent`а
             child: Card(
-                color: (task.isClosed ? Color(0xFFE5E4E4) : Colors.white),
+                color: (task.isClosed ? Color(0xFFE5E4E4) : themeData.cardColor),
                 child: Column(
                   children: [
                     Padding(
