@@ -29,6 +29,10 @@ class AuthController extends GetxController {
   /// вместо этого надо вот так (см. https://stackoverflow.com/questions/68125824/flutter-getx-initial-value-of-obs-variable-set-to-null ):
   Rx<UserInfo?> _userInfo = Rxn<UserInfo?>();
 
+  /// в случае, если при попытке входа была ошибка, она будет сохранена суда, и будет отображена
+  /// в нижней части LoginPage
+  String? _errorText;
+
   // #TODO: хранение надо спрятать в отдельный слой/класс
   final Future<SharedPreferences> sharedPreferencesFuture =
       SharedPreferences.getInstance();
@@ -63,6 +67,13 @@ class AuthController extends GetxController {
         jsonEncode(value));
   }
 
+  String? get errorText => _errorText;
+
+  set errorText(String? value) {
+    _errorText = value;
+    update();
+  }
+
   Future<void> initSharedPreferences() async {
     sharedPreferences = await SharedPreferences.getInstance();
   }
@@ -86,8 +97,18 @@ class AuthController extends GetxController {
   }
 
   login(bool inDemonstrationMode) {
+    errorText = null;
     AuthService authService = Get.find();
-    userInfo = authService.login(inDemonstrationMode: inDemonstrationMode);
+    try {
+      userInfo = authService.login(inDemonstrationMode: inDemonstrationMode);
+    }
+    // #TODO: при реальной аутентификации тут возможны исключения нескольких типов,
+    // их надо обрабатывать в секциях on (см. например flutter_entity_list)
+    catch (anyException) {
+      errorText =
+          "Неверный логин или пароль. \nПроверьте правильность введенных данных.";
+      throw anyException;
+    }
     isAuthenticated = true;
     update();
   }
