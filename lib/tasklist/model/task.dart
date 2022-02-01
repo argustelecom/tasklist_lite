@@ -3,6 +3,8 @@ import 'package:duration/duration.dart';
 import 'package:duration/locale.dart';
 import 'package:intl/intl.dart';
 
+import 'idleTime.dart';
+
 /// Представление о задаче
 class Task {
   final String systemAttrGroup = "Общие сведения";
@@ -73,6 +75,9 @@ class Task {
   /// Гибкие атрибуты
   LinkedHashMap<String, Object?>? flexibleAttribs;
 
+  /// Простой
+  IdleTime? idleTime;
+
   // null safety: здесь null`ами не может быть только id, name (т.к. они обязательны) и булевы свойства (т.к. для них задан дефолт в дефолтном конструкторе)
   // что интересно, фигурные скобочки внутри объявления конструктора делают параметры именованными, их теперь можно задавать не по порядку, а по имени. Удобно.
   Task(
@@ -94,7 +99,8 @@ class Task {
       this.isVisit = false,
       this.isPlanned = false,
       this.isOutdoor = false,
-      this.flexibleAttribs});
+      this.flexibleAttribs,
+      this.idleTime});
 
   bool isOverdue() {
     return (dueDate != null) && (dueDate!.isBefore((DateTime.now())));

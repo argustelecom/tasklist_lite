@@ -11,9 +11,11 @@ import 'package:tasklist_lite/pages/task_page.dart';
 import 'package:tasklist_lite/pages/tasklist_page.dart';
 import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/state/auth_controller.dart';
+import 'package:tasklist_lite/tasklist/fixture/notification_fixtures.dart';
 import 'package:tasklist_lite/tasklist/fixture/task_fixtures.dart';
 import 'package:tasklist_lite/tasklist/task_repository.dart';
 import 'package:tasklist_lite/theme/tasklist_theme_data.dart';
+import 'package:tasklist_lite/tasklist/notification_repository.dart';
 
 void main() {
   runApp(MyApp());
@@ -90,7 +92,9 @@ class MyApp extends StatelessWidget {
                 initialBinding: BindingsBuilder(() => {
                       Get.put(TaskRepository()),
                       Get.put(TaskFixtures()),
-                      Get.put(AuthService())
+                      Get.put(AuthService()),
+                      Get.put(NotificationRepository()),
+                      Get.put(NotificationFixtures())
                     }),
                 darkTheme: TaskListThemeData.darkThemeData.copyWith(
                   platform: defaultTargetPlatform,

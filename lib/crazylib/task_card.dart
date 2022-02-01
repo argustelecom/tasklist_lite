@@ -26,7 +26,7 @@ class TaskCard extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 0, vertical: 3),
             // размеры сознательно здесь не заданы, чтобы можно было масштабировать карточку снаружи, по размерам parent`а
             child: Card(
-                color: (task.isClosed ? Color(0xFFE5E4E4) : Colors.white),
+                color: (task.isClosed ? Color(0xFFE5E4E4) : themeData.cardColor),
                 child: Column(
                   children: [
                     Padding(
@@ -112,7 +112,7 @@ class TaskCard extends StatelessWidget {
                                 backgroundColor:
                                     // #TODO: зачем это: https://stackoverflow.com/questions/66476548/flutter-textbutton-padding  ??
                                     MaterialStateProperty.all<Color>(
-                                        Colors.yellowAccent),
+                                        Colors.yellow.shade700),
                                 padding: MaterialStateProperty.all<EdgeInsets>(
                                     EdgeInsets.all(2)),
                               ),
@@ -130,7 +130,7 @@ class TaskCard extends StatelessWidget {
                                 backgroundColor:
                                     // #TODO: зачем это: https://stackoverflow.com/questions/66476548/flutter-textbutton-padding  ??
                                     MaterialStateProperty.all<Color>(
-                                        Colors.yellowAccent),
+                                        Colors.yellow.shade700),
                                 padding: MaterialStateProperty.all<EdgeInsets>(
                                     EdgeInsets.all(2)),
                               ),

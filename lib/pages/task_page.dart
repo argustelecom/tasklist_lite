@@ -3,7 +3,8 @@ import 'dart:collection';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-//import 'package:tasklist_lite/crazylib/idle_time_manager_dialog.dart';
+
+import 'package:tasklist_lite/crazylib/idle_time_manager_dialog.dart';
 import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
 import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
@@ -200,7 +201,7 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
                   height: 30,
                   margin: EdgeInsets.only(right: 18),
                   decoration: BoxDecoration(
-                      color: Color(0xFFFBC22F),
+                      color: Colors.yellow.shade700,
                       borderRadius: BorderRadius.circular(4),
                       boxShadow: const [
                         BoxShadow(
@@ -223,16 +224,23 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
                         ),
                         value: 0,
                       ),
-                      if (true)
-                        const PopupMenuItem(
+                      if (task.idleTime == null)
+                        PopupMenuItem(
                           child: ListTile(
-                            leading: Icon(Icons.access_time),
-                            title: Text('Зарегистрировать простой'),
-                          ),
+                              leading: Icon(Icons.access_time),
+                              title: Text('Зарегистрировать простой'),
+                              onTap: () {Navigator.pop(context, "");
+                                showIdleTimeManagerDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return IdleTimeManagerDialog(task: this.task, idleTime: this.task.idleTime
+                                        //task: this.task, idleTime: this.task.idleTime
+                                    );
+                                  });}),
                           value: 1,
                         ),
-                      if (false)
-                        const PopupMenuItem(
+                      if (task.idleTime != null)
+                        PopupMenuItem(
                           child: ListTile(
                             leading: Icon(Icons.access_time),
                             title: Text('Завершить простой'),
