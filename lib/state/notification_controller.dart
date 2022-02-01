@@ -1,65 +1,83 @@
+import 'dart:async';
+
 import 'package:get/get.dart';
 import 'package:tasklist_lite/tasklist/fixture/notification_fixtures.dart';
 import 'package:tasklist_lite/tasklist/model/notify.dart';
-
+import 'package:tasklist_lite/tasklist/notification_repository.dart';
 
 class NotificationController extends GetxController {
-
   /// Список уведомлений, которые еще не прочитаны. Его будем выводить на UI
-  List <Notify> aliveNotifications = List.of({});
+  List<Notify> aliveNotifications = List.of({});
 
   /// Список уведомлений, которые уже прочитаны. Их пока просто храним.
-  List <Notify> deadNotifications = List.of({});
+  List<Notify> deadNotifications = List.of({});
 
   /// Для тех кто хочет знать, есть ли у нас сейчас живые уведомления
-  haveNotification(){
-    if (aliveNotifications.length>0){
-      return true;
-    }
-    else {
-      return false;}
+  haveNotifications() {
+    return (aliveNotifications.length > 0);
   }
 
   /// Метод для добавления нового уведомления в список живых уведомлений. Пока нигде не применяется
-  addAliveNotification(Notify notify){
+  addAliveNotification(Notify notify) {
     aliveNotifications.add(notify);
     update();
   }
 
   /// Метод для удаления уведомления из списка живых уведомлений
-  removeAliveNotification(Notify notify){
+  removeAliveNotification(Notify notify) {
     aliveNotifications.remove(notify);
     update();
   }
 
   /// Метод для добавления уведомления в список с прочитанными уведомлениями
-  addDeadNotifications(Notify notify){
+  addDeadNotification(Notify notify) {
     deadNotifications.add(notify);
     update();
   }
 
-  /// При инициализации странички всегда тащим данные с фикструры NotificationFixtures.firstNotifyFixture c помощью метода start()
-  // #TODO: Переосмыслить и переделать в будущем
-  @override
-  void onInit() {
-    super.onInit();
-    start();
-
-  }
-
   /// Метод для получения списка уведомлений
-  List<Notify> getNotification() {
+  List<Notify> getNotifications() {
     return aliveNotifications;
   }
 
-  /// Данный метод используем только для инициализации
-  // #TODO: В будущем нужно тянуть нужную фикстуру, пока что там она всего одна
-  start(){
-    return aliveNotifications = NotificationFixtures.firstNotifyFixture;
+  /// Подписка на непрочитанные уведомления
+  StreamSubscription? openedNotificationSubscription;
+
+  /// Ищем репозиторий уведомлений
+  NotificationRepository notificationRepository = Get.find();
+
+  /// Метод переподписки, скидывает старый стрим и слушает новый
+  StreamSubscription resubscribe(StreamSubscription? streamSubscription,
+      Stream<List<Notify>> stream, void onData(List<Notify> event)) {
+    streamSubscription?.cancel();
+    return stream.listen(onData);
   }
 
+  /// При инициализации ловим стрим и наполняем aliveNotifications
+  @override
+  void onInit() {
+    super.onInit();
+    openedNotificationSubscription = resubscribe(openedNotificationSubscription,
+        notificationRepository.streamOpenedNotifications(), (event) {
+      this.aliveNotifications = event;
+      update();
+    });
   }
 
+  /// Сбрасываем стрим
+  @override
+  void onClose() {
+    openedNotificationSubscription?.cancel();
+    super.onClose();
+  }
 
+  /// Используем для того, чтобы получить новый стрим с новыми данными при изменении фикстуры
+  void didChangeDependencies() {
+    openedNotificationSubscription = resubscribe(openedNotificationSubscription,
+        notificationRepository.streamOpenedNotifications(), (event) {
+      this.aliveNotifications = event;
+      update();
+    });
+  }
 
-
+}

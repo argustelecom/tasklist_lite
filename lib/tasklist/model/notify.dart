@@ -1,3 +1,5 @@
+import 'package:tasklist_lite/tasklist/model/task.dart';
+
 /// Уведомление по задаче
 class Notify {
   int id;
@@ -9,7 +11,7 @@ class Notify {
   String text;
 
   /// "Id задачи"
-  int task;
+  Task task;
 
   /// "Номер задачи"
   String number;

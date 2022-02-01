@@ -5,13 +5,14 @@ import 'package:tasklist_lite/pages/login_page.dart';
 import 'package:tasklist_lite/pages/notifications_page.dart';
 import 'package:tasklist_lite/state/auth_controller.dart';
 import 'package:tasklist_lite/state/notification_controller.dart';
+import 'package:tasklist_lite/tasklist/notification_repository.dart';
 
 class TopUserBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return GetX<AuthController>(builder: (authController) {
       return Padding(
-              padding: EdgeInsets.symmetric(vertical: 0, horizontal: 24),
+          padding: EdgeInsets.symmetric(vertical: 0, horizontal: 24),
           child: AppBar(
             leading: Icon(Icons.account_circle_outlined),
             titleSpacing: 0.0,
@@ -35,7 +36,7 @@ class TopUserBar extends StatelessWidget implements PreferredSizeWidget {
                       iconSize: 36, //IconTheme.of(context).size ?? 24,
                       tooltip: 'Уведомления',
                       // Если есть, то колокольчик звонит, а если нет ...
-                      icon: Icon(notificationController.haveNotification()
+                      icon: Icon(notificationController.haveNotifications()
                           ? Icons.notifications_active
                           : Icons.notifications_outlined),
                       onPressed: () {
