@@ -3,7 +3,7 @@ import 'package:duration/duration.dart';
 import 'package:duration/locale.dart';
 import 'package:intl/intl.dart';
 
-import 'idleTime.dart';
+import 'idle_time.dart';
 
 /// Представление о задаче
 class Task {

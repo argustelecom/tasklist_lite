@@ -224,36 +224,46 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
                         ),
                         value: 0,
                       ),
-                      if (task.idleTime == null)
-                        PopupMenuItem(
-                          child: ListTile(
-                              leading: Icon(Icons.access_time),
-                              title: Text('Зарегистрировать простой'),
-                              onTap: () {Navigator.pop(context, "");
-                                showIdleTimeManagerDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return IdleTimeManagerDialog(task: this.task, idleTime: this.task.idleTime
-                                        //task: this.task, idleTime: this.task.idleTime
-                                    );
-                                  });}),
-                          value: 1,
-                        ),
-                      if (task.idleTime != null)
-                        PopupMenuItem(
-                          child: ListTile(
+                      PopupMenuItem(
+                        child: ListTile(
                             leading: Icon(Icons.access_time),
-                            title: Text('Завершить простой'),
-                          ),
-                          value: 2,
-                        ),
+                            title: Text((task.idleTime == null)
+                                ? "Зарегистрировать простой"
+                                : "Завершить простой"),
+                            onTap: () {
+                              Navigator.pop(context, "");
+                              showModalBottomSheet(
+                                  context: context,
+                                  isDismissible: false,
+                                  isScrollControlled: true,
+                                  elevation: 5,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(6),
+                                        topRight: Radius.circular(6)),
+                                  ),
+                                  constraints: BoxConstraints(
+                                      minHeight:
+                                          MediaQuery.of(context).size.height -
+                                              90,
+                                      maxHeight:
+                                          MediaQuery.of(context).size.height -
+                                              90),
+                                  builder: (BuildContext context) {
+                                    return IdleTimeManagerDialog(
+                                        task: this.task,
+                                        idleTime: this.task.idleTime);
+                                  });
+                            }),
+                        value: 1,
+                      ),
                       if (task.assignee != null)
                         const PopupMenuItem(
                           child: ListTile(
                             leading: Icon(Icons.file_upload_outlined),
                             title: Text('Вернуть группе'),
                           ),
-                          value: 3,
+                          value: 2,
                         ),
                       if (task.assignee == null)
                         const PopupMenuItem(
@@ -261,7 +271,7 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
                             leading: Icon(Icons.file_download_outlined),
                             title: Text('Взять себе'),
                           ),
-                          value: 4,
+                          value: 3,
                         )
                     ],
                   ))

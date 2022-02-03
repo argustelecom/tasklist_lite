@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tasklist_lite/tasklist/idle_time_reason_repository.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
 import 'package:tasklist_lite/tasklist/task_repository.dart';
 
@@ -14,6 +15,11 @@ class TaskListController extends GetxController {
   /// закрытые за выбранный день задачи. Как только день перевыбран, должны быть переполучены в репозитории
   /// (в его функции также может входить кеширование)
   List<Task> closedTasks = List.of({});
+
+  /// справочные значения причин простоя. Запрашиваем из репозитория при инициализации контролллера
+  /// (далее берем из кэша)
+  /// TODO возможно, стоит перенести
+  List<String> idleTimeReasons = List.of({});
 
   /// выбранный в календаре день
   /// если не выбран, считается "сегодня" (тут есть тех. сложности, т.к. для inherited widget нужно, чтобы
@@ -90,6 +96,7 @@ class TaskListController extends GetxController {
   StreamSubscription? closedTasksSubscription;
 
   TaskRepository taskRepository = Get.find();
+  IdleTimeReasonRepository idleTimeReasonRepository = Get.find();
 
   StreamSubscription resubscribe(StreamSubscription? streamSubscription,
       Stream<List<Task>> stream, void onData(List<Task> event)) {
@@ -113,6 +120,8 @@ class TaskListController extends GetxController {
       this.closedTasks = event;
       update();
     });
+
+    idleTimeReasons = idleTimeReasonRepository.getIdleTimeReasons();
   }
 
   @override
