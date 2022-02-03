@@ -16,12 +16,18 @@ class GraphQLService {
     // пример с аутентификацией см. в закомменченном коде (с _authLink) в GraphQLService в flutter_movie
     // #TODO: параметры аутентификации должны откуда-то приходить, видимо после успешного входа на страничке логина
     _httpLink = HttpLink(url);
-    _graphQLClient = GraphQLClient(link: _httpLink, cache: cache);
+    // TODO hardcode аутентификации developer developer
+    final AuthLink authLink = AuthLink(
+      getToken: () => 'Basic ZGV2ZWxvcGVyOmRldmVsb3Blcg==',
+    );
+    Link link = authLink.concat(_httpLink);
 
+    _graphQLClient = GraphQLClient(link: link, cache: cache );
     // вебсокеты нужны для работы graphql subscription`ов
     // в примере flutter_movie это два разных url`а (для query/mutation и для subscription)
     _webSocketLink = WebSocketLink(webSocketUrl);
-    _webSocketClient = GraphQLClient(link: _webSocketLink, cache: cache);
+    Link webSocketLink = authLink.concat(_webSocketLink);
+    _webSocketClient = GraphQLClient(link: webSocketLink, cache: cache);
   }
 
   Future<QueryResult> query(String query,

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:get/get.dart';
 import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/tasklist/fixture/task_fixtures.dart';
@@ -12,10 +14,11 @@ class TaskRepository extends GetxService {
     /// получим таски из backend`а по graphQL, а если ничего не получим,
     /// то из соответствующего (то есть выбранного в настройках) профиля фикстурки
     // #TODO: пока не делаем это, надо отладить взаимодействие с сервером
-    /* List<Task> result = taskRemoteClient.getOpenedTasks();
+    // TODO: проверить
+    List<Task> result = taskRemoteClient.getOpenedTasks() as List<Task>;
     if (result.isNotEmpty) {
       return result;
-    }*/
+    }
     // прочитаем значение опции и используем соответствующую фикстуру
     ApplicationState applicationState = Get.find();
     TaskFixtures taskFixtures = Get.find();
@@ -33,9 +36,8 @@ class TaskRepository extends GetxService {
       return taskFixtures
           .streamOpenedTasks(applicationState.currentTaskFixture);
     }
-    // #TODO: обращение к TaskRemoteClient еще не реализовано
-    TaskFixtures taskFixtures = Get.find();
-    return taskFixtures.streamOpenedTasks(CurrentTaskFixture.thirdFixture);
+    Future<List<Task>> result = taskRemoteClient.getOpenedTasks();
+    return result.asStream();
   }
 
   ///****************************************************************************
@@ -49,8 +51,7 @@ class TaskRepository extends GetxService {
       return taskFixtures.streamClosedTasks(
           applicationState.currentTaskFixture, day);
     }
-    // #TODO: обращение к TaskRemoteClient еще не реализовано
-    TaskFixtures taskFixtures = Get.find();
-    return taskFixtures.streamClosedTasks(CurrentTaskFixture.thirdFixture, day);
+    Future<List<Task>> result = taskRemoteClient.geClosedTasks(day);
+    return result.asStream();
   }
 }

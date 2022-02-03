@@ -195,4 +195,54 @@ class Task {
     }
     return attrValues;
   }
+
+  factory Task.fromJson(Map<String, dynamic> json) {
+    return Task(
+      id: int.parse(json['id']),
+      name: json['name'],
+      desc: json['desc'],
+      processTypeName: json['processTypeName'],
+      taskType: json['taskType'],
+      dueDate: json['dueDate'] != null ? DateTime.parse(json['dueDate']) : null,
+      assignee: json['assignee'],
+      address: json['address'],
+      addressComment: json['addressComment'],
+      latitude: json['latitude'],
+      longitude: json['longitude'],
+      comment: json['comment'],
+      createDate: json['createDate'] != null ? DateTime.parse(json['createDate']) : null,
+      closeDate: json['closeDate'] != null ? DateTime.parse(json['closeDate']) : null,
+      isClosed: json['isClosed'],
+      isVisit: json['isVisit'],
+      isPlanned: json['isPlanned'],
+      isOutdoor: json['isOutdoor'],
+      flexibleAttribs: LinkedHashMap<String, Object?>.fromIterable(json['flexibleAttribute'],
+            key: (e) => e["key"],
+            value: (e) => e["value"])
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['name'] = this.name;
+    data['desc'] = this.desc;
+    data['processTypeName'] = this.processTypeName;
+    data['taskType'] = this.taskType;
+    data['dueDate'] = this.dueDate;
+    data['assignee'] = this.assignee;
+    data['address'] = this.address;
+    data['addressComment'] = this.addressComment;
+    data['latitude'] = this.latitude;
+    data['longitude'] = this.longitude;
+    data['comment'] = this.comment;
+    data['createDate'] = this.createDate;
+    data['closeDate'] = this.closeDate;
+    data['isClosed'] = this.isClosed;
+    data['isVisit'] = this.isVisit;
+    data['isPlanned'] = this.isPlanned;
+    data['isOutdoor'] = this.isOutdoor;
+    data['flexibleAttribute'] = this.flexibleAttribs;
+    return data;
+  }
 }
