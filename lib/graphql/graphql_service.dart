@@ -6,6 +6,7 @@ class GraphQLService {
   // #TODO: final это прекрасно, но теперь если в ходе работы приложения изменится, например, url, как это будет учтено?
   late final HttpLink _httpLink;
   late final WebSocketLink _webSocketLink;
+
   // если не передавать store, то будет использоваться InMemoryStore, что нам и нужно
   final GraphQLCache cache = GraphQLCache();
   late final GraphQLClient _graphQLClient;
@@ -22,7 +23,7 @@ class GraphQLService {
     );
     Link link = authLink.concat(_httpLink);
 
-    _graphQLClient = GraphQLClient(link: link, cache: cache );
+    _graphQLClient = GraphQLClient(link: link, cache: cache);
     // вебсокеты нужны для работы graphql subscription`ов
     // в примере flutter_movie это два разных url`а (для query/mutation и для subscription)
     _webSocketLink = WebSocketLink(webSocketUrl);

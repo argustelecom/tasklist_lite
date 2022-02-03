@@ -9,15 +9,17 @@ import 'model/task.dart';
 /// #TODO: должен доставать задачки по Rest с помощью запросов graphQL, например, как это делается во flutter_movie
 class TaskRemoteClient {
   // #TODO: избавиться от хардкода
-  static final String urlForTests = "http://localhost:8080/argus/graphql/support-service-thirdparty";
-  static final String webSocketUrlForTests = "http://localhost:8080/argus/graphql/support-service-thirdparty";
+  static final String urlForTests =
+      "http://localhost:8080/argus/graphql/support-service-thirdparty";
+  static final String webSocketUrlForTests =
+      "http://localhost:8080/argus/graphql/support-service-thirdparty";
 
   final GraphQLService _graphQLService =
       // #TODO: нужны осмысленные значения url
       // #TODO: нужно пробрасывать параметры аутентификации
       GraphQLService(url: urlForTests, webSocketUrl: webSocketUrlForTests);
 
-  Future<List<Task>> getOpenedTasks() async{
+  Future<List<Task>> getOpenedTasks() async {
     // #TODO изменить генерацию запроса
     // TODO подумать про изменение схемы graphql (что бы был доступен вызов myTasks() и myTasks(day))
     String myOpenedTasksQuery = '''
@@ -60,7 +62,7 @@ class TaskRemoteClient {
         print("value.isLoading ");
         return result;
       }
-     List.from( value.data!["myOpenedTasks"]).forEach((element) {
+      List.from(value.data!["myOpenedTasks"]).forEach((element) {
         result.add(Task.fromJson(element));
       });
     }, onError: (e) {
@@ -100,7 +102,7 @@ class TaskRemoteClient {
  }''';
     // это должен быть push или graphql subscription или что-то вроде
     Future<QueryResult> queryResultFuture =
-    _graphQLService.query(myClosedTasksQuery);
+        _graphQLService.query(myClosedTasksQuery);
     List<Task> result = List.of({});
     await queryResultFuture.then((value) {
       if (value.data == null) {
@@ -111,7 +113,7 @@ class TaskRemoteClient {
         print("value.isLoading ");
         return result;
       }
-      List.from( value.data!["myClosedTasks"]).forEach((element) {
+      List.from(value.data!["myClosedTasks"]).forEach((element) {
         result.add(Task.fromJson(element));
       });
     }, onError: (e) {

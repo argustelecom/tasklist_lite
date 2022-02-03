@@ -198,28 +198,33 @@ class Task {
 
   factory Task.fromJson(Map<String, dynamic> json) {
     return Task(
-      id: int.parse(json['id']),
-      name: json['name'],
-      desc: json['desc'],
-      processTypeName: json['processTypeName'],
-      taskType: json['taskType'],
-      dueDate: json['dueDate'] != null ? DateTime.parse(json['dueDate']) : null,
-      assignee: json['assignee'],
-      address: json['address'],
-      addressComment: json['addressComment'],
-      latitude: json['latitude'],
-      longitude: json['longitude'],
-      comment: json['comment'],
-      createDate: json['createDate'] != null ? DateTime.parse(json['createDate']) : null,
-      closeDate: json['closeDate'] != null ? DateTime.parse(json['closeDate']) : null,
-      isClosed: json['isClosed'],
-      isVisit: json['isVisit'],
-      isPlanned: json['isPlanned'],
-      isOutdoor: json['isOutdoor'],
-      flexibleAttribs: LinkedHashMap<String, Object?>.fromIterable(json['flexibleAttribute'],
+        id: int.parse(json['id']),
+        name: json['name'],
+        desc: json['desc'],
+        processTypeName: json['processTypeName'],
+        taskType: json['taskType'],
+        dueDate:
+            json['dueDate'] != null ? DateTime.parse(json['dueDate']) : null,
+        assignee: json['assignee'],
+        address: json['address'],
+        addressComment: json['addressComment'],
+        latitude: json['latitude'],
+        longitude: json['longitude'],
+        comment: json['comment'],
+        createDate: json['createDate'] != null
+            ? DateTime.parse(json['createDate'])
+            : null,
+        closeDate: json['closeDate'] != null
+            ? DateTime.parse(json['closeDate'])
+            : null,
+        isClosed: json['isClosed'],
+        isVisit: json['isVisit'],
+        isPlanned: json['isPlanned'],
+        isOutdoor: json['isOutdoor'],
+        flexibleAttribs: LinkedHashMap<String, Object?>.fromIterable(
+            json['flexibleAttribute'],
             key: (e) => e["key"],
-            value: (e) => e["value"])
-    );
+            value: (e) => e["value"]));
   }
 
   Map<String, dynamic> toJson() {
