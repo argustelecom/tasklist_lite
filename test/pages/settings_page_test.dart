@@ -7,7 +7,11 @@ import 'package:mockito/mockito.dart';
 import 'package:tasklist_lite/main.dart';
 import 'package:tasklist_lite/pages/settings_page.dart';
 
-import 'settings_page_test2.mocks.dart';
+class SettingsPageTest extends SettingsPage {
+  final Widget child;
+
+
+}
 
 
 /// Не рабочий пример теста.
@@ -35,10 +39,12 @@ void main() {
 
     await tester.pump(Duration(minutes: 1));
 
-    expect(find.text("Настройки"),
+    expect(find.text("Профиль"),
     findsOneWidget);
   });
 }
+
+
 // Предполагал что должно выглядеться следующим образом
 // testWidgets('Проверка виджета settings_page', (WidgetTester tester) async {
 // await tester.pumpWidget(SettingsPage());
