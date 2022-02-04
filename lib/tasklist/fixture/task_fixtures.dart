@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
+import 'package:tasklist_lite/tasklist/model/idle_time.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
 
 /// идентификаторы возможных фикстур, используемых для отладки приложения, когда нет реальных удаленных данных
@@ -64,8 +65,12 @@ class TaskFixtures {
         "Наряд/Приоритет": "2",
         "Объект/Тип объекта": "Базовая станция",
         "Объект/Название": "ВЛГ0127",
-        "Объект/Пробег до объекта (км)": "9 км"
-      }));
+        "Объект/Пробег до объекта (км)": "9 км",
+      }),
+      idleTime: new IdleTime(
+          reason: "Форс-мажор",
+          startDate: DateUtils.dateOnly(DateTime.now())
+              .add(const Duration(hours: -3))));
 
   static Task secondTask = new Task(
       id: 2,
@@ -149,7 +154,7 @@ class TaskFixtures {
         "Объект/Пробег до объекта (км)": "12 км"
       }));
 
-  static  Task fifthTask = new Task(
+  static Task fifthTask = new Task(
       id: 5,
       name: "РР-14569",
       desc: "РР-14569 (ВЛГ1077)",
@@ -176,7 +181,7 @@ class TaskFixtures {
         "Объект/Пробег до объекта (км)": "21 км"
       }));
 
-  static Task  sixthTask = new Task(
+  static Task sixthTask = new Task(
       id: 6,
       name: "АВР-10357",
       desc: "АВР-10357 (ВЛГ1379)",
@@ -263,7 +268,7 @@ class TaskFixtures {
         "Объект/Пробег до объекта (км)": "2 км"
       }));
 
-  static  Task ninthTask = new Task(
+  static Task ninthTask = new Task(
       id: 9,
       name: "РР-13678",
       desc: "РР-13678 (ВЛГ2023)",
