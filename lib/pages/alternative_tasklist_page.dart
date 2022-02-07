@@ -59,7 +59,7 @@ class _AlternativeTaskListPageState extends State<AlternativeTaskListPage> {
                         context: context,
                         builder: (BuildContext context) {
                           return CrazyDialog(
-                            title: Text("Настройки"),
+                            title: Text("Профиль"),
                             child: ListView(
                               shrinkWrap: true,
                               children: [

@@ -79,6 +79,7 @@ class LoginPageState extends State<LoginPage> {
                             "Можно указать любое имя пользователя и пароль. "
                             "\nБудет осуществлен вход без подключения к серверу, "
                             "\nбудут доступны демонстрационные данные. ",
+                        key: ValueKey('demo_mode'),
                         child:
                             // получается не как в макете, сам чекбокс все же имеет небольшой отступ, а в макете без отступа
                             // если это не прокатит, то надо If the way CheckboxListTile pads and positions its elements isn't quite
@@ -105,6 +106,7 @@ class LoginPageState extends State<LoginPage> {
                         children: [
                           CrazyButton(
                             title: "Войти",
+                            key: ValueKey('login_button'),
                             onPressed: () {
                               authController.login(isDemonstrationModeChecked);
                               NavigatorState navigatorState =

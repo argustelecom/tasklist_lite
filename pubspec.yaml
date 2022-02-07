@@ -50,8 +50,18 @@ dependencies:
   dropdown_button2: ^1.1.1
 
 dev_dependencies:
+  # для unit тестов
+  test: ^1.17.0
+  # для интеграционных тестов
+  integration_test:
+    sdk: flutter
+  # для widget тестов
   flutter_test:
     sdk: flutter
+  # для mock
+  mockito: ^5.0.17
+  # для запуска генератора кода: https://docs.flutter.dev/cookbook/testing/unit/mocking
+  build_runner: ^2.1.7
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

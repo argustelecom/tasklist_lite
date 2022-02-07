@@ -9,7 +9,7 @@ class MenuAction {
   final String caption;
   final VoidCallback callback;
 
-  static const settingsCaption = "Настройки";
+  static const settingsCaption = "Профиль";
   MenuAction(
       {required this.iconData, required this.caption, required this.callback});
 
