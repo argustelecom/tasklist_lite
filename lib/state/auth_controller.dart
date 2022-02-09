@@ -110,37 +110,43 @@ class AuthController extends GetxController {
   login(bool inDemonstrationMode, String login, String password,
       String serverAddress) async {
     errorText = null;
-    try {
-      AuthService authService = Get.find();
-      String basicAuth =
-          "Basic " + base64Encode(utf8.encode('$login:$password'));
-      setAuth(basicAuth);
+    if (inDemonstrationMode || (login.isNotEmpty && password.isNotEmpty)) {
+      try {
+        AuthService authService = Get.find();
+        String basicAuth =
+            "Basic " + base64Encode(utf8.encode('$login:$password'));
+        setAuth(basicAuth);
 
-      await authService
-          .login(basicAuth, serverAddress,
-              inDemonstrationMode: inDemonstrationMode)
-          .whenComplete(() => null)
-          .then(
-        (value) {
-          userInfo = value;
-          isAuthenticated = true;
-        },
-        onError: (Object e, StackTrace stackTrace) {
-          //должны выводится разные сообщения в зависимости от типа ошибки
-          // Отсутсвует Интернет/неправильный адрес СП
-          errorText =
-              "Неверный логин или пароль. \nПроверьте правильность введенных данных.";
-        },
-      );
+        await authService
+            .login(basicAuth, serverAddress,
+            inDemonstrationMode: inDemonstrationMode)
+            .whenComplete(() => null)
+            .then(
+              (value) {
+            userInfo = value;
+            isAuthenticated = true;
+          },
+          onError: (Object e, StackTrace stackTrace) {
+            //должны выводится разные сообщения в зависимости от типа ошибки
+            // Отсутсвует Интернет/неправильный адрес СП
+            errorText =
+            "Неверный логин или пароль. \nПроверьте правильность введенных данных.";
+          },
+        );
+      }
+      // #TODO: при реальной аутентификации тут возможны исключения нескольких типов,
+      // их надо обрабатывать в секциях on (см. например flutter_entity_list)
+      catch (anyException) {
+        errorText =
+        "Неверный логин или пароль. \nПроверьте правильность введенных данных.";
+      }
     }
-    // #TODO: при реальной аутентификации тут возможны исключения нескольких типов,
-    // их надо обрабатывать в секциях on (см. например flutter_entity_list)
-    catch (anyException) {
-
+    else {
       errorText =
-          "Неверный логин или пароль. \nПроверьте правильность введенных данных.";
+      "Неверный логин или пароль. \nПроверьте правильность введенных данных.";
     }
-    update();
+      update();
+
   }
 
   logout() {
