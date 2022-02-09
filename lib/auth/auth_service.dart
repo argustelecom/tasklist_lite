@@ -1,16 +1,23 @@
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:tasklist_lite/auth/auth_remote_client.dart';
 import 'package:tasklist_lite/tasklist/fixture/auth_fixtures.dart';
 import 'package:tasklist_lite/tasklist/model/user_info.dart';
 
 class AuthService extends GetxService {
-  UserInfo login({bool inDemonstrationMode = false}) {
-    if (!inDemonstrationMode) {
-      // #TODO: аутентификация путем выполнения graphql query whoami
-      throw FlutterError("not implemented!!!");
-    } else {
-      // в деморежиме аутентификация состоит в подсовывании данных из фикстуры в контроллер
-      return AuthFixture.authFixture;
+
+  Future<UserInfo> login(String basicAuth, String serverAddress,
+      {bool inDemonstrationMode = false}) async {
+    try {
+      if (!inDemonstrationMode) {
+        AuthRemoteClient authRemoteClient =
+            AuthRemoteClient(basicAuth, serverAddress);
+        return await authRemoteClient.getUserInfo();
+      } else {
+        // в деморежиме аутентификация состоит в подсовывании данных из фикстуры в контроллер
+        return  AuthFixture.authFixture;
+      }
+    } catch (e) {
+      throw new Exception("Error AuthService.login " + e.toString());
     }
   }
 }

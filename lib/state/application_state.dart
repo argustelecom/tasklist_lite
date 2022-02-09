@@ -4,16 +4,19 @@ import 'package:tasklist_lite/tasklist/fixture/task_fixtures.dart';
 /// shared state приложения, реализовано в соответствии с концепцией inherited widget
 /// https://medium.com/flutter/managing-flutter-application-state-with-inheritedwidgets-1140452befe1
 class ApplicationState {
+
+  static const String serverAddressUrl = "http://localhost:8080";
+
   const ApplicationState(
       {required this.themeMode,
       required this.currentTaskFixture,
-      this.serverAddress});
+      required this.serverAddress});
 
   final ThemeMode themeMode;
 
   final CurrentTaskFixture currentTaskFixture;
 
-  final String? serverAddress;
+  final String serverAddress;
 
   @override
   bool operator ==(Object other) {
@@ -49,7 +52,7 @@ class ApplicationState {
     return ApplicationState(
         themeMode: themeMode ?? this.themeMode,
         currentTaskFixture: currentTaskFixture ?? this.currentTaskFixture,
-        serverAddress: serverAddress);
+        serverAddress: serverAddress ?? this.serverAddress);
   }
 }
 
@@ -78,7 +81,7 @@ class ModelBinding extends StatefulWidget {
     this.initialModel = const ApplicationState(
         themeMode: ThemeMode.system,
         currentTaskFixture: CurrentTaskFixture.thirdFixture,
-        serverAddress: null),
+        serverAddress: ApplicationState.serverAddressUrl),
     required this.child,
   }) : super(key: key);
 
@@ -92,7 +95,7 @@ class _ModelBindingState extends State<ModelBinding> {
   ApplicationState currentModel = ApplicationState(
       themeMode: ThemeMode.system,
       currentTaskFixture: CurrentTaskFixture.firstFixture,
-      serverAddress: null);
+      serverAddress: ApplicationState.serverAddressUrl);
 
   @override
   void initState() {

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:get/get.dart';
@@ -40,12 +41,15 @@ class AuthController extends GetxController {
   late final SharedPreferences? sharedPreferences;
 
   static const String authenticatedKeyName = "authenticated";
+  static const String authenticated = "Authorization";
+  static const String userInfoKeyName = "userInfo";
 
-  static const String userInfoKeyName = "userinfo";
 
   bool get isAuthenticated {
     return _isAuthenticated.value;
   }
+
+  late String basicAuth;
 
   set isAuthenticated(bool value) {
     _isAuthenticated.value = value;
@@ -78,6 +82,13 @@ class AuthController extends GetxController {
     sharedPreferences = await SharedPreferences.getInstance();
   }
 
+
+  // TODO fix me необходимо перейти на использование SecureStorage
+  String setAuth(String basAuth)  =>
+      this.basicAuth = basAuth;
+
+  String getAuth()  => this.basicAuth;
+
   @override
   void onInit() {
     super.onInit();
@@ -96,26 +107,47 @@ class AuthController extends GetxController {
     });
   }
 
-  login(bool inDemonstrationMode) {
+  login(bool inDemonstrationMode, String login, String password,
+      String serverAddress) async {
     errorText = null;
-    AuthService authService = Get.find();
     try {
-      userInfo = authService.login(inDemonstrationMode: inDemonstrationMode);
+      AuthService authService = Get.find();
+      String basicAuth =
+          "Basic " + base64Encode(utf8.encode('$login:$password'));
+      setAuth(basicAuth);
+
+      await authService
+          .login(basicAuth, serverAddress,
+              inDemonstrationMode: inDemonstrationMode)
+          .whenComplete(() => null)
+          .then(
+        (value) {
+          userInfo = value;
+          isAuthenticated = true;
+        },
+        onError: (Object e, StackTrace stackTrace) {
+          //должны выводится разные сообщения в зависимости от типа ошибки
+          // Отсутсвует Интернет/неправильный адрес СП
+          errorText =
+              "Неверный логин или пароль. \nПроверьте правильность введенных данных.";
+        },
+      );
     }
     // #TODO: при реальной аутентификации тут возможны исключения нескольких типов,
     // их надо обрабатывать в секциях on (см. например flutter_entity_list)
     catch (anyException) {
+
       errorText =
           "Неверный логин или пароль. \nПроверьте правильность введенных данных.";
-      throw anyException;
     }
-    isAuthenticated = true;
     update();
   }
 
   logout() {
     userInfo = null;
     isAuthenticated = false;
+    // TODO FIX ME
+    basicAuth = "";
     update();
   }
 }

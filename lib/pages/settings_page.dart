@@ -39,7 +39,7 @@ class SettingsPageState extends State<SettingsPage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     ApplicationState applicationState = ApplicationState.of(context);
-    _serverAddressEditingController.text = applicationState.serverAddress ?? "";
+    _serverAddressEditingController.text = applicationState.serverAddress;
   }
 
   @override
@@ -76,7 +76,7 @@ class SettingsPageState extends State<SettingsPage> {
                   child: const Text('Отмена'),
                   onPressed: () {
                     _serverAddressEditingController.text =
-                        applicationState.serverAddress ?? "";
+                        applicationState.serverAddress;
                     Navigator.of(context).pop();
                     return;
                   },

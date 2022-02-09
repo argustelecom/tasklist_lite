@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tasklist_lite/state/application_state.dart';
+import 'package:tasklist_lite/state/auth_controller.dart';
 import 'package:tasklist_lite/tasklist/idle_time_reason_repository.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
 import 'package:tasklist_lite/tasklist/task_repository.dart';
@@ -26,12 +28,18 @@ class TaskListController extends GetxController {
   /// конструктор initialState был константным, а DateTime.now() никак не константный)
   DateTime _currentDate = DateUtils.dateOnly(DateTime.now());
 
+  AuthController authController = Get.find();
+
   DateTime get currentDate => _currentDate;
 
   set currentDate(DateTime value) {
     _currentDate = value;
+
+    late String basicAuth = authController.getAuth();
+    ApplicationState state = Get.find();
+    String serverAddress = state.serverAddress;
     closedTasksSubscription = resubscribe(closedTasksSubscription,
-        taskRepository.streamClosedTasks(this.currentDate), (event) {
+        taskRepository.streamClosedTasks(basicAuth, serverAddress, this.currentDate), (event) {
       this.closedTasks = event;
       update();
     });
@@ -109,14 +117,18 @@ class TaskListController extends GetxController {
     super.onInit();
     // берем stream`ы, на которых висят данные по открытым и закрытым задачам, и заводим их
     // на изменение соотв. полей контроллера списка.
+    late String basicAuth = authController.getAuth();
+    ApplicationState state = Get.find();
+    String serverAddress = state.serverAddress;
+
     openedTasksSubscription = resubscribe(
-        openedTasksSubscription, taskRepository.streamOpenedTasks(), (event) {
+        openedTasksSubscription, taskRepository.streamOpenedTasks(basicAuth, serverAddress), (event) {
       this.openedTasks = event;
       update();
     });
 
     closedTasksSubscription = resubscribe(closedTasksSubscription,
-        taskRepository.streamClosedTasks(this.currentDate), (event) {
+        taskRepository.streamClosedTasks(basicAuth, serverAddress,this.currentDate), (event) {
       this.closedTasks = event;
       update();
     });
@@ -137,13 +149,16 @@ class TaskListController extends GetxController {
   /// stream`ы taskRepository
   ///***************************************************************************
   void didChangeDependencies() {
+    late String basicAuth = authController.getAuth();
+    ApplicationState state = Get.find();
+    String serverAddress = state.serverAddress;
     openedTasksSubscription = resubscribe(
-        openedTasksSubscription, taskRepository.streamOpenedTasks(), (event) {
+        openedTasksSubscription, taskRepository.streamOpenedTasks(basicAuth, serverAddress), (event) {
       this.openedTasks = event;
       update();
     });
     closedTasksSubscription = resubscribe(closedTasksSubscription,
-        taskRepository.streamClosedTasks(this.currentDate), (event) {
+        taskRepository.streamClosedTasks(basicAuth, serverAddress,this.currentDate), (event) {
       this.closedTasks = event;
       update();
     });

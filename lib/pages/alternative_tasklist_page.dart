@@ -11,6 +11,7 @@ import 'package:tasklist_lite/layout/adaptive.dart';
 import 'package:tasklist_lite/layout/tasklist_multi_child_layout_delgate.dart';
 import 'package:tasklist_lite/pages/task_page.dart';
 import 'package:tasklist_lite/state/application_state.dart';
+import 'package:tasklist_lite/state/auth_controller.dart';
 import 'package:tasklist_lite/tasklist/fixture/task_fixtures.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
 import 'package:tasklist_lite/tasklist/task_repository.dart';
@@ -41,7 +42,10 @@ class _AlternativeTaskListPageState extends State<AlternativeTaskListPage> {
     Get.delete<ApplicationState>();
     Get.put(applicationState);
     TaskRepository taskRepository = Get.find();
-    List<Task> taskList = taskRepository.getTasks();
+    // TODO fix me получаем данные авторизации пользователя. Необходимо получать из secureStorage
+    AuthController authController =  Get.find();
+    late String basicAuth = authController.getAuth();
+    List<Task> taskList = taskRepository.getTasks(basicAuth, applicationState.serverAddress );
     // очень непривычно, тут низя в операции map обернуть тело анонимной функции в фигурные скобки {}
     // в java это была бы просто группировка операций в единый блок, а здесь этим объявляется Set :/
     List<Text> taskDescs = taskList.map((task) => Text(task.name)).toList();

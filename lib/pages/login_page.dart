@@ -17,6 +17,8 @@ class LoginPage extends StatefulWidget {
 
 class LoginPageState extends State<LoginPage> {
   bool isDemonstrationModeChecked = false;
+  TextEditingController _loginEditingController = new TextEditingController();
+  TextEditingController _passwordEditingController = new TextEditingController();
 
   InputDecoration fieldDecoration(String text) {
     return InputDecoration(
@@ -61,15 +63,19 @@ class LoginPageState extends State<LoginPage> {
                         child: Row(
                           children: [
                             Text("Адрес сервера: "),
-                            Text(applicationState.serverAddress ?? ""),
+                            Text(applicationState.serverAddress),
                           ],
                         ),
                       ),
                       TextField(
+                          controller: _loginEditingController,
                           cursorColor: Colors.blue,
                           // #TODO: "Имя пользователя" как-то посолидней, чем "логин". Обсудить с Лизой
-                          decoration: fieldDecoration("Логин")),
+                          decoration: fieldDecoration("Логин")
+                      )
+                      ,
                       TextField(
+                          controller: _passwordEditingController,
                           cursorColor: Colors.blue,
                           obscureText: true,
                           decoration: fieldDecoration("Пароль")),
@@ -108,7 +114,8 @@ class LoginPageState extends State<LoginPage> {
                             title: "Войти",
                             key: ValueKey('login_button'),
                             onPressed: () {
-                              authController.login(isDemonstrationModeChecked);
+                              authController.login(isDemonstrationModeChecked, _loginEditingController.text, _passwordEditingController.text,
+                                  applicationState.serverAddress);
                               NavigatorState navigatorState =
                                   Navigator.of(context);
                               // пока такой возможности нет, но если пользователь разлогинился не с домашней странички,
