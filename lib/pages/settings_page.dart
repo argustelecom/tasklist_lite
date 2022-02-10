@@ -12,19 +12,21 @@ import 'package:tasklist_lite/pages/support_page.dart';
 import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/state/auth_controller.dart';
 import 'package:tasklist_lite/tasklist/fixture/task_fixtures.dart';
+import 'package:tasklist_lite/tasklist/model/user_info.dart';
 
-class SettingsPage extends StatefulWidget {
+class ProfilePage extends StatefulWidget {
   static const String routeName = 'profile';
 
   @override
   State<StatefulWidget> createState() {
-    return new SettingsPageState();
+    return new ProfilePageState();
   }
 }
 
-class SettingsPageState extends State<SettingsPage> {
+class ProfilePageState extends State<ProfilePage> {
   // из-за него пришлось делать всю страницу stateful
   late TextEditingController _serverAddressEditingController;
+
   // а еще в этом state хранится набор suggestions для autocomplete`а
   // #TODO: обеспечить, чтобы эта коллекция переживала f5 в браузере
   List<String> serverAddressSuggestions = List.of({});
@@ -123,21 +125,9 @@ class SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    //Некоторые настройки стилей страницы:
-    //Стиль текста заголовка у блока
-    TextStyle headerTextStyleInBlock = TextStyle(fontSize: 18);
-    //Отступ заголовка блока
-    EdgeInsets paddingHeaderBlock =
-        EdgeInsets.only(left: 17, right: 15, bottom: 14);
     //Отступ карточки блока
-    EdgeInsets paddingBlock = EdgeInsets.only(left: 15, right: 15, bottom: 14);
     EdgeInsets paddingSettingBlock =
         EdgeInsets.only(left: 15, right: 15, bottom: 2);
-    //Lable текст в карточке блока
-    TextStyle textLableStyleInBlock =
-        TextStyle(color: Colors.grey, fontSize: 16);
-    //Текст в карточке блока из UserInfo
-    TextStyle textStyleInBlock = TextStyle(fontSize: 16);
 
     return ReflowingScaffold(
         appBar: AppBar(
@@ -153,140 +143,30 @@ class SettingsPageState extends State<SettingsPage> {
             padding: EdgeInsets.symmetric(vertical: 7, horizontal: 15),
             shrinkWrap: true,
             children: [
+              GetX<AuthController>(builder: (authController) {
+                UserInfo userInfo = authController.userInfo as UserInfo;
+                if (userInfo == null) {
+                  return SizedBox(
+                    child: Text("не полученны данные"),
+                  );
+                } else {
+                  LinkedHashSet<String> attrGroups = userInfo.getAttrGroups();
+                  return SizedBox(
+                      child: ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: attrGroups.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return AttrGroup(
+                                userInfo: userInfo,
+                                attrGroup: attrGroups.elementAt(index));
+                          }));
+                }
+              }),
               Padding(
-                  padding: paddingHeaderBlock,
-                  child: Text(
-                    "Общая информация",
-                    style: headerTextStyleInBlock,
-                  )),
-              Padding(
-                padding: paddingBlock,
-                child: Card(
-                    elevation: 3,
-                    color: context.theme.cardColor,
-                    child: Column(
-                      children: [
-                        Container(
-                            alignment: Alignment.centerLeft,
-                            padding: EdgeInsets.only(
-                                left: 15, right: 15, bottom: 5, top: 10),
-                            child: Column(children: [
-                              Container(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text("ФИО:",
-                                      style: textLableStyleInBlock)),
-                              Container(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text("Богданова Каролина Георгиевна",
-                                      style: textStyleInBlock)),
-                            ])),
-                        Container(
-                            alignment: Alignment.centerLeft,
-                            padding: EdgeInsets.only(
-                                left: 15, right: 15, bottom: 5, top: 5),
-                            child: Column(children: [
-                              Container(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text("Табельный номер:",
-                                      style: textLableStyleInBlock)),
-                              Container(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text("12345987-22",
-                                      style: textStyleInBlock)),
-                            ])),
-                        Container(
-                            alignment: Alignment.centerLeft,
-                            padding: EdgeInsets.only(
-                                left: 15, right: 15, bottom: 5, top: 5),
-                            child: Column(children: [
-                              Container(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text("Почтовый адрес:",
-                                      style: textLableStyleInBlock)),
-                              Container(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text("k.g.bogdanova@rt.ru",
-                                      style: textStyleInBlock)),
-                            ])),
-                        Container(
-                            alignment: Alignment.centerLeft,
-                            padding: EdgeInsets.only(
-                                left: 15, right: 15, bottom: 5, top: 5),
-                            child: Column(children: [
-                              Container(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text("Должность:",
-                                      style: textLableStyleInBlock)),
-                              Container(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text("Инженер электросвязи",
-                                      style: textStyleInBlock))
-                            ])),
-                        Container(
-                            alignment: Alignment.centerLeft,
-                            padding: EdgeInsets.only(
-                                left: 15, right: 15, bottom: 10, top: 5),
-                            child: Column(children: [
-                              Container(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text("Основной участок:",
-                                      style: textLableStyleInBlock)),
-                              Container(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text("Участок О2О Курган",
-                                      style: textStyleInBlock))
-                            ])),
-                      ],
-                    )),
-              ),
-              Padding(
-                  padding: paddingHeaderBlock,
-                  child: Text("Контакты руководителя",
-                      style: headerTextStyleInBlock)),
-              Padding(
-                  padding: paddingBlock,
-                  child: Card(
-                      elevation: 3,
-                      child: Column(children: [
-                        Container(
-                            alignment: Alignment.centerLeft,
-                            padding: EdgeInsets.only(
-                                left: 15, right: 15, bottom: 5, top: 10),
-                            child: Column(children: [
-                              Container(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text("Ваш руководитель:",
-                                      style: textLableStyleInBlock)),
-                              Container(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text("Бедрин Алексей Сергеевич"))
-                            ])),
-                        Container(
-                            alignment: Alignment.centerLeft,
-                            padding: EdgeInsets.only(
-                                left: 15, right: 15, bottom: 10, top: 5),
-                            child: Column(children: [
-                              Container(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                      "Контактный телефон руководителя:",
-                                      style: textLableStyleInBlock)),
-                              Container(
-                                  alignment: Alignment.centerLeft,
-                                  //TODO: должна быть ссылка, понажатию на которую
-                                  //пользователь должен получать возможность
-                                  //позвонить с помощью стороннего приложения
-                                  child: Text("+79041111457",
-                                      style: TextStyle(
-                                          color: Color(0xFF0071BA),
-                                          decoration:
-                                              TextDecoration.underline)))
-                            ])),
-                      ]))),
-              Padding(
-                  padding: paddingHeaderBlock,
+                  padding: EdgeInsets.only(left: 17, right: 15, bottom: 10, top: 4),
                   child: Text("Настройки приложения",
-                      style: headerTextStyleInBlock)),
+                      style: TextStyle(fontSize: 18))),
               Padding(
                   padding: paddingSettingBlock,
                   child: Card(
@@ -497,5 +377,72 @@ class SettingsPageState extends State<SettingsPage> {
                             ]),
                       )))
             ]));
+  }
+}
+
+// Вывод группы параметров
+class AttrGroup extends StatelessWidget {
+  final UserInfo userInfo;
+  final String attrGroup;
+
+  const AttrGroup({Key? key, required this.userInfo, required this.attrGroup})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    LinkedHashMap<String, Object?> attribValuesByGroup =
+        userInfo.getAttrValuesByGroup(attrGroup);
+
+    return Column(children: [
+      Container(
+          padding: EdgeInsets.only(left: 17, right: 15, top: 4),
+          alignment: Alignment.centerLeft,
+          child: Text(attrGroup, style: TextStyle(fontSize: 18))),
+      Padding(
+          padding: EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 10),
+          child: Card(
+              elevation: 3,
+              color: context.theme.cardColor,
+              child: ListView.builder(
+                  physics: NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: attribValuesByGroup.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return AttribValueColumn(
+                        attribValue:
+                            attribValuesByGroup.entries.elementAt(index));
+                  })))
+    ]);
+  }
+}
+
+// Вывод стобцом Параметр: Значение
+class AttribValueColumn extends StatelessWidget {
+  final MapEntry<String, Object?> attribValue;
+
+  const AttribValueColumn({Key? key, required this.attribValue})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    String attrKey = attribValue.key;
+    String attrValue =
+        (attribValue.value == null) ? "" : attribValue.value.toString();
+
+    return Container(
+        alignment: Alignment.centerLeft,
+        padding: EdgeInsets.only(left: 15, right: 15, bottom: 5, top: 5),
+        child: Column(children: [
+          Container(
+              alignment: Alignment.centerLeft,
+              child: Text("$attrKey:",
+                  style: TextStyle(
+                      fontSize: 16.0,
+                      color: Color(0xFF646363),
+                      fontWeight: FontWeight.normal))),
+          Container(
+              alignment: Alignment.centerLeft,
+              child: Text(attrValue, style: TextStyle(fontSize: 16))),
+        ]));
   }
 }

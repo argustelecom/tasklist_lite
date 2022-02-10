@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
     ),
     TaskPage.routeName: TaskPage(title: "Детальное представление задачи"),
     NotificationsPage.routeName: NotificationsPage(title: "Уведомления"),
-    SettingsPage.routeName: SettingsPage(),
+    ProfilePage.routeName: ProfilePage(),
     AlternativeTaskListPage.routeName: AlternativeTaskListPage(
       title: "Список задач исполнителя",
     ),
@@ -56,7 +56,7 @@ class MyApp extends StatelessWidget {
       builder: (context) => Obx(() {
         if (authController.isAuthenticated ||
             // без аутентификации можно попасть на страницу настроек
-            routeSettings.name == SettingsPage.routeName) {
+            routeSettings.name == ProfilePage.routeName) {
           return staticRoutes[routeSettings.name] ?? staticRoutes['/']!;
         } else {
           return LoginPage();

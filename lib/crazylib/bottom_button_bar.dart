@@ -33,7 +33,7 @@ class MenuAction {
     MenuAction(
         iconData: Icons.settings_outlined,
         caption: settingsCaption,
-        callback: () => {Get.toNamed(SettingsPage.routeName)}),
+        callback: () => {Get.toNamed(ProfilePage.routeName)}),
   });
 }
 
