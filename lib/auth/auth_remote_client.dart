@@ -19,11 +19,22 @@ class AuthRemoteClient {
 
   Future<UserInfo> getUserInfo() async {
     String whoIAm = '''
- {  whoiam {
-  userName
-  homeRegionName
-  securityRoles
-  securityRoleNames
+ {   whoiam{
+    userName
+    homeRegionName
+    securityRoles
+    securityRoleNames
+    workerName
+    family
+    surname
+    tabNumber
+    mainWorksite
+    email
+    workerAppoint
+    chefContact {
+      name
+      phoneNum
+    }
   }
  }
 ''';

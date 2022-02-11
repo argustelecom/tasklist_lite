@@ -92,7 +92,7 @@ class UserInfo {
         mainWorksite: json['mainWorksite'],
         tabNumber: json['tabNumber'],
         workerAppoint: json['workerAppoint'],
-        contactChiefList: (json['contactChefList'] as List)
+        contactChiefList: (json['chefContact'] as List)
             .map((e) => Contact.fromJson(e))
             .toList());
   }
