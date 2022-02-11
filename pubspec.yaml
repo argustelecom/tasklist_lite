@@ -49,6 +49,14 @@ dependencies:
 
   dropdown_button2: ^1.1.1
 
+  # работа с файлами
+  file_picker: ^4.3.3
+  image_picker: ^0.8.4+5
+  # утилита, расширяющая возможности iterable (например, добавляет distinct в List и т.д.)
+  darq: ^1.1.1
+  # скачивание файлов по URL
+  flutter_downloader: ^1.7.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

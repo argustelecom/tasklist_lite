@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:tasklist_lite/common/widgets/object_attach_widget/widgets/object_attach_widget.dart';
 
 import 'package:tasklist_lite/crazylib/idle_time_manager_dialog.dart';
 import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
@@ -124,7 +125,11 @@ class _TaskPageState extends State<TaskPage> {
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 32),
                     child: Card(
-                      child: Text("Здесь будут вложения"),
+                      child:  Container(
+                        height: 100.0,
+                        width: 100.0,
+                        child: ObjectAttachWidget(task.id)
+                      ),
                       elevation: 3,
                     ),
                   ),
