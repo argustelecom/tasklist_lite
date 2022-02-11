@@ -49,7 +49,7 @@ class AuthController extends GetxController {
     return _isAuthenticated.value;
   }
 
-  late String basicAuth;
+  late String basicAuth = "";
 
   set isAuthenticated(bool value) {
     _isAuthenticated.value = value;

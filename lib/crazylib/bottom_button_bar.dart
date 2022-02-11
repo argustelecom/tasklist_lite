@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:tasklist_lite/pages/settings_page.dart';
+import 'package:tasklist_lite/pages/profile_page.dart';
 import 'package:tasklist_lite/state/auth_controller.dart';
 
 /// перечень всех пунктов меню в bottom_bar и в widescreen-slider`е

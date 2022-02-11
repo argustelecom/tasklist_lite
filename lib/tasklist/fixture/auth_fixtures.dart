@@ -16,8 +16,11 @@ class AuthFixture {
       mainWorksite: "Участок О2О Курган",
       tabNumber: "12345987-22",
       workerAppoint: "Инженер электросвязи",
-      flexibleAttribs: new LinkedHashMap.of({
-          "Контакты руководителя/Ваш руководитель": "Бедрин Алексей Сергеевич",
-          "Контакты руководителя/Контактный телефон руководителя": "+79219991222"
-          }));
+      contactChiefList: new List.of(({contact1, contact2})));
+
+  static final Contact contact1 =
+      Contact(name: 'Бедрин Алексей Сергеевич', phoneNum: '+79211112475');
+
+  static final Contact contact2 =
+      Contact(name: 'Сом Георгий Сергеевич', phoneNum: '+7921223322');
 }

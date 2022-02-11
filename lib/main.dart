@@ -7,7 +7,7 @@ import 'package:tasklist_lite/pages/alternative_tasklist_page.dart';
 import 'package:tasklist_lite/pages/help_page.dart';
 import 'package:tasklist_lite/pages/login_page.dart';
 import 'package:tasklist_lite/pages/notifications_page.dart';
-import 'package:tasklist_lite/pages/settings_page.dart';
+import 'package:tasklist_lite/pages/profile_page.dart';
 import 'package:tasklist_lite/pages/support_page.dart';
 import 'package:tasklist_lite/pages/task_page.dart';
 import 'package:tasklist_lite/pages/tasklist_page.dart';

@@ -31,8 +31,8 @@ class UserInfo {
   /// Должность
   String? workerAppoint;
 
-  /// Гибкие атрибуты информация об руководителе
-  LinkedHashMap<String, Object?>? flexibleAttribs;
+  /// Список контактов руководителей
+  List<Contact>? contactChiefList;
 
   /// Права доступа пользователя (строковые human-readable id)
   List<String> securityRoles;
@@ -52,7 +52,7 @@ class UserInfo {
       this.mainWorksite,
       this.tabNumber,
       this.workerAppoint,
-      this.flexibleAttribs});
+      this.contactChiefList});
 
   /// Строка ФИО в равернутом виде. Например: Иванов Иван Иванович
   String getFullWorkerName() {
@@ -64,41 +64,6 @@ class UserInfo {
       }
     } else
       return family;
-  }
-
-  // LinkedHashSet выбран намеренно, чтобы выводить группы в том порядке, в котором получили
-  LinkedHashSet<String> getAttrGroups() {
-    LinkedHashSet<String> attrGroups = new LinkedHashSet<String>();
-    // Добавим системную группу
-    attrGroups.add(systemAttrGroup);
-    // Добавим группы гибких атрибутов
-    if (flexibleAttribs != null) {
-      flexibleAttribs?.keys.forEach((e) {
-        attrGroups.add(e.substring(0, e.indexOf("/")));
-      });
-    }
-    return attrGroups;
-  }
-
-  // LinkedHashMap выбран намеренно, чтобы выводить параметры в том порядке, в котором получили
-  LinkedHashMap<String, Object?> getAttrValuesByGroup(String group) {
-    LinkedHashMap<String, Object?> attrValues =
-        new LinkedHashMap<String, Object?>();
-    if (group.compareTo(systemAttrGroup) == 0) {
-      attrValues.addAll(new LinkedHashMap.of({
-        "ФИО": getFullWorkerName(),
-        "Табельный номер": tabNumber,
-        "Почтовый адрес": email,
-        "Должность": workerAppoint,
-        "Основной участок": mainWorksite,
-      }));
-    } else if (flexibleAttribs != null) {
-      flexibleAttribs?.forEach((key, value) {
-        if (key.startsWith("$group/"))
-          attrValues.addAll({key.substring(key.indexOf("/") + 1): value});
-      });
-    }
-    return attrValues;
   }
 
   /// для возможности сохранения в shared preferences
@@ -127,10 +92,9 @@ class UserInfo {
         mainWorksite: json['mainWorksite'],
         tabNumber: json['tabNumber'],
         workerAppoint: json['workerAppoint'],
-        flexibleAttribs: LinkedHashMap<String, Object?>.fromIterable(
-            json['flexibleAttribute'],
-            key: (e) => e["key"],
-            value: (e) => e["value"]));
+        contactChiefList: (json['contactChefList'] as List)
+            .map((e) => Contact.fromJson(e))
+            .toList());
   }
 
   Map<String, dynamic> toJson() {
@@ -146,7 +110,26 @@ class UserInfo {
     data['mainWorksite'] = this.mainWorksite;
     data['tabNumber'] = this.tabNumber;
     data['workerAppoint'] = this.workerAppoint;
-    data['flexibleAttribute'] = this.flexibleAttribs;
+    data['contactChefList'] = this.contactChiefList;
+    return data;
+  }
+}
+
+/// Контакт, содержит имя и номер телефона
+class Contact {
+  String name;
+  String? phoneNum;
+
+  Contact({required this.name, this.phoneNum});
+
+  factory Contact.fromJson(Map<String, dynamic> json) {
+    return Contact(name: json['name'], phoneNum: json['phoneNum']);
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['name'] = this.name;
+    data['phoneNum'] = this.phoneNum;
     return data;
   }
 }
