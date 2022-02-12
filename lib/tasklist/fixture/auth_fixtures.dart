@@ -19,7 +19,7 @@ class AuthFixture {
       contactChiefList: new List.of(({contact1, contact2})));
 
   static final Contact contact1 =
-      Contact(name: 'Бедрин Алексей Сергеевич', phoneNum: '+79211112475');
+      Contact(name: 'Бедрин Алексей Сергеевич', phoneNum: '+79211112475, +79003002010 200001232 +7-123-23123123');
 
   static final Contact contact2 =
       Contact(name: 'Сом Георгий Сергеевич', phoneNum: '+7921223322');

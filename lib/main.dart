@@ -88,7 +88,10 @@ class MyApp extends StatelessWidget {
                 onGenerateRoute: onGenerateRoute,
                 // случай onUnknown тоже будет корректно обработан внутри onGenerateRoute
                 onUnknownRoute: onGenerateRoute,
-                localizationsDelegates: [GlobalMaterialLocalizations.delegate],
+                localizationsDelegates: [GlobalMaterialLocalizations.delegate,
+                  // Добавил из-за ошбики "A CupertinoLocalizations delegate that supports the ru locale was not found."
+                  // по примеру из https://docs.flutter.dev/development/accessibility-and-localization/internationalization
+                  GlobalCupertinoLocalizations.delegate],
                 supportedLocales: [const Locale('ru')],
                 // чтобы таким образом добавить зависимости в контекст, пришлось делать не MaterialApp, а именно GetMaterialApp
                 //https://medium.com/flutter-community/the-flutter-getx-ecosystem-dependency-injection-8e763d0ec6b9

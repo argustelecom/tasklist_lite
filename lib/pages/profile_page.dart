@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get/get.dart';
@@ -13,6 +14,7 @@ import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/state/auth_controller.dart';
 import 'package:tasklist_lite/tasklist/fixture/task_fixtures.dart';
 import 'package:tasklist_lite/tasklist/model/user_info.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfilePage extends StatefulWidget {
   static const String routeName = 'profile';
@@ -143,23 +145,79 @@ class ProfilePageState extends State<ProfilePage> {
             padding: EdgeInsets.symmetric(vertical: 7, horizontal: 15),
             shrinkWrap: true,
             children: [
-              buildProfileData(context),
+              GetX<AuthController>(builder: (authController) {
+                UserInfo userInfo = authController.userInfo as UserInfo;
 
-              // GetX<AuthController>(builder: (authController) {
-              //   UserInfo userInfo = authController.userInfo as UserInfo;
-              //   LinkedHashSet<String> attrGroups = userInfo.getAttrGroups();
-              //     return SizedBox(
-              //         child: ListView.builder(
-              //             shrinkWrap: true,
-              //             physics: NeverScrollableScrollPhysics(),
-              //             itemCount: attrGroups.length,
-              //             itemBuilder: (BuildContext context, int index) {
-              //               return AttrGroup(
-              //                   userInfo: userInfo,
-              //                   attrGroup: attrGroups.elementAt(index));
-              //             }));
-              //   }
-              // }),
+                Widget contactsChief;
+                if (authController.userInfo?.contactChiefList != null)
+                  contactsChief = ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: userInfo.contactChiefList!.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Column(children: [
+                          TextWithLabelColumn(
+                              label: "Ваш руководитель:",
+                              value: userInfo.contactChiefList!
+                                  .elementAt(index)
+                                  .name),
+                          TextWithLabelColumn(
+                              label: "Контактный телефон руководителя:",
+                              value: userInfo.contactChiefList!
+                                  .elementAt(index)
+                                  .phoneNum!,
+                              type: TextType.phone),
+                        ]);
+                      });
+                else
+                  contactsChief = Text("Нет контактов руководителя.",
+                      style: TextStyle(
+                          fontSize: 16.0,
+                          color: Color(0xFF646363),
+                          fontWeight: FontWeight.normal));
+                return Column(children: [
+                  Container(
+                      padding: EdgeInsets.only(left: 17, right: 15, top: 10),
+                      alignment: Alignment.centerLeft,
+                      child: Text("Общая информация",
+                          style: TextStyle(fontSize: 18))),
+                  Padding(
+                      padding: EdgeInsets.only(
+                          left: 15, right: 15, top: 10, bottom: 10),
+                      child: Card(
+                          elevation: 3,
+                          color: context.theme.cardColor,
+                          child: ListView(shrinkWrap: true, children: [
+                            TextWithLabelColumn(
+                                label: "ФИО:",
+                                value: userInfo.getFullWorkerName()),
+                            TextWithLabelColumn(
+                                label: "Табельный номер:",
+                                value: userInfo.tabNumber.toString()),
+                            TextWithLabelColumn(
+                                label: "Почтовый адрес:",
+                                value: userInfo.email.toString()),
+                            TextWithLabelColumn(
+                                label: "Должность:",
+                                value: userInfo.workerAppoint.toString()),
+                            TextWithLabelColumn(
+                                label: "Основной участок:",
+                                value: userInfo.mainWorksite.toString())
+                          ]))),
+                  //TODO: а что если не руководителя? придумать как быть с null
+                  Container(
+                      padding: EdgeInsets.only(left: 17, right: 15, top: 10),
+                      alignment: Alignment.centerLeft,
+                      child: Text("Контакты руководителя",
+                          style: TextStyle(fontSize: 18))),
+                  Padding(
+                      padding: EdgeInsets.only(
+                          left: 15, right: 15, top: 10, bottom: 10),
+                      child: Card(
+                          elevation: 3,
+                          color: context.theme.cardColor,
+                          child: contactsChief))
+                ]);
+              }),
               Padding(
                   padding:
                       EdgeInsets.only(left: 17, right: 15, bottom: 10, top: 4),
@@ -376,63 +434,65 @@ class ProfilePageState extends State<ProfilePage> {
                       )))
             ]));
   }
+}
 
-  /// Отобраджения данных Профиля
-  Widget buildProfileData(BuildContext context) {
-    return GetX<AuthController>(builder: (authController) {
-      UserInfo userInfo = authController.userInfo as UserInfo;
-      return Column(children: [
-        Container(
-            padding: EdgeInsets.only(left: 17, right: 15, top: 10),
-            alignment: Alignment.centerLeft,
-            child: Text("Общая информация", style: TextStyle(fontSize: 18))),
-        Padding(
-            padding: EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 10),
-            child: Card(
-                elevation: 3,
-                color: context.theme.cardColor,
-                child: ListView(shrinkWrap: true, children: [
-                  viewText(context, "ФИО:", userInfo.getFullWorkerName()),
-                  viewText(context, "Табельный номер:",
-                      userInfo.tabNumber.toString()),
-                  viewText(
-                      context, "Почтовый адрес:", userInfo.email.toString()),
-                  viewText(
-                      context, "Должность:", userInfo.workerAppoint.toString()),
-                  viewText(context, "Основной участок:",
-                      userInfo.mainWorksite.toString())
-                ]))),
-        Container(
-            padding: EdgeInsets.only(left: 17, right: 15, top: 10),
-            alignment: Alignment.centerLeft,
-            child:
-                Text("Контакты руководителя", style: TextStyle(fontSize: 18))),
-        Padding(
-            padding: EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 10),
-            child: Card(
-                elevation: 3,
-                color: context.theme.cardColor,
-                child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: userInfo.contactChiefList!.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Column(children: [
-                        viewText(context, "Ваш руководитель:",
-                            userInfo.contactChiefList!.elementAt(index).name),
-                        viewText(
-                            context,
-                            "Контактный телефон руководителя:",
-                            userInfo.contactChiefList!
-                                .elementAt(index)
-                                .phoneNum!)
-                      ]);
-                    })))
-      ]);
-    });
-  }
+enum TextType { text, phone }
 
-  //Отделил для хранения общего стиля текстовых блоков lable: value
-  Widget viewText(BuildContext context, String label, String value) {
+/// Отображеине текста lable: value столбцом в card
+/// отделил для сохранения отсутупов на странице profile_page.
+/// value можно отобразить как текст, или телефон (будет отображаться, как ссылка)
+/// Доплнительно, если в value передать неколько телефонов через заяпятую или
+/// пробел, занчения будет отдельными ссылками.
+class TextWithLabelColumn extends StatelessWidget {
+  final String label;
+  final String value;
+  final TextType type;
+
+  TextWithLabelColumn(
+      {Key? key,
+      required this.label,
+      required this.value,
+      this.type = TextType.text})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    Widget textWidget;
+    if (type == TextType.phone) {
+      // Если поле телефон указали несколько номеров, нужно их распарсить для
+      // отображения через заяпятую отдельными ссылками.
+      List<TextSpan> textSpanList = [];
+      List<String> phoneNums = value.split(new RegExp(r'[, ]+'));
+      for (final number in phoneNums) {
+        if (textSpanList.isNotEmpty) textSpanList.add(TextSpan(
+            text:
+            ", ",
+            style: TextStyle(
+                fontSize: 16,
+                color: Colors.black)));
+        textSpanList.add(TextSpan(
+            text:
+            "$number",
+            style: TextStyle(
+                fontSize: 16,
+                color: Colors.blue,
+                decoration: TextDecoration.underline),
+            // Обеспечивает открытие ссылки по нажатию
+            recognizer: TapGestureRecognizer()
+              ..onTap = () {
+                launch("tel:$number");
+              }));
+      }
+      textWidget = Container(
+          alignment: Alignment.centerLeft,
+          child: RichText(
+              text: TextSpan(children: textSpanList
+                 )));
+    } else {
+      textWidget = Container(
+          alignment: Alignment.centerLeft,
+          child: Text(value, style: TextStyle(fontSize: 16)));
+    }
     return Container(
         alignment: Alignment.centerLeft,
         padding: EdgeInsets.only(left: 15, right: 15, bottom: 5, top: 5),
@@ -444,9 +504,7 @@ class ProfilePageState extends State<ProfilePage> {
                       fontSize: 16.0,
                       color: Color(0xFF646363),
                       fontWeight: FontWeight.normal))),
-          Container(
-              alignment: Alignment.centerLeft,
-              child: Text(value, style: TextStyle(fontSize: 16))),
+          textWidget
         ]));
   }
 }

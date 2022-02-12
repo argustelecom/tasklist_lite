@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:tasklist_lite/pages/login_page.dart';
 import 'package:tasklist_lite/pages/notifications_page.dart';
+import 'package:tasklist_lite/pages/profile_page.dart';
 import 'package:tasklist_lite/state/auth_controller.dart';
 import 'package:tasklist_lite/state/notification_controller.dart';
 import 'package:tasklist_lite/tasklist/notification_repository.dart';
@@ -17,17 +18,23 @@ class TopUserBar extends StatelessWidget implements PreferredSizeWidget {
             leading: Icon(Icons.account_circle_outlined),
             titleSpacing: 0.0,
             toolbarHeight: 100,
-            title: Column(
-              children: [
-                Text(authController.userInfo == null
-                    ? ""
-                    : authController.userInfo!.userName + ",",
-                    key: ValueKey('$TopUserBar'+'_username')),
-                Text(authController.userInfo == null
-                    ? ""
-                    : authController.userInfo!.homeRegionName),
-              ],
-            ),
+            title: InkResponse (
+                highlightShape: BoxShape.rectangle,
+                onTap: () {
+                  Navigator.pushNamed(context, ProfilePage.routeName);
+                },
+                child: Column(
+                  children: [
+                    Text(
+                        authController.userInfo == null
+                            ? ""
+                            : authController.userInfo!.userName + ",",
+                        key: ValueKey('$TopUserBar' + '_username')),
+                    Text(authController.userInfo == null
+                        ? ""
+                        : authController.userInfo!.homeRegionName),
+                  ])
+                ),
             actions: [
               // Вызваем NotificationController, чтобы взять у него инфу по наличию уведомлений
               GetBuilder<NotificationController>(
