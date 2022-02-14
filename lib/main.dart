@@ -13,8 +13,10 @@ import 'package:tasklist_lite/pages/task_page.dart';
 import 'package:tasklist_lite/pages/tasklist_page.dart';
 import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/state/auth_controller.dart';
+import 'package:tasklist_lite/tasklist/fixture/history_events_fixtures.dart';
 import 'package:tasklist_lite/tasklist/fixture/notification_fixtures.dart';
 import 'package:tasklist_lite/tasklist/fixture/task_fixtures.dart';
+import 'package:tasklist_lite/tasklist/history_events_repository.dart';
 import 'package:tasklist_lite/tasklist/idle_time_reason_repository.dart';
 import 'package:tasklist_lite/tasklist/task_repository.dart';
 import 'package:tasklist_lite/theme/tasklist_theme_data.dart';
@@ -103,7 +105,9 @@ class MyApp extends StatelessWidget {
                       Get.put(AuthService()),
                       Get.put(NotificationRepository()),
                       Get.put(NotificationFixtures()),
-                      Get.put(IdleTimeReasonRepository())
+                      Get.put(IdleTimeReasonRepository()),
+                      Get.put(HistoryEventsFixtures()),
+                      Get.put(HistoryEventRepository())
                     }),
                 darkTheme: TaskListThemeData.darkThemeData.copyWith(
                   platform: defaultTargetPlatform,

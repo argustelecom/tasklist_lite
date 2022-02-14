@@ -25,7 +25,7 @@ class NotificationCard extends StatelessWidget {
           title: Text(notify.time, style: TextStyle(fontStyle: FontStyle.italic)) ,
           subtitle: Padding(
             //Кликабельная ссылка на таск. Такой странный паддинг нужен чтобы не было мисклика когда раскрываешь ExpansionTile
-            padding: EdgeInsets.only(right: 150),
+            padding: EdgeInsets.only(right: 100),
              child : GestureDetector(
                child: Text(task.name, style: TextStyle(
                 color: Colors.blue

@@ -8,6 +8,9 @@ import 'package:tasklist_lite/tasklist/idle_time_reason_repository.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
 import 'package:tasklist_lite/tasklist/task_repository.dart';
 
+import '../tasklist/history_events_repository.dart';
+import '../tasklist/model/history_event.dart';
+
 /// содержит state списка задач и (возможно в будущем) формы задачи
 class TaskListController extends GetxController {
   /// открытые задачи. Их перечень не зависит от выбранного числа и обновляется только по необходимости
@@ -38,8 +41,10 @@ class TaskListController extends GetxController {
     late String basicAuth = authController.getAuth();
     ApplicationState state = Get.find();
     String serverAddress = state.serverAddress;
-    closedTasksSubscription = resubscribe(closedTasksSubscription,
-        taskRepository.streamClosedTasks(basicAuth, serverAddress, this.currentDate), (event) {
+    closedTasksSubscription = resubscribe(
+        closedTasksSubscription,
+        taskRepository.streamClosedTasks(
+            basicAuth, serverAddress, this.currentDate), (event) {
       this.closedTasks = event;
       update();
     });
@@ -105,6 +110,7 @@ class TaskListController extends GetxController {
 
   TaskRepository taskRepository = Get.find();
   IdleTimeReasonRepository idleTimeReasonRepository = Get.find();
+  HistoryEventRepository historyEventRepository = Get.find();
 
   StreamSubscription resubscribe(StreamSubscription? streamSubscription,
       Stream<List<Task>> stream, void onData(List<Task> event)) {
@@ -121,14 +127,16 @@ class TaskListController extends GetxController {
     ApplicationState state = Get.find();
     String serverAddress = state.serverAddress;
 
-    openedTasksSubscription = resubscribe(
-        openedTasksSubscription, taskRepository.streamOpenedTasks(basicAuth, serverAddress), (event) {
+    openedTasksSubscription = resubscribe(openedTasksSubscription,
+        taskRepository.streamOpenedTasks(basicAuth, serverAddress), (event) {
       this.openedTasks = event;
       update();
     });
 
-    closedTasksSubscription = resubscribe(closedTasksSubscription,
-        taskRepository.streamClosedTasks(basicAuth, serverAddress,this.currentDate), (event) {
+    closedTasksSubscription = resubscribe(
+        closedTasksSubscription,
+        taskRepository.streamClosedTasks(
+            basicAuth, serverAddress, this.currentDate), (event) {
       this.closedTasks = event;
       update();
     });
@@ -152,15 +160,93 @@ class TaskListController extends GetxController {
     late String basicAuth = authController.getAuth();
     ApplicationState state = Get.find();
     String serverAddress = state.serverAddress;
-    openedTasksSubscription = resubscribe(
-        openedTasksSubscription, taskRepository.streamOpenedTasks(basicAuth, serverAddress), (event) {
+    openedTasksSubscription = resubscribe(openedTasksSubscription,
+        taskRepository.streamOpenedTasks(basicAuth, serverAddress), (event) {
       this.openedTasks = event;
       update();
     });
-    closedTasksSubscription = resubscribe(closedTasksSubscription,
-        taskRepository.streamClosedTasks(basicAuth, serverAddress,this.currentDate), (event) {
+    closedTasksSubscription = resubscribe(
+        closedTasksSubscription,
+        taskRepository.streamClosedTasks(
+            basicAuth, serverAddress, this.currentDate), (event) {
       this.closedTasks = event;
       update();
     });
   }
+
+  /// *************  Тут начинается блок нужных штук для истории по наряду *************
+  /// **********************************************************************************
+
+  /// Данный метод отвечает за первичное наполнение листа с историческими событиями
+  initHistory(Task task) {
+    return historyEventList = historyEventRepository.getHistoryEvent(task);
+  }
+
+  /// Лист с историческими событиями по наряду
+  List<HistoryEvent> historyEventList = List.of({});
+
+  /// Метод для добавления комментария по наряду
+  addComment(String comment, bool isAlarm, Task task) {
+    var newComment = new HistoryEvent(
+        // TODO: Персону нужно будет брать из учетки
+        person: 'Вы',
+        type: "Комментарий",
+        content: comment,
+        date: DateTime.now(),
+        isAlarm: isAlarm,
+        task: task);
+
+    if (comment.length > 0) {
+      HistoryEventRepository().addNewComment(newComment);
+    }
+    update();
+  }
+
+  /// Добавлеяем новый коммент с проверкой аварии(для кнопки проверка аварии)
+  addNewCrashComment(Task currentTask) {
+    var newCrashComment = new HistoryEvent(
+        // TODO: Персону нужно будет брать из учетки
+        person: 'Текущий пользователь',
+        type: "Комментарий",
+        content: 'Проверка аварии *111*1234#',
+        date: DateTime.now(),
+        isAlarm: false,
+        task: currentTask);
+
+    HistoryEventRepository().addNewComment(newCrashComment);
+    update();
+  }
+
+  /// Метод для получения списка событий
+  getHistoryEvents() {
+    historyEventList.sort((a, b) => a.date.compareTo(b.date));
+    return historyEventList;
+  }
+
+  /// Признак нужно ли уведомление, когда оставляем комментарий(колокольчик)
+  var isAlarmComment = false;
+
+  /// Получаем признак нужности уведомления
+  getIsAlarmComment() {
+    return isAlarmComment;
+  }
+
+  /// Переключаем признак нужности уведомления
+  changeIsAlarmComment() {
+    isAlarmComment = !isAlarmComment;
+    update();
+  }
+
+  /// Фокуснода для текстового поля ввода комментария
+  FocusNode focusNodeCommentInput = FocusNode();
+
+  /// Чтобы моментально фокусироваться и получать
+  setFocus() {
+    focusNodeCommentInput.requestFocus();
+    update();
+  }
+
+  /// *************  Тут заканчивается блок нужных штук для истории по наряду *************
+  /// **********************************************************************************
+
 }
