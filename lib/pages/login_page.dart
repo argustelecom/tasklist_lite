@@ -1,10 +1,58 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:google_language_fonts/google_language_fonts.dart';
 import 'package:tasklist_lite/crazylib/crazy_button.dart';
 import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
 import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/state/auth_controller.dart';
+
+// #TODO: если делать отдельным виджетом, стоит параметризовать размеры, кривую анимации, длительность
+class AnimatedLogo extends StatefulWidget {
+  final String assetName;
+
+  AnimatedLogo({required this.assetName});
+  @override
+  State<StatefulWidget> createState() {
+    return AnimatedLogoState(assetName: this.assetName);
+  }
+}
+
+class AnimatedLogoState extends State<AnimatedLogo> {
+  final String assetName;
+
+  bool tapped = false;
+
+  AnimatedLogoState({required this.assetName});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          tapped = true;
+        });
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 600),
+        curve: Curves.bounceOut,
+        onEnd: () {
+          setState(() {
+            tapped = false;
+          });
+        },
+        height: tapped ? 220 : 180,
+        width: tapped ? 220 : 180,
+        child: Image.asset(
+          // внимательней, хотсвап не подцепляет изменения в asset, надо делать полную пересборку
+          assetName,
+          bundle: rootBundle,
+        ),
+      ),
+    );
+  }
+}
 
 class LoginPage extends StatefulWidget {
   static const String routeName = "/login";
@@ -18,7 +66,8 @@ class LoginPage extends StatefulWidget {
 class LoginPageState extends State<LoginPage> {
   bool isDemonstrationModeChecked = false;
   TextEditingController _loginEditingController = new TextEditingController();
-  TextEditingController _passwordEditingController = new TextEditingController();
+  TextEditingController _passwordEditingController =
+      new TextEditingController();
 
   InputDecoration fieldDecoration(String text) {
     return InputDecoration(
@@ -38,16 +87,14 @@ class LoginPageState extends State<LoginPage> {
     return GetBuilder<AuthController>(builder: (authController) {
       return ReflowingScaffold(
         body: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          // #TODO: логотип флаттыря нехорошо так юзать. Ждем наш логотип
-          FlutterLogo(
-            size: 64,
+          AnimatedLogo(
+            assetName: "images/logo_figaro.png",
           ),
           Padding(
-            padding: EdgeInsets.symmetric(vertical: 16),
-            child: Text(
-              "ФИГАРО",
-              style: TextStyle(fontSize: 20),
-            ),
+            padding: EdgeInsets.only(bottom: 16),
+            child: Text("ФИГАРО",
+                style: // Arsenal из google_fonts не умеет кириллицу, пришлось из google_language_fonts
+                    CyrillicFonts.arsenal(fontSize: 30)),
           ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 8),
@@ -71,9 +118,7 @@ class LoginPageState extends State<LoginPage> {
                           controller: _loginEditingController,
                           cursorColor: Colors.blue,
                           // #TODO: "Имя пользователя" как-то посолидней, чем "логин". Обсудить с Лизой
-                          decoration: fieldDecoration("Логин")
-                      )
-                      ,
+                          decoration: fieldDecoration("Логин")),
                       TextField(
                           controller: _passwordEditingController,
                           cursorColor: Colors.blue,
@@ -114,7 +159,10 @@ class LoginPageState extends State<LoginPage> {
                             title: "Войти",
                             key: ValueKey('login_button'),
                             onPressed: () {
-                              authController.login(isDemonstrationModeChecked, _loginEditingController.text, _passwordEditingController.text,
+                              authController.login(
+                                  isDemonstrationModeChecked,
+                                  _loginEditingController.text,
+                                  _passwordEditingController.text,
                                   applicationState.serverAddress);
                               NavigatorState navigatorState =
                                   Navigator.of(context);

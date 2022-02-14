@@ -25,8 +25,10 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  # для поддержки text_theme
   google_fonts: ^2.0.0
+  # pure google_fonts не поддерживают кириллицу у многих шрифтов
+  # просто отображает в дефолтном Roboto. Пришлось подключить это.
+  google_language_fonts: ^2.0.0
   adaptive_breakpoints: ^0.1.0
   get: any
 
@@ -76,10 +78,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
-
+  assets:
+    - images/logo_figaro.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 
