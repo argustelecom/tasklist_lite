@@ -1,4 +1,5 @@
 import 'dart:collection';
+
 import 'package:duration/duration.dart';
 import 'package:duration/locale.dart';
 import 'package:intl/intl.dart';
@@ -73,7 +74,7 @@ class Task {
   bool isOutdoor;
 
   /// Гибкие атрибуты
-  LinkedHashMap<String, Object?>? flexibleAttribs;
+  LinkedHashMap<String, Object?> flexibleAttribs = LinkedHashMap();
 
   /// Простой
   IdleTime? idleTime;
@@ -99,7 +100,7 @@ class Task {
       this.isVisit = false,
       this.isPlanned = false,
       this.isOutdoor = false,
-      this.flexibleAttribs,
+      required this.flexibleAttribs,
       this.idleTime});
 
   bool isOverdue() {
@@ -166,11 +167,9 @@ class Task {
     // Добавим системную группу
     attrGroups.add(systemAttrGroup);
     // Добавим группы гибких атрибутов
-    if (flexibleAttribs != null) {
-      flexibleAttribs?.keys.forEach((e) {
-        attrGroups.add(e.substring(0, e.indexOf("/")));
-      });
-    }
+    flexibleAttribs.keys.forEach((e) {
+      attrGroups.add(e.substring(0, e.indexOf("/")));
+    });
     return attrGroups;
   }
 
@@ -187,12 +186,11 @@ class Task {
         "Долгота": longitude,
         "Примечание": comment
       }));
-    } else if (flexibleAttribs != null) {
-      flexibleAttribs?.forEach((key, value) {
+    } else
+      flexibleAttribs.forEach((key, value) {
         if (key.startsWith("$group/"))
           attrValues.addAll({key.substring(key.indexOf("/") + 1): value});
       });
-    }
     return attrValues;
   }
 

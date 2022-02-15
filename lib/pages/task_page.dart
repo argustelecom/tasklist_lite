@@ -1,15 +1,11 @@
 import 'dart:collection';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:tasklist_lite/crazylib/history_event_card.dart';
-
 import 'package:tasklist_lite/crazylib/idle_time_manager_dialog.dart';
 import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
+import 'package:tasklist_lite/crazylib/task_due_date_label.dart';
 import 'package:tasklist_lite/state/application_state.dart';
-import 'package:tasklist_lite/state/tasklist_controller.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
 
 class TaskPage extends StatefulWidget {
@@ -31,25 +27,15 @@ class _TaskPageState extends State<TaskPage> {
     }
     ThemeData themeData = Theme.of(context);
     ApplicationState applicationState = ApplicationState.of(context);
-    // Это дефолтный контроллер для управления текстовым полем
-    TextEditingController commentTextController;
-    commentTextController = TextEditingController();
-    // Тут ищем тасклистконтроллер и вызываем метод для получения исторических событий
-    // TODO: Переделать, вероятно это неправильно
-    TaskListController taskListController = Get.find();
-    taskListController.initHistory(task!);
-    // Это дефолтный скроллконтрроллер, используем на вкладке история, чтобы перематывать на последнее событие т.к. это удобно для пользователя
-    ScrollController _scrollController = new ScrollController();
 
-    if (task == null)
-
+    if (task == null) {
       /// TODO облагородить или создать страницу ошибки
       return DefaultTabController(
           length: 4,
           child: ReflowingScaffold(
               body: Text(
                   "Что-то пошло не так. Вернитесь на главную страницу и попробуйте снова.")));
-    else {
+    } else {
       LinkedHashSet<String> attrGroups = task.getAttrGroups();
 
       return DefaultTabController(
@@ -140,155 +126,10 @@ class _TaskPageState extends State<TaskPage> {
                       elevation: 3,
                     ),
                   ),
-                  // Список исторических событий по наряду
-                  GetBuilder<TaskListController>(
-                      init: TaskListController(),
-                      builder: (taskListController) {
-                        return Padding(
-                            padding: EdgeInsets.only(
-                                left: 12, right: 12, bottom: 12),
-                            child: Column(
-                              children: [
-                                Expanded(
-                                  child: ListView.builder(
-                                      itemCount: taskListController
-                                          .getHistoryEvents()
-                                          .length,
-                                      controller: _scrollController,
-                                      itemBuilder:
-                                          (BuildContext context, int index) {
-                                        return historyEventCard(
-                                            person: taskListController
-                                                .getHistoryEvents()[index]
-                                                .person,
-                                            content: taskListController
-                                                .getHistoryEvents()[index]
-                                                .content,
-                                            type: taskListController
-                                                .getHistoryEvents()[index]
-                                                .type,
-                                            date: taskListController
-                                                .getHistoryEvents()[index]
-                                                .date,
-                                            isAlarm: taskListController
-                                                .getHistoryEvents()[index]
-                                                .isAlarm);
-                                      }),
-                                ),
-                                // Текстовое поле ввода комментария
-                                Padding(
-                                  padding: EdgeInsets.only(top: 16),
-                                  child: TextField(
-                                      focusNode: taskListController
-                                          .focusNodeCommentInput,
-                                      textInputAction: TextInputAction.send,
-                                      keyboardType: TextInputType.text,
-                                      textAlign: TextAlign.start,
-                                      decoration: InputDecoration(
-                                        hintText: "Ваш комментарий",
-                                        hintStyle: TextStyle(fontSize: 14),
-                                        fillColor: themeData.bottomAppBarColor,
-                                        border: InputBorder.none,
-                                        filled: true,
-                                        suffixIcon: IconButton(
-                                          tooltip: 'С уведомлением',
-                                          icon: Icon(
-                                              taskListController
-                                                      .getIsAlarmComment()
-                                                  ? Icons.notifications
-                                                  : Icons.notifications_off,
-                                              // size: 30,
-                                              color: Colors.black),
-                                          onPressed: () {
-                                            taskListController
-                                                .changeIsAlarmComment();
-                                          },
-                                        ),
-                                        isCollapsed: false,
-                                      ),
-                                      onSubmitted: (text) {
-                                        taskListController.addComment(
-                                            commentTextController.text,
-                                            taskListController
-                                                .getIsAlarmComment(),
-                                            task!);
-                                        commentTextController.clear();
-                                        _scrollController.animateTo(
-                                          _scrollController
-                                              .position.maxScrollExtent,
-                                          curve: Curves.easeOut,
-                                          duration:
-                                              const Duration(milliseconds: 300),
-                                        );
-                                        FocusManager.instance.primaryFocus
-                                            ?.unfocus();
-                                      },
-                                      onTap: () =>
-                                          taskListController.setFocus(),
-                                      minLines: 1,
-                                      maxLines: 5,
-                                      controller: commentTextController),
-                                ),
-                                // if (taskListController.focusNodeCommentInput.hasFocus)
-                                Visibility(
-                                    visible: taskListController
-                                        .focusNodeCommentInput.hasFocus,
-                                    child: Padding(
-                                      padding:
-                                          EdgeInsets.only(top: 8, right: 16),
-                                      child: Row(
-                                          children: [
-                                            TextButton(
-                                              child: Padding(
-                                                padding: EdgeInsets.only(
-                                                    top: 4,
-                                                    right: 8,
-                                                    left: 8,
-                                                    bottom: 4),
-                                                child: const Text('Отправить',
-                                                    style: TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 14)),
-                                              ),
-                                              style: ButtonStyle(
-                                                  shape: MaterialStateProperty.all<
-                                                          RoundedRectangleBorder>(
-                                                      RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius.circular(
-                                                                  6))),
-                                                  padding: MaterialStateProperty
-                                                      .all<EdgeInsets>(
-                                                          EdgeInsets.all(2)),
-                                                  backgroundColor:
-                                                      MaterialStateProperty.all<Color>(
-                                                          Colors.yellow.shade700)),
-                                              onPressed: () {
-                                                taskListController.addComment(
-                                                    commentTextController.text,
-                                                    taskListController
-                                                        .getIsAlarmComment(),
-                                                    task!);
-                                                commentTextController.clear();
-                                                _scrollController.animateTo(
-                                                  _scrollController
-                                                      .position.maxScrollExtent,
-                                                  curve: Curves.easeOut,
-                                                  duration: const Duration(
-                                                      milliseconds: 300),
-                                                );
-                                                FocusManager
-                                                    .instance.primaryFocus
-                                                    ?.unfocus();
-                                              },
-                                            ),
-                                          ],
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end),
-                                    ))
-                              ],
-                            ));
-                      })
+                  Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 32),
+                      child: Card(
+                          child: Text("Здесь будет история"), elevation: 3))
                 ]))
               ])));
     }
@@ -302,7 +143,6 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    TaskListController taskListController = Get.find();
     return AppBar(
         leading: IconButton(
           iconSize: 40,
@@ -341,14 +181,7 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
               Padding(
                   padding: EdgeInsets.symmetric(vertical: 2),
                   child: Row(children: [
-                    Text(
-                      "КС: " + task.getDueDateFullText(),
-                      style: TextStyle(
-                          inherit: false,
-                          fontSize: 14,
-                          color: task.isOverdue() ? Colors.red : Colors.green),
-                      textAlign: TextAlign.left,
-                    )
+                    TaskDueDateLabel(task: task),
                   ])),
             ],
           ),
@@ -430,17 +263,7 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
                             title: Text('Взять себе'),
                           ),
                           value: 3,
-                        ),
-                      // Данная кнопка оставляет системный комментарий
-                      PopupMenuItem(
-                          value: 4,
-                          child: ListTile(
-                            leading: Icon(Icons.announcement),
-                            title: Text('Проверка аварии'),
-                            onTap: () {
-                              taskListController.addNewCrashComment(task);
-                            },
-                          ))
+                        )
                     ],
                   ))
             ])

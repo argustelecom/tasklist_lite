@@ -50,7 +50,7 @@ class TaskList extends StatelessWidget {
               itemBuilder: (context, index) {
                 return TaskCard(
                   task: controller.getTasks()[index], //taskList[index],
-                  taskPageRoutName: TaskPage.routeName,
+                  taskPageRouteName: TaskPage.routeName,
                 );
               }));
     });

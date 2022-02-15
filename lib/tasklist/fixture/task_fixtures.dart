@@ -22,26 +22,49 @@ enum CurrentTaskFixture {
 /// Служба, возвращающая набор задач по переданному идентификатору фикстуры
 class TaskFixtures {
   // #TODO: в name должен быть скорее номер задачи, а указанное здесь должно быть в desc
-  List<Task> firstTaskFixture = List.of(
-      {new Task(id: 1, name: "Ленинский 107 Атлант замена компрессора")});
+  List<Task> firstTaskFixture = List.of({
+    new Task(
+        id: 1,
+        name: "Ленинский 107 Атлант замена компрессора",
+        flexibleAttribs: LinkedHashMap()),
+  });
 
-  List<Task> firstTaskFixtureAdditionalTasks =
-      List.of({new Task(id: 10, name: "Ленинский 117 Минск диодный мост")});
+  List<Task> firstTaskFixtureAdditionalTasks = List.of({
+    new Task(
+        id: 10,
+        name: "Ленинский 117 Минск диодный мост",
+        flexibleAttribs: LinkedHashMap())
+  });
 
   List<Task> secondTaskFixture = List.of({
-    new Task(id: 2, name: "Papa Johns Ветеранов заказ 111"),
+    new Task(
+        id: 2,
+        name: "Papa Johns Ветеранов заказ 111",
+        flexibleAttribs: LinkedHashMap()),
     new Task(
         id: 3,
         name: "Papa Johns 111 доставка Зины Портновой 15",
-        assignee: "developer")
+        assignee: "developer",
+        flexibleAttribs: LinkedHashMap())
   });
 
   List<Task> secondTaskFixtureAdditionalTasks = List.of({
-    new Task(id: 11, name: "Pizza Hut Ветеранов заказ 15"),
-    new Task(id: 12, name: "Pizza Hut доствка Ленинский 144")
+    new Task(
+        id: 11,
+        name: "Pizza Hut Ветеранов заказ 15",
+        flexibleAttribs: LinkedHashMap()),
+    new Task(
+        id: 12,
+        name: "Pizza Hut доствка Ленинский 144",
+        flexibleAttribs: LinkedHashMap())
   });
 
-  static Task firstTask = new Task(
+  static const foreignOrderIdFlexAttrName = "Наряд/ID заявки оператора";
+  static const objectNameFlexAttrName = "Объект/Название";
+  static const orderOperatorNameFlexAttrName = "Наряд/Оператор";
+  static const distanceToObjectFlexAttrName = "Объект/Пробег до объекта (км)";
+
+  static final Task firstTask = new Task(
       id: 1,
       name: "АВР-24035",
       desc: "АВР-24035 (ВЛГ0127)",
@@ -59,20 +82,20 @@ class TaskFixtures {
       isClosed: false,
       isOutdoor: true,
       flexibleAttribs: new LinkedHashMap.of({
-        "Наряд/Оператор": "Tele2",
-        "Наряд/ID заявки оператора": "INT33564",
+        orderOperatorNameFlexAttrName: "Tele2",
+        foreignOrderIdFlexAttrName: "INT33564",
         "Наряд/Договор": "№464527",
         "Наряд/Приоритет": "2",
         "Объект/Тип объекта": "Базовая станция",
-        "Объект/Название": "ВЛГ0127",
-        "Объект/Пробег до объекта (км)": "9 км",
+        objectNameFlexAttrName: "ВЛГ0127",
+        distanceToObjectFlexAttrName: "9 км",
       }),
       idleTime: new IdleTime(
           reason: "Форс-мажор",
           startDate: DateUtils.dateOnly(DateTime.now())
               .add(const Duration(hours: -3))));
 
-  static Task secondTask = new Task(
+  static final Task secondTask = new Task(
       id: 2,
       name: "РР-27089",
       desc: "РР-27089 (ВОЛС Лосево-Песочное)",
@@ -90,16 +113,16 @@ class TaskFixtures {
       isClosed: false,
       isOutdoor: true,
       flexibleAttribs: new LinkedHashMap.of({
-        "Наряд/Оператор": "Megafon",
-        "Наряд/ID заявки оператора": "INT35134",
+        orderOperatorNameFlexAttrName: "Megafon",
+        foreignOrderIdFlexAttrName: "INT35134",
         "Наряд/Договор": "№464527",
         "Наряд/Приоритет": "5",
         "Объект/Тип объекта": "ВОЛС",
-        "Объект/Название": "Лосево-Песочное",
-        "Объект/Пробег до объекта (км)": "73 км"
+        objectNameFlexAttrName: "ВОЛС Лосево-Песочное",
+        distanceToObjectFlexAttrName: "73 км"
       }));
 
-  static Task thirdTask = new Task(
+  static final Task thirdTask = new Task(
       id: 3,
       name: "РР-28050",
       desc: "РР-28050 (ВЛГ4032)",
@@ -118,16 +141,16 @@ class TaskFixtures {
       isClosed: false,
       isOutdoor: true,
       flexibleAttribs: new LinkedHashMap.of({
-        "Наряд/Оператор": "Tele2",
-        "Наряд/ID заявки оператора": "INT36197",
+        orderOperatorNameFlexAttrName: "Tele2",
+        foreignOrderIdFlexAttrName: "INT36197",
         "Наряд/Договор": "№464527",
         "Наряд/Приоритет": "5",
         "Объект/Тип объекта": "Базовая станция",
-        "Объект/Название": "ВЛГ4032",
-        "Объект/Пробег до объекта (км)": "5 км"
+        objectNameFlexAttrName: "ВЛГ4032",
+        distanceToObjectFlexAttrName: "5 км"
       }));
 
-  static Task fourthTask = new Task(
+  static final Task fourthTask = new Task(
       id: 4,
       name: "ТО-19099",
       desc: "ТО-19099 (ВЛГ0734)",
@@ -145,16 +168,16 @@ class TaskFixtures {
       isClosed: false,
       isOutdoor: true,
       flexibleAttribs: new LinkedHashMap.of({
-        "Наряд/Оператор": "Tele2",
-        "Наряд/ID заявки оператора": "INT45090",
+        orderOperatorNameFlexAttrName: "Tele2",
+        foreignOrderIdFlexAttrName: "INT45090",
         "Наряд/Договор": "№464527",
         "Наряд/Приоритет": "5",
         "Объект/Тип объекта": "Базовая станция",
-        "Объект/Название": "ВЛГ0734",
-        "Объект/Пробег до объекта (км)": "12 км"
+        objectNameFlexAttrName: "ВЛГ0734",
+        distanceToObjectFlexAttrName: "12 км"
       }));
 
-  static Task fifthTask = new Task(
+  static final Task fifthTask = new Task(
       id: 5,
       name: "РР-14569",
       desc: "РР-14569 (ВЛГ1077)",
@@ -172,16 +195,16 @@ class TaskFixtures {
       isClosed: false,
       isOutdoor: true,
       flexibleAttribs: new LinkedHashMap.of({
-        "Наряд/Оператор": "Tele2",
-        "Наряд/ID заявки оператора": "INT44785",
+        orderOperatorNameFlexAttrName: "Tele2",
+        foreignOrderIdFlexAttrName: "INT44785",
         "Наряд/Договор": "№464527",
         "Наряд/Приоритет": "3",
         "Объект/Тип объекта": "Базовая станция",
-        "Объект/Название": "ВЛГ1077",
-        "Объект/Пробег до объекта (км)": "21 км"
+        objectNameFlexAttrName: "ВЛГ1077",
+        distanceToObjectFlexAttrName: "21 км"
       }));
 
-  static Task sixthTask = new Task(
+  static final Task sixthTask = new Task(
       id: 6,
       name: "АВР-10357",
       desc: "АВР-10357 (ВЛГ1379)",
@@ -201,16 +224,16 @@ class TaskFixtures {
       isClosed: true,
       isOutdoor: true,
       flexibleAttribs: new LinkedHashMap.of({
-        "Наряд/Оператор": "Tele2",
-        "Наряд/ID заявки оператора": "INT42748",
+        orderOperatorNameFlexAttrName: "Tele2",
+        foreignOrderIdFlexAttrName: "INT42748",
         "Наряд/Договор": "№464527",
         "Наряд/Приоритет": "3",
         "Объект/Тип объекта": "Базовая станция",
-        "Объект/Название": "ВЛГ1379",
-        "Объект/Пробег до объекта (км)": "2 км"
+        objectNameFlexAttrName: "ВЛГ1379",
+        distanceToObjectFlexAttrName: "2 км"
       }));
 
-  static Task seventhTask = new Task(
+  static final Task seventhTask = new Task(
       id: 7,
       name: "РР-10346",
       desc: "РР-10346 (ВЛГ1027)",
@@ -230,16 +253,16 @@ class TaskFixtures {
       isClosed: true,
       isOutdoor: true,
       flexibleAttribs: new LinkedHashMap.of({
-        "Наряд/Оператор": "Tele2",
-        "Наряд/ID заявки оператора": "INT34673",
+        orderOperatorNameFlexAttrName: "Tele2",
+        foreignOrderIdFlexAttrName: "INT34673",
         "Наряд/Договор": "№464836",
         "Наряд/Приоритет": "5",
         "Объект/Тип объекта": "Базовая станция",
-        "Объект/Название": "ВЛГ1027",
-        "Объект/Пробег до объекта (км)": "14 км"
+        objectNameFlexAttrName: "ВЛГ1027",
+        distanceToObjectFlexAttrName: "14 км"
       }));
 
-  static Task eighthTask = new Task(
+  static final Task eighthTask = new Task(
       id: 8,
       name: "РР-11542",
       desc: "РР-11542 (ВЛГ2625)",
@@ -259,16 +282,16 @@ class TaskFixtures {
       isClosed: true,
       isOutdoor: true,
       flexibleAttribs: new LinkedHashMap.of({
-        "Наряд/Оператор": "Megafon",
-        "Наряд/ID заявки оператора": "INT38676",
+        orderOperatorNameFlexAttrName: "Megafon",
+        foreignOrderIdFlexAttrName: "INT38676",
         "Наряд/Договор": "№734577",
         "Наряд/Приоритет": "5",
         "Объект/Тип объекта": "Базовая станция",
-        "Объект/Название": "ВЛГ2625",
-        "Объект/Пробег до объекта (км)": "2 км"
+        objectNameFlexAttrName: "ВЛГ2625",
+        distanceToObjectFlexAttrName: "2 км"
       }));
 
-  static Task ninthTask = new Task(
+  static final Task ninthTask = new Task(
       id: 9,
       name: "РР-13678",
       desc: "РР-13678 (ВЛГ2023)",
@@ -288,16 +311,16 @@ class TaskFixtures {
       isClosed: true,
       isOutdoor: true,
       flexibleAttribs: new LinkedHashMap.of({
-        "Наряд/Оператор": "Megafon",
-        "Наряд/ID заявки оператора": "INT33566",
+        orderOperatorNameFlexAttrName: "Megafon",
+        foreignOrderIdFlexAttrName: "INT33566",
         "Наряд/Договор": "№734577",
         "Наряд/Приоритет": "5",
         "Объект/Тип объекта": "Базовая станция",
-        "Объект/Название": "ВЛГ2023",
-        "Объект/Пробег до объекта (км)": "10 км"
+        objectNameFlexAttrName: "ВЛГ2023",
+        distanceToObjectFlexAttrName: "10 км"
       }));
 
-  List<Task> thirdTaskFixture = List.of({
+  final List<Task> thirdTaskFixture = List.of({
     firstTask,
     secondTask,
     thirdTask,
@@ -309,7 +332,7 @@ class TaskFixtures {
     ninthTask
   });
 
-  List<Task> thirdTaskFixtureAdditionalTasks = List.of({
+  final List<Task> thirdTaskFixtureAdditionalTasks = List.of({
     new Task(
         id: 11,
         name: "ТО-17051",
@@ -328,13 +351,13 @@ class TaskFixtures {
         isClosed: false,
         isOutdoor: true,
         flexibleAttribs: new LinkedHashMap.of({
-          "Наряд/Оператор": "Megafon",
-          "Наряд/ID заявки оператора": "INT43463",
+          orderOperatorNameFlexAttrName: "Megafon",
+          foreignOrderIdFlexAttrName: "INT43463",
           "Наряд/Договор": "№464527",
           "Наряд/Приоритет": "9",
           "Объект/Тип объекта": "Базовая станция",
-          "Объект/Название": "ВЛГД1024",
-          "Объект/Пробег до объекта (км)": "6 км"
+          objectNameFlexAttrName: "ВЛГД1024",
+          distanceToObjectFlexAttrName: "6 км"
         })),
     new Task(
         id: 12,
@@ -354,13 +377,13 @@ class TaskFixtures {
         isClosed: false,
         isOutdoor: true,
         flexibleAttribs: new LinkedHashMap.of({
-          "Наряд/Оператор": "Tele2",
-          "Наряд/ID заявки оператора": "INT42748",
+          orderOperatorNameFlexAttrName: "Tele2",
+          foreignOrderIdFlexAttrName: "INT42748",
           "Наряд/Договор": "№464527",
           "Наряд/Приоритет": "1",
           "Объект/Тип объекта": "Базовая станция",
-          "Объект/Название": "ВЛГ2937",
-          "Объект/Пробег до объекта (км)": "2 км"
+          objectNameFlexAttrName: "ВЛГ2937",
+          distanceToObjectFlexAttrName: "2 км"
         }))
   });
 
