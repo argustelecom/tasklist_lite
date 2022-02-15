@@ -4,7 +4,14 @@
 Кроссплатформенное адаптивное приложение.
 
 ## Сборка
-1. Выполни настройку окружение как предлагается в интернете, https://docs.flutter.dev/get-started/install (пп. 1-2).
+1. Выполни настройку окружение как предлагается в интернете, https://docs.flutter.dev/get-started/install (пп. 1-2). 
+   Для установки скачай версию flutter sdk 2.10.1, дотупно в [SDK releases] (https://docs.flutter.dev/development/tools/sdk/releases).
+
+   **Обязательно! Если обновляешь у себя версию flutter на новую из-за зависимостей:**
+     - **сообщи всем в чате о необходимости обновления flutter sdk**
+     - **поменяй фиксированную версию в сборке .github/workflows/build.yml** 
+     - **поправь требуемую версию в pubspec.yaml**
+
 2. Выполни `flutter pub get` в каталоге проекта, чтобы затянуть нужные зависимости.
 ### в IDE (Android Studio)
 1. ПКМ на проекте (tasklist_lite) -> module settings -> project -> выбери android SDK (не путай с JDK).

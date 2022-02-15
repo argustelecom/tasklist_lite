@@ -23,7 +23,7 @@ jobs:
       - run: echo "Installed java to the runner."
       - uses: subosito/flutter-action@v1
         with:
-          flutter-version: "2.10.0"
+          flutter-version: "2.10.1"
           channel: "stable"
       - run: flutter pub get
 #      - name: Analyze code
