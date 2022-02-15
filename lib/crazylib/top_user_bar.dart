@@ -18,10 +18,11 @@ class TopUserBar extends StatelessWidget implements PreferredSizeWidget {
             toolbarHeight: 100,
             title: Column(
               children: [
-                Text(authController.userInfo == null
-                    ? ""
-                    : authController.userInfo!.userName + ",",
-                    key: ValueKey('$TopUserBar'+'_username')),
+                Text(
+                    authController.userInfo == null
+                        ? ""
+                        : authController.userInfo!.userName + ",",
+                    key: ValueKey('$TopUserBar' + '_username')),
                 Text(authController.userInfo == null
                     ? ""
                     : authController.userInfo!.homeRegionName),
@@ -32,18 +33,50 @@ class TopUserBar extends StatelessWidget implements PreferredSizeWidget {
               GetBuilder<NotificationController>(
                   init: NotificationController(),
                   builder: (notificationController) {
-                    return IconButton(
-                      iconSize: 36, //IconTheme.of(context).size ?? 24,
-                      tooltip: 'Уведомления',
-                      // Если есть, то колокольчик звонит, а если нет ...
-                      icon: Icon(notificationController.haveNotifications()
-                          ? Icons.notifications_active
-                          : Icons.notifications_outlined),
-                      onPressed: () {
-                        Navigator.pushNamed(
-                            context, NotificationsPage.routeName);
-                      },
-                    );
+                    return
+                      Padding(padding: EdgeInsets.only(top: 14), child: Stack(
+                        children: [
+                          Positioned(child: IconButton(
+                            iconSize: 36, //IconTheme.of(context).size ?? 24,
+                            tooltip: 'Уведомления',
+                            // Если есть, то колокольчик звонит, а если нет ...
+                            icon: Icon(notificationController.haveNotifications()
+                                ? Icons.notifications
+                                : Icons.notifications_outlined),
+                            onPressed: () {
+                              Navigator.pushNamed(
+                                  context, NotificationsPage.routeName);
+                            },
+                          ),),
+
+                          notificationController.aliveNotifications.length != 0
+                              ?
+                          Positioned(
+                            right: 8,
+                            top: 8,
+                            child:
+                            Container(
+                              padding: EdgeInsets.all(2),
+                              decoration: BoxDecoration(
+                                  color: Colors.red,
+                                  shape: BoxShape.circle),
+                              constraints: BoxConstraints(
+                                minWidth: 16,
+                                minHeight: 16,
+                              ),
+                              child: Text(
+                                '${notificationController.aliveNotifications.length}',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          )
+                              : Container(),
+                        ],
+                      ),);
                   }),
               IconButton(
                 iconSize: IconTheme.of(context).size ?? 24,
