@@ -4,6 +4,7 @@ import 'package:substring_highlight/substring_highlight.dart';
 import 'package:tasklist_lite/crazylib/task_due_date_label.dart';
 import 'package:tasklist_lite/state/tasklist_controller.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../tasklist/fixture/task_fixtures.dart';
 
@@ -133,15 +134,30 @@ class TaskCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       // #TODO: в макете у иконки еще elevation присутствует, с ходу не получилось сделать
-                      // #TODO: сделать animated, например как логотип на странице входа
-                      // #TODO: поиск по всем полям пока не работает
                       IconButton(
                         onPressed: () async {
-                          // #TODO: сделать переход на карту
                           // Есть map_launcher, но он в вебе не работает (ругается)
-                          // но можно открывать урл к google maps например
+                          // но можно открывать урл к yandex maps например
                           // https://stackoverflow.com/questions/52052232/flutter-url-launcher-google-maps
-                          // launch("map:" + task.getAddressDescription());
+                          String baseUrl = "https://yandex.ru/maps/?l=map&z=11";
+                          // параметры открытия яндекса см. https://yandex.com/dev/yandex-apps-launch/maps/doc/concepts/yandexmaps-web.html
+                          // #TODO: если бы у нас были текущиие координаты (а они будут в следующих версиях), можно открывать прям маршрут,
+                          // см. Plot Route https://yandex.com/dev/yandex-apps-launch/maps/doc/concepts/yandexmaps-web.html#yandexmaps-web__buildroute
+                          if ((task.latitude != null) &&
+                              (task.longitude != null)) {
+                            baseUrl = baseUrl +
+                                "&pt=" +
+                                task.latitude.toString() +
+                                "," +
+                                task.longitude.toString();
+                          } else if (task.address != null) {
+                            // если координаты не заданы, поищем по адресу
+                            baseUrl = baseUrl + "&text=" + task.address!;
+                          }
+                          final String encodedURl = Uri.encodeFull(baseUrl);
+                          // тут можно было бы проверить через canLaunch, но вроде не обязательно
+                          // в крайнем случае откроет просто карту в неподходящем месте
+                          launch(encodedURl);
                         },
                         icon: Icon(
                           Icons.place,

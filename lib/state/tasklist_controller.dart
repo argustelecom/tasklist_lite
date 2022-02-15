@@ -8,6 +8,7 @@ import 'package:tasklist_lite/tasklist/idle_time_reason_repository.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
 import 'package:tasklist_lite/tasklist/task_repository.dart';
 
+import '../tasklist/fixture/task_fixtures.dart';
 import '../tasklist/history_events_repository.dart';
 import '../tasklist/model/history_event.dart';
 
@@ -74,7 +75,7 @@ class TaskListController extends GetxController {
   // в данном случае сеттер не только меняет внутренее состояние контрооллера, но и отвечает также за сигнал
   // о необходимости обновления. #TODO: пока не ясно, насколько это нормально и правильно
   set searchText(String value) {
-    _searchText = value;
+    _searchText = value.toLowerCase();
     update();
   }
 
@@ -94,8 +95,21 @@ class TaskListController extends GetxController {
     closedTasks.sort((a, b) => a.closeDate!.compareTo(b.closeDate!));
     resultList.addAll(closedTasks);
     return List.of(resultList
-        // фильтруем по наличию введенного (в поле поиска) текста в названии задачи
-        .where((element) => element.name.contains(searchText))
+        // фильтруем по наличию введенного (в поле поиска) текста в названии и других полях задачи
+        .where((element) => (element.name.toLowerCase().contains(searchText) ||
+            element.flexibleAttribs[TaskFixtures.foreignOrderIdFlexAttrName]
+                .toString()
+                .toLowerCase()
+                .contains(searchText) ||
+            element.flexibleAttribs[TaskFixtures.objectNameFlexAttrName]
+                .toString()
+                .toLowerCase()
+                .contains(searchText) ||
+            element.flexibleAttribs[TaskFixtures.orderOperatorNameFlexAttrName]
+                .toString()
+                .toLowerCase()
+                .contains(searchText) ||
+            element.getAddressDescription().contains(searchText)))
         // фильтруем по признаку "назначенная/неназначенная"
         .where((element) => ((assignedSwitch && element.assignee != null) ||
             (!assignedSwitch && element.assignee == null)))
