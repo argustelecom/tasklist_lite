@@ -27,8 +27,7 @@ class TaskCard extends StatelessWidget {
         GetBuilder<TaskListController>(
       builder: (controller) {
         // размеры сознательно здесь не заданы, чтобы можно было масштабировать карточку снаружи, по размерам parent`а
-        child:
-        Card(
+        return Card(
           color: (task.isClosed ? Color(0xFFE5E4E4) : themeData.cardColor),
           elevation: 5,
           // без обертывания строки в IntrinsicHeight, не получилось увидеть VerticalDivider
