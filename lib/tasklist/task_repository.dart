@@ -11,13 +11,13 @@ class TaskRepository extends GetxService {
   // TODO переделать текущую реализацию вывова TaskRemoteClient,
   //  необходимо избавиться от постоянного создания TaskRemoteClient при вызове методов
 
-
   List<Task> getTasks(String basicAuth, String serverAddress) {
     /// получим таски из backend`а по graphQL, а если ничего не получим,
     /// то из соответствующего (то есть выбранного в настройках) профиля фикстурки
     // #TODO: пока не делаем это, надо отладить взаимодействие с сервером
     // TODO: проверить
-    TaskRemoteClient taskRemoteClient = TaskRemoteClient(basicAuth, serverAddress);
+    TaskRemoteClient taskRemoteClient =
+        TaskRemoteClient(basicAuth, serverAddress);
     List<Task> result = taskRemoteClient.getOpenedTasks() as List<Task>;
     if (result.isNotEmpty) {
       return result;
@@ -25,21 +25,21 @@ class TaskRepository extends GetxService {
     // прочитаем значение опции и используем соответствующую фикстуру
     ApplicationState applicationState = Get.find();
     TaskFixtures taskFixtures = Get.find();
-    return taskFixtures.getTasks(applicationState.currentTaskFixture);
+    return taskFixtures.getTasks();
   }
 
   ///****************************************************************************
   /// Возвращает reactive поток с открытыми задачами для слоя представления. Может получать
   /// задачи как из бакенда на сервере, так и из фикстуры
   ///****************************************************************************
-  Stream<List<Task>> streamOpenedTasks(String basicAuth, String serverAddress ) {
+  Stream<List<Task>> streamOpenedTasks(String basicAuth, String serverAddress) {
     ApplicationState applicationState = Get.find();
-    if (applicationState.currentTaskFixture != CurrentTaskFixture.noneFixture) {
+    if (applicationState.inDemonstrationMode) {
       TaskFixtures taskFixtures = Get.find();
-      return taskFixtures
-          .streamOpenedTasks(applicationState.currentTaskFixture);
+      return taskFixtures.streamOpenedTasks();
     }
-    TaskRemoteClient taskRemoteClient = TaskRemoteClient(basicAuth, serverAddress);
+    TaskRemoteClient taskRemoteClient =
+        TaskRemoteClient(basicAuth, serverAddress);
     Future<List<Task>> result = taskRemoteClient.getOpenedTasks();
     return result.asStream();
   }
@@ -48,14 +48,15 @@ class TaskRepository extends GetxService {
   /// Возвращает reactive поток с закрытыми задачами для слоя представления. Может получать
   /// задачи как из бакенда на сервере, так и из фикстуры
   ///****************************************************************************
-  Stream<List<Task>> streamClosedTasks(String basicAuth, String serverAddress ,DateTime day) {
+  Stream<List<Task>> streamClosedTasks(
+      String basicAuth, String serverAddress, DateTime day) {
     ApplicationState applicationState = Get.find();
-    if (applicationState.currentTaskFixture != CurrentTaskFixture.noneFixture) {
+    if (applicationState.inDemonstrationMode) {
       TaskFixtures taskFixtures = Get.find();
-      return taskFixtures.streamClosedTasks(
-          applicationState.currentTaskFixture, day);
+      return taskFixtures.streamClosedTasks(day);
     }
-    TaskRemoteClient taskRemoteClient = TaskRemoteClient(basicAuth, serverAddress);
+    TaskRemoteClient taskRemoteClient =
+        TaskRemoteClient(basicAuth, serverAddress);
     Future<List<Task>> result = taskRemoteClient.geClosedTasks(day);
     return result.asStream();
   }

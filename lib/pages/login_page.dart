@@ -64,7 +64,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class LoginPageState extends State<LoginPage> {
-  bool isDemonstrationModeChecked = false;
   TextEditingController _loginEditingController = new TextEditingController();
   TextEditingController _passwordEditingController =
       new TextEditingController();
@@ -139,12 +138,21 @@ class LoginPageState extends State<LoginPage> {
                             // [InkWell]. (см. каменты в checkbox_list_tile)
                             CheckboxListTile(
                           contentPadding: EdgeInsets.zero,
-                          value: isDemonstrationModeChecked,
+                          value:
+                              ApplicationState.of(context).inDemonstrationMode,
                           onChanged: (value) {
                             if (value != null) {
-                              setState(() {
-                                isDemonstrationModeChecked = value;
-                              });
+                              ApplicationState newApplicationState =
+                                  ApplicationState.of(context)
+                                      .copyWith(inDemonstrationMode: value);
+                              ApplicationState.update(
+                                  context, newApplicationState);
+                              // kostd: делаем это глупое помещение в контекст перед тем, как слой поведения обратится
+                              // к ApplicationState (см. камент в самом ApplicationState)
+                              // в данном конкретном случае проще всего помещать в контекст при изменении значения inDemonstrationMode
+                              // т.к. оно меняется только в одном месте -- здесь
+                              Get.delete<ApplicationState>();
+                              Get.put(newApplicationState);
                             }
                           },
                           title: Text(
@@ -160,7 +168,8 @@ class LoginPageState extends State<LoginPage> {
                             key: ValueKey('login_button'),
                             onPressed: () {
                               authController.login(
-                                  isDemonstrationModeChecked,
+                                  ApplicationState.of(context)
+                                      .inDemonstrationMode,
                                   _loginEditingController.text,
                                   _passwordEditingController.text,
                                   applicationState.serverAddress);

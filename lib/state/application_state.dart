@@ -1,33 +1,42 @@
 import 'package:flutter/material.dart';
-import 'package:tasklist_lite/tasklist/fixture/task_fixtures.dart';
 
 /// shared state приложения, реализовано в соответствии с концепцией inherited widget
 /// https://medium.com/flutter/managing-flutter-application-state-with-inheritedwidgets-1140452befe1
+///
+/// kostd, 16.02.2022: в чем разница применения этого и контроллеров, держащих весь остальной state?
+/// Пока (условно) считаем, что это разделяемый state приложения, к которому имеют доступ не только слой
+/// представления, но и слой поведения (domain в терминах clean architecture), то есть может инжектиться
+/// и вызываться сервисами и репозиториями.
+///
+/// Это тянет за собой неприятный костыль, требующий перед каждым вызовом слоя представления помещать в контекст (Get.put).
+/// Пока живем с этим. Живем и терпим.
+///
+/// #TODO: уже щас ясно, что слоистая архитектура в чистом виде у нас не получается, не применима. Нужно
+/// дальше курить clean architecture, разбираться, чем отличается от layered и переходить на нее.
+/// #TODO: для этого начинать например с https://devmuaz.medium.com/flutter-clean-architecture-series-part-1-d2d4c2e75c47
 class ApplicationState {
-
   static const String serverAddressUrl = "http://localhost:8080";
 
   const ApplicationState(
       {required this.themeMode,
-      required this.currentTaskFixture,
-      required this.serverAddress});
+      required this.serverAddress,
+      required this.inDemonstrationMode});
 
   final ThemeMode themeMode;
 
-  final CurrentTaskFixture currentTaskFixture;
-
   final String serverAddress;
+  final bool inDemonstrationMode;
 
   @override
   bool operator ==(Object other) {
     return other is ApplicationState &&
         this.themeMode == other.themeMode &&
-        this.currentTaskFixture == other.currentTaskFixture &&
-        this.serverAddress == other.serverAddress;
+        this.serverAddress == other.serverAddress &&
+        this.inDemonstrationMode == other.inDemonstrationMode;
   }
 
   @override
-  int get hashCode => hashValues(themeMode, currentTaskFixture, serverAddress);
+  int get hashCode => hashValues(themeMode, serverAddress, inDemonstrationMode);
 
   static ApplicationState of(BuildContext context) {
     // тут реализацию пришлось подглядеть в GalleryOptions, т.к. каноничная дает ошибки компиляции
@@ -47,12 +56,12 @@ class ApplicationState {
 
   ApplicationState copyWith(
       {ThemeMode? themeMode,
-      CurrentTaskFixture? currentTaskFixture,
-      String? serverAddress}) {
+      String? serverAddress,
+      bool? inDemonstrationMode}) {
     return ApplicationState(
         themeMode: themeMode ?? this.themeMode,
-        currentTaskFixture: currentTaskFixture ?? this.currentTaskFixture,
-        serverAddress: serverAddress ?? this.serverAddress);
+        serverAddress: serverAddress ?? this.serverAddress,
+        inDemonstrationMode: inDemonstrationMode ?? this.inDemonstrationMode);
   }
 }
 
@@ -63,8 +72,7 @@ class _ModelBindingScope extends InheritedWidget {
     // #TODO: разобраться в разнице между @requred и required. Первое, похоже, теперь рудимент
     required this.modelBindingState,
     required Widget child,
-  })  : assert(modelBindingState != null),
-        super(key: key, child: child);
+  }) : super(key: key, child: child);
 
   final _ModelBindingState modelBindingState;
 
@@ -80,8 +88,8 @@ class ModelBinding extends StatefulWidget {
     Key? key,
     this.initialModel = const ApplicationState(
         themeMode: ThemeMode.system,
-        currentTaskFixture: CurrentTaskFixture.thirdFixture,
-        serverAddress: ApplicationState.serverAddressUrl),
+        serverAddress: ApplicationState.serverAddressUrl,
+        inDemonstrationMode: false),
     required this.child,
   }) : super(key: key);
 
@@ -94,8 +102,8 @@ class ModelBinding extends StatefulWidget {
 class _ModelBindingState extends State<ModelBinding> {
   ApplicationState currentModel = ApplicationState(
       themeMode: ThemeMode.system,
-      currentTaskFixture: CurrentTaskFixture.firstFixture,
-      serverAddress: ApplicationState.serverAddressUrl);
+      serverAddress: ApplicationState.serverAddressUrl,
+      inDemonstrationMode: false);
 
   @override
   void initState() {

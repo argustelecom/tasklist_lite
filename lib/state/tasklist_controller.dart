@@ -75,18 +75,6 @@ class TaskListController extends GetxController {
   /// значение в поле ввода текста. в getTasks отдаются только таски, содержащие в названии этот текст
   String _searchText = "";
 
-  /// значение, соответствующее значению переключателя "назначенные/неназначенные"
-  bool _assignedSwitch = true;
-
-  bool get assignedSwitch => _assignedSwitch;
-
-  set assignedSwitch(bool value) {
-    _assignedSwitch = value;
-    // #TODO: хорошо бы update выполнять с указанием id подлежащих обновлению кусков
-    // этим снизим потребление ресурсов на обновления.
-    update();
-  }
-
   String get searchText => _searchText;
 
   // в данном случае сеттер не только меняет внутренее состояние контрооллера, но и отвечает также за сигнал
@@ -127,9 +115,6 @@ class TaskListController extends GetxController {
                 .toLowerCase()
                 .contains(searchText) ||
             element.getAddressDescription().contains(searchText)))
-        // фильтруем по признаку "назначенная/неназначенная"
-        .where((element) => ((assignedSwitch && element.assignee != null) ||
-            (!assignedSwitch && element.assignee == null)))
         // фильтруем по попаданию даты закрытия в текущий день
         .where((element) => ((!element.isClosed ||
             DateUtils.dateOnly(element.closeDate!).millisecondsSinceEpoch ==

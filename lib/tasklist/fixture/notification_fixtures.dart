@@ -1,4 +1,3 @@
-import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/tasklist/fixture/task_fixtures.dart';
 import 'package:tasklist_lite/tasklist/model/notify.dart';
 
@@ -55,19 +54,13 @@ class NotificationFixtures {
   });
 
   /// Метод для получения фикстуры уведомлений
-  List<Notify> getNotify(CurrentTaskFixture currentTaskFixture) {
-    //Если получили не третью фикстуру, вернем тестовое значение
-    if (currentTaskFixture != CurrentTaskFixture.thirdFixture) {
-      return test;
-    }
-    //Если третья фикстура, то вернем лист с уведомлениями
+  List<Notify> getNotify() {
     return firstNotifyFixture;
   }
 
   ///Запускаем стрим, который дает список открытых уведомлений
-  Stream<List<Notify>> streamOpenedNotification(
-      CurrentTaskFixture currentTaskFixture) async* {
-    List<Notify> notifies = getNotify(currentTaskFixture);
+  Stream<List<Notify>> streamOpenedNotification() async* {
+    List<Notify> notifies = getNotify();
 
     yield notifies;
 

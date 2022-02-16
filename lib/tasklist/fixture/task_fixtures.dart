@@ -4,61 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:tasklist_lite/tasklist/model/idle_time.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
 
-/// идентификаторы возможных фикстур, используемых для отладки приложения, когда нет реальных удаленных данных
-enum CurrentTaskFixture {
-  /// первая, самая минималистичная фикстурка
-  firstFixture,
-
-  /// вторая пожирнее
-  secondFixture,
-
-  /// третья фикстурка для извращенцев
-  thirdFixture,
-
-  /// фикстура не выбрана, действует только полученный удаленно набор данных
-  noneFixture
-}
-
 /// Служба, возвращающая набор задач по переданному идентификатору фикстуры
 class TaskFixtures {
-  // #TODO: в name должен быть скорее номер задачи, а указанное здесь должно быть в desc
-  List<Task> firstTaskFixture = List.of({
-    new Task(
-        id: 1,
-        name: "Ленинский 107 Атлант замена компрессора",
-        flexibleAttribs: LinkedHashMap()),
-  });
-
-  List<Task> firstTaskFixtureAdditionalTasks = List.of({
-    new Task(
-        id: 10,
-        name: "Ленинский 117 Минск диодный мост",
-        flexibleAttribs: LinkedHashMap())
-  });
-
-  List<Task> secondTaskFixture = List.of({
-    new Task(
-        id: 2,
-        name: "Papa Johns Ветеранов заказ 111",
-        flexibleAttribs: LinkedHashMap()),
-    new Task(
-        id: 3,
-        name: "Papa Johns 111 доставка Зины Портновой 15",
-        assignee: "developer",
-        flexibleAttribs: LinkedHashMap())
-  });
-
-  List<Task> secondTaskFixtureAdditionalTasks = List.of({
-    new Task(
-        id: 11,
-        name: "Pizza Hut Ветеранов заказ 15",
-        flexibleAttribs: LinkedHashMap()),
-    new Task(
-        id: 12,
-        name: "Pizza Hut доствка Ленинский 144",
-        flexibleAttribs: LinkedHashMap())
-  });
-
   static const foreignOrderIdFlexAttrName = "Наряд/ID заявки оператора";
   static const objectNameFlexAttrName = "Объект/Название";
   static const orderOperatorNameFlexAttrName = "Наряд/Оператор";
@@ -130,7 +77,7 @@ class TaskFixtures {
       taskType: "Назначение наряда бригаде",
       dueDate:
           DateUtils.dateOnly(DateTime.now()).add(const Duration(hours: 22)),
-      assignee: null,
+      assignee: "Богданова И.Л.",
       address: "г.Вологда, ул.Лесопарковая, 9Б",
       latitude: null,
       longitude: null,
@@ -158,7 +105,7 @@ class TaskFixtures {
       taskType: "Назначение наряда бригаде",
       dueDate: DateUtils.dateOnly(DateTime.now())
           .add(const Duration(hours: 24 * 1 + 16)),
-      assignee: null,
+      assignee: "Богданова И.Л.",
       address: "г.Вологда, ул.Северная, 27",
       latitude: null,
       longitude: null,
@@ -185,7 +132,7 @@ class TaskFixtures {
       taskType: "Назначение наряда бригаде",
       dueDate: DateUtils.dateOnly(DateTime.now())
           .add(const Duration(hours: 24 * 3 + 15)),
-      assignee: null,
+      assignee: "Богданова И.Л.",
       address: "г.Вологда, пр.Мира, 16",
       latitude: null,
       longitude: null,
@@ -320,7 +267,8 @@ class TaskFixtures {
         distanceToObjectFlexAttrName: "10 км"
       }));
 
-  final List<Task> thirdTaskFixture = List.of({
+  /// раньше были еще две фикстурки, а это была третьей
+  final List<Task> taskFixture = List.of({
     firstTask,
     secondTask,
     thirdTask,
@@ -332,7 +280,7 @@ class TaskFixtures {
     ninthTask
   });
 
-  final List<Task> thirdTaskFixtureAdditionalTasks = List.of({
+  final List<Task> taskFixtureAdditionalTasks = List.of({
     new Task(
         id: 11,
         name: "ТО-17051",
@@ -341,7 +289,7 @@ class TaskFixtures {
         taskType: "Назначение наряда бригаде",
         dueDate: DateUtils.dateOnly(DateTime.now())
             .add(const Duration(hours: 24 * 7 + 14)),
-        assignee: null,
+        assignee: "Богданова И.Л.",
         address: "г.Вологда, пр.Космонавтов, 23a",
         latitude: null,
         longitude: null,
@@ -387,34 +335,19 @@ class TaskFixtures {
         }))
   });
 
-  List<Task> getTasks(CurrentTaskFixture currentTaskFixture) {
-    if (currentTaskFixture == CurrentTaskFixture.firstFixture) {
-      // чтобы возвращалась не сама фикстура, а ее копия (иначе можем случайно потом изменить)
-      return List.of(firstTaskFixture);
-    } else if (currentTaskFixture == CurrentTaskFixture.secondFixture) {
-      return List.of(secondTaskFixture);
-    } else if (currentTaskFixture == CurrentTaskFixture.thirdFixture) {
-      return List.of(thirdTaskFixture);
-    } else
-      return new List.of({});
+  List<Task> getTasks() {
+    return List.of(taskFixture);
   }
 
   ///***************************************************************************
   /// периодически подает список с разным набором задач, чтобы была возможность
   /// протестировать клиентскую часть без подписок graphql
-  Stream<List<Task>> streamOpenedTasks(
-      CurrentTaskFixture currentTaskFixture) async* {
+  Stream<List<Task>> streamOpenedTasks() async* {
     while (true) {
-      List<Task> tasks = getTasks(currentTaskFixture);
+      List<Task> tasks = getTasks();
       // по четным минутам в возвращаемое значение подмешиваем additional задачи
       if (DateTime.now().minute.isEven) {
-        if (currentTaskFixture == CurrentTaskFixture.firstFixture) {
-          tasks.addAll(firstTaskFixtureAdditionalTasks);
-        } else if (currentTaskFixture == CurrentTaskFixture.secondFixture) {
-          tasks.addAll(secondTaskFixtureAdditionalTasks);
-        } else {
-          tasks.addAll(thirdTaskFixtureAdditionalTasks);
-        }
+        tasks.addAll(taskFixtureAdditionalTasks);
       }
       yield tasks.where((e) => !e.isClosed).toList();
 
@@ -422,19 +355,12 @@ class TaskFixtures {
     }
   }
 
-  Stream<List<Task>> streamClosedTasks(
-      CurrentTaskFixture currentTaskFixture, DateTime day) async* {
+  Stream<List<Task>> streamClosedTasks(DateTime day) async* {
     while (true) {
-      List<Task> tasks = getTasks(currentTaskFixture);
+      List<Task> tasks = getTasks();
 
       if (DateTime.now().minute.isEven) {
-        if (currentTaskFixture == CurrentTaskFixture.firstFixture) {
-          tasks.addAll(firstTaskFixtureAdditionalTasks);
-        } else if (currentTaskFixture == CurrentTaskFixture.secondFixture) {
-          tasks.addAll(secondTaskFixtureAdditionalTasks);
-        } else {
-          tasks.addAll(thirdTaskFixtureAdditionalTasks);
-        }
+        tasks.addAll(taskFixtureAdditionalTasks);
       }
       List<Task> closedTasks = tasks.where((e) => e.isClosed).toList();
       yield closedTasks;

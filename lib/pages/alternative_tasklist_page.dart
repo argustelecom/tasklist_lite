@@ -12,7 +12,6 @@ import 'package:tasklist_lite/layout/tasklist_multi_child_layout_delgate.dart';
 import 'package:tasklist_lite/pages/task_page.dart';
 import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/state/auth_controller.dart';
-import 'package:tasklist_lite/tasklist/fixture/task_fixtures.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
 import 'package:tasklist_lite/tasklist/task_repository.dart';
 
@@ -82,26 +81,6 @@ class _AlternativeTaskListPageState extends State<AlternativeTaskListPage> {
                                         context,
                                         ApplicationState.of(context)
                                             .copyWith(themeMode: newValue));
-                                  }),
-                              ExpansionRadioTile<CurrentTaskFixture>(
-                                  title: Text("Источник данных"),
-                                  selectedObject: ApplicationState.of(context)
-                                      .currentTaskFixture,
-                                  optionsMap: LinkedHashMap.of({
-                                    CurrentTaskFixture.firstFixture:
-                                        "Первая фикстура",
-                                    CurrentTaskFixture.secondFixture:
-                                        "Вторая фикстура",
-                                    CurrentTaskFixture.thirdFixture:
-                                        "Третья фикстура",
-                                    CurrentTaskFixture.noneFixture:
-                                        "Фикстура не выбрана (удаленный источник данных)"
-                                  }),
-                                  onChanged: (CurrentTaskFixture? newValue) {
-                                    ApplicationState.update(
-                                        context,
-                                        ApplicationState.of(context).copyWith(
-                                            currentTaskFixture: newValue));
                                   }),
                             ],
                           ),
