@@ -8,6 +8,9 @@
 .buildlog/
 .history
 .svn/
+#файлы разрешения конфликтов сгенерированные kdiff
+*.orig
+
 
 # IntelliJ related
 *.iml

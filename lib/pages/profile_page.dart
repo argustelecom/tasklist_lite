@@ -1,12 +1,12 @@
 import 'dart:collection';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get/get.dart';
 import 'package:tasklist_lite/crazylib/expansion_radio_tile.dart';
 import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
+import 'package:tasklist_lite/pages/about_app_page.dart';
 import 'package:tasklist_lite/pages/help_page.dart';
 import 'package:tasklist_lite/pages/login_page.dart';
 import 'package:tasklist_lite/pages/support_page.dart';
@@ -130,51 +130,47 @@ class ProfilePageState extends State<ProfilePage> {
     //Отступ карточки блока
     EdgeInsets paddingSettingBlock =
         EdgeInsets.only(left: 15, right: 15, bottom: 2);
+    return GetX<AuthController>(builder: (authController) {
+      UserInfo userInfo = authController.userInfo as UserInfo;
+      return ReflowingScaffold(
+          appBar: AppBar(
+            // нажатие на заголовок должно возвращать назад
+            title: InkResponse(
+                child: Text("Профиль"),
+                highlightShape: BoxShape.rectangle,
+                onTap: () {
+                  Navigator.pop(context);
+                }),
+            titleTextStyle: TextStyle(fontFamily: "ABeeZee", fontSize: 20),
+            leading: IconButton(
+              icon: const Icon(Icons.chevron_left_outlined),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            toolbarHeight: 50,
+            elevation: 5.0,
+            titleSpacing: 0.0,
+            actions: [
+              //Скопировано из TopUserBar
+              IconButton(
+                iconSize: IconTheme.of(context).size ?? 24,
+                tooltip: 'Выход',
+                icon: const Icon(Icons.exit_to_app_outlined),
+                onPressed: () {
+                  authController.logout();
+                  Navigator.pushNamed(context, LoginPage.routeName);
+                },
+              )
+            ],
 
-    return ReflowingScaffold(
-        appBar: AppBar(
-          title: new Text("Профиль"),
-          leading: IconButton(
-            icon: Icon(Icons.chevron_left_outlined),
-            onPressed: () {
-              Navigator.pop(context);
-            },
+            //  bottom: BorderSide(color: themeData.dividerColor, width: 2.0)))
           ),
-        ),
-        body: ListView(
-            padding: EdgeInsets.symmetric(vertical: 7, horizontal: 15),
-            shrinkWrap: true,
-            children: [
-              GetX<AuthController>(builder: (authController) {
-                UserInfo userInfo = authController.userInfo as UserInfo;
-
-                Widget contactsChief;
-                if (authController.userInfo?.contactChiefList != null)
-                  contactsChief = ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: userInfo.contactChiefList!.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Column(children: [
-                          TextWithLabelColumn(
-                              label: "Ваш руководитель:",
-                              value: userInfo.contactChiefList!
-                                  .elementAt(index)
-                                  .name),
-                          TextWithLabelColumn(
-                              label: "Контактный телефон руководителя:",
-                              value: userInfo.contactChiefList!
-                                  .elementAt(index)
-                                  .phoneNum!,
-                              type: TextType.phone),
-                        ]);
-                      });
-                else
-                  contactsChief = Text("Нет контактов руководителя.",
-                      style: TextStyle(
-                          fontSize: 16.0,
-                          color: Color(0xFF646363),
-                          fontWeight: FontWeight.normal));
-                return Column(children: [
+          body: ListView(
+              padding: EdgeInsets.symmetric(vertical: 7, horizontal: 15),
+              shrinkWrap: true,
+              children: [
+                Column(children: [
                   Container(
                       padding: EdgeInsets.only(left: 17, right: 15, top: 10),
                       alignment: Alignment.centerLeft,
@@ -186,24 +182,27 @@ class ProfilePageState extends State<ProfilePage> {
                       child: Card(
                           elevation: 3,
                           color: context.theme.cardColor,
-                          child: ListView(shrinkWrap: true, children: [
-                            TextWithLabelColumn(
-                                label: "ФИО:",
-                                value: userInfo.getFullWorkerName()),
-                            TextWithLabelColumn(
-                                label: "Табельный номер:",
-                                value: userInfo.tabNumber.toString()),
-                            TextWithLabelColumn(
-                                label: "Почтовый адрес:",
-                                value: userInfo.email.toString()),
-                            TextWithLabelColumn(
-                                label: "Должность:",
-                                value: userInfo.workerAppoint.toString()),
-                            TextWithLabelColumn(
-                                label: "Основной участок:",
-                                value: userInfo.mainWorksite.toString())
-                          ]))),
-                  //TODO: а что если не руководителя? придумать как быть с null
+                          child: ListView(
+                              shrinkWrap: true,
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 15, vertical: 10),
+                              children: [
+                                TextWithLabelColumn(
+                                    label: "ФИО:",
+                                    value: userInfo.getFullWorkerName()),
+                                TextWithLabelColumn(
+                                    label: "Табельный номер:",
+                                    value: userInfo.tabNumber.toString()),
+                                TextWithLabelColumn(
+                                    label: "Почтовый адрес:",
+                                    value: userInfo.email.toString()),
+                                TextWithLabelColumn(
+                                    label: "Должность:",
+                                    value: userInfo.workerAppoint.toString()),
+                                TextWithLabelColumn(
+                                    label: "Основной участок:",
+                                    value: userInfo.mainWorksite.toString())
+                              ]))),
                   Container(
                       padding: EdgeInsets.only(left: 17, right: 15, top: 10),
                       alignment: Alignment.centerLeft,
@@ -215,228 +214,291 @@ class ProfilePageState extends State<ProfilePage> {
                       child: Card(
                           elevation: 3,
                           color: context.theme.cardColor,
-                          child: contactsChief))
-                ]);
-              }),
-              Padding(
-                  padding:
-                      EdgeInsets.only(left: 17, right: 15, bottom: 10, top: 4),
-                  child: Text("Настройки приложения",
-                      style: TextStyle(fontSize: 18))),
-              Padding(
-                  padding: paddingSettingBlock,
-                  child: Card(
-                      elevation: 3,
-                      child: SizedBox(
-                          height: 50.0,
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Padding(
-                                    padding: EdgeInsets.only(left: 15),
-                                    child: Text(
-                                      "Ночной режим",
-                                    )),
-                                Padding(
-                                    padding: EdgeInsets.only(right: 5),
-                                    child: Transform.scale(
-                                        scale: 1.1,
-                                        child: CupertinoSwitch(
-                                            activeColor:
-                                                Color.fromRGBO(251, 194, 47, 1),
-                                            value: ApplicationState.of(context)
-                                                    .themeMode ==
-                                                ThemeMode.dark,
-                                            onChanged: (value) {
-                                              if (value) {
-                                                ApplicationState.update(
-                                                    context,
+                          child: _ContactsChiefListView(
+                              contactChiefList: userInfo.contactChiefList))),
+                  Container(
+                      padding: EdgeInsets.only(
+                          left: 17, right: 15, bottom: 10, top: 10),
+                      alignment: Alignment.centerLeft,
+                      child: Text("Настройки приложения",
+                          style: TextStyle(fontSize: 18))),
+                  Padding(
+                      padding: paddingSettingBlock,
+                      child: Card(
+                          elevation: 3,
+                          child: SizedBox(
+                              height: 50.0,
+                              child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Padding(
+                                        padding: EdgeInsets.only(left: 15),
+                                        child: Text(
+                                          "Ночной режим",
+                                        )),
+                                    Padding(
+                                        padding: EdgeInsets.only(right: 5),
+                                        child: Transform.scale(
+                                            scale: 1.1,
+                                            child: Switch(
+                                                activeColor: Color(0xFFFFFF),
+                                                activeTrackColor:
+                                                    Color(0xFBC22F),
+                                                value:
                                                     ApplicationState.of(context)
-                                                        .copyWith(
-                                                            themeMode: ThemeMode
-                                                                .dark));
-                                              } else {
-                                                ApplicationState.update(
-                                                    context,
-                                                    ApplicationState.of(context)
-                                                        .copyWith(
-                                                            themeMode: ThemeMode
-                                                                .light));
-                                              }
-                                            })))
-                              ])))),
-              Padding(
-                  padding: paddingSettingBlock,
-                  child: Card(
-                      elevation: 3,
-                      child: SizedBox(
-                          height: 50.0,
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                            .themeMode ==
+                                                        ThemeMode.dark,
+                                                onChanged: (value) {
+                                                  if (value) {
+                                                    ApplicationState.update(
+                                                        context,
+                                                        ApplicationState.of(
+                                                                context)
+                                                            .copyWith(
+                                                                themeMode:
+                                                                    ThemeMode
+                                                                        .dark));
+                                                  } else {
+                                                    ApplicationState.update(
+                                                        context,
+                                                        ApplicationState.of(
+                                                                context)
+                                                            .copyWith(
+                                                                themeMode:
+                                                                    ThemeMode
+                                                                        .light));
+                                                  }
+                                                })))
+                                  ])))),
+                  Padding(
+                      padding: paddingSettingBlock,
+                      child: Card(
+                          elevation: 3,
+                          child: SizedBox(
+                              height: 50.0,
+                              child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Padding(
+                                        padding: EdgeInsets.only(left: 15),
+                                        child: Text(
+                                          "Запоминать избранные работы",
+                                        )),
+                                    Padding(
+                                        padding: EdgeInsets.only(right: 5),
+                                        child: Transform.scale(
+                                            scale: 1.1,
+                                            child:
+                                                //Переклбчатель задизайблен, так как
+                                                //доработка "Запоминать избранные работы"
+                                                //будет в следующих этапах
+                                                Switch(
+                                                    activeColor:
+                                                        Color(0xFFFFFF),
+                                                    activeTrackColor:
+                                                        Color(0xFBC22F),
+                                                    value: false,
+                                                    // непосреджственно отсутствие действий при нажатии
+                                                    // дизеблит переключатель в ui (тускнет и окрашивается в серый цвет)
+                                                    onChanged: null)))
+                                  ])))),
+                  Padding(
+                      padding: paddingSettingBlock,
+                      child: Card(
+                          elevation: 3,
+                          child: ExpansionTile(
+                              title: Text("Адрес сервера"),
                               children: [
-                                Padding(
-                                    padding: EdgeInsets.only(left: 15),
-                                    child: Text(
-                                      "Запоминать избранные работы",
-                                    )),
-                                Padding(
-                                    padding: EdgeInsets.only(right: 5),
-                                    child: Transform.scale(
-                                        scale: 1.1,
-                                        child:
-                                            //Переклбчатель задизайблен, так как
-                                            //доработка "Запоминать избранные работы"
-                                            //будет в следующих этапах
-                                            CupertinoSwitch(
-                                          value: false,
-                                          onChanged: null,
-                                          activeColor:
-                                              Color.fromRGBO(251, 194, 47, 1),
-                                        )))
-                              ])))),
-              Padding(
-                  padding: paddingSettingBlock,
-                  child: Card(
-                      elevation: 3,
-                      child: ExpansionTile(
-                          title: Text("Адрес сервера"),
-                          children: [
-                            Focus(
-                              onFocusChange: (value) {
-                                // здесь value имеет тип bool и говорит, обрели мы фокус (true) или потеряли (false)
-                                // #TODO: и почему все же нет такого у TextField из коробки? эх, еще учиться и учиться!
-                                if (!value) {
-                                  onServerAddressEdited();
-                                }
-                              },
-                              // TypeAheadField -- это одна из реализаций поля с autocompete (на вкус kostd, наиболее зрелая)
-                              child: TypeAheadField<String>(
-                                textFieldConfiguration: TextFieldConfiguration(
-                                  controller: _serverAddressEditingController,
-                                  onSubmitted: (value) {
-                                    // достаточно вызывать из onFocusChanged, т.к иначе это будет повторный вызов
-                                    //onServerAddressEdited();
+                                Focus(
+                                  onFocusChange: (value) {
+                                    // здесь value имеет тип bool и говорит, обрели мы фокус (true) или потеряли (false)
+                                    // #TODO: и почему все же нет такого у TextField из коробки? эх, еще учиться и учиться!
+                                    if (!value) {
+                                      onServerAddressEdited();
+                                    }
                                   },
-                                  decoration: InputDecoration(
-                                      labelText:
-                                          "В формате <доменное имя(ip):порт>"),
+                                  // TypeAheadField -- это одна из реализаций поля с autocompete (на вкус kostd, наиболее зрелая)
+                                  child: TypeAheadField<String>(
+                                    textFieldConfiguration:
+                                        TextFieldConfiguration(
+                                      controller:
+                                          _serverAddressEditingController,
+                                      onSubmitted: (value) {
+                                        // достаточно вызывать из onFocusChanged, т.к иначе это будет повторный вызов
+                                        //onServerAddressEdited();
+                                      },
+                                      decoration: InputDecoration(
+                                          labelText:
+                                              "В формате <доменное имя(ip):порт>"),
+                                    ),
+                                    suggestionsCallback: (String pattern) {
+                                      return serverAddressSuggestions.where(
+                                          (element) =>
+                                              element.startsWith(pattern));
+                                    },
+                                    itemBuilder:
+                                        (BuildContext context, suggestion) {
+                                      return ListTile(
+                                        title: Text(suggestion),
+                                      );
+                                    },
+                                    onSuggestionSelected: (String suggestion) {
+                                      _serverAddressEditingController.text =
+                                          suggestion;
+                                    },
+                                    noItemsFoundBuilder: (context) {
+                                      // иначе будет показан жирный No items found!
+                                      return Text("");
+                                    },
+                                  ),
                                 ),
-                                suggestionsCallback: (String pattern) {
-                                  return serverAddressSuggestions.where(
-                                      (element) => element.startsWith(pattern));
-                                },
-                                itemBuilder:
-                                    (BuildContext context, suggestion) {
-                                  return ListTile(
-                                    title: Text(suggestion),
-                                  );
-                                },
-                                onSuggestionSelected: (String suggestion) {
-                                  _serverAddressEditingController.text =
-                                      suggestion;
-                                },
-                                noItemsFoundBuilder: (context) {
-                                  // иначе будет показан жирный No items found!
-                                  return Text("");
-                                },
-                              ),
-                            ),
-                          ]))),
-              Padding(
-                  padding: paddingSettingBlock,
-                  child: Card(
-                      elevation: 3,
-                      child: ExpansionRadioTile<CurrentTaskFixture>(
-                          title: Text("Источник данных"),
-                          selectedObject:
-                              ApplicationState.of(context).currentTaskFixture,
-                          optionsMap: LinkedHashMap.of({
-                            CurrentTaskFixture.firstFixture: "Первая фикстура",
-                            CurrentTaskFixture.secondFixture: "Вторая фикстура",
-                            CurrentTaskFixture.thirdFixture: "Третья фикстура",
-                            CurrentTaskFixture.noneFixture:
-                                "Фикстура не выбрана (удаленный источник данных)"
-                          }),
-                          onChanged: (CurrentTaskFixture? newValue) {
-                            ApplicationState.update(
-                                context,
-                                ApplicationState.of(context)
-                                    .copyWith(currentTaskFixture: newValue));
-                          }))),
-              Padding(
-                  padding: paddingSettingBlock,
-                  child: Card(
-                      elevation: 3,
-                      child: SizedBox(
-                          height: 50.0,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Padding(
-                                  padding: EdgeInsets.only(left: 15),
-                                  child: Text("Служба поддержки")),
-                              IconButton(
-                                  alignment: Alignment.centerRight,
-                                  padding: EdgeInsets.only(right: 15),
-                                  iconSize: 30,
-                                  tooltip: 'Служба поддержки',
-                                  icon:
-                                      const Icon(Icons.chevron_right_outlined),
-                                  onPressed: () {
-                                    Navigator.pushNamed(
-                                        context, SupportPage.routeName);
-                                  })
-                            ],
-                          )))),
-              Padding(
-                  padding: paddingSettingBlock,
-                  child: Card(
-                      elevation: 3,
-                      child: SizedBox(
-                          height: 50.0,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Padding(
-                                  padding: EdgeInsets.only(left: 15),
-                                  child: Text("Помощь")),
-                              IconButton(
-                                  alignment: Alignment.centerRight,
-                                  padding: EdgeInsets.only(right: 15),
-                                  iconSize: 30,
-                                  tooltip: 'Помощь',
-                                  icon:
-                                      const Icon(Icons.chevron_right_outlined),
-                                  onPressed: () {
-                                    Navigator.pushNamed(
-                                        context, HelpPage.routeName);
-                                  })
-                            ],
-                          )))),
-              Padding(
-                  padding: paddingSettingBlock,
-                  child: Card(
-                      elevation: 3,
-                      child: SizedBox(
-                        height: 50.0,
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Padding(
-                                  padding: EdgeInsets.only(left: 15),
-                                  child: Text("О приложении")),
-                              //TODO: Значение версии нужно брать из настройки.
-                              Padding(
-                                  padding: EdgeInsets.only(right: 15),
-                                  child: Text("0.0.1",
-                                      style: TextStyle(color: Colors.grey)))
-                            ]),
-                      )))
-            ]));
+                              ]))),
+                  Padding(
+                      padding: paddingSettingBlock,
+                      child: Card(
+                          elevation: 3,
+                          child: ExpansionRadioTile<CurrentTaskFixture>(
+                              title: Text("Источник данных"),
+                              selectedObject: ApplicationState.of(context)
+                                  .currentTaskFixture,
+                              optionsMap: LinkedHashMap.of({
+                                CurrentTaskFixture.firstFixture:
+                                    "Первая фикстура",
+                                CurrentTaskFixture.secondFixture:
+                                    "Вторая фикстура",
+                                CurrentTaskFixture.thirdFixture:
+                                    "Третья фикстура",
+                                CurrentTaskFixture.noneFixture:
+                                    "Фикстура не выбрана (удаленный источник данных)"
+                              }),
+                              onChanged: (CurrentTaskFixture? newValue) {
+                                ApplicationState.update(
+                                    context,
+                                    ApplicationState.of(context).copyWith(
+                                        currentTaskFixture: newValue));
+                              }))),
+                  Padding(
+                      padding: paddingSettingBlock,
+                      child: Card(
+                          elevation: 3,
+                          child: SizedBox(
+                              height: 50.0,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Padding(
+                                      padding: EdgeInsets.only(left: 15),
+                                      child: Text("Служба поддержки")),
+                                  IconButton(
+                                      alignment: Alignment.centerRight,
+                                      padding: EdgeInsets.only(right: 15),
+                                      iconSize: 30,
+                                      tooltip: 'Служба поддержки',
+                                      icon: const Icon(
+                                          Icons.chevron_right_outlined),
+                                      onPressed: () {
+                                        Navigator.pushNamed(
+                                            context, SupportPage.routeName);
+                                      })
+                                ],
+                              )))),
+                  Padding(
+                      padding: paddingSettingBlock,
+                      child: Card(
+                          elevation: 3,
+                          child: SizedBox(
+                              height: 50.0,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Padding(
+                                      padding: EdgeInsets.only(left: 15),
+                                      child: Text("Помощь")),
+                                  IconButton(
+                                      alignment: Alignment.centerRight,
+                                      padding: EdgeInsets.only(right: 15),
+                                      iconSize: 30,
+                                      tooltip: 'Помощь',
+                                      icon: const Icon(
+                                          Icons.chevron_right_outlined),
+                                      onPressed: () {
+                                        Navigator.pushNamed(
+                                            context, HelpPage.routeName);
+                                      })
+                                ],
+                              )))),
+                  Padding(
+                      padding: paddingSettingBlock,
+                      child: Card(
+                          elevation: 3,
+                          child: SizedBox(
+                              height: 50.0,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Padding(
+                                      padding: EdgeInsets.only(left: 15),
+                                      child: Text("О приложении")),
+                                  IconButton(
+                                      alignment: Alignment.centerRight,
+                                      padding: EdgeInsets.only(right: 15),
+                                      iconSize: 30,
+                                      tooltip: 'О приложении',
+                                      icon: const Icon(
+                                          Icons.chevron_right_outlined),
+                                      onPressed: () {
+                                        Navigator.pushNamed(
+                                            context, AboutAppPage.routeName);
+                                      })
+                                ],
+                              ))))
+                ])
+              ]));
+    });
   }
 }
 
-enum TextType { text, phone }
+/// Для отображения контактов руководителя на странице profile
+class _ContactsChiefListView extends StatelessWidget {
+  final List<Contact>? contactChiefList;
+
+  _ContactsChiefListView({Key? key, required this.contactChiefList})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    if (contactChiefList != null) {
+      return ListView.builder(
+          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+          shrinkWrap: true,
+          itemCount: contactChiefList?.length,
+          itemBuilder: (BuildContext context, int index) {
+            return Column(children: [
+              TextWithLabelColumn(
+                  label: "ФИО:",
+                  value: contactChiefList?.elementAt(index).name ?? ""),
+              TextWithLabelColumn(
+                  label: "Контактный телефон:",
+                  value: contactChiefList?.elementAt(index).phoneNum ?? "",
+                  type: _TextType.phone),
+            ]);
+          });
+    } else {
+      return Text("Нет контактов руководителя.",
+          style: TextStyle(
+              fontSize: 16.0,
+              color: Color(0xFF646363),
+              fontWeight: FontWeight.normal));
+    }
+  }
+}
+
+enum _TextType { text, phone }
 
 /// Отображеине текста lable: value столбцом в card
 /// отделил для сохранения отсутупов на странице profile_page.
@@ -446,33 +508,29 @@ enum TextType { text, phone }
 class TextWithLabelColumn extends StatelessWidget {
   final String label;
   final String value;
-  final TextType type;
+  final _TextType type;
 
   TextWithLabelColumn(
       {Key? key,
       required this.label,
       required this.value,
-      this.type = TextType.text})
+      this.type = _TextType.text})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     Widget textWidget;
-    if (type == TextType.phone) {
+    if (type == _TextType.phone) {
       // Если поле телефон указали несколько номеров, нужно их распарсить для
       // отображения через заяпятую отдельными ссылками.
       List<TextSpan> textSpanList = [];
       List<String> phoneNums = value.split(new RegExp(r'[, ]+'));
       for (final number in phoneNums) {
-        if (textSpanList.isNotEmpty) textSpanList.add(TextSpan(
-            text:
-            ", ",
-            style: TextStyle(
-                fontSize: 16,
-                color: Colors.black)));
+        if (textSpanList.isNotEmpty)
+          textSpanList.add(TextSpan(
+              text: ", ", style: TextStyle(fontSize: 16, color: Colors.black)));
         textSpanList.add(TextSpan(
-            text:
-            "$number",
+            text: "$number",
             style: TextStyle(
                 fontSize: 16,
                 color: Colors.blue,
@@ -485,9 +543,7 @@ class TextWithLabelColumn extends StatelessWidget {
       }
       textWidget = Container(
           alignment: Alignment.centerLeft,
-          child: RichText(
-              text: TextSpan(children: textSpanList
-                 )));
+          child: RichText(text: TextSpan(children: textSpanList)));
     } else {
       textWidget = Container(
           alignment: Alignment.centerLeft,
@@ -495,7 +551,7 @@ class TextWithLabelColumn extends StatelessWidget {
     }
     return Container(
         alignment: Alignment.centerLeft,
-        padding: EdgeInsets.only(left: 15, right: 15, bottom: 5, top: 5),
+        padding: EdgeInsets.only(bottom: 5, top: 5),
         child: Column(children: [
           Container(
               alignment: Alignment.centerLeft,

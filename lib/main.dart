@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'package:tasklist_lite/auth/auth_service.dart';
+import 'package:tasklist_lite/pages/about_app_page.dart';
 import 'package:tasklist_lite/pages/alternative_tasklist_page.dart';
 import 'package:tasklist_lite/pages/help_page.dart';
 import 'package:tasklist_lite/pages/login_page.dart';
@@ -44,7 +45,8 @@ class MyApp extends StatelessWidget {
     ),
     LoginPage.routeName: LoginPage(),
     SupportPage.routeName: SupportPage(title: "Служба поддержки"),
-    HelpPage.routeName: HelpPage(title: "Помощь")
+    HelpPage.routeName: HelpPage(title: "Помощь"),
+    AboutAppPage.routeName: AboutAppPage(title: "О приложении")
 };
 
   // то же самое (то есть не пустить на страницу, а отправить на форму входа, если не залогинен)
