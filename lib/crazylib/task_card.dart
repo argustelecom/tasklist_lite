@@ -40,6 +40,7 @@ class TaskCard extends StatelessWidget {
                 Expanded(
                   child: InkWell(
                     onTap: () {
+                      controller.setCurrentTask(task);
                       Navigator.pushNamed(
                         context,
                         this.taskPageRouteName,

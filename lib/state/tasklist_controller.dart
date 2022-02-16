@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/state/auth_controller.dart';
+import 'package:tasklist_lite/user_secure_storage/user_secure_storage_service.dart';
 import 'package:tasklist_lite/tasklist/idle_time_reason_repository.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
 import 'package:tasklist_lite/tasklist/task_repository.dart';
@@ -54,6 +55,22 @@ class TaskListController extends GetxController {
 
   /// выбранный таск.
   Task? currentTask;
+
+  Future initCurrentTask() async {
+    currentTask = await UserSecureStorageService.getTask();
+  }
+
+  setCurrentTask(Task? task) {
+    currentTask = task;
+    UserSecureStorageService.setTask(task);
+  }
+
+  Task? getCurrentTask() {
+    if (currentTask == null) {
+      initCurrentTask().whenComplete(() => null);
+    }
+    return currentTask;
+  }
 
   /// значение в поле ввода текста. в getTasks отдаются только таски, содержащие в названии этот текст
   String _searchText = "";

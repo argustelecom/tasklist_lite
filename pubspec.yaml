@@ -52,6 +52,8 @@ dependencies:
   dropdown_button2: ^1.1.1
   url_launcher: ^6.0.0
 
+  flutter_secure_storage: ^5.0.2
+
 dev_dependencies:
   # для unit тестов
   test: ^1.17.0

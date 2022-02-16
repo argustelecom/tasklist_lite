@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tasklist_lite/auth/auth_service.dart';
+import 'package:tasklist_lite/user_secure_storage/user_secure_storage_service.dart';
 import 'package:tasklist_lite/tasklist/model/user_info.dart';
 
 ///*******************************************************************************
@@ -12,11 +12,11 @@ import 'package:tasklist_lite/tasklist/model/user_info.dart';
 class AuthController extends GetxController {
   /// Состоялся ли успешный логин в рамках этого сеанса работы.
   /// Почему тут не обойтись без .obs? потому что получить настоящее значение
-  /// isAuthenticated мы должны из sharedPreferences, которые инициализируются
+  /// isAuthenticated мы должны из UserSecureStorage, который инициализируется
   /// асинхронно. То есть (см. например https://habr.com/ru/post/497278/,
   /// https://dart.dev/codelabs/async-await#execution-flow-with-async-and-await )
   /// сначала контроллер синхронно вернет неверное локальное значение, а потом,
-  /// в event loop`e (то есть хз когда) проинитит shared preferences и достанет
+  /// в event loop`e (то есть хз когда) проинитит UserSecureStorage и достанет
   /// настоящее значение. К этому моменту onGenerateRoute из main`а уже отработает
   /// по неправильному, ранее возвращенному значению. И только реактивность и
   /// observable может заставить onGenerateRoute учесть правильное значение, когда
@@ -33,12 +33,6 @@ class AuthController extends GetxController {
   /// в случае, если при попытке входа была ошибка, она будет сохранена суда, и будет отображена
   /// в нижней части LoginPage
   String? _errorText;
-
-  // #TODO: хранение надо спрятать в отдельный слой/класс
-  final Future<SharedPreferences> sharedPreferencesFuture =
-      SharedPreferences.getInstance();
-
-  late final SharedPreferences? sharedPreferences;
 
   static const String authenticatedKeyName = "authenticated";
   static const String authenticated = "Authorization";
@@ -57,7 +51,7 @@ class AuthController extends GetxController {
     // наверное да, т.к. не все и не везде наблюдают?
     update();
 
-    sharedPreferences?.setBool(authenticatedKeyName, _isAuthenticated.value);
+    UserSecureStorageService.setAuthenticated(_isAuthenticated.value);
   }
 
   UserInfo? get userInfo => _userInfo.value;
@@ -65,10 +59,7 @@ class AuthController extends GetxController {
   set userInfo(UserInfo? value) {
     _userInfo.value = value;
     update();
-    sharedPreferences?.setString(
-        userInfoKeyName,
-        // jsonEncode сам вызовет toJson у переданного объекта (см. каменты в jsonEncode)
-        jsonEncode(value));
+    UserSecureStorageService.setUserInfo(value);
   }
 
   String? get errorText => _errorText;
@@ -78,33 +69,20 @@ class AuthController extends GetxController {
     update();
   }
 
-  Future<void> initSharedPreferences() async {
-    sharedPreferences = await SharedPreferences.getInstance();
-  }
-
-
-  // TODO fix me необходимо перейти на использование SecureStorage
   String setAuth(String basAuth)  =>
       this.basicAuth = basAuth;
 
   String getAuth()  => this.basicAuth;
 
+  Future initAuthData() async {
+    isAuthenticated = await UserSecureStorageService.getAuthenticated();
+    userInfo = await UserSecureStorageService.getUserInfo();
+  }
+
   @override
   void onInit() {
     super.onInit();
-
-    initSharedPreferences().whenComplete(() {
-      bool? __isAuthenticated =
-          sharedPreferences!.getBool(authenticatedKeyName);
-      if (__isAuthenticated != null) {
-        isAuthenticated = __isAuthenticated;
-      }
-
-      String? rawUserInfo = sharedPreferences!.getString(userInfoKeyName);
-      if (rawUserInfo != null) {
-        userInfo = UserInfo.fromJson(jsonDecode(rawUserInfo));
-      }
-    });
+    initAuthData().whenComplete(() => null);
   }
 
   login(bool inDemonstrationMode, String login, String password,

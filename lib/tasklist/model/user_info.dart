@@ -71,6 +71,7 @@ class UserInfo {
   factory UserInfo.fromJson(Map<String, dynamic> json) {
     dynamic rawSecurityRoles = json['securityRoles'];
     dynamic rawSecurityRoleNames = json['securityRoleNames'];
+    dynamic rawContacts = json['chefContact'];
     return UserInfo(
         userName: json['userName'],
         homeRegionName: json['homeRegionName'],
@@ -92,9 +93,10 @@ class UserInfo {
         mainWorksite: json['mainWorksite'],
         tabNumber: json['tabNumber'],
         workerAppoint: json['workerAppoint'],
-        contactChiefList: (json['chefContact'] as List)
-            .map((e) => Contact.fromJson(e))
-            .toList());
+        contactChiefList:
+            rawContacts != null && (rawContacts as List).isNotEmpty
+                ? (rawContacts as List).map((e) => Contact.fromJson(e)).toList()
+                : List.of({}));
   }
 
   Map<String, dynamic> toJson() {

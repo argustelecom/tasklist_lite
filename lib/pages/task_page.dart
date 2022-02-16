@@ -1,11 +1,13 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:tasklist_lite/crazylib/idle_time_manager_dialog.dart';
 import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
 import 'package:tasklist_lite/crazylib/task_due_date_label.dart';
 import 'package:tasklist_lite/state/application_state.dart';
+import 'package:tasklist_lite/state/tasklist_controller.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
 
 import 'package:tasklist_lite/crazylib/history_event_card.dart';
@@ -26,11 +28,8 @@ class TaskPage extends StatefulWidget {
 class _TaskPageState extends State<TaskPage> {
   @override
   Widget build(BuildContext context) {
-    Task? task;
-    if (ModalRoute.of(context)!.settings.arguments != null) {
-      task = ModalRoute.of(context)!.settings.arguments as Task;
-    }
     ThemeData themeData = Theme.of(context);
+    Task? task;
     ApplicationState applicationState = ApplicationState.of(context);
     // Это дефолтный контроллер для управления текстовым полем
     TextEditingController commentTextController;
@@ -39,6 +38,7 @@ class _TaskPageState extends State<TaskPage> {
     // Тут ищем тасклистконтроллер и вызываем метод для получения исторических событий
     // TODO: Переделать, вероятно это неправильно
     TaskListController taskListController = Get.find();
+    task = taskListController.getCurrentTask();
     taskListController.initHistory(task!);
 
     // Это дефолтный скроллконтрроллер, используем на вкладке история, чтобы перематывать на последнее событие т.к. это удобно для пользователя
