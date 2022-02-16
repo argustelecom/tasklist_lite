@@ -1,10 +1,7 @@
-import 'dart:collection';
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get/get.dart';
-import 'package:tasklist_lite/crazylib/expansion_radio_tile.dart';
 import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
 import 'package:tasklist_lite/pages/about_app_page.dart';
 import 'package:tasklist_lite/pages/help_page.dart';
@@ -12,7 +9,6 @@ import 'package:tasklist_lite/pages/login_page.dart';
 import 'package:tasklist_lite/pages/support_page.dart';
 import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/state/auth_controller.dart';
-import 'package:tasklist_lite/tasklist/fixture/task_fixtures.dart';
 import 'package:tasklist_lite/tasklist/model/user_info.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -355,30 +351,6 @@ class ProfilePageState extends State<ProfilePage> {
                                   ),
                                 ),
                               ]))),
-                  Padding(
-                      padding: paddingSettingBlock,
-                      child: Card(
-                          elevation: 3,
-                          child: ExpansionRadioTile<CurrentTaskFixture>(
-                              title: Text("Источник данных"),
-                              selectedObject: ApplicationState.of(context)
-                                  .currentTaskFixture,
-                              optionsMap: LinkedHashMap.of({
-                                CurrentTaskFixture.firstFixture:
-                                    "Первая фикстура",
-                                CurrentTaskFixture.secondFixture:
-                                    "Вторая фикстура",
-                                CurrentTaskFixture.thirdFixture:
-                                    "Третья фикстура",
-                                CurrentTaskFixture.noneFixture:
-                                    "Фикстура не выбрана (удаленный источник данных)"
-                              }),
-                              onChanged: (CurrentTaskFixture? newValue) {
-                                ApplicationState.update(
-                                    context,
-                                    ApplicationState.of(context).copyWith(
-                                        currentTaskFixture: newValue));
-                              }))),
                   Padding(
                       padding: paddingSettingBlock,
                       child: Card(

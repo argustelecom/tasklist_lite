@@ -3,8 +3,8 @@ import 'dart:convert';
 
 import 'package:get/get.dart';
 import 'package:tasklist_lite/auth/auth_service.dart';
-import 'package:tasklist_lite/user_secure_storage/user_secure_storage_service.dart';
 import 'package:tasklist_lite/tasklist/model/user_info.dart';
+import 'package:tasklist_lite/user_secure_storage/user_secure_storage_service.dart';
 
 ///*******************************************************************************
 ///****          хранит state аутентификации и инфу о текущем пользователе    ****
@@ -38,7 +38,6 @@ class AuthController extends GetxController {
   static const String authenticated = "Authorization";
   static const String userInfoKeyName = "userInfo";
 
-
   bool get isAuthenticated {
     return _isAuthenticated.value;
   }
@@ -69,10 +68,9 @@ class AuthController extends GetxController {
     update();
   }
 
-  String setAuth(String basAuth)  =>
-      this.basicAuth = basAuth;
+  String setAuth(String basAuth) => this.basicAuth = basAuth;
 
-  String getAuth()  => this.basicAuth;
+  String getAuth() => this.basicAuth;
 
   Future initAuthData() async {
     isAuthenticated = await UserSecureStorageService.getAuthenticated();
@@ -96,11 +94,10 @@ class AuthController extends GetxController {
         setAuth(basicAuth);
 
         await authService
-            .login(basicAuth, serverAddress,
-            inDemonstrationMode: inDemonstrationMode)
+            .login(basicAuth, serverAddress)
             .whenComplete(() => null)
             .then(
-              (value) {
+          (value) {
             userInfo = value;
             isAuthenticated = true;
           },
@@ -108,7 +105,7 @@ class AuthController extends GetxController {
             //должны выводится разные сообщения в зависимости от типа ошибки
             // Отсутсвует Интернет/неправильный адрес СП
             errorText =
-            "Неверный логин или пароль. \nПроверьте правильность введенных данных.";
+                "Неверный логин или пароль. \nПроверьте правильность введенных данных.";
           },
         );
       }
@@ -116,15 +113,13 @@ class AuthController extends GetxController {
       // их надо обрабатывать в секциях on (см. например flutter_entity_list)
       catch (anyException) {
         errorText =
-        "Неверный логин или пароль. \nПроверьте правильность введенных данных.";
+            "Неверный логин или пароль. \nПроверьте правильность введенных данных.";
       }
-    }
-    else {
+    } else {
       errorText =
-      "Неверный логин или пароль. \nПроверьте правильность введенных данных.";
+          "Неверный логин или пароль. \nПроверьте правильность введенных данных.";
     }
-      update();
-
+    update();
   }
 
   logout() {
