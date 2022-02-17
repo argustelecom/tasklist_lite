@@ -31,7 +31,7 @@ class _SupportPageState extends State<SupportPage> {
             //TODO: Тут будет информация о службе поддержки и настройка включения debugMode ?
             Padding(
                 padding: EdgeInsets.all(15.0),
-                child: Text("Страница находиться в разработке."))
+                child: Text("Страница находится в разработке."))
           ],
         ));
   }
