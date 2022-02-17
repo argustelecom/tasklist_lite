@@ -37,10 +37,20 @@ class TaskFixtures {
         objectNameFlexAttrName: "ВЛГ0127",
         distanceToObjectFlexAttrName: "9 км",
       }),
-      idleTime: new IdleTime(
-          reason: "Форс-мажор",
-          startDate: DateUtils.dateOnly(DateTime.now())
-              .add(const Duration(hours: -3))));
+      idleTimeList: [
+        new IdleTime(
+            id: 24,
+            reason: "Дорожная обстановка",
+            startDate: DateUtils.dateOnly(DateTime.now())
+                .add(const Duration(hours: -5)),
+            endDate: DateUtils.dateOnly(DateTime.now())
+                .add(const Duration(hours: -4))),
+        new IdleTime(
+            id: 25,
+            reason: "Форс-мажор",
+            startDate: DateUtils.dateOnly(DateTime.now())
+                .add(const Duration(hours: -3)))
+      ]);
 
   static final Task secondTask = new Task(
       id: 2,

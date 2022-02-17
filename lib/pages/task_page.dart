@@ -9,11 +9,7 @@ import 'package:tasklist_lite/crazylib/task_due_date_label.dart';
 import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/state/tasklist_controller.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
-
 import 'package:tasklist_lite/crazylib/history_event_card.dart';
-import 'package:get/get.dart';
-import 'package:tasklist_lite/state/tasklist_controller.dart';
-
 
 class TaskPage extends StatefulWidget {
   static const String routeName = 'task';
@@ -81,7 +77,7 @@ class _TaskPageState extends State<TaskPage> {
                         labelColor: Colors.black,
                         labelStyle: TextStyle(fontSize: 18),
                         unselectedLabelStyle:
-                            TextStyle(color: Colors.grey, fontSize: 18),
+                        TextStyle(color: Colors.grey, fontSize: 18),
                         tabs: [
                           Tab(
                             child: Text(
@@ -112,36 +108,38 @@ class _TaskPageState extends State<TaskPage> {
                 //Заменил SizedBox на Expanded, чтобы не ругался на bottom overflow
                 Expanded(
                     child: TabBarView(children: [
-                  Padding(
-                    padding: EdgeInsets.only(left: 12, right: 12, bottom: 12),
-                    child: Card(
-                      child: SizedBox(
-                          height: 400.0,
-                          child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: attrGroups.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return AttrGroup(
-                                    task: task!,
-                                    attrGroup: attrGroups.elementAt(index));
-                              })),
-                      elevation: 3,
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 32),
-                    child: Card(
-                      child: Text("Здесь будут работы"),
-                      elevation: 3,
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 32),
-                    child: Card(
-                      child: Text("Здесь будут вложения"),
-                      elevation: 3,
-                    ),
-                  ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                            left: 12, right: 12, bottom: 12),
+                        child: Card(
+                          child: SizedBox(
+                              height: 400.0,
+                              child: ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: attrGroups.length,
+                                  itemBuilder: (BuildContext context,
+                                      int index) {
+                                    return AttrGroup(
+                                        task: task!,
+                                        attrGroup: attrGroups.elementAt(index));
+                                  })),
+                          elevation: 3,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 32),
+                        child: Card(
+                          child: Text("Здесь будут работы"),
+                          elevation: 3,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 32),
+                        child: Card(
+                          child: Text("Здесь будут вложения"),
+                          elevation: 3,
+                        ),
+                      ),
                       GetBuilder<TaskListController>(
                           init: TaskListController(),
                           builder: (taskListController) {
@@ -157,7 +155,8 @@ class _TaskPageState extends State<TaskPage> {
                                               .length,
                                           controller: _scrollController,
                                           itemBuilder:
-                                              (BuildContext context, int index) {
+                                              (BuildContext context,
+                                              int index) {
                                             return historyEventCard(
                                                 person: taskListController
                                                     .getHistoryEvents()[index]
@@ -188,7 +187,8 @@ class _TaskPageState extends State<TaskPage> {
                                           decoration: InputDecoration(
                                             hintText: "Ваш комментарий",
                                             hintStyle: TextStyle(fontSize: 14),
-                                            fillColor: themeData.bottomAppBarColor,
+                                            fillColor: themeData
+                                                .bottomAppBarColor,
                                             border: InputBorder.none,
                                             filled: true,
                                             suffixIcon: IconButton(
@@ -246,34 +246,43 @@ class _TaskPageState extends State<TaskPage> {
                                                         right: 8,
                                                         left: 8,
                                                         bottom: 4),
-                                                    child: const Text('Отправить',
+                                                    child: const Text(
+                                                        'Отправить',
                                                         style: TextStyle(
                                                             color: Colors.black,
                                                             fontSize: 14)),
                                                   ),
                                                   style: ButtonStyle(
-                                                      shape: MaterialStateProperty.all<
+                                                      shape: MaterialStateProperty
+                                                          .all<
                                                           RoundedRectangleBorder>(
                                                           RoundedRectangleBorder(
                                                               borderRadius:
-                                                              BorderRadius.circular(
+                                                              BorderRadius
+                                                                  .circular(
                                                                   6))),
                                                       padding: MaterialStateProperty
                                                           .all<EdgeInsets>(
                                                           EdgeInsets.all(2)),
                                                       backgroundColor:
-                                                      MaterialStateProperty.all<Color>(
-                                                          Colors.yellow.shade700)),
+                                                      MaterialStateProperty.all<
+                                                          Color>(
+                                                          Colors.yellow
+                                                              .shade700)),
                                                   onPressed: () {
-                                                    taskListController.addComment(
-                                                        commentTextController.text,
+                                                    taskListController
+                                                        .addComment(
+                                                        commentTextController
+                                                            .text,
                                                         taskListController
                                                             .getIsAlarmComment(),
                                                         task!);
-                                                    commentTextController.clear();
+                                                    commentTextController
+                                                        .clear();
                                                     _scrollController.animateTo(
                                                       _scrollController
-                                                          .position.maxScrollExtent,
+                                                          .position
+                                                          .maxScrollExtent,
                                                       curve: Curves.easeOut,
                                                       duration: const Duration(
                                                           milliseconds: 300),
@@ -290,7 +299,7 @@ class _TaskPageState extends State<TaskPage> {
                                   ],
                                 ));
                           })
-                ]))
+                    ]))
               ])));
     }
   }
@@ -315,7 +324,7 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
         titleSpacing: 0.0,
         toolbarHeight: 100,
         title:
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -368,7 +377,8 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
                     padding: EdgeInsets.all(0.0),
                     elevation: 3,
                     offset: Offset(0, 50),
-                    itemBuilder: (BuildContext context) => <PopupMenuEntry>[
+                    itemBuilder: (BuildContext context) =>
+                    <PopupMenuEntry>[
                       const PopupMenuItem(
                         child: ListTile(
                           leading: Icon(Icons.check_circle_outline),
@@ -379,7 +389,7 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
                       PopupMenuItem(
                         child: ListTile(
                             leading: Icon(Icons.access_time),
-                            title: Text((task.idleTime == null)
+                            title: Text((task.idleTimeList == null)
                                 ? "Зарегистрировать простой"
                                 : "Завершить простой"),
                             onTap: () {
@@ -396,15 +406,21 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
                                   ),
                                   constraints: BoxConstraints(
                                       minHeight:
-                                          MediaQuery.of(context).size.height -
-                                              90,
+                                      MediaQuery
+                                          .of(context)
+                                          .size
+                                          .height -
+                                          90,
                                       maxHeight:
-                                          MediaQuery.of(context).size.height -
-                                              90),
+                                      MediaQuery
+                                          .of(context)
+                                          .size
+                                          .height -
+                                          90),
                                   builder: (BuildContext context) {
                                     return IdleTimeManagerDialog(
-                                        task: this.task,
-                                        idleTime: this.task.idleTime);
+                                        idleTime: this.task
+                                            .getCurrentIdleTime());
                                   });
                             }),
                         value: 1,
@@ -456,7 +472,7 @@ class AttrGroup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     LinkedHashMap<String, Object?> attribValuesByGroup =
-        task.getAttrValuesByGroup(attrGroup);
+    task.getAttrValuesByGroup(attrGroup);
 
     return Column(children: [
       Container(
@@ -465,14 +481,14 @@ class AttrGroup extends StatelessWidget {
               style: const TextStyle(fontSize: 18, color: Colors.grey))),
       SizedBox(
           child: ListView.builder(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        shrinkWrap: true,
-        itemCount: attribValuesByGroup.length,
-        itemBuilder: (BuildContext context, int index) {
-          return AttribValueRow(
-              attribValue: attribValuesByGroup.entries.elementAt(index));
-        },
-      ))
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            shrinkWrap: true,
+            itemCount: attribValuesByGroup.length,
+            itemBuilder: (BuildContext context, int index) {
+              return AttribValueRow(
+                  attribValue: attribValuesByGroup.entries.elementAt(index));
+            },
+          ))
     ]);
   }
 }
@@ -489,9 +505,9 @@ class AttribValueRow extends StatelessWidget {
     String attrValue = (attribValue.value == null)
         ? ""
         : (attribValue.value.runtimeType == DateTime
-            ? DateFormat("dd.MM.yyyy HH:mm")
-                .format(DateTime.parse(attribValue.value.toString()))
-            : attribValue.value.toString());
+        ? DateFormat("dd.MM.yyyy HH:mm")
+        .format(DateTime.parse(attribValue.value.toString()))
+        : attribValue.value.toString());
 
     return Row(children: [
       Expanded(
@@ -504,10 +520,11 @@ class AttribValueRow extends StatelessWidget {
                           color: Color(0xFF646363),
                           fontWeight: FontWeight.normal),
                       children: <TextSpan>[
-                    TextSpan(text: "$attrKey:   "),
-                    TextSpan(
-                        text: attrValue, style: TextStyle(color: Colors.black))
-                  ]))))
+                        TextSpan(text: "$attrKey:   "),
+                        TextSpan(
+                            text: attrValue,
+                            style: TextStyle(color: Colors.black))
+                      ]))))
     ]);
   }
 }

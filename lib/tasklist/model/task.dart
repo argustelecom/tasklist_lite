@@ -77,7 +77,7 @@ class Task {
   LinkedHashMap<String, Object?> flexibleAttribs = LinkedHashMap();
 
   /// Простой
-  IdleTime? idleTime;
+  List<IdleTime>? idleTimeList = <IdleTime>[];
 
   // null safety: здесь null`ами не может быть только id, name (т.к. они обязательны) и булевы свойства (т.к. для них задан дефолт в дефолтном конструкторе)
   // что интересно, фигурные скобочки внутри объявления конструктора делают параметры именованными, их теперь можно задавать не по порядку, а по имени. Удобно.
@@ -101,7 +101,7 @@ class Task {
       this.isPlanned = false,
       this.isOutdoor = false,
       required this.flexibleAttribs,
-      this.idleTime});
+      this.idleTimeList});
 
   bool isOverdue() {
     return (dueDate != null) && (dueDate!.isBefore((DateTime.now())));
@@ -192,6 +192,13 @@ class Task {
           attrValues.addAll({key.substring(key.indexOf("/") + 1): value});
       });
     return attrValues;
+  }
+
+  IdleTime? getCurrentIdleTime() {
+    if (idleTimeList != null && idleTimeList!.isNotEmpty) {
+      return idleTimeList!.firstWhere((e) => !e.isCompleted(), orElse: null);
+    } else
+      return null;
   }
 
   factory Task.fromJson(Map<String, dynamic> json) {

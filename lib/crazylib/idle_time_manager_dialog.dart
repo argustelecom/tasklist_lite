@@ -12,11 +12,9 @@ import 'dropdown_button.dart';
 class IdleTimeManagerDialog extends StatefulWidget {
   IdleTimeManagerDialog({
     Key? key,
-    required this.task,
     this.idleTime,
   }) : super(key: key);
 
-  final Task task;
   IdleTime? idleTime;
 
   @override
