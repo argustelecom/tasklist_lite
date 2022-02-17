@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -267,7 +268,10 @@ class ProfilePageState extends State<ProfilePage> {
                                                   }
                                                 })))
                                   ])))),
-                  Padding(
+                  // TASK-126749 з4. прячем лишннее для релизной сборки.
+                  // функционал "Запоминать избранные работы" не попадает в релиз первой версии
+                  // если нужна в релизной сборке или  другой, то убери "if (kDebugMode)".
+                  if (kDebugMode) Padding(
                       padding: paddingSettingBlock,
                       child: Card(
                           elevation: 3,
