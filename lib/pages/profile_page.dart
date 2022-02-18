@@ -126,7 +126,7 @@ class ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     //Отступ карточки блока
     EdgeInsets paddingSettingBlock =
-        EdgeInsets.only(left: 15, right: 15, bottom: 2);
+        EdgeInsets.only(bottom: 2);
     return GetX<AuthController>(builder: (authController) {
       UserInfo userInfo = authController.userInfo as UserInfo;
       return ReflowingScaffold(
@@ -169,13 +169,12 @@ class ProfilePageState extends State<ProfilePage> {
               children: [
                 Column(children: [
                   Container(
-                      padding: EdgeInsets.only(left: 17, right: 15, top: 10),
+                      padding: EdgeInsets.only(left: 2, top: 10),
                       alignment: Alignment.centerLeft,
                       child: Text("Общая информация",
                           style: TextStyle(fontSize: 18))),
                   Padding(
-                      padding: EdgeInsets.only(
-                          left: 15, right: 15, top: 10, bottom: 10),
+                      padding: EdgeInsets.only(top: 10, bottom: 10),
                       child: Card(
                           elevation: 3,
                           color: context.theme.cardColor,
@@ -201,21 +200,19 @@ class ProfilePageState extends State<ProfilePage> {
                                     value: userInfo.mainWorksite.toString())
                               ]))),
                   Container(
-                      padding: EdgeInsets.only(left: 17, right: 15, top: 10),
+                      padding: EdgeInsets.only(top: 10),
                       alignment: Alignment.centerLeft,
                       child: Text("Контакты руководителя",
                           style: TextStyle(fontSize: 18))),
                   Padding(
-                      padding: EdgeInsets.only(
-                          left: 15, right: 15, top: 10, bottom: 10),
+                      padding: EdgeInsets.only(top: 10, bottom: 10),
                       child: Card(
                           elevation: 3,
                           color: context.theme.cardColor,
                           child: _ContactsChiefListView(
                               contactChiefList: userInfo.contactChiefList))),
                   Container(
-                      padding: EdgeInsets.only(
-                          left: 17, right: 15, bottom: 10, top: 10),
+                      padding: EdgeInsets.only(bottom: 10, top: 10),
                       alignment: Alignment.centerLeft,
                       child: Text("Настройки приложения",
                           style: TextStyle(fontSize: 18))),
@@ -461,7 +458,7 @@ class _ContactsChiefListView extends StatelessWidget {
               TextWithLabelColumn(
                   label: "Контактный телефон:",
                   value: contactChiefList?.elementAt(index).phoneNum ?? "",
-                  type: _TextType.phone),
+                  type: TextType.phone),
             ]);
           });
     } else {
@@ -474,7 +471,8 @@ class _ContactsChiefListView extends StatelessWidget {
   }
 }
 
-enum _TextType { text, phone }
+/// Тип выполняемого оборудования
+enum TextType { text, phone }
 
 /// Отображеине текста lable: value столбцом в card
 /// отделил для сохранения отсутупов на странице profile_page.
@@ -484,19 +482,19 @@ enum _TextType { text, phone }
 class TextWithLabelColumn extends StatelessWidget {
   final String label;
   final String value;
-  final _TextType type;
+  final TextType type;
 
   TextWithLabelColumn(
       {Key? key,
       required this.label,
       required this.value,
-      this.type = _TextType.text})
+      this.type = TextType.text})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     Widget textWidget;
-    if (type == _TextType.phone) {
+    if (type == TextType.phone) {
       // Если поле телефон указали несколько номеров, нужно их распарсить для
       // отображения через заяпятую отдельными ссылками.
       List<TextSpan> textSpanList = [];

@@ -1,9 +1,14 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:google_language_fonts/google_language_fonts.dart';
 import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
+import 'package:tasklist_lite/pages/login_page.dart';
 import 'package:tasklist_lite/pages/profile_page.dart';
 
 class AboutAppPage extends StatefulWidget {
-  static const String routeName = 'AboutApp';
+  static const String routeName = 'aboutapp';
 
   AboutAppPage({Key? key, required this.title}) : super(key: key);
   final String title;
@@ -33,9 +38,18 @@ class _AboutAppPageState extends State<AboutAppPage> {
             shrinkWrap: true,
             children: [
               Column(children: [
+                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  Image.asset(
+                    "images/logo_figaro.png", bundle: rootBundle, height: 180, width: 180,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 10),
+                    child: Text("Фигаро - приложение для быстрых выездных специалистов лучшего оператора РФ!",
+                        style: TextStyle(fontSize: 16), textAlign: TextAlign.center),
+                  ),
+                ]),
                 Padding(
-                    padding: EdgeInsets.only(
-                        left: 15, right: 15, top: 10, bottom: 10),
+                    padding: EdgeInsets.only(top: 10, bottom: 10),
                     child: Card(
                         elevation: 3,
                         color: themeData.cardColor,
