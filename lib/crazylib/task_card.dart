@@ -14,6 +14,7 @@ class TaskCard extends StatelessWidget {
   final Task task;
   final String taskPageRouteName;
 
+  static const double taskCardElevation = 2;
   const TaskCard(
       {Key? key, required this.task, required this.taskPageRouteName})
       : super(key: key);
@@ -30,7 +31,7 @@ class TaskCard extends StatelessWidget {
         // размеры сознательно здесь не заданы, чтобы можно было масштабировать карточку снаружи, по размерам parent`а
         return Card(
           color: (task.isClosed ? Color(0xFFE5E4E4) : themeData.cardColor),
-          elevation: 5,
+          elevation: taskCardElevation,
           // без обертывания строки в IntrinsicHeight, не получилось увидеть VerticalDivider
           // https://stackoverflow.com/questions/49388281/flutter-vertical-divider-and-horizontal-divider
           child: IntrinsicHeight(

@@ -4,17 +4,24 @@ import 'package:google_fonts/google_fonts.dart';
 ///
 /// copy-pasted from flutter-gallery sample app
 class TaskListThemeData {
-  static ThemeData lightThemeData =
-      themeData(lightColorScheme, Colors.black.withOpacity(0.12));
-  static ThemeData darkThemeData =
-      themeData(darkColorScheme, Colors.white.withOpacity(0.12));
+  static ThemeData lightThemeData = themeData(
+      // в   factory ThemeData({ hintColor задается как:
+      // hintColor ??= isDark ? Colors.white60 : Colors.black.withOpacity(0.6);
+      // пропишем то же самое явно, чтобы можно было опиратся на hintcolor в коде (иначе он просто null)
+      lightColorScheme,
+      Colors.black.withOpacity(0.12),
+      Colors.black.withOpacity(0.6));
+  static ThemeData darkThemeData = themeData(
+      darkColorScheme, Colors.white.withOpacity(0.12), Colors.white60);
 
-  static ThemeData themeData(ColorScheme colorScheme, Color focusColor) {
+  static ThemeData themeData(
+      ColorScheme colorScheme, Color focusColor, Color hintColor) {
     return ThemeData(
       colorScheme: colorScheme,
       textTheme: _textTheme,
       // Matches manifest.json colors and background color.
       primaryColor: const Color(0xFF030303),
+      hintColor: hintColor,
       appBarTheme: AppBarTheme(
         backgroundColor: colorScheme.background,
         elevation: 0,
@@ -40,7 +47,9 @@ class TaskListThemeData {
   }
 
   static const ColorScheme lightColorScheme = ColorScheme(
-    primary: Color(0xFFB93C5D),
+    // primary используется, например, для заливки индикатора в календаре. Больше особо нигде не используется
+    // в любом случае, синий лучше, чем красный.
+    primary: Colors.blue,
     primaryVariant: Color(0xFF117378),
     secondary: Color(0xFFEFF3F3),
     secondaryVariant: Color(0xFFFAFBFB),
@@ -56,7 +65,7 @@ class TaskListThemeData {
   );
 
   static const ColorScheme darkColorScheme = ColorScheme(
-    primary: Color(0xFFFF8383),
+    primary: Colors.blue,
     primaryVariant: Color(0xFF1CDEC9),
     secondary: Color(0xFF4D1F7C),
     secondaryVariant: Color(0xFF451B6F),

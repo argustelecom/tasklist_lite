@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/state/auth_controller.dart';
-import 'package:tasklist_lite/user_secure_storage/user_secure_storage_service.dart';
 import 'package:tasklist_lite/tasklist/idle_time_reason_repository.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
 import 'package:tasklist_lite/tasklist/task_repository.dart';
+import 'package:tasklist_lite/user_secure_storage/user_secure_storage_service.dart';
 
 import '../tasklist/fixture/task_fixtures.dart';
 import '../tasklist/history_events_repository.dart';
@@ -41,6 +41,7 @@ class TaskListController extends GetxController {
     _currentDate = value;
 
     late String basicAuth = authController.getAuth();
+
     ApplicationState state = Get.find();
     String serverAddress = state.serverAddress;
     closedTasksSubscription = resubscribe(
@@ -81,6 +82,36 @@ class TaskListController extends GetxController {
   // о необходимости обновления. #TODO: пока не ясно, насколько это нормально и правильно
   set searchText(String value) {
     _searchText = value.toLowerCase();
+    update();
+  }
+
+  /// признак раскрытости inline-календаря в списке задач
+  /// #TODO: вообще хотелось state презентации держать в stateful-виджетах
+  /// но этот(а также следующие searchBarExpanded, datePickerBarExpanded) нужен нескольким,
+  /// которые не хочется объединять в uber-stateful. Но можно ведь хотя бы вынести
+  /// в отдельный presentation-контроллер.
+  bool _calendarOpened = false;
+  bool _datePickerBarExpanded = false;
+  bool _searchBarExpanded = false;
+
+  bool get calendarOpened => _calendarOpened;
+
+  set calendarOpened(bool value) {
+    _calendarOpened = value;
+    update();
+  }
+
+  bool get datePickerBarExpanded => _datePickerBarExpanded;
+
+  set datePickerBarExpanded(bool value) {
+    _datePickerBarExpanded = value;
+    update();
+  }
+
+  bool get searchBarExpanded => _searchBarExpanded;
+
+  set searchBarExpanded(bool value) {
+    _searchBarExpanded = value;
     update();
   }
 

@@ -7,6 +7,8 @@ import 'package:tasklist_lite/state/tasklist_controller.dart';
 /// рефакторинг -- вынос кода: панель с фильтром по дате из страницы списка задач
 /// это пока не самостоятельный компонент DatePickerBar, но может стать таковым, если
 ///  будет нужно
+@Deprecated(
+    "Заменен на TasklistFilterBar. По славной традиции, не выброшен, а оставлен на будущее. Куча хлама еще не так велика.")
 class DatePickerBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:tasklist_lite/crazylib/date_picker_bar.dart';
 import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
 import 'package:tasklist_lite/crazylib/task_card.dart';
 import 'package:tasklist_lite/crazylib/top_user_bar.dart';
@@ -8,51 +7,22 @@ import 'package:tasklist_lite/pages/task_page.dart';
 import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/state/tasklist_controller.dart';
 
-class SearchBar extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    ThemeData themeData = Theme.of(context);
-    return GetBuilder<TaskListController>(builder: (controller) {
-      return Padding(
-        padding: EdgeInsets.fromLTRB(36, 0, 36, 8),
-        child: TextField(
-          textAlign: TextAlign.center,
-          decoration: InputDecoration(
-            hintText: "Номер наряда",
-            fillColor: themeData.bottomAppBarColor,
-            border: InputBorder.none,
-            filled: true,
-            suffixIcon: IconButton(
-              tooltip: 'Поиск',
-              icon: const Icon(Icons.search_outlined),
-              onPressed: () {},
-            ),
-            isCollapsed: false,
-          ),
-          onChanged: (value) {
-            controller.searchText = value;
-          },
-        ),
-      );
-    });
-  }
-}
+import '../crazylib/tasklist_filter_bar.dart';
 
 class TaskList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<TaskListController>(builder: (controller) {
-      return Expanded(
-          child: ListView.builder(
-              padding: EdgeInsets.symmetric(vertical: 0, horizontal: 32),
-              shrinkWrap: true,
-              itemCount: controller.getTasks().length,
-              itemBuilder: (context, index) {
-                return TaskCard(
-                  task: controller.getTasks()[index], //taskList[index],
-                  taskPageRouteName: TaskPage.routeName,
-                );
-              }));
+      return ListView.builder(
+          padding: EdgeInsets.symmetric(vertical: 0, horizontal: 32),
+          shrinkWrap: true,
+          itemCount: controller.getTasks().length,
+          itemBuilder: (context, index) {
+            return TaskCard(
+              task: controller.getTasks()[index], //taskList[index],
+              taskPageRouteName: TaskPage.routeName,
+            );
+          });
     });
   }
 }
@@ -97,15 +67,33 @@ class _TaskListPageState extends State<TaskListPage> {
 
     return GetBuilder<TaskListController>(
       init: TaskListController(),
-      builder: (controller) {
+      builder: (taskListController) {
         return ReflowingScaffold(
           appBar: TopUserBar(),
           body: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              SearchBar(),
-              TaskList(),
-              DatePickerBar(),
+              TasklistFiltersBar(),
+              Expanded(
+                child: Stack(
+                  children: [
+                    TaskList(),
+                    if (taskListController.calendarOpened)
+                      // отображается только вместе с календарем. Расположен "под календарем"
+                      // с точки зрения stack`а. Нужен, чтобы если пользователь ткнул мимо календаря,
+                      // календарь был спрятан
+                      // #TODO: если будут жалобы, что это не работает, когда кликнули на TaskListFilterBar или
+                      // вообще на appBar, нужно поднять его повыше, либо срозу в body Scaffold`а страницы, либо
+                      // даже под Scaffold (добавить еще один стек)
+                      GestureDetector(
+                          onTap: () {
+                            taskListController.calendarOpened = false;
+                          },
+                          child: null),
+                    if (taskListController.calendarOpened) InlineCalendar()
+                  ],
+                ),
+              ),
             ],
           ),
         );
