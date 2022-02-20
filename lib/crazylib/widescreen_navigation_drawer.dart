@@ -21,27 +21,43 @@ class WideScreenNavigationDrawer extends StatelessWidget {
         ),
         body: Column(
           children: [
-            Expanded(child: GetX<AuthController>(builder: (authController) {
-              return ListView(
-                  padding: EdgeInsets.symmetric(vertical: 0, horizontal: 32),
-                  shrinkWrap: true,
-                  children: MenuAction.mainActionList
-                      .map((e) => InkWell(
-                          onTap: e.callback,
-                          child: Row(children: [
-                            IconButton(
-                              onPressed: authController.isAuthenticated ||
-                                      (e.caption == MenuAction.settingsCaption)
-                                  ? e.callback
-                                  : null,
-                              icon: Icon(e.iconData),
-                              iconSize: IconTheme.of(context).size ?? 24,
-                              tooltip: e.caption,
-                            ),
-                            Text(e.caption)
-                          ])))
-                      .toList());
-            })),
+            GetX<AuthController>(builder: (authController) {
+              return authController.isAuthenticated
+                  ? Expanded(
+                      child: ListView(
+                          padding:
+                              EdgeInsets.symmetric(vertical: 0, horizontal: 32),
+                          shrinkWrap: true,
+                          children: MenuAction.mainActionList
+                              .map((e) => InkWell(
+                                  onTap: e.callback,
+                                  child: Row(children: [
+                                    IconButton(
+                                      onPressed: e.callback,
+                                      icon: Icon(e.iconData),
+                                      iconSize:
+                                          IconTheme.of(context).size ?? 24,
+                                      tooltip: e.caption,
+                                    ),
+                                    Text(e.caption)
+                                  ])))
+                              .toList()),
+                    )
+                  : Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      child: SizedBox(
+                        height: 100,
+                        child: Card(
+                          elevation: 5,
+                          child: Padding(
+                            padding:
+                                EdgeInsets.only(left: 16, right: 16, top: 16),
+                            child: Text(
+                                "Меню будет доступно после входа в систему."),
+                          ),
+                        ),
+                      ));
+            }),
           ],
         ),
       ),

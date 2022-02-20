@@ -5,7 +5,6 @@ import 'package:tasklist_lite/crazylib/time_picker_button.dart';
 import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/state/tasklist_controller.dart';
 import 'package:tasklist_lite/tasklist/model/idle_time.dart';
-import 'package:tasklist_lite/tasklist/model/task.dart';
 
 import 'dropdown_button.dart';
 
@@ -84,7 +83,7 @@ class _IdleTimeManagerDialogState extends State<IdleTimeManagerDialog> {
                   padding: EdgeInsets.all(8),
                   child: Text("Причина простоя*",
                       style: TextStyle(color: Colors.black54))),
-              CustomDropDownButton(
+              CustomDropDownButton<String>(
                 value: _reason,
                 itemsList: controller.idleTimeReasons,
                 hint: "Выберите причину",

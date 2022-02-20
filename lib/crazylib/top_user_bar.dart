@@ -16,6 +16,7 @@ class TopUserBar extends StatelessWidget implements PreferredSizeWidget {
           child: AppBar(
             leading: IconButton(
                 icon: Icon(Icons.account_circle_outlined),
+                tooltip: "Профиль",
                 onPressed: () {
                   Navigator.pushNamed(context, ProfilePage.routeName);
                 }),

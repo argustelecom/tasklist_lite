@@ -15,28 +15,39 @@ import 'package:flutter/material.dart';
 /// дальше курить clean architecture, разбираться, чем отличается от layered и переходить на нее.
 /// #TODO: для этого начинать например с https://devmuaz.medium.com/flutter-clean-architecture-series-part-1-d2d4c2e75c47
 class ApplicationState {
-  static const String serverAddressUrl = "http://localhost:8080";
+  static const defaultServerAddress = "http://localhost:8080";
+  static const Map<String, String> defaultPossibleServers = const {
+    "localhost": defaultServerAddress,
+    "jboss12": "http://jboss12:8080"
+  };
 
   const ApplicationState(
       {required this.themeMode,
       required this.serverAddress,
-      required this.inDemonstrationMode});
+      required this.inDemonstrationMode,
+      required this.possibleServers});
 
   final ThemeMode themeMode;
 
   final String serverAddress;
   final bool inDemonstrationMode;
 
+  // здесь Map не получается проинициализировать, т.к. тогда придется отказаться от
+  // модификатора final и const-конструктора, или же допустить null в конструкторе
+  final Map<String, String> possibleServers;
+
   @override
   bool operator ==(Object other) {
     return other is ApplicationState &&
         this.themeMode == other.themeMode &&
         this.serverAddress == other.serverAddress &&
-        this.inDemonstrationMode == other.inDemonstrationMode;
+        this.inDemonstrationMode == other.inDemonstrationMode &&
+        this.possibleServers == other.possibleServers;
   }
 
   @override
-  int get hashCode => hashValues(themeMode, serverAddress, inDemonstrationMode);
+  int get hashCode => hashValues(
+      themeMode, serverAddress, inDemonstrationMode, possibleServers);
 
   static ApplicationState of(BuildContext context) {
     // тут реализацию пришлось подглядеть в GalleryOptions, т.к. каноничная дает ошибки компиляции
@@ -61,7 +72,8 @@ class ApplicationState {
     return ApplicationState(
         themeMode: themeMode ?? this.themeMode,
         serverAddress: serverAddress ?? this.serverAddress,
-        inDemonstrationMode: inDemonstrationMode ?? this.inDemonstrationMode);
+        inDemonstrationMode: inDemonstrationMode ?? this.inDemonstrationMode,
+        possibleServers: possibleServers);
   }
 }
 
@@ -87,9 +99,11 @@ class ModelBinding extends StatefulWidget {
   ModelBinding({
     Key? key,
     this.initialModel = const ApplicationState(
-        themeMode: ThemeMode.system,
-        serverAddress: ApplicationState.serverAddressUrl,
-        inDemonstrationMode: false),
+      themeMode: ThemeMode.system,
+      serverAddress: ApplicationState.defaultServerAddress,
+      inDemonstrationMode: false,
+      possibleServers: ApplicationState.defaultPossibleServers,
+    ),
     required this.child,
   }) : super(key: key);
 
@@ -101,9 +115,11 @@ class ModelBinding extends StatefulWidget {
 
 class _ModelBindingState extends State<ModelBinding> {
   ApplicationState currentModel = ApplicationState(
-      themeMode: ThemeMode.system,
-      serverAddress: ApplicationState.serverAddressUrl,
-      inDemonstrationMode: false);
+    themeMode: ThemeMode.system,
+    serverAddress: ApplicationState.defaultServerAddress,
+    inDemonstrationMode: false,
+    possibleServers: ApplicationState.defaultPossibleServers,
+  );
 
   @override
   void initState() {

@@ -5,22 +5,15 @@ import 'package:tasklist_lite/crazylib/quote_card.dart';
 import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
 import 'package:tasklist_lite/games/beaumarchais_quotes.dart';
 
-class SupportPage extends StatefulWidget {
-  static const String routeName = 'support';
+/// Отчеты (какие?)
+class ReportsPage extends StatelessWidget {
+  static const String routeName = 'reports';
 
-  SupportPage({Key? key, required this.title}) : super(key: key);
-  final String title;
-
-  @override
-  _SupportPageState createState() => _SupportPageState();
-}
-
-class _SupportPageState extends State<SupportPage> {
   @override
   Widget build(BuildContext context) {
     return ReflowingScaffold(
         appBar: AppBar(
-            title: new Text("Служба поддержки"),
+            title: new Text("Страница отчетов"),
             titleTextStyle: TextStyle(fontFamily: "ABeeZee", fontSize: 20),
             toolbarHeight: 50,
             elevation: 5.0,
@@ -31,7 +24,7 @@ class _SupportPageState extends State<SupportPage> {
                   Navigator.pop(context);
                 })),
         body: ListView(children: [
-          //TODO: Тут будет информация о службе поддержки и настройка включения debugMode ?
+          //#TODO:
           Padding(
               padding: EdgeInsets.all(15.0),
               child: Text("Страница находится в разработке.")),

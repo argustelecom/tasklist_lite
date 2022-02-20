@@ -4,8 +4,8 @@
 Кроссплатформенное адаптивное приложение.
 
 ## Сборка
-1. Выполни настройку окружение как предлагается в интернете, https://docs.flutter.dev/get-started/install (пп. 1-2). 
-   Для установки скачай версию flutter sdk 2.10.1, дотупно в [SDK releases] (https://docs.flutter.dev/development/tools/sdk/releases).
+1. Выполни настройку окружения как предлагается в интернете, https://docs.flutter.dev/get-started/install (пп. 1-2). 
+   Для установки скачай версию flutter sdk 2.10.1, доступно в [SDK releases] (https://docs.flutter.dev/development/tools/sdk/releases).
 
    **Обязательно! Если обновляешь у себя версию flutter на новую из-за зависимостей:**
      - **сообщи всем в чате о необходимости обновления flutter sdk**

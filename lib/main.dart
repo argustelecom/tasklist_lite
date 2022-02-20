@@ -3,15 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'package:tasklist_lite/auth/auth_service.dart';
+import 'package:tasklist_lite/custom_navigator_observer.dart';
 import 'package:tasklist_lite/pages/about_app_page.dart';
 import 'package:tasklist_lite/pages/alternative_tasklist_page.dart';
 import 'package:tasklist_lite/pages/help_page.dart';
 import 'package:tasklist_lite/pages/login_page.dart';
 import 'package:tasklist_lite/pages/notifications_page.dart';
 import 'package:tasklist_lite/pages/profile_page.dart';
+import 'package:tasklist_lite/pages/reports_page.dart';
 import 'package:tasklist_lite/pages/support_page.dart';
 import 'package:tasklist_lite/pages/task_page.dart';
 import 'package:tasklist_lite/pages/tasklist_page.dart';
+import 'package:tasklist_lite/pages/trunk_page.dart';
 import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/state/auth_controller.dart';
 import 'package:tasklist_lite/tasklist/fixture/history_events_fixtures.dart';
@@ -19,9 +22,11 @@ import 'package:tasklist_lite/tasklist/fixture/notification_fixtures.dart';
 import 'package:tasklist_lite/tasklist/fixture/task_fixtures.dart';
 import 'package:tasklist_lite/tasklist/history_events_repository.dart';
 import 'package:tasklist_lite/tasklist/idle_time_reason_repository.dart';
+import 'package:tasklist_lite/tasklist/notification_repository.dart';
 import 'package:tasklist_lite/tasklist/task_repository.dart';
 import 'package:tasklist_lite/theme/tasklist_theme_data.dart';
-import 'package:tasklist_lite/tasklist/notification_repository.dart';
+
+import 'state/common_dropdown_controller.dart';
 
 void main() {
   runApp(MyApp());
@@ -32,10 +37,10 @@ class MyApp extends StatelessWidget {
   /// карта всех маршрутов. Если сделал новую страничку, добавь маршрут к ней суда
   final Map<String, Widget> staticRoutes = {
     '/': TaskListPage(
-      title: 'Список задач исполнителя',
+      title: 'Фигаро: список задач',
     ),
     TaskListPage.routeName: TaskListPage(
-      title: 'Список задач исполнителя',
+      title: 'Фигаро: список задач',
     ),
     TaskPage.routeName: TaskPage(title: "Детальное представление задачи"),
     NotificationsPage.routeName: NotificationsPage(title: "Уведомления"),
@@ -46,8 +51,10 @@ class MyApp extends StatelessWidget {
     LoginPage.routeName: LoginPage(),
     SupportPage.routeName: SupportPage(title: "Служба поддержки"),
     HelpPage.routeName: HelpPage(title: "Помощь"),
-    AboutAppPage.routeName: AboutAppPage(title: "О приложении")
-};
+    AboutAppPage.routeName: AboutAppPage(title: "О приложении"),
+    TrunkPage.routeName: TrunkPage(),
+    ReportsPage.routeName: ReportsPage(),
+  };
 
   // то же самое (то есть не пустить на страницу, а отправить на форму входа, если не залогинен)
   // в приличном обществе делают через route guard`ы. Например, https://blog.logrocket.com/implementing-route-guards-flutter-web-apps/
@@ -82,7 +89,7 @@ class MyApp extends StatelessWidget {
             init: AuthController(),
             builder: (authController) {
               return GetMaterialApp(
-                title: 'Список задач исполнителя',
+                title: 'Фигаро',
                 themeMode: ApplicationState.of(context).themeMode,
                 theme: TaskListThemeData.lightThemeData.copyWith(
                   platform: defaultTargetPlatform,
@@ -92,10 +99,12 @@ class MyApp extends StatelessWidget {
                 onGenerateRoute: onGenerateRoute,
                 // случай onUnknown тоже будет корректно обработан внутри onGenerateRoute
                 onUnknownRoute: onGenerateRoute,
-                localizationsDelegates: [GlobalMaterialLocalizations.delegate,
+                localizationsDelegates: [
+                  GlobalMaterialLocalizations.delegate,
                   // Добавил из-за ошбики "A CupertinoLocalizations delegate that supports the ru locale was not found."
                   // по примеру из https://docs.flutter.dev/development/accessibility-and-localization/internationalization
-                  GlobalCupertinoLocalizations.delegate],
+                  GlobalCupertinoLocalizations.delegate
+                ],
                 supportedLocales: [const Locale('ru')],
                 // чтобы таким образом добавить зависимости в контекст, пришлось делать не MaterialApp, а именно GetMaterialApp
                 //https://medium.com/flutter-community/the-flutter-getx-ecosystem-dependency-injection-8e763d0ec6b9
@@ -109,11 +118,28 @@ class MyApp extends StatelessWidget {
                       Get.put(NotificationFixtures()),
                       Get.put(IdleTimeReasonRepository()),
                       Get.put(HistoryEventsFixtures()),
-                      Get.put(HistoryEventRepository())
+                      Get.put(HistoryEventRepository()),
+                      Get.put(CommonDropdownController())
                     }),
                 darkTheme: TaskListThemeData.darkThemeData.copyWith(
                   platform: defaultTargetPlatform,
                 ),
+                navigatorObservers: [
+                  CustomNavigatorObserver(
+                    onPop: (route, previousRoute) {
+                      // _DropdownRoute<String> является приватным, поэтому проверить здесь через is не можем
+                      // route.settings.name у _DropdownRoute<String> равен null, тоже проекрасно
+                      // но воля к костылям несокрушима, поэтому:
+                      if (route.runtimeType
+                          .toString()
+                          .startsWith("_DropdownRoute")) {
+                        CommonDropdownController commonDropdownController =
+                            Get.find();
+                        commonDropdownController.someDropdownTapped = false;
+                      }
+                    },
+                  )
+                ],
               );
             });
       }),

@@ -1,5 +1,10 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
+
+import '../crazylib/quote_card.dart';
+import '../games/beaumarchais_quotes.dart';
 
 class HelpPage extends StatefulWidget {
   static const String routeName = 'help';
@@ -30,8 +35,12 @@ class _HelpPageState extends State<HelpPage> {
           children: [
             //TODO:Должно появиться вложение Руководство пользователя.doc
             Padding(
-                padding: EdgeInsets.all(15.0),
-                child: Text("Страница находится в разработке."))
+              padding: EdgeInsets.all(15.0),
+              child: Text("Страница находится в разработке."),
+            ),
+            QuoteCard(
+                quote: kBeaumarchaisQuotes[
+                    Random().nextInt(kBeaumarchaisQuotes.length)]),
           ],
         ));
   }
