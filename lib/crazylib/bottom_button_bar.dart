@@ -63,18 +63,19 @@ class BottomButtonBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetX<AuthController>(builder: (authController) {
       return authController.isAuthenticated
-          ? Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: MenuAction.mainActionList
-                  .map((e) => new IconButton(
-                        // если не залогинились, доступны только настройки
-                        // The icon is disabled if [onPressed] is null.
-                        onPressed: e.callback,
-                        icon: Icon(e.iconData),
-                        iconSize: IconTheme.of(context).size ?? 24,
-                        tooltip: e.caption,
-                      ))
-                  .toList())
+          ? BottomAppBar(
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: MenuAction.mainActionList
+                      .map((e) => new IconButton(
+                            // если не залогинились, доступны только настройки
+                            // The icon is disabled if [onPressed] is null.
+                            onPressed: e.callback,
+                            icon: Icon(e.iconData),
+                            iconSize: IconTheme.of(context).size ?? 24,
+                            tooltip: e.caption,
+                          ))
+                      .toList()))
           : Text("");
     });
   }
