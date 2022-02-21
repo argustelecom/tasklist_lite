@@ -17,6 +17,8 @@ import 'package:tasklist_lite/pages/tasklist_page.dart';
 import 'package:tasklist_lite/pages/trunk_page.dart';
 import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/state/auth_controller.dart';
+import 'package:tasklist_lite/state/history_event_controller.dart';
+import 'package:tasklist_lite/state/tasklist_controller.dart';
 import 'package:tasklist_lite/tasklist/fixture/history_events_fixtures.dart';
 import 'package:tasklist_lite/tasklist/fixture/notification_fixtures.dart';
 import 'package:tasklist_lite/tasklist/fixture/task_fixtures.dart';

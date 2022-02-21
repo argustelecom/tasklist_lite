@@ -1,4 +1,3 @@
-import 'dart:js_util';
 
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:tasklist_lite/graphql/graphql_service.dart';
