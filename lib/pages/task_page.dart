@@ -3,7 +3,7 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:tasklist_lite/crazylib/crazy_button.dart';
+import 'package:tasklist_lite/crazylib/history_event_card.dart';
 import 'package:tasklist_lite/crazylib/idle_time_manager_dialog.dart';
 import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
 import 'package:tasklist_lite/crazylib/task_due_date_label.dart';
@@ -11,7 +11,6 @@ import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/state/history_event_controller.dart';
 import 'package:tasklist_lite/state/tasklist_controller.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
-import 'package:tasklist_lite/crazylib/history_event_card.dart';
 
 class TaskPage extends StatefulWidget {
   static const String routeName = 'task';
@@ -175,62 +174,65 @@ class _TaskPageState extends State<TaskPage> {
                                 // Текстовое поле ввода комментария
                                 Padding(
                                   padding: EdgeInsets.only(top: 16),
-                                  child: Focus(onFocusChange: (value) {
-                        historyEventController.setOnTextFieldFocused(value);
-                        },child:TextField(
-                                      textInputAction: TextInputAction.send,
-                                      keyboardType: TextInputType.text,
-                                      textAlign: TextAlign.start,
-                                      decoration: InputDecoration(
-                                        hintText: "Ваш комментарий",
-                                        hintStyle: TextStyle(fontSize: 14),
-                                        fillColor: themeData.bottomAppBarColor,
-                                        border: InputBorder.none,
-                                        filled: true,
-                                        suffixIcon: IconButton(
-                                          tooltip: 'С уведомлением',
-                                          icon: Icon(
+                                  child: Focus(
+                                    onFocusChange: (value) {
+                                      historyEventController
+                                          .setOnTextFieldFocused(value);
+                                    },
+                                    child: TextField(
+                                        textInputAction: TextInputAction.send,
+                                        keyboardType: TextInputType.text,
+                                        textAlign: TextAlign.start,
+                                        decoration: InputDecoration(
+                                          hintText: "Ваш комментарий",
+                                          hintStyle: TextStyle(fontSize: 14),
+                                          fillColor:
+                                              themeData.bottomAppBarColor,
+                                          border: InputBorder.none,
+                                          filled: true,
+                                          suffixIcon: IconButton(
+                                            tooltip: 'С уведомлением',
+                                            icon: Icon(
+                                                historyEventController
+                                                        .getIsAlarmComment()
+                                                    ? Icons.notifications
+                                                    : Icons.notifications_off,
+                                                // size: 30,
+                                                color: Colors.black),
+                                            onPressed: () {
                                               historyEventController
-                                                  .getIsAlarmComment()
-                                                  ? Icons.notifications
-                                                  : Icons.notifications_off,
-                                              // size: 30,
-                                              color: Colors.black),
-                                          onPressed: () {
-                                            historyEventController
-                                                .changeIsAlarmComment();
-                                          },
+                                                  .changeIsAlarmComment();
+                                            },
+                                          ),
+                                          isCollapsed: false,
                                         ),
-                                        isCollapsed: false,
-                                      ),
-                                      onSubmitted: (text) {
-                                        historyEventController.addComment(
-                                            commentTextController.text,
-                                            historyEventController
-                                                .getIsAlarmComment(),
-                                            taskListController.currentTask!);
-                                        commentTextController.clear();
-                                        historyScrollController.animateTo(
-                                          historyScrollController
-                                              .position.maxScrollExtent,
-                                          curve: Curves.easeOut,
-                                          duration:
-                                          const Duration(milliseconds: 300),
-                                        );
-                                        FocusManager.instance.primaryFocus
-                                            ?.unfocus();
-                                      },
-                                      // onTap: () =>
-                                      //     historyEventController.setFocus(),
-                                      minLines: 1,
-                                      maxLines: 5,
-                                      controller: commentTextController), ),
-
-
-
+                                        onSubmitted: (text) {
+                                          historyEventController.addComment(
+                                              commentTextController.text,
+                                              historyEventController
+                                                  .getIsAlarmComment(),
+                                              taskListController.currentTask!);
+                                          commentTextController.clear();
+                                          historyScrollController.animateTo(
+                                            historyScrollController
+                                                .position.maxScrollExtent,
+                                            curve: Curves.easeOut,
+                                            duration: const Duration(
+                                                milliseconds: 300),
+                                          );
+                                          FocusManager.instance.primaryFocus
+                                              ?.unfocus();
+                                        },
+                                        // onTap: () =>
+                                        //     historyEventController.setFocus(),
+                                        minLines: 1,
+                                        maxLines: 5,
+                                        controller: commentTextController),
+                                  ),
                                 ),
                                 Visibility(
-                                    visible: historyEventController.getOnTextFieldFocused(),
+                                    visible: historyEventController
+                                        .getOnTextFieldFocused(),
                                     child: Padding(
                                       padding:
                                           EdgeInsets.only(top: 8, right: 16),
@@ -253,7 +255,8 @@ class _TaskPageState extends State<TaskPage> {
                                                           RoundedRectangleBorder>(
                                                       RoundedRectangleBorder(
                                                           borderRadius:
-                                                          BorderRadius.circular(32))),
+                                                              BorderRadius.circular(
+                                                                  32))),
                                                   padding: MaterialStateProperty
                                                       .all<EdgeInsets>(
                                                           EdgeInsets.all(2)),
@@ -306,149 +309,177 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
     // FIXME: этого тут быть не должно, наверное!!!
     //Get.put(HistoryEventController());
 
-    HistoryEventController historyEventController = Get.find();
+    // HistoryEventController historyEventController = Get.find();
     TaskListController taskListController = Get.find();
-    return GetX<HistoryEventController>(init:HistoryEventController() ,builder: (historyEventController){
-    return AppBar(
-        leading: IconButton(
-          iconSize: 40,
-          icon: Icon(Icons.chevron_left_outlined),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        titleSpacing: 0.0,
-        toolbarHeight: 100,
-        title:
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                  padding: EdgeInsets.symmetric(vertical: 6),
-                  child: Row(children: [
-                    Text(
-                      task.processTypeName ?? " ",
-                      style: TextStyle(
-                          inherit: false, fontSize: 14, color: Colors.black54),
-                      textAlign: TextAlign.left,
-                    )
-                  ])),
-              Padding(
-                  padding: EdgeInsets.symmetric(vertical: 2),
-                  child: Row(children: [
-                    Text(
-                      task.name,
-                      style: TextStyle(
-                          inherit: false, fontSize: 20, color: Colors.black),
-                      textAlign: TextAlign.left,
-                    )
-                  ])),
-              Padding(
-                  padding: EdgeInsets.symmetric(vertical: 2),
-                  child: Row(children: [
-                    TaskDueDateLabel(task: task),
-                  ])),
-            ],
-          ),
-          if (!task.isClosed)
-            Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-              Container(
-                  width: 30,
-                  height: 30,
-                  margin: EdgeInsets.only(right: 18),
-                  decoration: BoxDecoration(
-                      color: Colors.yellow.shade700,
-                      borderRadius: BorderRadius.circular(4),
-                      boxShadow: const [
-                        BoxShadow(
-                            color: Colors.black38,
-                            blurRadius: 0.6,
-                            spreadRadius: 0.6,
-                            offset: Offset(0.0, 1.2)),
-                      ]),
-                  child: PopupMenuButton(
-                    icon: Icon(Icons.menu),
-                    iconSize: 28,
-                    padding: EdgeInsets.all(0.0),
-                    elevation: 3,
-                    offset: Offset(0, 50),
-                    itemBuilder: (BuildContext context) => <PopupMenuEntry>[
-                      const PopupMenuItem(
-                        child: ListTile(
-                          leading: Icon(Icons.check_circle_outline),
-                          title: Text('Завершить этап'),
-                        ),
-                        value: 0,
-                      ),
-                      PopupMenuItem(
-                        child: ListTile(
-                            leading: Icon(Icons.access_time),
-                            title: Text((task.idleTimeList == null)
-                                ? "Зарегистрировать простой"
-                                : "Завершить простой"),
-                            onTap: () {
-                              Navigator.pop(context, "");
-                              showModalBottomSheet(
-                                  context: context,
-                                  isDismissible: false,
-                                  isScrollControlled: true,
-                                  elevation: 5,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(6),
-                                        topRight: Radius.circular(6)),
-                                  ),
-                                  constraints: BoxConstraints(
-                                      minHeight:
-                                          MediaQuery.of(context).size.height -
-                                              90,
-                                      maxHeight:
-                                          MediaQuery.of(context).size.height -
-                                              90),
-                                  builder: (BuildContext context) {
-                                    return IdleTimeManagerDialog(
-                                        idleTime:
-                                            this.task.getCurrentIdleTime());
-                                  });
-                            }),
-                        value: 1,
-                      ),
-                      if (task.assignee != null)
-                        const PopupMenuItem(
-                          child: ListTile(
-                            leading: Icon(Icons.file_upload_outlined),
-                            title: Text('Вернуть группе'),
-                          ),
-                          value: 2,
-                        ),
-                      if (task.assignee == null)
-                        const PopupMenuItem(
-                          child: ListTile(
-                            leading: Icon(Icons.file_download_outlined),
-                            title: Text('Взять себе'),
-                          ),
-                          value: 3,
-                        ),
-                      // Данная кнопка оставляет системный комментарий
-                      PopupMenuItem(
-                          value: 4,
-                          child: ListTile(
-                            leading: Icon(Icons.announcement),
-                            title: Text('Проверка аварии'),
-                            onTap: () {
-                              DefaultTabController.of(context)!.animateTo(3,
-                                  curve: Curves.easeOut,
-                                  duration: const Duration(milliseconds: 300));
-                              historyEventController.addNewCrashComment(
-                                  taskListController.currentTask!);
-                            },
-                          ))
-                    ],
-                  ))
-            ])
-        ])
-    );});
+    return GetBuilder<HistoryEventController>(
+        init: HistoryEventController(),
+        builder: (historyEventController) {
+          return AppBar(
+              leading: IconButton(
+                iconSize: 40,
+                icon: Icon(Icons.chevron_left_outlined),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              titleSpacing: 0.0,
+              toolbarHeight: 100,
+              title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                            padding: EdgeInsets.symmetric(vertical: 6),
+                            child: Row(children: [
+                              Text(
+                                task.processTypeName ?? " ",
+                                style: TextStyle(
+                                    inherit: false,
+                                    fontSize: 14,
+                                    color: Colors.black54),
+                                textAlign: TextAlign.left,
+                              )
+                            ])),
+                        Padding(
+                            padding: EdgeInsets.symmetric(vertical: 2),
+                            child: Row(children: [
+                              Text(
+                                task.name,
+                                style: TextStyle(
+                                    inherit: false,
+                                    fontSize: 20,
+                                    color: Colors.black),
+                                textAlign: TextAlign.left,
+                              )
+                            ])),
+                        Padding(
+                            padding: EdgeInsets.symmetric(vertical: 2),
+                            child: Row(children: [
+                              TaskDueDateLabel(task: task),
+                            ])),
+                      ],
+                    ),
+                    if (!task.isClosed)
+                      Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Container(
+                                width: 30,
+                                height: 30,
+                                margin: EdgeInsets.only(right: 18),
+                                decoration: BoxDecoration(
+                                    color: Colors.yellow.shade700,
+                                    borderRadius: BorderRadius.circular(4),
+                                    boxShadow: const [
+                                      BoxShadow(
+                                          color: Colors.black38,
+                                          blurRadius: 0.6,
+                                          spreadRadius: 0.6,
+                                          offset: Offset(0.0, 1.2)),
+                                    ]),
+                                child: PopupMenuButton(
+                                  icon: Icon(Icons.menu),
+                                  iconSize: 28,
+                                  padding: EdgeInsets.all(0.0),
+                                  elevation: 3,
+                                  offset: Offset(0, 50),
+                                  itemBuilder: (BuildContext context) =>
+                                      <PopupMenuEntry>[
+                                    const PopupMenuItem(
+                                      child: ListTile(
+                                        leading:
+                                            Icon(Icons.check_circle_outline),
+                                        title: Text('Завершить этап'),
+                                      ),
+                                      value: 0,
+                                    ),
+                                    PopupMenuItem(
+                                      child: ListTile(
+                                          leading: Icon(Icons.access_time),
+                                          title: Text(
+                                              (task.idleTimeList == null)
+                                                  ? "Зарегистрировать простой"
+                                                  : "Завершить простой"),
+                                          onTap: () {
+                                            Navigator.pop(context, "");
+                                            showModalBottomSheet(
+                                                context: context,
+                                                isDismissible: false,
+                                                isScrollControlled: true,
+                                                elevation: 5,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.only(
+                                                          topLeft: Radius
+                                                              .circular(6),
+                                                          topRight:
+                                                              Radius.circular(
+                                                                  6)),
+                                                ),
+                                                constraints: BoxConstraints(
+                                                    minHeight:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height -
+                                                            90,
+                                                    maxHeight:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height -
+                                                            90),
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return IdleTimeManagerDialog(
+                                                      idleTime: this
+                                                          .task
+                                                          .getCurrentIdleTime());
+                                                });
+                                          }),
+                                      value: 1,
+                                    ),
+                                    if (task.assignee != null)
+                                      const PopupMenuItem(
+                                        child: ListTile(
+                                          leading:
+                                              Icon(Icons.file_upload_outlined),
+                                          title: Text('Вернуть группе'),
+                                        ),
+                                        value: 2,
+                                      ),
+                                    if (task.assignee == null)
+                                      const PopupMenuItem(
+                                        child: ListTile(
+                                          leading: Icon(
+                                              Icons.file_download_outlined),
+                                          title: Text('Взять себе'),
+                                        ),
+                                        value: 3,
+                                      ),
+                                    // Данная кнопка оставляет системный комментарий
+                                    PopupMenuItem(
+                                        value: 4,
+                                        child: ListTile(
+                                          leading: Icon(Icons.announcement),
+                                          title: Text('Проверка аварии'),
+                                          onTap: () {
+                                            DefaultTabController.of(context)!
+                                                .animateTo(3,
+                                                    curve: Curves.easeOut,
+                                                    duration: const Duration(
+                                                        milliseconds: 300));
+                                            historyEventController
+                                                .addNewCrashComment(
+                                                    taskListController
+                                                        .currentTask!);
+                                          },
+                                        ))
+                                  ],
+                                ))
+                          ])
+                  ]));
+        });
   }
 
   @override
