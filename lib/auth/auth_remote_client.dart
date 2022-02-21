@@ -31,7 +31,7 @@ class AuthRemoteClient {
     mainWorksite
     email
     workerAppoint
-    chefContact {
+    chiefContact {
       name
       phoneNum
     }

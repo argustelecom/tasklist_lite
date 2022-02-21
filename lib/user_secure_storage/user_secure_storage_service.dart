@@ -10,6 +10,7 @@ class UserSecureStorageService {
   static const String _authenticatedKeyName = "authenticated";
   static const String _userInfoKeyName = "userinfo";
   static const String _taskKeyName = "task";
+  static const String _serverAddress = "serverAddress";
 
   static Future<bool> getAuthenticated() async {
     final authStr = await _storage.read(key: _authenticatedKeyName);
@@ -37,6 +38,14 @@ class UserSecureStorageService {
     if (task != null) {
       await _storage.write(key: _taskKeyName, value: jsonEncode(task));
     }
+  }
+
+  static Future<String?> getServerAddress() async {
+    return  await _storage.read(key: _serverAddress);
+  }
+
+  static Future setServerAddress(String serverAddress) async {
+      await _storage.write(key: _serverAddress, value: serverAddress);
   }
 
 }

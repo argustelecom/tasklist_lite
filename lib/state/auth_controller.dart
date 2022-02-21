@@ -43,6 +43,24 @@ class AuthController extends GetxController {
   }
 
   late String basicAuth = "";
+  late String serverAddress;
+
+  String getServerAddress() {
+    if (serverAddress == null) {
+      UserSecureStorageService.getServerAddress().whenComplete(() => null);
+    }
+    return serverAddress;
+  }
+
+  setServerAddress(String value) {
+    serverAddress = value;
+    UserSecureStorageService.setServerAddress(value);
+  }
+
+  Future initServerAddress() async {
+    // TODO разобраться как сделать правильно
+    serverAddress = (await UserSecureStorageService.getServerAddress())!;
+  }
 
   set isAuthenticated(bool value) {
     _isAuthenticated.value = value;
@@ -92,6 +110,7 @@ class AuthController extends GetxController {
         String basicAuth =
             "Basic " + base64Encode(utf8.encode('$login:$password'));
         setAuth(basicAuth);
+        setServerAddress(serverAddress);
 
         await authService
             .login(basicAuth, serverAddress)
@@ -113,7 +132,7 @@ class AuthController extends GetxController {
       // их надо обрабатывать в секциях on (см. например flutter_entity_list)
       catch (anyException) {
         errorText =
-            "Неверный логин или пароль. \nПроверьте правильность введенных данных.";
+            "Неверный логин или пароль. \nПроверьте правильность введенных данных. \nНеожиданная ошибка";
       }
     } else {
       errorText =

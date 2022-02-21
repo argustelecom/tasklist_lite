@@ -44,8 +44,9 @@ class _AlternativeTaskListPageState extends State<AlternativeTaskListPage> {
     // TODO fix me получаем данные авторизации пользователя. Необходимо получать из secureStorage
     AuthController authController = Get.find();
     late String basicAuth = authController.getAuth();
+    late String serverAddress = authController.getServerAddress();
     List<Task> taskList =
-        taskRepository.getTasks(basicAuth, applicationState.serverAddress);
+        taskRepository.getTasks(basicAuth, serverAddress);
     // очень непривычно, тут низя в операции map обернуть тело анонимной функции в фигурные скобки {}
     // в java это была бы просто группировка операций в единый блок, а здесь этим объявляется Set :/
     List<Text> taskDescs = taskList.map((task) => Text(task.name)).toList();

@@ -71,7 +71,7 @@ class UserInfo {
   factory UserInfo.fromJson(Map<String, dynamic> json) {
     dynamic rawSecurityRoles = json['securityRoles'];
     dynamic rawSecurityRoleNames = json['securityRoleNames'];
-    dynamic rawContacts = json['chefContact'];
+    dynamic rawContacts = json['chiefContact'];
     return UserInfo(
         userName: json['userName'],
         homeRegionName: json['homeRegionName'],
