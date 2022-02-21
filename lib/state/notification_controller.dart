@@ -5,6 +5,8 @@ import 'package:tasklist_lite/tasklist/fixture/notification_fixtures.dart';
 import 'package:tasklist_lite/tasklist/model/notify.dart';
 import 'package:tasklist_lite/tasklist/notification_repository.dart';
 
+import 'auth_controller.dart';
+
 class NotificationController extends GetxController {
   /// Список уведомлений, которые еще не прочитаны. Его будем выводить на UI
   List<Notify> aliveNotifications = List.of({});
@@ -57,9 +59,12 @@ class NotificationController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    AuthController authController = Get.find();
     openedNotificationSubscription = resubscribe(openedNotificationSubscription,
-        notificationRepository.streamOpenedNotifications(), (event) {
-      this.aliveNotifications = event;
+        notificationRepository.streamOpenedNotifications(authController.getAuth(),authController.getServerAddress()), (event) {
+          //Только те, что отсутсвуют в deadNotifications
+          List<Notify> newOpenNotify = event.where((element) => !deadNotifications.map((e) => e.id).contains(element.id)).toList();
+      this.aliveNotifications = newOpenNotify;
       update();
     });
   }
@@ -73,9 +78,13 @@ class NotificationController extends GetxController {
 
   /// Используем для того, чтобы получить новый стрим с новыми данными при изменении фикстуры
   void didChangeDependencies() {
+    AuthController authController = Get.find();
     openedNotificationSubscription = resubscribe(openedNotificationSubscription,
-        notificationRepository.streamOpenedNotifications(), (event) {
-      this.aliveNotifications = event;
+        notificationRepository.streamOpenedNotifications(authController.getAuth(),authController.getServerAddress()), (event) {
+      //Только те, что отсутсвуют в deadNotifications
+      List<Notify> newOpenNotify = event.where((element) => !deadNotifications.map((e) => e.id).contains(element.id)).toList();
+
+      this.aliveNotifications = newOpenNotify;
       update();
     });
   }
