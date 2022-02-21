@@ -11,6 +11,38 @@ class TaskRemoteClient {
 
   static const String thirdPartyApiAddress = "/argus/graphql/support-service-thirdparty";
 
+  /// Получение простоя IdleTime
+  static const String idleTimeQuery = '''    
+    id
+    reason
+    beginTime
+    endTime ''';
+ /// Получение "легкого" Task, без истории
+  static const String taskGraphqlQuery = '''id
+  name
+  desc
+  processTypeName
+  taskType
+  dueDate
+  assignee
+  address
+  addressComment
+  createDate
+  isVisit
+  isPlanned
+  isOutdoor
+  isClosed
+  latitude
+  longitude
+  flexibleAttribute {
+     key
+     value
+  }
+  idleTimePeriod {
+    $idleTimeQuery
+  }
+  ''';
+
   late GraphQLService _graphQLService;
 
   TaskRemoteClient(String basicAuth, String serverAddress) {
@@ -27,49 +59,12 @@ class TaskRemoteClient {
     // TODO подумать про изменение схемы graphql (что бы был доступен вызов myTasks() и myTasks(day))
     String myOpenedTasksQuery = '''
  {  myOpenedTasks {
-    id
-    name
-    desc
-    processTypeName
-    taskType
-    dueDate
-    assignee
-    address
-    addressComment
-    createDate
-    isVisit
-    isPlanned
-    isOutdoor
-    isClosed
-    latitude
-    longitude
-    flexibleAttribute{
-      key
-      value
-    }
-
+    $taskGraphqlQuery
  }
  }
 ''';
-    // #TODO: если это делать в момент запуска приложения, получается долго (сервер отвечает более 1с)
-    // это должен быть push или graphql subscription или что-то вроде
-    Future<QueryResult> queryResultFuture =
-        _graphQLService.query(myOpenedTasksQuery);
-    List<Task> result = List.of({});
-    await queryResultFuture.then((value) {
-      if (value.hasException) {
-        throw Exception(value.exception);
-      }
-      if (value.data == null) {
-        return result;
-      }
-      List.from(value.data!["myOpenedTasks"]).forEach((element) {
-        result.add(Task.fromJson(element));
-      });
-    }, onError: (e) {
-      throw Exception(" onError " + e.toString());
-    });
-    return result;
+    return getTasks(myOpenedTasksQuery, "myOpenedTasks");
+
   }
 
   Future<List<Task>> geClosedTasks(DateTime day) async {
@@ -77,31 +72,16 @@ class TaskRemoteClient {
     String myClosedTasksQuery = '''
  {  
    myClosedTasks(day: "$date") {
-    id
-    name
-    desc
-    processTypeName
-    taskType
-    dueDate
-    assignee
-    address
-    addressComment
-    createDate
-    isVisit
-    isPlanned
-    isOutdoor
-    isClosed
-    latitude
-    longitude
-    flexibleAttribute{
-      key
-      value
-    }
+    $taskGraphqlQuery
    }
  }''';
 
+   return getTasks(myClosedTasksQuery, "myClosedTasks");
+  }
+
+  Future<List<Task>> getTasks  (String queryString, String queryName) async {
     Future<QueryResult> queryResultFuture =
-        _graphQLService.query(myClosedTasksQuery);
+    _graphQLService.query(queryString);
     List<Task> result = List.of({});
     await queryResultFuture.then((value) {
       if (value.hasException) {
@@ -110,7 +90,7 @@ class TaskRemoteClient {
       if (value.data == null) {
         return result;
       }
-      List.from(value.data!["myClosedTasks"]).forEach((element) {
+      List.from(value.data!["$queryName"]).forEach((element) {
         result.add(Task.fromJson(element));
       });
     }, onError: (e) {

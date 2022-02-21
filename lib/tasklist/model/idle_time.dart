@@ -46,4 +46,22 @@ class IdleTime {
     } else
       return "";
   }
+
+  factory IdleTime.fromJson(Map<String, dynamic> json) {
+    return IdleTime(
+        id: int.parse(json['id']) ,
+        reason: json['reason'],
+        startDate:DateTime.parse(json['startDate']),
+        endDate: json['endDate'] != null ? DateTime.parse(json['endDate']) : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['reason'] = this.reason;
+    data['startDate'] = this.startDate.toString();
+    data['endDate'] = this.endDate != null ? this.endDate.toString() : null;;
+    return data;
+  }
 }

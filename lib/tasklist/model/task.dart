@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:duration/duration.dart';
 import 'package:duration/locale.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import 'idle_time.dart';
@@ -203,8 +204,9 @@ class Task {
 
   factory Task.fromJson(Map<String, dynamic> json) {
     dynamic rawAttributes = json['flexibleAttribute'];
+    dynamic rawIdleTime = json['idleTime'];
     return Task(
-        id: json['id'],
+        id: int.parse(json['id']) ,
         name: json['name'],
         desc: json['desc'],
         processTypeName: json['processTypeName'],
@@ -227,9 +229,17 @@ class Task {
         isVisit: json['isVisit'],
         isPlanned: json['isPlanned'],
         isOutdoor: json['isOutdoor'],
-        flexibleAttribs: rawAttributes != null && rawAttributes.isNotEmpty
-            ? LinkedHashMap<String, Object?>.from(Map.from(rawAttributes))
-            : LinkedHashMap.fromIterable(List.of({})));
+
+        // TODO
+        flexibleAttribs: LinkedHashMap<String, Object?>.fromIterable(
+            json['flexibleAttribute'],
+            key: (e) => e["key"],
+            value: (e) => e["value"]),
+
+        idleTimeList: rawIdleTime != null && (rawIdleTime as List).isNotEmpty
+        ? (rawIdleTime as List).map((e) => IdleTime.fromJson(e)).toList()
+        : List.of({}));
+
   }
 
   Map<String, dynamic> toJson() {
@@ -255,6 +265,7 @@ class Task {
     data['isPlanned'] = this.isPlanned;
     data['isOutdoor'] = this.isOutdoor;
     data['flexibleAttribute'] = this.flexibleAttribs;
+    data['idleTimeList'] = this.idleTimeList;
     return data;
   }
 }
