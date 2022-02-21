@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-
 /// Это карточка исторического события, данные карточки используем на task_page
 /// для представления исторических событий на соответсвующей вкладке
-class historyEventCard extends StatelessWidget {
+class HistoryEventCard extends StatelessWidget {
   final String person;
   final String type;
   var content;
   final DateTime date;
   final isAlarm;
 
-  historyEventCard(
+  HistoryEventCard(
       {Key? key,
       required this.person,
       required this.type,
@@ -56,16 +55,17 @@ class historyEventCard extends StatelessWidget {
               )
             ],
           ),
-          Align(alignment:Alignment.topLeft ,child: Padding(
-            padding: EdgeInsets.only(top: 8, left: 16, right: 16),
-            child: Text(
-              "$content",
-              softWrap: true,
-              style: const TextStyle(fontSize: 14),
+          Align(
+            alignment: Alignment.topLeft,
+            child: Padding(
+              padding: EdgeInsets.only(top: 8, left: 16, right: 16),
+              child: Text(
+                "$content",
+                softWrap: true,
+                style: const TextStyle(fontSize: 14),
+              ),
             ),
-          ),),
-
-
+          ),
           Padding(
             padding: EdgeInsets.only(right: 16, bottom: 8),
             child: Row(

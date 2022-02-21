@@ -7,7 +7,7 @@ import 'model/task.dart';
 
 class HistoryEventRepository extends GetxService {
   /// Получаем из фикстуры список исторических событий
-  List<HistoryEvent> getHistoryEvent(Task task) {
+  List<HistoryEvent> getHistoryEvent(Task? task) {
     ApplicationState applicationState = Get.find();
     HistoryEventsFixtures historyEventsFixtures = Get.find();
     if (applicationState.inDemonstrationMode) {
