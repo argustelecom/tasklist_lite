@@ -113,7 +113,7 @@ class AuthController extends GetxController {
         setServerAddress(serverAddress);
 
         await authService
-            .login(basicAuth, serverAddress)
+            .login(basicAuth, serverAddress, inDemonstrationMode)
             .whenComplete(() => null)
             .then(
           (value) {
@@ -121,10 +121,27 @@ class AuthController extends GetxController {
             isAuthenticated = true;
           },
           onError: (Object e, StackTrace stackTrace) {
-            //должны выводится разные сообщения в зависимости от типа ошибки
-            // Отсутсвует Интернет/неправильный адрес СП
-            errorText =
-                "Неверный логин или пароль. \nПроверьте правильность введенных данных.";
+            // Простейшая обработка ошибок
+            // дурацкая реализация. Exception.message не доступно
+            String message = e.toString().substring("Exception: ".length);
+
+            switch (message) {
+              case ("Сервер не доступен"):
+                errorText =
+                    "Сервер не доступен. \nПроверьте правильность введенных данных. \nСообщите администратору.";
+                break;
+              case ("Неавторизован"):
+                errorText =
+                    "Неверный логин или пароль. \nПроверьте правильность введенных данных.";
+                break;
+              case ("Ошибка получения данных о профиле пользователя"):
+                errorText =
+                    "Ошибка получения данных о профиле пользователя. \nСообщите администратору.";
+                break;
+              default:
+                errorText =
+                    "Ошибка получения данных. \nСообщите администратору.";
+            }
           },
         );
       }
@@ -132,7 +149,7 @@ class AuthController extends GetxController {
       // их надо обрабатывать в секциях on (см. например flutter_entity_list)
       catch (anyException) {
         errorText =
-            "Неверный логин или пароль. \nПроверьте правильность введенных данных. \nНеожиданная ошибка";
+            "Неожиданная ошибка. \nСообщите администратору.";
       }
     } else {
       errorText =

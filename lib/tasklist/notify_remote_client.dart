@@ -43,8 +43,7 @@ class NotifyRemoteClient {
 }
  }
 ''';
-    // #TODO: если это делать в момент запуска приложения, получается долго (сервер отвечает более 1с)
-    // это должен быть push или graphql subscription или что-то вроде
+     // TODO Единообразный вызов вместе с Task_remote_client
     Future<QueryResult> queryResultFuture =
         _graphQLService.query(myNotify);
     List<Notify> result = List.of({});

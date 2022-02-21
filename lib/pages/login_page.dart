@@ -234,7 +234,7 @@ class LoginPageState extends State<LoginPage> {
                                         .inDemonstrationMode,
                                     _loginEditingController.text,
                                     _passwordEditingController.text,
-                                    applicationState.serverAddress);
+                                    ApplicationState.of(context).serverAddress);
                                 NavigatorState navigatorState =
                                     Navigator.of(context);
                                 // пока такой возможности нет, но если пользователь разлогинился не с домашней странички,

@@ -1,3 +1,5 @@
+import 'dart:js_util';
+
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:tasklist_lite/graphql/graphql_service.dart';
 import 'package:tasklist_lite/tasklist/model/user_info.dart';
@@ -18,8 +20,8 @@ class AuthRemoteClient {
   }
 
   Future<UserInfo> getUserInfo() async {
-    String whoIAm = '''
- {   whoiam{
+    String whoAmI = '''
+ {   whoami{
     userName
     homeRegionName
     securityRoles
@@ -39,27 +41,29 @@ class AuthRemoteClient {
  }
 ''';
     // Используем late так как инициализация происходит await whenComplete
+    // TODO Единообразный вызов вместе с Task_remote_client
     late UserInfo result;
-    try {
-      Future<QueryResult> queryResultFuture = _graphQLService.query(whoIAm);
+      Future<QueryResult> queryResultFuture = _graphQLService.query(whoAmI);
       await queryResultFuture.whenComplete(() => null).then((value) {
         if (value.hasException) {
           // need catch 401 error
-          throw Exception(value.exception);
+          if (value.exception?.linkException is ServerException) {
+            throw Exception("Сервер не доступен");
+          }
+          if (value.exception?.linkException is HttpLinkParserException) {
+          throw Exception("Неавторизован");
+          }
+          throw Exception("Неожиданная ошибка");
         }
         if (value.data == null) {
-          throw Exception("value.data == null");
+          throw Exception("Ошибка получения данных о профиле пользователя");
         }
         if (!value.isLoading) {
-          result = UserInfo.fromJson(value.data!["whoiam"]);
+          result = UserInfo.fromJson(value.data!["whoami"]);
           return result;
         }
-      }, onError: (e) {
-        throw Exception(" onError " + e.toString());
       });
-    } catch (e) {
-      throw new Exception("AuthRemoteClient.getUserInfo:  " + e.toString());
-    }
+
     return result;
   }
 }
