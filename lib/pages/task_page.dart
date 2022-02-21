@@ -224,6 +224,8 @@ class _TaskPageState extends State<TaskPage> {
                                             duration: const Duration(
                                                 milliseconds: 300),
                                           );
+                                          FocusManager.instance.primaryFocus
+                                              ?.unfocus();
                                         },
                                         minLines: 1,
                                         maxLines: 5,
@@ -281,6 +283,9 @@ class _TaskPageState extends State<TaskPage> {
                                                   duration: const Duration(
                                                       milliseconds: 300),
                                                 );
+                                                FocusManager
+                                                    .instance.primaryFocus
+                                                    ?.unfocus();
                                               },
                                             ),
                                           ],
