@@ -8,24 +8,24 @@ import '../state/auth_controller.dart';
 
 /// перечень всех пунктов меню в bottom_bar и в widescreen-slider`е
 class MenuAction {
-  final IconData iconData;
+  final Widget icon;
   final String caption;
   final VoidCallback callback;
 
   MenuAction(
-      {required this.iconData, required this.caption, required this.callback});
+      {required this.icon, required this.caption, required this.callback});
 
   // в callback`ах не может использовать Navigator.pushNamed, т.к. здесь нет buildContext`а.
   // Но тут нас выручает Get с возможностью навигации без контекста
   static final List<MenuAction> mainActionList = List.of({
     MenuAction(
-        iconData: Icons.backpack_outlined,
+        icon: Image.asset("images/ibob_backpack_icon.png"),
         caption: "Рюкзак",
         callback: () {
           Get.toNamed(TrunkPage.routeName);
         }),
     MenuAction(
-        iconData: Icons.event_available_outlined,
+        icon: Icon(Icons.event_available_outlined),
         caption: "Список задач",
         // список задач имеет корневой маршрут "/". Это значит, что он уже был
         // по-любому открыт, и нам надо делать pop, а не push, чтобы попасть туда.
@@ -38,13 +38,13 @@ class MenuAction {
           );
         }),
     MenuAction(
-        iconData: Icons.insert_chart_outlined,
+        icon: Icon(Icons.insert_chart_outlined),
         caption: "Отчеты",
         callback: () {
           Get.toNamed(ReportsPage.routeName);
         }),
     MenuAction(
-        iconData: Icons.report_problem_outlined,
+        icon: Icon(Icons.report_problem_outlined),
         caption: "Сообщить об ошибке",
         callback: () {}),
   });
@@ -71,7 +71,7 @@ class BottomButtonBar extends StatelessWidget {
                             // если не залогинились, доступны только настройки
                             // The icon is disabled if [onPressed] is null.
                             onPressed: e.callback,
-                            icon: Icon(e.iconData),
+                            icon: e.icon,
                             iconSize: IconTheme.of(context).size ?? 24,
                             tooltip: e.caption,
                           ))

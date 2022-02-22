@@ -34,7 +34,7 @@ class WideScreenNavigationDrawer extends StatelessWidget {
                                   child: Row(children: [
                                     IconButton(
                                       onPressed: e.callback,
-                                      icon: Icon(e.iconData),
+                                      icon: e.icon,
                                       iconSize:
                                           IconTheme.of(context).size ?? 24,
                                       tooltip: e.caption,
