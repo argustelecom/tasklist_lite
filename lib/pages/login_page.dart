@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get/get.dart';
 import 'package:google_language_fonts/google_language_fonts.dart';
 import 'package:tasklist_lite/crazylib/crazy_button.dart';
@@ -8,6 +9,7 @@ import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
 import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/state/auth_controller.dart';
 import 'package:tasklist_lite/state/common_dropdown_controller.dart';
+import 'package:tasklist_lite/user_secure_storage/user_secure_storage_service.dart';
 
 // #TODO: если делать отдельным виджетом, стоит параметризовать размеры, кривую анимации, длительность
 class AnimatedLogo extends StatefulWidget {
@@ -73,6 +75,12 @@ class LoginPageState extends State<LoginPage> {
 
   String? _selectedServer;
 
+  // набор suggestions для autocomplete`а
+  List<String> serverAddressSuggestions = List.of({});
+
+  static const serverAddressSuggestionsStorageKey =
+      "serverAddressSuggestionsStorageKey";
+
   InputDecoration fieldDecoration(BuildContext context, String text) {
     ThemeData themeData = Theme.of(context);
     return InputDecoration(
@@ -80,6 +88,20 @@ class LoginPageState extends State<LoginPage> {
         floatingLabelStyle: TextStyle(color: themeData.colorScheme.primary),
         focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: themeData.colorScheme.primary)));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    UserSecureStorageService.readList(serverAddressSuggestionsStorageKey)
+        .then((value) => serverAddressSuggestions = value,
+            onError: (Object error, StackTrace stackTrace) {
+      // #TODO: завести нормальный лог вместо print. И вообще, хорошо бы спрятать обработку
+      // ошибок в UserSecureStorageService
+      print(
+          "ошибка чтения serverAddressSuggestions из хранилища: $error, stack = $stackTrace");
+    });
   }
 
   @override
@@ -174,10 +196,28 @@ class LoginPageState extends State<LoginPage> {
                             }).toList();
                           },
                         ),
-                        TextField(
-                          controller: _serverAddressEditingController,
-                          cursorColor: themeData.colorScheme.primary,
-                          decoration: fieldDecoration(context, "Адрес сервера"),
+                        TypeAheadField<String>(
+                          textFieldConfiguration: TextFieldConfiguration(
+                            controller: _serverAddressEditingController,
+                            decoration:
+                                fieldDecoration(context, "Адрес сервера"),
+                          ),
+                          suggestionsCallback: (String pattern) {
+                            return serverAddressSuggestions.where(
+                                (element) => element.startsWith(pattern));
+                          },
+                          itemBuilder: (BuildContext context, suggestion) {
+                            return ListTile(
+                              title: Text(suggestion),
+                            );
+                          },
+                          onSuggestionSelected: (String suggestion) {
+                            _serverAddressEditingController.text = suggestion;
+                          },
+                          noItemsFoundBuilder: (context) {
+                            // иначе будет показан жирный No items found!
+                            return Text("");
+                          },
                         ),
                         Tooltip(
                           textStyle: TextStyle(fontSize: 16),
@@ -223,27 +263,51 @@ class LoginPageState extends State<LoginPage> {
                               title: "Войти",
                               key: ValueKey('login_button'),
                               onPressed: () {
+                                /// пополняем коллекцию suggestions
+
+                                if (!serverAddressSuggestions.contains(
+                                        _serverAddressEditingController.text) &&
+                                    _serverAddressEditingController
+                                        .text.isNotEmpty) {
+                                  setState(() {
+                                    serverAddressSuggestions.add(
+                                        _serverAddressEditingController.text);
+                                  });
+                                }
+
+                                UserSecureStorageService.writeList(
+                                    serverAddressSuggestionsStorageKey,
+                                    serverAddressSuggestions);
+
+                                /// обновляем адрес в ApplicationState
                                 ApplicationState.update(
                                     context,
                                     ApplicationState.of(context).copyWith(
                                         serverAddress:
                                             _serverAddressEditingController
                                                 .text));
-                                authController.login(
+
+                                /// логинимся
+                                Future<void> loginFuture = authController.login(
                                     ApplicationState.of(context)
                                         .inDemonstrationMode,
                                     _loginEditingController.text,
                                     _passwordEditingController.text,
                                     ApplicationState.of(context).serverAddress);
-                                NavigatorState navigatorState =
-                                    Navigator.of(context);
-                                // пока такой возможности нет, но если пользователь разлогинился не с домашней странички,
-                                // надо бы его возвращать туда, откуда он разлогинился
-                                if (navigatorState.canPop()) {
-                                  navigatorState.pop();
-                                } else {
-                                  navigatorState.pushNamed("/");
-                                }
+
+                                /// Если пользователь разлогинился не с домашней странички(а, например, со страницы профиля),
+                                /// надо его возвращать туда, откуда он разлогинился
+                                loginFuture.then((value) {
+                                  if (authController.isAuthenticated) {
+                                    NavigatorState navigatorState =
+                                        Navigator.of(context);
+                                    if (navigatorState.canPop()) {
+                                      navigatorState.pop();
+                                    } else {
+                                      navigatorState.pushNamed("/");
+                                    }
+                                  }
+                                });
                               },
                               padding: EdgeInsets.symmetric(vertical: 8),
                             ),

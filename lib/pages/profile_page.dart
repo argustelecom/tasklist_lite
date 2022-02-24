@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get/get.dart';
 import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
 import 'package:tasklist_lite/pages/about_app_page.dart';
@@ -13,120 +12,13 @@ import 'package:tasklist_lite/state/auth_controller.dart';
 import 'package:tasklist_lite/tasklist/model/user_info.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class ProfilePage extends StatefulWidget {
+class ProfilePage extends StatelessWidget {
   static const String routeName = 'profile';
-
-  @override
-  State<StatefulWidget> createState() {
-    return new ProfilePageState();
-  }
-}
-
-class ProfilePageState extends State<ProfilePage> {
-  // из-за него пришлось делать всю страницу stateful
-  late TextEditingController _serverAddressEditingController;
-
-  // а еще в этом state хранится набор suggestions для autocomplete`а
-  // #TODO: обеспечить, чтобы эта коллекция переживала f5 в браузере
-  List<String> serverAddressSuggestions = List.of({});
-
-  @override
-  void initState() {
-    super.initState();
-    _serverAddressEditingController = new TextEditingController();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    ApplicationState applicationState = ApplicationState.of(context);
-    _serverAddressEditingController.text = applicationState.serverAddress;
-  }
-
-  @override
-  void dispose() {
-    _serverAddressEditingController.dispose();
-    super.dispose();
-  }
-
-  /// Вызывается, когда пользователь отредактировал адрес сервера.
-  /// то есть, помимо onSubmitted в самом TextField`e, еще и при
-  /// потере фокуса (потому что в вебе пользователь именно так и заканчивает
-  /// редактирование. #TODO: не понятно, почему для этого пришлось изобретать
-  /// костылик с Focus.onFocusChange, а TextField это из коробки не поддерживает.
-  onServerAddressEdited() {
-    ApplicationState applicationState = ApplicationState.of(context);
-    if (_serverAddressEditingController.text !=
-        applicationState.serverAddress) {
-      // по итогам редактирования адрес сервера таки изменился
-      // если пользователь аутентифицирован, надо его предупредить, а потом
-      // завершить сеанс и отправить на страницу входа, чтобы подключиться к
-      // серверу с новым адресом.
-      AuthController authController = Get.find();
-      if (authController.isAuthenticated) {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: const Text("Переподключение к серверу"),
-              content: const Text("Адрес сервера был изменен. "
-                  "\nВ случае подтверждения, потребуется переподключение к серверу. "
-                  "\nСеанс завершится, будет отображена страница входа. Продолжить?"),
-              actions: <Widget>[
-                TextButton(
-                  child: const Text('Отмена'),
-                  onPressed: () {
-                    _serverAddressEditingController.text =
-                        applicationState.serverAddress;
-                    Navigator.of(context).pop();
-                    return;
-                  },
-                ),
-                TextButton(
-                  child: const Text('Продолжить'),
-                  onPressed: () {
-                    ApplicationState.update(
-                        context,
-                        applicationState.copyWith(
-                            serverAddress:
-                                _serverAddressEditingController.text));
-                    // не забываем добавить новый текст в коллекцию suggestions
-                    if (!serverAddressSuggestions
-                        .contains(_serverAddressEditingController.text)) {
-                      serverAddressSuggestions
-                          .add(_serverAddressEditingController.text);
-                    }
-                    authController.logout();
-                    // закроем открытый диалог и перекинем пользователя на страницу входа
-                    NavigatorState navigatorState = Navigator.of(context);
-                    navigatorState.pop();
-                    navigatorState.pushNamed(LoginPage.routeName);
-                  },
-                ),
-              ],
-            );
-          },
-        );
-      } else {
-        // не забываем добавить новый текст в коллекцию suggestions
-        if (!serverAddressSuggestions
-            .contains(_serverAddressEditingController.text)) {
-          serverAddressSuggestions.add(_serverAddressEditingController.text);
-        }
-        // пользователь не был залогинен, поэтому просто заменим адрес в настройках на новый
-        ApplicationState.update(
-            context,
-            applicationState.copyWith(
-                serverAddress: _serverAddressEditingController.text));
-      }
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     //Отступ карточки блока
-    EdgeInsets paddingSettingBlock =
-        EdgeInsets.only(bottom: 2);
+    EdgeInsets paddingSettingBlock = EdgeInsets.only(bottom: 2);
     return GetX<AuthController>(builder: (authController) {
       UserInfo userInfo = authController.userInfo as UserInfo;
       return ReflowingScaffold(
@@ -268,90 +160,41 @@ class ProfilePageState extends State<ProfilePage> {
                   // TASK-126749 з4. прячем лишннее для релизной сборки.
                   // функционал "Запоминать избранные работы" не попадает в релиз первой версии
                   // если нужна в релизной сборке или  другой, то убери "if (kDebugMode)".
-                  if (kDebugMode) Padding(
-                      padding: paddingSettingBlock,
-                      child: Card(
-                          elevation: 3,
-                          child: SizedBox(
-                              height: 50.0,
-                              child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Padding(
-                                        padding: EdgeInsets.only(left: 15),
-                                        child: Text(
-                                          "Запоминать избранные работы",
-                                        )),
-                                    Padding(
-                                        padding: EdgeInsets.only(right: 5),
-                                        child: Transform.scale(
-                                            scale: 1.1,
-                                            child:
-                                                //Переклбчатель задизайблен, так как
-                                                //доработка "Запоминать избранные работы"
-                                                //будет в следующих этапах
-                                                Switch(
-                                                    activeColor:
-                                                        Color(0xFFFFFF),
-                                                    activeTrackColor:
-                                                        Color(0xFBC22F),
-                                                    value: false,
-                                                    // непосреджственно отсутствие действий при нажатии
-                                                    // дизеблит переключатель в ui (тускнет и окрашивается в серый цвет)
-                                                    onChanged: null)))
-                                  ])))),
-                  Padding(
-                      padding: paddingSettingBlock,
-                      child: Card(
-                          elevation: 3,
-                          child: ExpansionTile(
-                              title: Text("Адрес сервера"),
-                              children: [
-                                Focus(
-                                  onFocusChange: (value) {
-                                    // здесь value имеет тип bool и говорит, обрели мы фокус (true) или потеряли (false)
-                                    // #TODO: и почему все же нет такого у TextField из коробки? эх, еще учиться и учиться!
-                                    if (!value) {
-                                      onServerAddressEdited();
-                                    }
-                                  },
-                                  // TypeAheadField -- это одна из реализаций поля с autocompete (на вкус kostd, наиболее зрелая)
-                                  child: TypeAheadField<String>(
-                                    textFieldConfiguration:
-                                        TextFieldConfiguration(
-                                      controller:
-                                          _serverAddressEditingController,
-                                      onSubmitted: (value) {
-                                        // достаточно вызывать из onFocusChanged, т.к иначе это будет повторный вызов
-                                        //onServerAddressEdited();
-                                      },
-                                      decoration: InputDecoration(
-                                          labelText:
-                                              "В формате <доменное имя(ip):порт>"),
-                                    ),
-                                    suggestionsCallback: (String pattern) {
-                                      return serverAddressSuggestions.where(
-                                          (element) =>
-                                              element.startsWith(pattern));
-                                    },
-                                    itemBuilder:
-                                        (BuildContext context, suggestion) {
-                                      return ListTile(
-                                        title: Text(suggestion),
-                                      );
-                                    },
-                                    onSuggestionSelected: (String suggestion) {
-                                      _serverAddressEditingController.text =
-                                          suggestion;
-                                    },
-                                    noItemsFoundBuilder: (context) {
-                                      // иначе будет показан жирный No items found!
-                                      return Text("");
-                                    },
-                                  ),
-                                ),
-                              ]))),
+                  if (kDebugMode)
+                    Padding(
+                        padding: paddingSettingBlock,
+                        child: Card(
+                            elevation: 3,
+                            child: SizedBox(
+                                height: 50.0,
+                                child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Padding(
+                                          padding: EdgeInsets.only(left: 15),
+                                          child: Text(
+                                            "Запоминать избранные работы",
+                                          )),
+                                      Padding(
+                                          padding: EdgeInsets.only(right: 5),
+                                          child: Transform.scale(
+                                              scale: 1.1,
+                                              child:
+                                                  //Переклбчатель задизайблен, так как
+                                                  //доработка "Запоминать избранные работы"
+                                                  //будет в следующих этапах
+                                                  Switch(
+                                                      activeColor:
+                                                          Color(0xFFFFFF),
+                                                      activeTrackColor:
+                                                          Color(0xFBC22F),
+                                                      value: false,
+                                                      // непосреджственно отсутствие действий при нажатии
+                                                      // дизеблит переключатель в ui (тускнет и окрашивается в серый цвет)
+                                                      onChanged: null)))
+                                    ])))),
+
                   Padding(
                       padding: paddingSettingBlock,
                       child: Card(

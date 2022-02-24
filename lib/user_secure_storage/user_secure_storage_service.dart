@@ -22,7 +22,8 @@ class UserSecureStorageService {
 
   static Future<UserInfo?> getUserInfo() async {
     final userInfoStr = await _storage.read(key: _userInfoKeyName);
-    return userInfoStr != null ? UserInfo.fromJson(jsonDecode(userInfoStr))
+    return userInfoStr != null
+        ? UserInfo.fromJson(jsonDecode(userInfoStr))
         : null;
   }
 
@@ -41,11 +42,22 @@ class UserSecureStorageService {
   }
 
   static Future<String?> getServerAddress() async {
-    return  await _storage.read(key: _serverAddress);
+    return await _storage.read(key: _serverAddress);
   }
 
   static Future setServerAddress(String serverAddress) async {
-      await _storage.write(key: _serverAddress, value: serverAddress);
+    await _storage.write(key: _serverAddress, value: serverAddress);
   }
 
+  static Future<List<String>> readList(String key) async {
+    String? result = await _storage.read(key: key);
+    if (result != null) {
+      return (json.decode(result) as List).cast<String>();
+    }
+    return List.of({});
+  }
+
+  static Future writeList(String key, List<String> data) async {
+    return await _storage.write(key: key, value: json.encode(data));
+  }
 }

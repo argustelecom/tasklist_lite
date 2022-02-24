@@ -17,8 +17,6 @@ import 'package:tasklist_lite/pages/tasklist_page.dart';
 import 'package:tasklist_lite/pages/trunk_page.dart';
 import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/state/auth_controller.dart';
-import 'package:tasklist_lite/state/history_event_controller.dart';
-import 'package:tasklist_lite/state/tasklist_controller.dart';
 import 'package:tasklist_lite/tasklist/fixture/history_events_fixtures.dart';
 import 'package:tasklist_lite/tasklist/fixture/notification_fixtures.dart';
 import 'package:tasklist_lite/tasklist/fixture/task_fixtures.dart';
@@ -36,6 +34,9 @@ void main() {
 
 // #TODO: сделать автотесты
 class MyApp extends StatelessWidget {
+  /// эта странца может отображаться довольно часто, поэтому не хочется ее каждый раз пересоздавать.
+  static final LoginPage loginPage = LoginPage();
+
   /// карта всех маршрутов. Если сделал новую страничку, добавь маршрут к ней суда
   final Map<String, Widget> staticRoutes = {
     '/': TaskListPage(
@@ -50,7 +51,7 @@ class MyApp extends StatelessWidget {
     AlternativeTaskListPage.routeName: AlternativeTaskListPage(
       title: "Список задач исполнителя",
     ),
-    LoginPage.routeName: LoginPage(),
+    LoginPage.routeName: loginPage,
     SupportPage.routeName: SupportPage(title: "Служба поддержки"),
     HelpPage.routeName: HelpPage(title: "Помощь"),
     AboutAppPage.routeName: AboutAppPage(title: "О приложении"),
@@ -72,7 +73,7 @@ class MyApp extends StatelessWidget {
             routeSettings.name == ProfilePage.routeName) {
           return staticRoutes[routeSettings.name] ?? staticRoutes['/']!;
         } else {
-          return LoginPage();
+          return loginPage;
         }
       }),
       settings: routeSettings,
