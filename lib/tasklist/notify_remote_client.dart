@@ -49,7 +49,14 @@ class NotifyRemoteClient {
     List<Notify> result = List.of({});
     await queryResultFuture.then((value) {
       if (value.hasException) {
-        throw Exception(value.exception);
+        // need catch 401 error
+        if (value.exception?.linkException is ServerException) {
+          throw Exception("Сервер не доступен");
+        }
+        if (value.exception?.linkException is HttpLinkParserException) {
+          throw Exception("Неавторизован");
+        }
+        throw Exception("Неожиданная ошибка");
       }
       if (value.data == null) {
         return result;

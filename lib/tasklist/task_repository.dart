@@ -18,7 +18,7 @@ class TaskRepository extends GetxService {
     // TODO: проверить
     TaskRemoteClient taskRemoteClient =
         TaskRemoteClient(basicAuth, serverAddress);
-    List<Task> result = taskRemoteClient.getOpenedTasks() as List<Task>;
+    List<Task> result = taskRemoteClient.getOpenedTasks() as List<Task> ;
     if (result.isNotEmpty) {
       return result;
     }
@@ -38,9 +38,15 @@ class TaskRepository extends GetxService {
       TaskFixtures taskFixtures = Get.find();
       return taskFixtures.streamOpenedTasks();
     }
-    TaskRemoteClient taskRemoteClient =
-        TaskRemoteClient(basicAuth, serverAddress);
-    Future<List<Task>> result = taskRemoteClient.getOpenedTasks();
+
+    Future<List<Task>> result = Future(() => List.of({}));
+    try {
+      TaskRemoteClient taskRemoteClient =
+          TaskRemoteClient(basicAuth, serverAddress);
+      result = taskRemoteClient.getOpenedTasks();
+    } catch (e) {
+      // TODO fix me do nothing
+    }
     return result.asStream();
   }
 
