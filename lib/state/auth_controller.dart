@@ -47,19 +47,19 @@ class AuthController extends GetxController {
 
   String getServerAddress() {
     if (serverAddress == null) {
-      LocalStorageService.getServerAddress().whenComplete(() => null);
+      LocalStorageService.readServerAddress().whenComplete(() => null);
     }
     return serverAddress;
   }
 
   setServerAddress(String value) {
     serverAddress = value;
-    LocalStorageService.setServerAddress(value);
+    LocalStorageService.writeServerAddress(value);
   }
 
   Future initServerAddress() async {
     // TODO разобраться как сделать правильно
-    serverAddress = (await LocalStorageService.getServerAddress())!;
+    serverAddress = (await LocalStorageService.readServerAddress())!;
   }
 
   set isAuthenticated(bool value) {
@@ -68,7 +68,7 @@ class AuthController extends GetxController {
     // наверное да, т.к. не все и не везде наблюдают?
     update();
 
-    LocalStorageService.setAuthenticated(_isAuthenticated.value);
+    LocalStorageService.writeIsAuthenticated(_isAuthenticated.value);
   }
 
   UserInfo? get userInfo => _userInfo.value;
@@ -76,7 +76,7 @@ class AuthController extends GetxController {
   set userInfo(UserInfo? value) {
     _userInfo.value = value;
     update();
-    LocalStorageService.setUserInfo(value);
+    LocalStorageService.writeUserInfo(value);
   }
 
   String? get errorText => _errorText;
@@ -91,8 +91,8 @@ class AuthController extends GetxController {
   String getAuth() => this.basicAuth;
 
   Future initAuthData() async {
-    isAuthenticated = await LocalStorageService.getAuthenticated();
-    userInfo = await LocalStorageService.getUserInfo();
+    isAuthenticated = await LocalStorageService.readIsAuthenticated();
+    userInfo = await LocalStorageService.readUserInfo();
   }
 
   @override

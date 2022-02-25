@@ -13,43 +13,43 @@ class LocalStorageService {
   static const String _authenticatedKeyName = "authenticated";
   static const String _userInfoKeyName = "userinfo";
   static const String _taskKeyName = "task";
-  static const String _serverAddress = "serverAddress";
+  static const String _serverAddressKeyName = "serverAddress";
 
-  static Future<bool> getAuthenticated() async {
+  static Future<bool> readIsAuthenticated() async {
     final authStr = await _storage.read(key: _authenticatedKeyName);
     return (authStr == 'true');
   }
 
-  static Future setAuthenticated(bool authenticated) async => await _storage
+  static Future writeIsAuthenticated(bool authenticated) async => await _storage
       .write(key: _authenticatedKeyName, value: authenticated.toString());
 
-  static Future<UserInfo?> getUserInfo() async {
+  static Future<UserInfo?> readUserInfo() async {
     final userInfoStr = await _storage.read(key: _userInfoKeyName);
     return userInfoStr != null
         ? UserInfo.fromJson(jsonDecode(userInfoStr))
         : null;
   }
 
-  static Future setUserInfo(UserInfo? userInfo) async =>
+  static Future writeUserInfo(UserInfo? userInfo) async =>
       await _storage.write(key: _userInfoKeyName, value: jsonEncode(userInfo));
 
-  static Future<Task?> getTask() async {
+  static Future<Task?> readTask() async {
     final taskStr = await _storage.read(key: _taskKeyName);
     return taskStr != null ? Task.fromJson(jsonDecode(taskStr)) : null;
   }
 
-  static Future setTask(Task? task) async {
+  static Future writeTask(Task? task) async {
     if (task != null) {
       await _storage.write(key: _taskKeyName, value: jsonEncode(task));
     }
   }
 
-  static Future<String?> getServerAddress() async {
-    return await _storage.read(key: _serverAddress);
+  static Future<String?> readServerAddress() async {
+    return await _storage.read(key: _serverAddressKeyName);
   }
 
-  static Future setServerAddress(String serverAddress) async {
-    await _storage.write(key: _serverAddress, value: serverAddress);
+  static Future writeServerAddress(String serverAddress) async {
+    await _storage.write(key: _serverAddressKeyName, value: serverAddress);
   }
 
   static Future<List<String>> readList(String key) async {

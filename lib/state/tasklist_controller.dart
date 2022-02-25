@@ -57,12 +57,12 @@ class TaskListController extends GetxController {
   Task? currentTask;
 
   Future initCurrentTask() async {
-    currentTask = await LocalStorageService.getTask();
+    currentTask = await LocalStorageService.readTask();
   }
 
   setCurrentTask(Task? task) {
     currentTask = task;
-    LocalStorageService.setTask(task);
+    LocalStorageService.writeTask(task);
   }
 
   Task? getCurrentTask() {
