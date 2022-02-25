@@ -131,7 +131,7 @@ class MyApp extends StatelessWidget {
                   CustomNavigatorObserver(
                     onPop: (route, previousRoute) {
                       // _DropdownRoute<String> является приватным, поэтому проверить здесь через is не можем
-                      // route.settings.name у _DropdownRoute<String> равен null, тоже проекрасно
+                      // route.settings.name у _DropdownRoute<String> равен null, тоже прекрасно
                       // но воля к костылям несокрушима, поэтому:
                       if (route.runtimeType
                           .toString()
