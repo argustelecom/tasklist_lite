@@ -12,6 +12,8 @@ import 'package:tasklist_lite/state/tasklist_controller.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
 import 'package:tasklist_lite/crazylib/history_event_card.dart';
 
+import '../crazylib/adaptive_dialog.dart';
+
 class TaskPage extends StatefulWidget {
   static const String routeName = 'task';
 
@@ -46,7 +48,7 @@ class _TaskPageState extends State<TaskPage> {
                   "Что-то пошло не так. Вернитесь на главную страницу и попробуйте снова.")));
     } else {
       LinkedHashSet<String> attrGroups =
-          taskListController.currentTask!.getAttrGroups();
+      taskListController.currentTask!.getAttrGroups();
 
       return DefaultTabController(
           length: 4,
@@ -76,7 +78,7 @@ class _TaskPageState extends State<TaskPage> {
                         labelColor: Colors.black,
                         labelStyle: TextStyle(fontSize: 18),
                         unselectedLabelStyle:
-                            TextStyle(color: Colors.grey, fontSize: 18),
+                        TextStyle(color: Colors.grey, fontSize: 18),
                         tabs: [
                           Tab(
                             child: Text(
@@ -107,195 +109,210 @@ class _TaskPageState extends State<TaskPage> {
                 //Заменил SizedBox на Expanded, чтобы не ругался на bottom overflow
                 Expanded(
                     child: TabBarView(children: [
-                  Padding(
-                    padding: EdgeInsets.only(left: 12, right: 12, bottom: 12),
-                    child: Card(
-                      child: SizedBox(
-                          height: 400.0,
-                          child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: attrGroups.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return AttrGroup(
-                                    task: taskListController.currentTask!,
-                                    attrGroup: attrGroups.elementAt(index));
-                              })),
-                      elevation: 3,
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 32),
-                    child: Card(
-                      child: Text("Здесь будут работы"),
-                      elevation: 3,
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 32),
-                    child: Card(
-                      child: Text("Здесь будут вложения"),
-                      elevation: 3,
-                    ),
-                  ),
-                  GetBuilder<HistoryEventController>(
-                      init: HistoryEventController(),
-                      builder: (historyEventController) {
-                        return Padding(
-                            padding: EdgeInsets.only(
-                                left: 12, right: 12, bottom: 12),
-                            child: Column(
-                              children: [
-                                Expanded(
-                                  child: ListView.builder(
-                                      itemCount: historyEventController
-                                          .getHistoryEvents()
-                                          .length,
-                                      controller: historyScrollController,
-                                      itemBuilder:
-                                          (BuildContext context, int index) {
-                                        return HistoryEventCard(
-                                            person: historyEventController
-                                                .getHistoryEvents()[index]
-                                                .person,
-                                            content: historyEventController
-                                                .getHistoryEvents()[index]
-                                                .content,
-                                            type: historyEventController
-                                                .getHistoryEvents()[index]
-                                                .type,
-                                            date: historyEventController
-                                                .getHistoryEvents()[index]
-                                                .date,
-                                            isAlarm: historyEventController
-                                                .getHistoryEvents()[index]
-                                                .isAlarm);
-                                      }),
-                                ),
-                                // Текстовое поле ввода комментария
-                                Padding(
-                                  padding: EdgeInsets.only(top: 16),
-                                  child: Focus(
-                                    onFocusChange: (value) {
-                                      Future.delayed(
-                                          const Duration(milliseconds: 100),
-                                          () {
-                                        historyEventController
-                                            .setOnTextFieldFocused(value);
-                                      });
-                                    },
-                                    child: TextField(
-                                        textInputAction: TextInputAction.send,
-                                        keyboardType: TextInputType.text,
-                                        textAlign: TextAlign.start,
-                                        decoration: InputDecoration(
-                                          hintText: "Ваш комментарий",
-                                          hintStyle: TextStyle(fontSize: 14),
-                                          fillColor:
-                                              themeData.bottomAppBarColor,
-                                          border: InputBorder.none,
-                                          filled: true,
-                                          suffixIcon: IconButton(
-                                            tooltip: 'С уведомлением',
-                                            icon: Icon(
+                      Padding(
+                        padding: EdgeInsets.only(
+                            left: 12, right: 12, bottom: 12),
+                        child: Card(
+                          child: SizedBox(
+                              height: 400.0,
+                              child: ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: attrGroups.length,
+                                  itemBuilder: (BuildContext context,
+                                      int index) {
+                                    return AttrGroup(
+                                        task: taskListController.currentTask!,
+                                        attrGroup: attrGroups.elementAt(index));
+                                  })),
+                          elevation: 3,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 32),
+                        child: Card(
+                          child: Text("Здесь будут работы"),
+                          elevation: 3,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 32),
+                        child: Card(
+                          child: Text("Здесь будут вложения"),
+                          elevation: 3,
+                        ),
+                      ),
+                      GetBuilder<HistoryEventController>(
+                          init: HistoryEventController(),
+                          builder: (historyEventController) {
+                            return Padding(
+                                padding: EdgeInsets.only(
+                                    left: 12, right: 12, bottom: 12),
+                                child: Column(
+                                  children: [
+                                    Expanded(
+                                      child: ListView.builder(
+                                          itemCount: historyEventController
+                                              .getHistoryEvents()
+                                              .length,
+                                          controller: historyScrollController,
+                                          itemBuilder:
+                                              (BuildContext context,
+                                              int index) {
+                                            return HistoryEventCard(
+                                                person: historyEventController
+                                                    .getHistoryEvents()[index]
+                                                    .person,
+                                                content: historyEventController
+                                                    .getHistoryEvents()[index]
+                                                    .content,
+                                                type: historyEventController
+                                                    .getHistoryEvents()[index]
+                                                    .type,
+                                                date: historyEventController
+                                                    .getHistoryEvents()[index]
+                                                    .date,
+                                                isAlarm: historyEventController
+                                                    .getHistoryEvents()[index]
+                                                    .isAlarm);
+                                          }),
+                                    ),
+                                    // Текстовое поле ввода комментария
+                                    Padding(
+                                      padding: EdgeInsets.only(top: 16),
+                                      child: Focus(
+                                        onFocusChange: (value) {
+                                          Future.delayed(
+                                              const Duration(milliseconds: 100),
+                                                  () {
                                                 historyEventController
-                                                        .getIsAlarmComment()
-                                                    ? Icons.notifications
-                                                    : Icons.notifications_off,
-                                                // size: 30,
-                                                color: Colors.black),
-                                            onPressed: () {
-                                              historyEventController
-                                                  .changeIsAlarmComment();
-                                            },
-                                          ),
-                                          isCollapsed: false,
-                                        ),
-                                        onSubmitted: (text) {
-                                          historyEventController.addComment(
-                                              commentTextController.text,
-                                              historyEventController
-                                                  .getIsAlarmComment(),
-                                              taskListController.currentTask!);
-                                          commentTextController.clear();
-                                          historyScrollController.animateTo(
-                                            historyScrollController
-                                                .position.maxScrollExtent,
-                                            curve: Curves.easeOut,
-                                            duration: const Duration(
-                                                milliseconds: 300),
-                                          );
-                                          FocusManager.instance.primaryFocus
-                                              ?.unfocus();
+                                                    .setOnTextFieldFocused(
+                                                    value);
+                                              });
                                         },
-                                        minLines: 1,
-                                        maxLines: 5,
-                                        controller: commentTextController),
-                                  ),
-                                ),
-                                Visibility(
-                                    visible: historyEventController
-                                        .getOnTextFieldFocused(),
-                                    child: Padding(
-                                      padding:
-                                          EdgeInsets.only(top: 8, right: 16),
-                                      child: Row(
-                                          children: [
-                                            TextButton(
-                                              child: Padding(
-                                                padding: EdgeInsets.only(
-                                                    top: 4,
-                                                    right: 8,
-                                                    left: 8,
-                                                    bottom: 4),
-                                                child: const Text('Отправить',
-                                                    style: TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 14)),
+                                        child: TextField(
+                                            textInputAction: TextInputAction
+                                                .send,
+                                            keyboardType: TextInputType.text,
+                                            textAlign: TextAlign.start,
+                                            decoration: InputDecoration(
+                                              hintText: "Ваш комментарий",
+                                              hintStyle: TextStyle(
+                                                  fontSize: 14),
+                                              fillColor:
+                                              themeData.bottomAppBarColor,
+                                              border: InputBorder.none,
+                                              filled: true,
+                                              suffixIcon: IconButton(
+                                                tooltip: 'С уведомлением',
+                                                icon: Icon(
+                                                    historyEventController
+                                                        .getIsAlarmComment()
+                                                        ? Icons.notifications
+                                                        : Icons
+                                                        .notifications_off,
+                                                    // size: 30,
+                                                    color: Colors.black),
+                                                onPressed: () {
+                                                  historyEventController
+                                                      .changeIsAlarmComment();
+                                                },
                                               ),
-                                              style: ButtonStyle(
-                                                  shape: MaterialStateProperty.all<
+                                              isCollapsed: false,
+                                            ),
+                                            onSubmitted: (text) {
+                                              historyEventController.addComment(
+                                                  commentTextController.text,
+                                                  historyEventController
+                                                      .getIsAlarmComment(),
+                                                  taskListController
+                                                      .currentTask!);
+                                              commentTextController.clear();
+                                              historyScrollController.animateTo(
+                                                historyScrollController
+                                                    .position.maxScrollExtent,
+                                                curve: Curves.easeOut,
+                                                duration: const Duration(
+                                                    milliseconds: 300),
+                                              );
+                                              FocusManager.instance.primaryFocus
+                                                  ?.unfocus();
+                                            },
+                                            minLines: 1,
+                                            maxLines: 5,
+                                            controller: commentTextController),
+                                      ),
+                                    ),
+                                    Visibility(
+                                        visible: historyEventController
+                                            .getOnTextFieldFocused(),
+                                        child: Padding(
+                                          padding:
+                                          EdgeInsets.only(top: 8, right: 16),
+                                          child: Row(
+                                              children: [
+                                                TextButton(
+                                                  child: Padding(
+                                                    padding: EdgeInsets.only(
+                                                        top: 4,
+                                                        right: 8,
+                                                        left: 8,
+                                                        bottom: 4),
+                                                    child: const Text(
+                                                        'Отправить',
+                                                        style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontSize: 14)),
+                                                  ),
+                                                  style: ButtonStyle(
+                                                      shape: MaterialStateProperty
+                                                          .all<
                                                           RoundedRectangleBorder>(
-                                                      RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius.circular(
+                                                          RoundedRectangleBorder(
+                                                              borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
                                                                   32))),
-                                                  padding: MaterialStateProperty
-                                                      .all<EdgeInsets>(
+                                                      padding: MaterialStateProperty
+                                                          .all<EdgeInsets>(
                                                           EdgeInsets.all(2)),
-                                                  backgroundColor:
-                                                      MaterialStateProperty.all<Color>(
-                                                          Colors.yellow.shade700)),
-                                              onPressed: () {
-                                                historyEventController
-                                                    .addComment(
+                                                      backgroundColor:
+                                                      MaterialStateProperty.all<
+                                                          Color>(
+                                                          Colors.yellow
+                                                              .shade700)),
+                                                  onPressed: () {
+                                                    historyEventController
+                                                        .addComment(
                                                         commentTextController
                                                             .text,
                                                         historyEventController
                                                             .getIsAlarmComment(),
                                                         taskListController
                                                             .currentTask!);
-                                                commentTextController.clear();
-                                                historyScrollController
-                                                    .animateTo(
-                                                  historyScrollController
-                                                      .position.maxScrollExtent,
-                                                  curve: Curves.easeOut,
-                                                  duration: const Duration(
-                                                      milliseconds: 300),
-                                                );
-                                                FocusManager
-                                                    .instance.primaryFocus
-                                                    ?.unfocus();
-                                              },
-                                            ),
-                                          ],
-                                          mainAxisAlignment:
+                                                    commentTextController
+                                                        .clear();
+                                                    historyScrollController
+                                                        .animateTo(
+                                                      historyScrollController
+                                                          .position
+                                                          .maxScrollExtent,
+                                                      curve: Curves.easeOut,
+                                                      duration: const Duration(
+                                                          milliseconds: 300),
+                                                    );
+                                                    FocusManager
+                                                        .instance.primaryFocus
+                                                        ?.unfocus();
+                                                  },
+                                                ),
+                                              ],
+                                              mainAxisAlignment:
                                               MainAxisAlignment.end),
-                                    ))
-                              ],
-                            ));
-                      })
-                ]))
+                                        ))
+                                  ],
+                                ));
+                          })
+                    ]))
               ])));
     }
   }
@@ -321,25 +338,13 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
                 },
               ),
               titleSpacing: 0.0,
-              toolbarHeight: 100,
+              toolbarHeight: 60,
               title: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Padding(
-                            padding: EdgeInsets.symmetric(vertical: 6),
-                            child: Row(children: [
-                              Text(
-                                task.processTypeName ?? " ",
-                                style: TextStyle(
-                                    inherit: false,
-                                    fontSize: 14,
-                                    color: Colors.black54),
-                                textAlign: TextAlign.left,
-                              )
-                            ])),
                         Padding(
                             padding: EdgeInsets.symmetric(vertical: 2),
                             child: Row(children: [
@@ -384,11 +389,11 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
                                   elevation: 3,
                                   offset: Offset(0, 50),
                                   itemBuilder: (BuildContext context) =>
-                                      <PopupMenuEntry>[
+                                  <PopupMenuEntry>[
                                     const PopupMenuItem(
                                       child: ListTile(
                                         leading:
-                                            Icon(Icons.check_circle_outline),
+                                        Icon(Icons.check_circle_outline),
                                         title: Text('Завершить этап'),
                                       ),
                                       value: 0,
@@ -397,36 +402,14 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
                                       child: ListTile(
                                           leading: Icon(Icons.access_time),
                                           title: Text(
-                                              (task.idleTimeList == null)
+                                              (task.getCurrentIdleTime() ==
+                                                  null)
                                                   ? "Зарегистрировать простой"
                                                   : "Завершить простой"),
                                           onTap: () {
                                             Navigator.pop(context, "");
-                                            showModalBottomSheet(
+                                            showAdaptiveDialog(
                                                 context: context,
-                                                isDismissible: false,
-                                                isScrollControlled: true,
-                                                elevation: 5,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.only(
-                                                          topLeft: Radius
-                                                              .circular(6),
-                                                          topRight:
-                                                              Radius.circular(
-                                                                  6)),
-                                                ),
-                                                constraints: BoxConstraints(
-                                                    minHeight:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .height -
-                                                            90,
-                                                    maxHeight:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .height -
-                                                            90),
                                                 builder:
                                                     (BuildContext context) {
                                                   return IdleTimeManagerDialog(
@@ -441,7 +424,7 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
                                       const PopupMenuItem(
                                         child: ListTile(
                                           leading:
-                                              Icon(Icons.file_upload_outlined),
+                                          Icon(Icons.file_upload_outlined),
                                           title: Text('Вернуть группе'),
                                         ),
                                         value: 2,
@@ -464,13 +447,13 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
                                           onTap: () {
                                             DefaultTabController.of(context)!
                                                 .animateTo(3,
-                                                    curve: Curves.easeOut,
-                                                    duration: const Duration(
-                                                        milliseconds: 300));
+                                                curve: Curves.easeOut,
+                                                duration: const Duration(
+                                                    milliseconds: 300));
                                             historyEventController
                                                 .addNewCrashComment(
-                                                    taskListController
-                                                        .currentTask!);
+                                                taskListController
+                                                    .currentTask!);
                                           },
                                         ))
                                   ],
@@ -481,7 +464,7 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(80.0);
+  Size get preferredSize => const Size.fromHeight(60.0);
 }
 
 // Вывод группы параметров
@@ -495,7 +478,7 @@ class AttrGroup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     LinkedHashMap<String, Object?> attribValuesByGroup =
-        task.getAttrValuesByGroup(attrGroup);
+    task.getAttrValuesByGroup(attrGroup);
 
     return Column(children: [
       Container(
@@ -504,14 +487,14 @@ class AttrGroup extends StatelessWidget {
               style: const TextStyle(fontSize: 18, color: Colors.grey))),
       SizedBox(
           child: ListView.builder(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        shrinkWrap: true,
-        itemCount: attribValuesByGroup.length,
-        itemBuilder: (BuildContext context, int index) {
-          return AttribValueRow(
-              attribValue: attribValuesByGroup.entries.elementAt(index));
-        },
-      ))
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            shrinkWrap: true,
+            itemCount: attribValuesByGroup.length,
+            itemBuilder: (BuildContext context, int index) {
+              return AttribValueRow(
+                  attribValue: attribValuesByGroup.entries.elementAt(index));
+            },
+          ))
     ]);
   }
 }
@@ -528,9 +511,9 @@ class AttribValueRow extends StatelessWidget {
     String attrValue = (attribValue.value == null)
         ? ""
         : (attribValue.value.runtimeType == DateTime
-            ? DateFormat("dd.MM.yyyy HH:mm")
-                .format(DateTime.parse(attribValue.value.toString()))
-            : attribValue.value.toString());
+        ? DateFormat("dd.MM.yyyy HH:mm")
+        .format(DateTime.parse(attribValue.value.toString()))
+        : attribValue.value.toString());
 
     return Row(children: [
       Expanded(
@@ -543,10 +526,11 @@ class AttribValueRow extends StatelessWidget {
                           color: Color(0xFF646363),
                           fontWeight: FontWeight.normal),
                       children: <TextSpan>[
-                    TextSpan(text: "$attrKey:   "),
-                    TextSpan(
-                        text: attrValue, style: TextStyle(color: Colors.black))
-                  ]))))
+                        TextSpan(text: "$attrKey:   "),
+                        TextSpan(
+                            text: attrValue,
+                            style: TextStyle(color: Colors.black))
+                      ]))))
     ]);
   }
 }

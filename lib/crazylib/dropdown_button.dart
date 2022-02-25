@@ -24,7 +24,7 @@ class CustomDropDownButton<T> extends StatelessWidget {
       this.hint,
       required this.onChanged,
       Key? key,
-      this.padding = const EdgeInsets.all(8),
+      this.padding = const EdgeInsets.all(0),
       this.dropdownPadding = const EdgeInsets.all(0),
       this.borderColor,
       this.dropdownColor,
