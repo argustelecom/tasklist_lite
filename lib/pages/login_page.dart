@@ -76,9 +76,9 @@ class LoginPageState extends State<LoginPage> {
   String? _selectedServer;
 
   // набор suggestions для autocomplete`а
-  List<String> serverAddressSuggestions = List.of({});
+  List<String> _serverAddressSuggestions = List.of({});
 
-  static const serverAddressSuggestionsStorageKey =
+  static const _serverAddressSuggestionsStorageKey =
       "serverAddressSuggestionsStorageKey";
 
   InputDecoration fieldDecoration(BuildContext context, String text) {
@@ -94,8 +94,8 @@ class LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
 
-    UserSecureStorageService.readList(serverAddressSuggestionsStorageKey)
-        .then((value) => serverAddressSuggestions = value,
+    UserSecureStorageService.readList(_serverAddressSuggestionsStorageKey)
+        .then((value) => _serverAddressSuggestions = value,
             onError: (Object error, StackTrace stackTrace) {
       // #TODO: завести нормальный лог вместо print. И вообще, хорошо бы спрятать обработку
       // ошибок в UserSecureStorageService
@@ -203,7 +203,7 @@ class LoginPageState extends State<LoginPage> {
                                 fieldDecoration(context, "Адрес сервера"),
                           ),
                           suggestionsCallback: (String pattern) {
-                            return serverAddressSuggestions.where(
+                            return _serverAddressSuggestions.where(
                                 (element) => element.startsWith(pattern));
                           },
                           itemBuilder: (BuildContext context, suggestion) {
@@ -265,19 +265,24 @@ class LoginPageState extends State<LoginPage> {
                               onPressed: () {
                                 /// пополняем коллекцию suggestions
 
-                                if (!serverAddressSuggestions.contains(
+                                if (!_serverAddressSuggestions.contains(
                                         _serverAddressEditingController.text) &&
                                     _serverAddressEditingController
                                         .text.isNotEmpty) {
                                   setState(() {
-                                    serverAddressSuggestions.add(
+                                    _serverAddressSuggestions.add(
                                         _serverAddressEditingController.text);
+                                    // но пополняем не бесконечно, а только до пяти возможных
+                                    // вариантов, чтобы не пухла
+                                    if (_serverAddressSuggestions.length > 5) {
+                                      _serverAddressSuggestions.removeAt(0);
+                                    }
                                   });
                                 }
 
                                 UserSecureStorageService.writeList(
-                                    serverAddressSuggestionsStorageKey,
-                                    serverAddressSuggestions);
+                                    _serverAddressSuggestionsStorageKey,
+                                    _serverAddressSuggestions);
 
                                 /// обновляем адрес в ApplicationState
                                 ApplicationState.update(

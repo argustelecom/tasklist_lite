@@ -170,9 +170,10 @@ class TaskCard extends StatelessWidget {
                                   color: themeData.colorScheme.primary,
                                 ),
                               ),
-                              // #TODO: согласно макету, по иконкой должно быть не равномерное подчеркивание,
+                              // #TODO: согласно макету, под иконкой должно быть не равномерное подчеркивание,
                               // а тень, хитро полученная как тень рамки иконки в figma. Подобного эффекта пока
                               // достичь не удалось.
+                              // Еще вариант -- такая вот иконка https://www.iconfinder.com/icons/2344289/gps_location_map_place_icon
                               Expanded(
                                 child: Padding(
                                   padding: EdgeInsets.only(
