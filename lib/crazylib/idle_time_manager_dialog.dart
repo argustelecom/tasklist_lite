@@ -20,7 +20,7 @@ class IdleTimeManagerDialog extends StatefulWidget {
 
 class IdleTimeManagerDialogState extends State<IdleTimeManagerDialog> {
   IdleTime? idleTime;
-  String? reason;
+  IdleTimeReason? reason;
   DateTime? startDate;
   TimeOfDay? startTime;
   DateTime? endDate;
@@ -59,9 +59,17 @@ class IdleTimeManagerDialogState extends State<IdleTimeManagerDialog> {
                 style: TextStyle(color: Colors.black54))),
         Padding(
             padding: EdgeInsets.symmetric(vertical: 8),
-            child: CustomDropDownButton<String>(
+            child: CustomDropDownButton<IdleTimeReason>(
               value: reason,
               itemsList: controller.idleTimeReasons,
+              selectedItemBuilder: (BuildContext context) {
+                return controller.idleTimeReasons
+                    .map<Widget>((IdleTimeReason item) {
+                  return Align(
+                      alignment: Alignment.centerLeft,
+                      child: (Text(item.name)));
+                }).toList();
+              },
               hint: "Выберите причину",
               onChanged: (value) {
                 setState(() {

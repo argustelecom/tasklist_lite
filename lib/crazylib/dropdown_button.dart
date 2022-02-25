@@ -58,7 +58,8 @@ class CustomDropDownButton<T> extends StatelessWidget {
                 borderRadius: BorderRadius.circular(5),
                 color: themeData.cardColor),
             focusColor: themeData.cardColor,
-            hint: Text(hint ?? ""),
+            hint:
+                Align(alignment: Alignment.centerLeft, child: Text(hint ?? "")),
             value: value,
             items: itemsList
                 .map((T item) => DropdownMenuItem<T>(

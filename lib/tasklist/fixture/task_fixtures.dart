@@ -1,8 +1,11 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
+import 'package:tasklist_lite/tasklist/fixture/idle_time_reason_fixtures.dart';
 import 'package:tasklist_lite/tasklist/model/idle_time.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
+
+import '../idle_time_reason_repository.dart';
 
 /// Служба, возвращающая набор задач по переданному идентификатору фикстуры
 class TaskFixtures {
@@ -40,14 +43,14 @@ class TaskFixtures {
       idleTimeList: [
         new IdleTime(
             id: 24,
-            reason: "Дорожная обстановка",
+            reason: IdleTimeReasonFixtures.idleTimeReason_2,
             startDate: DateUtils.dateOnly(DateTime.now())
                 .add(const Duration(hours: -5)),
             endDate: DateUtils.dateOnly(DateTime.now())
                 .add(const Duration(hours: -4))),
         new IdleTime(
             id: 25,
-            reason: "Форс-мажор",
+            reason: IdleTimeReasonFixtures.idleTimeReason_6,
             startDate: DateUtils.dateOnly(DateTime.now())
                 .add(const Duration(hours: -3)))
       ]);

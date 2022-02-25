@@ -1,6 +1,5 @@
 import 'package:duration/duration.dart';
 import 'package:duration/locale.dart';
-import 'package:tasklist_lite/crazylib/date_picker_button.dart';
 
 /// Простой
 class IdleTime {
@@ -8,7 +7,7 @@ class IdleTime {
   int id;
 
   /// Причина простоя
-  String reason;
+  IdleTimeReason reason;
 
   /// Время начала простоя
   DateTime startDate;
@@ -49,10 +48,10 @@ class IdleTime {
 
   factory IdleTime.fromJson(Map<String, dynamic> json) {
     return IdleTime(
-        id: int.parse(json['id']) ,
-        reason: json['reason'],
-        startDate:DateTime.parse(json['startDate']),
-        endDate: json['endDate'] != null ? DateTime.parse(json['endDate']) : null,
+      id: int.parse(json['id']),
+      reason: json['reason'],
+      startDate: DateTime.parse(json['startDate']),
+      endDate: json['endDate'] != null ? DateTime.parse(json['endDate']) : null,
     );
   }
 
@@ -61,7 +60,23 @@ class IdleTime {
     data['id'] = this.id;
     data['reason'] = this.reason;
     data['startDate'] = this.startDate.toString();
-    data['endDate'] = this.endDate != null ? this.endDate.toString() : null;;
+    data['endDate'] = this.endDate != null ? this.endDate.toString() : null;
     return data;
+  }
+}
+
+/// Причина простоя
+class IdleTimeReason {
+  /// ID причины
+  int id;
+
+  /// Название причины
+  String name;
+
+  IdleTimeReason({required this.id, required this.name});
+
+  @override
+  String toString() {
+    return this.name;
   }
 }

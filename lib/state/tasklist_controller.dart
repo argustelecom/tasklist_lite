@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/state/auth_controller.dart';
 import 'package:tasklist_lite/tasklist/idle_time_reason_repository.dart';
+import 'package:tasklist_lite/tasklist/model/idle_time.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
 import 'package:tasklist_lite/tasklist/task_repository.dart';
 import 'package:tasklist_lite/user_secure_storage/local_storage_service.dart';
@@ -25,7 +26,7 @@ class TaskListController extends GetxController {
   /// справочные значения причин простоя. Запрашиваем из репозитория при инициализации контролллера
   /// (далее берем из кэша)
   /// TODO возможно, стоит перенести
-  List<String> idleTimeReasons = List.of({});
+  List<IdleTimeReason> idleTimeReasons = List.of({});
 
   /// выбранный в календаре день
   /// если не выбран, считается "сегодня" (тут есть тех. сложности, т.к. для inherited widget нужно, чтобы
