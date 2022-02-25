@@ -9,7 +9,7 @@ import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
 import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/state/auth_controller.dart';
 import 'package:tasklist_lite/state/common_dropdown_controller.dart';
-import 'package:tasklist_lite/user_secure_storage/user_secure_storage_service.dart';
+import 'package:tasklist_lite/user_secure_storage/local_storage_service.dart';
 
 // #TODO: если делать отдельным виджетом, стоит параметризовать размеры, кривую анимации, длительность
 class AnimatedLogo extends StatefulWidget {
@@ -94,7 +94,7 @@ class LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
 
-    UserSecureStorageService.readList(_serverAddressSuggestionsStorageKey)
+    LocalStorageService.readList(_serverAddressSuggestionsStorageKey)
         .then((value) => _serverAddressSuggestions = value,
             onError: (Object error, StackTrace stackTrace) {
       // #TODO: завести нормальный лог вместо print. И вообще, хорошо бы спрятать обработку
@@ -280,7 +280,7 @@ class LoginPageState extends State<LoginPage> {
                                   });
                                 }
 
-                                UserSecureStorageService.writeList(
+                                LocalStorageService.writeList(
                                     _serverAddressSuggestionsStorageKey,
                                     _serverAddressSuggestions);
 

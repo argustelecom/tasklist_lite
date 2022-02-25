@@ -4,7 +4,10 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
 import 'package:tasklist_lite/tasklist/model/user_info.dart';
 
-class UserSecureStorageService {
+/// обеспечивает локальное хранение значений. То есть доступ к сохраненным
+/// значениям кешируется, возможен без обращения к серверу.
+/// Под капотом используется SecureStorage, который работает и нативно, и в вебе.
+class LocalStorageService {
   static final _storage = FlutterSecureStorage();
 
   static const String _authenticatedKeyName = "authenticated";

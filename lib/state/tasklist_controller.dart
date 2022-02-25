@@ -7,11 +7,10 @@ import 'package:tasklist_lite/state/auth_controller.dart';
 import 'package:tasklist_lite/tasklist/idle_time_reason_repository.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
 import 'package:tasklist_lite/tasklist/task_repository.dart';
-import 'package:tasklist_lite/user_secure_storage/user_secure_storage_service.dart';
+import 'package:tasklist_lite/user_secure_storage/local_storage_service.dart';
 
 import '../tasklist/fixture/task_fixtures.dart';
 import '../tasklist/history_events_repository.dart';
-import '../tasklist/model/history_event.dart';
 
 /// содержит state списка задач и (возможно в будущем) формы задачи
 class TaskListController extends GetxController {
@@ -58,12 +57,12 @@ class TaskListController extends GetxController {
   Task? currentTask;
 
   Future initCurrentTask() async {
-    currentTask = await UserSecureStorageService.getTask();
+    currentTask = await LocalStorageService.getTask();
   }
 
   setCurrentTask(Task? task) {
     currentTask = task;
-    UserSecureStorageService.setTask(task);
+    LocalStorageService.setTask(task);
   }
 
   Task? getCurrentTask() {

@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:tasklist_lite/auth/auth_service.dart';
 import 'package:tasklist_lite/tasklist/model/user_info.dart';
-import 'package:tasklist_lite/user_secure_storage/user_secure_storage_service.dart';
+import 'package:tasklist_lite/user_secure_storage/local_storage_service.dart';
 
 ///*******************************************************************************
 ///****          хранит state аутентификации и инфу о текущем пользователе    ****
@@ -47,19 +47,19 @@ class AuthController extends GetxController {
 
   String getServerAddress() {
     if (serverAddress == null) {
-      UserSecureStorageService.getServerAddress().whenComplete(() => null);
+      LocalStorageService.getServerAddress().whenComplete(() => null);
     }
     return serverAddress;
   }
 
   setServerAddress(String value) {
     serverAddress = value;
-    UserSecureStorageService.setServerAddress(value);
+    LocalStorageService.setServerAddress(value);
   }
 
   Future initServerAddress() async {
     // TODO разобраться как сделать правильно
-    serverAddress = (await UserSecureStorageService.getServerAddress())!;
+    serverAddress = (await LocalStorageService.getServerAddress())!;
   }
 
   set isAuthenticated(bool value) {
@@ -68,7 +68,7 @@ class AuthController extends GetxController {
     // наверное да, т.к. не все и не везде наблюдают?
     update();
 
-    UserSecureStorageService.setAuthenticated(_isAuthenticated.value);
+    LocalStorageService.setAuthenticated(_isAuthenticated.value);
   }
 
   UserInfo? get userInfo => _userInfo.value;
@@ -76,7 +76,7 @@ class AuthController extends GetxController {
   set userInfo(UserInfo? value) {
     _userInfo.value = value;
     update();
-    UserSecureStorageService.setUserInfo(value);
+    LocalStorageService.setUserInfo(value);
   }
 
   String? get errorText => _errorText;
@@ -91,8 +91,8 @@ class AuthController extends GetxController {
   String getAuth() => this.basicAuth;
 
   Future initAuthData() async {
-    isAuthenticated = await UserSecureStorageService.getAuthenticated();
-    userInfo = await UserSecureStorageService.getUserInfo();
+    isAuthenticated = await LocalStorageService.getAuthenticated();
+    userInfo = await LocalStorageService.getUserInfo();
   }
 
   @override
@@ -148,8 +148,7 @@ class AuthController extends GetxController {
       // #TODO: при реальной аутентификации тут возможны исключения нескольких типов,
       // их надо обрабатывать в секциях on (см. например flutter_entity_list)
       catch (anyException) {
-        errorText =
-            "Неожиданная ошибка. \nСообщите администратору.";
+        errorText = "Неожиданная ошибка. \nСообщите администратору.";
       }
     } else {
       errorText =
