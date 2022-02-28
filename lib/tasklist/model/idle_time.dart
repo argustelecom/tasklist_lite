@@ -49,7 +49,7 @@ class IdleTime {
   factory IdleTime.fromJson(Map<String, dynamic> json) {
     return IdleTime(
       id: int.parse(json['id']),
-      reason: json['reason'],
+      reason: IdleTimeReason.fromJson(json['reason']),
       startDate: DateTime.parse(json['startDate']),
       endDate: json['endDate'] != null ? DateTime.parse(json['endDate']) : null,
     );
@@ -78,5 +78,19 @@ class IdleTimeReason {
   @override
   String toString() {
     return this.name;
+  }
+
+  factory IdleTimeReason.fromJson(Map<String, dynamic> json) {
+    return IdleTimeReason(
+      id: int.parse(json['id']) ,
+      name: json['name'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['name'] = this.name;
+    return data;
   }
 }

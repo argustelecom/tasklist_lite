@@ -13,6 +13,8 @@ class Task {
 
   final int id;
 
+  final int biId;
+
   /// "Номер"
   final String name;
 
@@ -84,6 +86,7 @@ class Task {
   // что интересно, фигурные скобочки внутри объявления конструктора делают параметры именованными, их теперь можно задавать не по порядку, а по имени. Удобно.
   Task(
       {required this.id,
+      required this.biId,
       required this.name,
       this.desc,
       this.processTypeName,
@@ -207,6 +210,7 @@ class Task {
     dynamic rawIdleTime = json['idleTime'];
     return Task(
         id: int.parse(json['id']) ,
+        biId: int.parse(json['biId']) ,
         name: json['name'],
         desc: json['desc'],
         processTypeName: json['processTypeName'],
@@ -245,6 +249,7 @@ class Task {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
+    data['biId'] = this.biId;
     data['name'] = this.name;
     data['desc'] = this.desc;
     data['processTypeName'] = this.processTypeName;

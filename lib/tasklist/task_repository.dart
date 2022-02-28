@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:get/get.dart';
 import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/tasklist/fixture/task_fixtures.dart';
+import 'package:tasklist_lite/tasklist/model/idle_time.dart';
 import 'package:tasklist_lite/tasklist/task_remote_client.dart';
 
 import 'model/task.dart';
@@ -63,7 +64,33 @@ class TaskRepository extends GetxService {
     }
     TaskRemoteClient taskRemoteClient =
         TaskRemoteClient(basicAuth, serverAddress);
-    Future<List<Task>> result = taskRemoteClient.geClosedTasks(day);
+    Future<List<Task>> result = taskRemoteClient.getClosedTasks(day);
     return result.asStream();
+  }
+
+  Future<IdleTime?> registerIdle( String basicAuth, String serverAddress, int foreignSiteOrderId,
+      int taskInstanceId,
+      int reasonId,
+      DateTime beginTime,
+      DateTime? endTime) async {
+
+    TaskRemoteClient taskRemoteClient = TaskRemoteClient(basicAuth, serverAddress);
+     return await taskRemoteClient.registerIdle(foreignSiteOrderId,
+        taskInstanceId,
+        reasonId,
+        beginTime,
+        endTime);
+  }
+
+  Future<IdleTime> finishIdle( String basicAuth, String serverAddress, int foreignSiteOrderId,
+      int taskInstanceId,
+      DateTime beginTime,
+      DateTime endTime) async {
+
+    TaskRemoteClient taskRemoteClient = TaskRemoteClient(basicAuth, serverAddress);
+    return await taskRemoteClient.finishIdle(foreignSiteOrderId,
+        taskInstanceId,
+        beginTime,
+        endTime);
   }
 }

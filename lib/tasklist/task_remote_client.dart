@@ -1,6 +1,7 @@
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:tasklist_lite/graphql/graphql_service.dart';
+import 'package:tasklist_lite/tasklist/model/idle_time.dart';
 
 import 'model/task.dart';
 
@@ -11,14 +12,21 @@ class TaskRemoteClient {
 
   static const String thirdPartyApiAddress = "/argus/graphql/support-service-thirdparty";
 
+  /// Причина простоя IdleTimeReason
+  static const String idleTimeReasonQuery = '''
+      id
+    name
+    ''';
   /// Получение простоя IdleTime
   static const String idleTimeQuery = '''    
     id
-    reason
+    $idleTimeReasonQuery
     beginTime
     endTime ''';
+
  /// Получение "легкого" Task, без истории
   static const String taskGraphqlQuery = '''id
+  biId
   name
   desc
   processTypeName
@@ -67,7 +75,7 @@ class TaskRemoteClient {
 
   }
 
-  Future<List<Task>> geClosedTasks(DateTime day) async {
+  Future<List<Task>> getClosedTasks(DateTime day) async {
     String date = DateFormat('dd.mm.yyyy').format(day);
     String myClosedTasksQuery = '''
  {  
@@ -100,6 +108,124 @@ class TaskRemoteClient {
       List.from(value.data!["$queryName"]).forEach((element) {
         result.add(Task.fromJson(element));
       });
+    }, onError: (e) {
+      throw Exception(" onError " + e.toString());
+    });
+    return result;
+  }
+
+  Future<List<IdleTimeReason>> getIdleTimeReason() async {
+
+    String getIdleTimeReasonQuery = '''
+ {  idleTimeReason {
+   $idleTimeReasonQuery
+ }
+ }
+''';
+    Future<QueryResult> queryResultFuture =
+    _graphQLService.query(getIdleTimeReasonQuery);
+    List<IdleTimeReason> result = List.of({});
+    await queryResultFuture.then((value) {
+      if (value.hasException) {
+        // need catch 401 error
+        if (value.exception?.linkException is ServerException) {
+          throw Exception("Сервер не доступен");
+        }
+        if (value.exception?.linkException is HttpLinkParserException) {
+          throw Exception("Неавторизован");
+        }
+        throw Exception("Неожиданная ошибка");
+      }
+      if (value.data == null) {
+        return result;
+      }
+      List.from(value.data!["idleTimeReason"]).forEach((element) {
+        result.add(IdleTimeReason.fromJson(element));
+      });
+    }, onError: (e) {
+      throw Exception(" onError " + e.toString());
+    });
+    return result;
+
+  }
+
+  Future<IdleTime?> registerIdle(int foreignSiteOrderId, int taskInstanceId,
+      int reasonId, DateTime beginTime, DateTime? endTime) async {
+    String beginTimeStr = DateFormat('dd.MM.yyyy HH:mm:ss').format(beginTime);
+    String endTimeStr = '';
+    if (endTime != null) {
+      endTimeStr = DateFormat('dd.MM.yyyy HH:mm:ss').format(endTime);
+    }
+    String registerIdleQuery = '''
+ mutation {  
+   registerIdleTime(
+    foreignSiteOrderId:"$foreignSiteOrderId",
+    taskInstanceId:"$taskInstanceId",
+    reasonId:"$reasonId",
+    beginTime:"$beginTimeStr",
+    endTime:"$endTimeStr"){
+       $idleTimeQuery
+    }
+ }''';
+
+    Future<QueryResult> mutationResultFuture =
+        _graphQLService.mutate(registerIdleQuery);
+    late IdleTime result;
+    await mutationResultFuture.then((value) {
+      if (value.hasException) {
+        // need catch 401 error
+        if (value.exception?.linkException is ServerException) {
+          throw Exception("Сервер не доступен");
+        }
+        if (value.exception?.linkException is HttpLinkParserException) {
+          throw Exception("Неавторизован");
+        }
+        throw Exception("Неожиданная ошибка");
+      }
+      if (value.data == null || value.data!["registerIdleTime"] == null) {
+        return null;
+      }
+      result = IdleTime.fromJson(value.data!["registerIdleTime"]);
+    }, onError: (e) {
+      throw Exception(" onError " + e.toString());
+    });
+    return result;
+  }
+
+  Future<IdleTime> finishIdle(int foreignSiteOrderId, int taskInstanceId,
+     DateTime beginTime, DateTime endTime) async {
+    String beginTimeStr = DateFormat('dd.MM.yyyy HH:mm:ss').format(beginTime);
+    String endTimeStr = DateFormat('dd.MM.yyyy HH:mm:ss').format(endTime);
+
+    String finishIdleQuery = '''
+ mutation {  
+   finishIdleTime(
+    foreignSiteOrderId:"$foreignSiteOrderId",
+    taskInstanceId:"$taskInstanceId",
+    beginTime:"$beginTimeStr",
+    endTime:"$endTimeStr"){
+       $idleTimeQuery
+    }
+ }''';
+
+    Future<QueryResult> mutationResultFuture =
+    _graphQLService.mutate(finishIdleQuery);
+    late IdleTime result;
+    await mutationResultFuture.then((value) {
+      if (value.hasException) {
+        // need catch 401 error
+        if (value.exception?.linkException is ServerException) {
+          throw Exception("Сервер не доступен");
+        }
+        if (value.exception?.linkException is HttpLinkParserException) {
+          throw Exception("Неавторизован");
+        }
+        throw Exception("Неожиданная ошибка");
+      }
+      if (value.data == null || value.data!["finishIdleTime"] == null) {
+        return null;
+      }
+      result = IdleTime.fromJson(value.data!["finishIdleTime"]);
     }, onError: (e) {
       throw Exception(" onError " + e.toString());
     });

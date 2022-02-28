@@ -16,6 +16,7 @@ class TaskFixtures {
 
   static final Task firstTask = new Task(
       id: 1,
+      biId: 1,
       name: "АВР-24035",
       desc: "АВР-24035 (ВЛГ0127)",
       processTypeName: "Аварийно-восстановительные работы",
@@ -57,6 +58,7 @@ class TaskFixtures {
 
   static final Task secondTask = new Task(
       id: 2,
+      biId: 2,
       name: "РР-27089",
       desc: "РР-27089 (ВОЛС Лосево-Песочное)",
       processTypeName: "Разовые работы",
@@ -84,6 +86,7 @@ class TaskFixtures {
 
   static final Task thirdTask = new Task(
       id: 3,
+      biId: 3,
       name: "РР-28050",
       desc: "РР-28050 (ВЛГ4032)",
       processTypeName: "Разовые работы",
@@ -112,6 +115,7 @@ class TaskFixtures {
 
   static final Task fourthTask = new Task(
       id: 4,
+      biId: 4,
       name: "ТО-19099",
       desc: "ТО-19099 (ВЛГ0734)",
       processTypeName: "Техническое обслуживание",
@@ -139,6 +143,7 @@ class TaskFixtures {
 
   static final Task fifthTask = new Task(
       id: 5,
+      biId: 5,
       name: "РР-14569",
       desc: "РР-14569 (ВЛГ1077)",
       processTypeName: "Разовые работы",
@@ -166,6 +171,7 @@ class TaskFixtures {
 
   static final Task sixthTask = new Task(
       id: 6,
+      biId: 6,
       name: "АВР-10357",
       desc: "АВР-10357 (ВЛГ1379)",
       processTypeName: "Аварийно-восстановительные работы",
@@ -195,6 +201,7 @@ class TaskFixtures {
 
   static final Task seventhTask = new Task(
       id: 7,
+      biId: 7,
       name: "РР-10346",
       desc: "РР-10346 (ВЛГ1027)",
       processTypeName: "Разовые работы",
@@ -224,6 +231,7 @@ class TaskFixtures {
 
   static final Task eighthTask = new Task(
       id: 8,
+      biId: 8,
       name: "РР-11542",
       desc: "РР-11542 (ВЛГ2625)",
       processTypeName: "Разовые работы",
@@ -253,6 +261,7 @@ class TaskFixtures {
 
   static final Task ninthTask = new Task(
       id: 9,
+      biId: 9,
       name: "РР-13678",
       desc: "РР-13678 (ВЛГ2023)",
       processTypeName: "Разовые работы",
@@ -296,6 +305,7 @@ class TaskFixtures {
   final List<Task> taskFixtureAdditionalTasks = List.of({
     new Task(
         id: 11,
+        biId: 11,
         name: "ТО-17051",
         desc: "ТО-17051 (ВЛГ1024)",
         processTypeName: "Техническое обслужавание",
@@ -322,6 +332,7 @@ class TaskFixtures {
         })),
     new Task(
         id: 12,
+        biId: 12,
         name: "АВР-18364",
         desc: "АВР-18364 (ВЛГ2937)",
         processTypeName: "Аварийно-восстановительные работы",

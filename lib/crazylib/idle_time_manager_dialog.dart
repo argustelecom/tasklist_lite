@@ -162,7 +162,28 @@ class IdleTimeManagerDialogState extends State<IdleTimeManagerDialog> {
         // TODO: обращение к контроллеру/репозиторию для валидации и формирования запроса
         //  пока просто закрываем диалог
         onPressed: () {
+          (idleTime == null)
+              ? controller.registerIdle(
+              controller.getCurrentTask()!.biId,
+              controller.getCurrentTask()!.id,
+                  reason!.id,
+                  new DateTime(startDate!.year, startDate!.month,
+                      startDate!.day, startTime!.hour, startTime!.minute),
+              (endDate != null && endTime != null)
+                      ? new DateTime(endDate!.year, endDate!.month, endDate!.day,
+                          endTime!.hour, endTime!.minute)
+                      : null)
+              : controller.finishIdle(
+              controller.getCurrentTask()!.biId,
+              controller.getCurrentTask()!.id,
+              new DateTime(startDate!.year, startDate!.month,
+                  startDate!.day, startTime!.hour, startTime!.minute),
+              new DateTime(endDate!.year, endDate!.month, endDate!.day,
+                  endTime!.hour, endTime!.minute)
+                  );
+
           Navigator.of(context).pop();
+
         },
       );
 
