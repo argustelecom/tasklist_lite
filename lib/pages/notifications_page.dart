@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
 import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/crazylib/notification_card.dart';
@@ -17,7 +18,6 @@ class NotificationsPage extends StatefulWidget {
 }
 
 class _NotificationsPageState extends State<NotificationsPage> {
-
   //Обновляем зависимости, в случае, если изменилась фикстура
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -63,9 +63,14 @@ class _NotificationsPageState extends State<NotificationsPage> {
                           separatorBuilder: (BuildContext context, int index) {
                             // Достаем плашку, когда дата следующего оповещения отличается от текущей
                             // Для корректной работы на вход ожидается отсортированный по дате список уведомлений
-                            // #TODO: Надо сортировать список уведомлений на уровне контроллера
-                            if (controller.getNotifications()[index].date !=
-                                controller.getNotifications()[index + 1].date) {
+                            if (DateFormat('dd MMMM yyyy', "ru_RU").format(
+                                    controller
+                                        .getNotifications()[index]
+                                        .date) !=
+                                DateFormat('dd MMMM yyyy', "ru_RU").format(
+                                    controller
+                                        .getNotifications()[index + 1]
+                                        .date)) {
                               return DateRow(
                                   date: controller
                                       .getNotifications()[index + 1]
@@ -83,7 +88,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
                               key: UniqueKey(),
                               child: NotificationCard(
                                   notify: controller.getNotifications()[index],
-                                  task: controller.getNotifications()[index].task,
+                                  task:
+                                      controller.getNotifications()[index].task,
                                   taskPageRouteName: 'task'),
                               onDismissed: (direction) {
                                 // Когда смахиваем уведомление, добавляем его в DeadNotifications и удаляем его из aliveNotifications.

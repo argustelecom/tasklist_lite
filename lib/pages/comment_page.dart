@@ -33,11 +33,13 @@ class _CommentPageState extends State<CommentPage> {
               body: Padding(
                   padding: EdgeInsets.only(left: 12, right: 12, bottom: 12),
                   child: Expanded(
-                      child: ListView(children: [
-                        HistoryEventCard(maxLines: 500,
-                            comment: historyEventController.selectedComment)
-                      ],)
-                      )));
+                      child: ListView(
+                    children: [
+                      HistoryEventCard(
+                          maxLines: 500,
+                          comment: historyEventController.selectedComment)
+                    ],
+                  ))));
         });
   }
 }

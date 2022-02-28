@@ -5,12 +5,14 @@ import 'package:tasklist_lite/pages/comment_page.dart';
 /// Это карточка исторического события, данные карточки используем на task_page
 /// для представления исторических событий на соответсвующей вкладке
 class HistoryEventCard extends StatelessWidget {
- ///Это комментарий который передаем в карточку для отображения
+  ///Это комментарий который передаем в карточку для отображения
   final comment;
+
   ///Это максимальное кол-во строк для отображения.На страничке с историей ограничено до 10, на страничке с комментом до 1000 = неограничено по задумке
   final maxLines;
 
-  HistoryEventCard({Key? key, required this.comment, this.maxLines}) : super(key: key);
+  HistoryEventCard({Key? key, required this.comment, this.maxLines})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -50,10 +52,10 @@ class HistoryEventCard extends StatelessWidget {
                   ))
             ],
           ),
-          Container( child: Align(
+          Container(
+              child: Align(
             alignment: Alignment.topLeft,
-            child:
-            Padding(
+            child: Padding(
                 padding: EdgeInsets.only(top: 8, left: 16, right: 16),
                 child: Text(
                   "${comment.content}",
@@ -62,7 +64,6 @@ class HistoryEventCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 )),
           )),
-
           Padding(
             padding: EdgeInsets.only(right: 16, bottom: 8),
             child: Row(

@@ -39,6 +39,7 @@ class NotificationController extends GetxController {
 
   /// Метод для получения списка уведомлений
   List<Notify> getNotifications() {
+    aliveNotifications.sort((a, b) => b.date.compareTo(a.date));
     return aliveNotifications;
   }
 
