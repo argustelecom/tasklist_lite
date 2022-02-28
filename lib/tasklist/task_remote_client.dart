@@ -14,13 +14,15 @@ class TaskRemoteClient {
 
   /// Причина простоя IdleTimeReason
   static const String idleTimeReasonQuery = '''
-      id
+    id
     name
     ''';
   /// Получение простоя IdleTime
   static const String idleTimeQuery = '''    
     id
-    $idleTimeReasonQuery
+    reason{
+       $idleTimeReasonQuery
+    }
     beginTime
     endTime ''';
 
