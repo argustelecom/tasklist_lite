@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
 import 'package:tasklist_lite/state/application_state.dart';
-import 'package:tasklist_lite/state/tasklist_controller.dart';
-import 'package:tasklist_lite/tasklist/fixture/task_fixtures.dart';
 import 'package:tasklist_lite/crazylib/notification_card.dart';
-import 'package:tasklist_lite/tasklist/model/task.dart';
 import 'package:tasklist_lite/state/notification_controller.dart';
 import 'package:tasklist_lite/crazylib/date_row.dart';
 

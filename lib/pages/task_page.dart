@@ -13,6 +13,7 @@ import 'package:tasklist_lite/tasklist/model/task.dart';
 import 'package:tasklist_lite/crazylib/history_event_card.dart';
 
 import '../crazylib/adaptive_dialog.dart';
+import 'comment_page.dart';
 
 class TaskPage extends StatefulWidget {
   static const String routeName = 'task';
@@ -158,23 +159,20 @@ class _TaskPageState extends State<TaskPage> {
                                           itemBuilder:
                                               (BuildContext context,
                                               int index) {
-                                            return HistoryEventCard(
-                                                person: historyEventController
-                                                    .getHistoryEvents()[index]
-                                                    .person,
-                                                content: historyEventController
-                                                    .getHistoryEvents()[index]
-                                                    .content,
-                                                type: historyEventController
-                                                    .getHistoryEvents()[index]
-                                                    .type,
-                                                date: historyEventController
-                                                    .getHistoryEvents()[index]
-                                                    .date,
-                                                isAlarm: historyEventController
-                                                    .getHistoryEvents()[index]
-                                                    .isAlarm);
-                                          }),
+                                            return InkWell(
+                                                child: HistoryEventCard(maxLines: 10,
+                                                    comment: historyEventController
+                                                        .getHistoryEvents()[index]),
+                                                onTap: () {
+                                                  historyEventController
+                                                      .setCurrentComment(
+                                                      historyEventController
+                                                          .getHistoryEvents()[
+                                                      index]);
+                                                  Navigator.pushNamed(context,
+                                                      CommentPage.routeName);
+                                                });
+                                              }),
                                     ),
                                     // Текстовое поле ввода комментария
                                     Padding(

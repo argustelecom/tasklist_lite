@@ -6,6 +6,7 @@ import 'package:tasklist_lite/auth/auth_service.dart';
 import 'package:tasklist_lite/custom_navigator_observer.dart';
 import 'package:tasklist_lite/pages/about_app_page.dart';
 import 'package:tasklist_lite/pages/alternative_tasklist_page.dart';
+import 'package:tasklist_lite/pages/comment_page.dart';
 import 'package:tasklist_lite/pages/help_page.dart';
 import 'package:tasklist_lite/pages/login_page.dart';
 import 'package:tasklist_lite/pages/notifications_page.dart';
@@ -57,6 +58,7 @@ class MyApp extends StatelessWidget {
     AboutAppPage.routeName: AboutAppPage(title: "О приложении"),
     TrunkPage.routeName: TrunkPage(),
     ReportsPage.routeName: ReportsPage(),
+    CommentPage.routeName: CommentPage()
   };
 
   // то же самое (то есть не пустить на страницу, а отправить на форму входа, если не залогинен)

@@ -1,23 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:tasklist_lite/pages/comment_page.dart';
 
 /// Это карточка исторического события, данные карточки используем на task_page
 /// для представления исторических событий на соответсвующей вкладке
 class HistoryEventCard extends StatelessWidget {
-  final String person;
-  final String type;
-  var content;
-  final DateTime date;
-  final isAlarm;
+ ///Это комментарий который передаем в карточку для отображения
+  final comment;
+  ///Это максимальное кол-во строк для отображения.На страничке с историей ограничено до 10, на страничке с комментом до 1000 = неограничено по задумке
+  final maxLines;
 
-  HistoryEventCard(
-      {Key? key,
-      required this.person,
-      required this.type,
-      required this.content,
-      required this.date,
-      required this.isAlarm})
-      : super(key: key);
+  HistoryEventCard({Key? key, required this.comment, this.maxLines}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +25,7 @@ class HistoryEventCard extends StatelessWidget {
               Expanded(
                 child: Padding(
                   padding: EdgeInsets.only(left: 16, top: 8),
-                  child: Text("$person",
+                  child: Text("${comment.person}",
                       style: TextStyle(
                         fontSize: 14,
                       )),
@@ -41,41 +34,46 @@ class HistoryEventCard extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.only(top: 8, right: 8),
                 child: Icon(
-                  isAlarm ? Icons.notifications_active : null,
+                  comment.isAlarm ? Icons.notifications_active : null,
                   size: 16,
                   color: Colors.grey,
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(top: 8, right: 16),
-                child: Text(
-                  "$type",
-                  style: const TextStyle(fontSize: 14, color: Colors.grey),
-                ),
-              )
+                  padding: EdgeInsets.only(top: 8, right: 16),
+                  child: Container(
+                    child: Text(
+                      "${comment.type}",
+                      style: TextStyle(fontSize: 14, color: Colors.grey),
+                      maxLines: 10,
+                    ),
+                  ))
             ],
           ),
-          Align(
+          Container( child: Align(
             alignment: Alignment.topLeft,
-            child: Padding(
-              padding: EdgeInsets.only(top: 8, left: 16, right: 16),
-              child: Text(
-                "$content",
-                softWrap: true,
-                style: const TextStyle(fontSize: 14),
-              ),
-            ),
-          ),
+            child:
+            Padding(
+                padding: EdgeInsets.only(top: 8, left: 16, right: 16),
+                child: Text(
+                  "${comment.content}",
+                  style: const TextStyle(fontSize: 14),
+                  maxLines: maxLines,
+                  overflow: TextOverflow.ellipsis,
+                )),
+          )),
+
           Padding(
             padding: EdgeInsets.only(right: 16, bottom: 8),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Text("${DateFormat('dd.MM.yyyy HH:mm', "ru_RU").format(date)}",
+                Text(
+                    "${DateFormat('dd.MM.yyyy HH:mm', "ru_RU").format(comment.date)}",
                     style: const TextStyle(fontSize: 12, color: Colors.grey)),
               ],
             ),
-          ),
+          )
         ],
       ),
     );

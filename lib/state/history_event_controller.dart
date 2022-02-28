@@ -96,8 +96,14 @@ class HistoryEventController extends GetxController {
 
   /// Получаем статус фокуса
   getOnTextFieldFocused() {
-    // Future.delayed(const Duration(milliseconds: 500), () {
-      return onTextFieldFocused;
-    // });
+    return onTextFieldFocused;
+  }
+
+  /// Храним коммент для перехода в него
+  var selectedComment;
+
+  /// Указываем какой коммент выбираем
+  setCurrentComment(HistoryEvent historyEvent) {
+    selectedComment = historyEvent;
   }
 }
