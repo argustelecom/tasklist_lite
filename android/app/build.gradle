@@ -36,6 +36,7 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.example.tasklist_lite"
+        //v.semchenko: начиная с 21 версии multidex включен по умолчанию (https://docs.flutter.dev/deployment/android#enabling-multidex-support)
         minSdkVersion 21
         targetSdkVersion 30
         versionCode flutterVersionCode.toInteger()

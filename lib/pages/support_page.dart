@@ -5,17 +5,9 @@ import 'package:tasklist_lite/crazylib/quote_card.dart';
 import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
 import 'package:tasklist_lite/games/beaumarchais_quotes.dart';
 
-class SupportPage extends StatefulWidget {
+class SupportPage extends StatelessWidget {
   static const String routeName = 'support';
 
-  SupportPage({Key? key, required this.title}) : super(key: key);
-  final String title;
-
-  @override
-  _SupportPageState createState() => _SupportPageState();
-}
-
-class _SupportPageState extends State<SupportPage> {
   @override
   Widget build(BuildContext context) {
     return ReflowingScaffold(

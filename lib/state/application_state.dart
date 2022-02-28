@@ -1,4 +1,7 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 /// shared state приложения, реализовано в соответствии с концепцией inherited widget
 /// https://medium.com/flutter/managing-flutter-application-state-with-inheritedwidgets-1140452befe1
@@ -38,6 +41,9 @@ class ApplicationState {
   // здесь Map не получается проинициализировать, т.к. тогда придется отказаться от
   // модификатора final и const-конструктора, или же допустить null в конструкторе
   final Map<String, String> possibleServers;
+  //TODO: научиться прокидывать значение в настройки в const-конструктор.
+  // final Map<String, String> possibleServers = Map<String, String>.from(jsonDecode(dotenv.get('URL_SERVERS', fallback:
+  // "{\"localhost\": \"$defaultServerAddress\", \"jboss12\": \"http://jboss12:8080\"}")));
 
   @override
   bool operator ==(Object other) {

@@ -3,7 +3,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
-import 'package:tasklist_lite/pages/about_app_page.dart';
+import 'package:tasklist_lite/pages/about_page.dart';
 import 'package:tasklist_lite/pages/help_page.dart';
 import 'package:tasklist_lite/pages/login_page.dart';
 import 'package:tasklist_lite/pages/support_page.dart';
@@ -269,7 +269,7 @@ class ProfilePage extends StatelessWidget {
                                           Icons.chevron_right_outlined),
                                       onPressed: () {
                                         Navigator.pushNamed(
-                                            context, AboutAppPage.routeName);
+                                            context, AboutPage.routeName);
                                       })
                                 ],
                               ))))
@@ -315,7 +315,7 @@ class _ContactsChiefListView extends StatelessWidget {
 }
 
 /// Тип выполняемого оборудования
-enum TextType { text, phone }
+enum TextType { text, phone, mail, link }
 
 /// Отображеине текста lable: value столбцом в card
 /// отделил для сохранения отсутупов на странице profile_page.
@@ -361,6 +361,34 @@ class TextWithLabelColumn extends StatelessWidget {
       textWidget = Container(
           alignment: Alignment.centerLeft,
           child: RichText(text: TextSpan(children: textSpanList)));
+    } else if (type == TextType.mail) {
+      textWidget = Container(
+          alignment: Alignment.centerLeft,
+          child: RichText(text: TextSpan(
+              text: value,
+              style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.blue,
+                  decoration: TextDecoration.underline),
+              // Обеспечивает открытие ссылки по нажатию
+              recognizer: TapGestureRecognizer()
+                ..onTap = () {
+                  launch("mailto:$value");
+                })));
+    }else if (type == TextType.link) {
+      textWidget = Container(
+          alignment: Alignment.centerLeft,
+          child: RichText(text: TextSpan(
+              text: value,
+              style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.blue,
+                  decoration: TextDecoration.underline),
+              // Обеспечивает открытие ссылки по нажатию
+              recognizer: TapGestureRecognizer()
+                ..onTap = () {
+                  launch("https://$value");
+                })));
     } else {
       textWidget = Container(
           alignment: Alignment.centerLeft,

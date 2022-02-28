@@ -1,10 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'package:tasklist_lite/auth/auth_service.dart';
 import 'package:tasklist_lite/custom_navigator_observer.dart';
-import 'package:tasklist_lite/pages/about_app_page.dart';
+import 'package:tasklist_lite/pages/about_page.dart';
 import 'package:tasklist_lite/pages/alternative_tasklist_page.dart';
 import 'package:tasklist_lite/pages/comment_page.dart';
 import 'package:tasklist_lite/pages/help_page.dart';
@@ -29,7 +31,12 @@ import 'package:tasklist_lite/theme/tasklist_theme_data.dart';
 
 import 'state/common_dropdown_controller.dart';
 
-void main() {
+void main() async {
+  // Читаем настройки переменные среды
+  WidgetsFlutterBinding.ensureInitialized();
+  //по https://pub.dev/packages/flutter_dotenv
+  await dotenv.load(fileName: "config/app.env");
+
   runApp(MyApp());
 }
 
@@ -53,9 +60,9 @@ class MyApp extends StatelessWidget {
       title: "Список задач исполнителя",
     ),
     LoginPage.routeName: loginPage,
-    SupportPage.routeName: SupportPage(title: "Служба поддержки"),
-    HelpPage.routeName: HelpPage(title: "Помощь"),
-    AboutAppPage.routeName: AboutAppPage(title: "О приложении"),
+    SupportPage.routeName: SupportPage(),
+    HelpPage.routeName: HelpPage(),
+    AboutPage.routeName: AboutPage(),
     TrunkPage.routeName: TrunkPage(),
     ReportsPage.routeName: ReportsPage(),
     CommentPage.routeName: CommentPage()
