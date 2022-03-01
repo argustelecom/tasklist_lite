@@ -15,6 +15,9 @@ import 'package:flutter/material.dart';
 /// дальше курить clean architecture, разбираться, чем отличается от layered и переходить на нее.
 /// #TODO: для этого начинать например с https://devmuaz.medium.com/flutter-clean-architecture-series-part-1-d2d4c2e75c47
 class ApplicationState {
+  //для проверки из-под эмулятора используй этот адрес, если не работает дефолт
+  //static const defaultServerAddress = "http://10.0.2.2:8080";
+
   static const defaultServerAddress = "http://localhost:8080";
   static const Map<String, String> defaultPossibleServers = const {
     "localhost": defaultServerAddress,

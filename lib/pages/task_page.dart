@@ -12,6 +12,7 @@ import 'package:tasklist_lite/state/tasklist_controller.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
 import 'package:tasklist_lite/crazylib/history_event_card.dart';
 
+import '../common/widgets/object_attach_widget/widgets/object_attach_widget.dart';
 import '../crazylib/adaptive_dialog.dart';
 import 'comment_page.dart';
 
@@ -136,7 +137,11 @@ class _TaskPageState extends State<TaskPage> {
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 32),
                     child: Card(
-                      child: Text("Здесь будут вложения"),
+                      child: Container(
+                          height: 100.0,
+                          width: 100.0,
+                          child: ObjectAttachWidget(taskListController.currentTask!.id)
+                      ),
                       elevation: 3,
                     ),
                   ),
