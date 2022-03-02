@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:tasklist_lite/state/auth_controller.dart';
 import '../tasklist/history_events_repository.dart';
 import '../tasklist/model/history_event.dart';
 import '../tasklist/model/task.dart';
@@ -9,6 +10,7 @@ class HistoryEventController extends GetxController {
   /// Ищем нужные нам штуки
   HistoryEventRepository historyEventRepository = Get.find();
   TaskListController taskListController = Get.find();
+  AuthController authController = Get.find();
 
   /// Инициализируем список событий
   @override
@@ -18,7 +20,13 @@ class HistoryEventController extends GetxController {
 
   /// Данный метод отвечает за первичное наполнение листа с историческими событиями
   initHistory(Task? task) {
-    return historyEventList = historyEventRepository.getHistoryEvent(task);
+    if (task != null) {
+      historyEventRepository
+          .getHistoryEvent(
+              authController.basicAuth, authController.serverAddress, task)
+          .whenComplete(() => null)
+          .then((value) => historyEventList = value);
+    }
   }
 
   /// Лист с историческими событиями по наряду
@@ -26,33 +34,19 @@ class HistoryEventController extends GetxController {
 
   /// Метод для добавления комментария по наряду
   addComment(String comment, bool isAlarm, Task task) {
-    var newComment = new HistoryEvent(
-        // TODO: Персону нужно будет брать из учетки
-        person: 'Вы',
-        type: "Комментарий",
-        content: comment,
-        date: DateTime.now(),
-        isAlarm: isAlarm,
-        task: task);
-
-    if (comment.length > 0) {
-      HistoryEventRepository().addNewComment(newComment);
+        if (comment.length > 0) {
+      HistoryEventRepository().addNewComment( authController.basicAuth, authController.serverAddress, task, comment, isAlarm);
     }
     update();
   }
 
   /// Добавлеяем новый коммент с проверкой аварии(для кнопки проверка аварии)
-  addNewCrashComment(Task currentTask) {
-    var newCrashComment = new HistoryEvent(
-        // TODO: Персону нужно будет брать из учетки
-        person: 'Текущий пользователь',
-        type: "Комментарий",
-        content: 'Проверка аварии *111*1234#',
-        date: DateTime.now(),
-        isAlarm: false,
-        task: currentTask);
+  addNewCrashComment(Task task) {
+    // TODO генерировать правильный комментарий
+    String comment =  'Проверка аварии *111*1234#';
+    bool isAlarm = false;
 
-    HistoryEventRepository().addNewComment(newCrashComment);
+    HistoryEventRepository().addNewComment( authController.basicAuth, authController.serverAddress, task, comment, isAlarm);
     update();
   }
 

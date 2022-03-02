@@ -1,5 +1,3 @@
-import 'package:tasklist_lite/tasklist/model/task.dart';
-
 /// Событие в истории
 class HistoryEvent {
   ///Персона, которая сгенерировала событие
@@ -14,9 +12,6 @@ class HistoryEvent {
   ///Какое-то содержимое события
   var content;
 
-  /// Задача, к которой относится данное историческое событие
-  Task task;
-
   ///Дата события
   final DateTime date;
 
@@ -25,6 +20,26 @@ class HistoryEvent {
       required this.type,
       required this.content,
       required this.date,
-      required this.isAlarm,
-      required this.task});
+      required this.isAlarm
+      });
+
+  factory HistoryEvent.fromJson(Map<String, dynamic> json) {
+    return HistoryEvent(
+      person: json['person'],
+      type: json['type'],
+      isAlarm: json['important'],
+      content: json['text'] ,
+      date: DateTime.parse(json['date'])
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['person'] = this.person;
+    data['type'] = this.type;
+    data['important'] = this.isAlarm;
+    data['text'] = this.content;
+    data['date'] =  this.date.toString();
+    return data;
+  }
 }

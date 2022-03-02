@@ -10,22 +10,19 @@ class HistoryEventsFixtures {
         type: "Комментарий",
         content: "Взяли в работу. Выезжаем",
         date: DateTime.now(),
-        isAlarm: true,
-        task: TaskFixtures.firstTask),
+        isAlarm: true),
     new HistoryEvent(
         person: "Собакевич П.",
         type: "Вложение",
         content: "фото_объекта.jpg",
         date: DateTime.now().subtract(Duration(days: 1)),
-        isAlarm: false,
-        task: TaskFixtures.firstTask),
+        isAlarm: false),
     new HistoryEvent(
         person: "Собакевич П.",
         type: "Комментарий",
         content: "Юстировка БС 2321. взять с собой лопату ",
         date: DateTime.now().subtract(Duration(days: 1)),
-        isAlarm: true,
-        task: TaskFixtures.firstTask),
+        isAlarm: true),
     new HistoryEvent(
         person: "RT_TTMS_USER",
         type: "Уведомление",
@@ -35,8 +32,7 @@ class HistoryEventsFixtures {
             "Участок:Неизвестные объекты О2О;Название: ?; "
             "Время отсчета контрольного срока: 31.10.2021 18:42 (+05:00); Сдвиг: 2229 час. 12 мин.; Примечание: ?;  ",
         date: DateTime.now().subtract(Duration(days: 2)),
-        isAlarm: false,
-        task: TaskFixtures.firstTask),
+        isAlarm: false),
   });
 
   static List<HistoryEvent> secondHistoryEventFixture = List.of({
@@ -45,22 +41,19 @@ class HistoryEventsFixtures {
         type: "Комментарий",
         content: "Принято",
         date: DateTime.now(),
-        isAlarm: true,
-        task: TaskFixtures.secondTask),
+        isAlarm: true),
     new HistoryEvent(
         person: "Дроздов Д.",
         type: "Вложение",
         content: "схема_проезда.jpg",
         date: DateTime.now().subtract(Duration(days: 1)),
-        isAlarm: false,
-        task: TaskFixtures.secondTask),
+        isAlarm: false),
     new HistoryEvent(
         person: "Дроздов Д.",
         type: "Комментарий",
         content: "Пятый поворот у третей сосны",
         date: DateTime.now().subtract(Duration(days: 1)),
-        isAlarm: true,
-        task: TaskFixtures.secondTask),
+        isAlarm: true),
     new HistoryEvent(
         person: "RT_TTMS_USER",
         type: "Уведомление",
@@ -70,8 +63,7 @@ class HistoryEventsFixtures {
             "Участок:Неизвестные объекты О2О;Название: ?; "
             "Время отсчета контрольного срока: 31.10.2021 18:42 (+05:00); Сдвиг: 2229 час. 12 мин.; Примечание: ?;  ",
         date: DateTime.now().subtract(Duration(days: 2)),
-        isAlarm: false,
-        task: TaskFixtures.firstTask),
+        isAlarm: false),
   });
 
   static List<HistoryEvent> thirdHistoryEventFixture = List.of({
@@ -80,22 +72,19 @@ class HistoryEventsFixtures {
         type: "Вложение",
         content: "фото_антенны.jpg",
         date: DateTime.now(),
-        isAlarm: true,
-        task: TaskFixtures.thirdTask),
+        isAlarm: true),
     new HistoryEvent(
         person: "Мышкин В.",
         type: "Вложение",
         content: "фото_БС_2764>.jpg",
         date: DateTime.now().subtract(Duration(days: 1)),
-        isAlarm: false,
-        task: TaskFixtures.thirdTask),
+        isAlarm: false),
     new HistoryEvent(
         person: "Хомяк Е.",
         type: "Комментарий",
         content: "Просьба предоставить фото с объекта",
         date: DateTime.now().subtract(Duration(days: 1)),
-        isAlarm: true,
-        task: TaskFixtures.thirdTask),
+        isAlarm: true),
     new HistoryEvent(
         person: "RT_TTMS_USER",
         type: "Уведомление",
@@ -104,12 +93,11 @@ class HistoryEventsFixtures {
             "Участок:Неизвестные объекты О2О;Название: ?; "
             "Время отсчета контрольного срока: 31.10.2021 18:42 (+05:00); Сдвиг: 2229 час. 12 мин.; Примечание: ?;  ",
         date: DateTime.now().subtract(Duration(days: 2)),
-        isAlarm: false,
-        task: TaskFixtures.thirdTask),
+        isAlarm: false),
   });
 
   /// Метод получения событий по наряду. На вход передаем задачу, по которой хотим получить события
-  List<HistoryEvent> getHistoryEvents(Task? task) {
+  List<HistoryEvent> getHistoryEvents(Task task) {
     if (task == TaskFixtures.firstTask) {
       return firstHistoryEventFixture;
     } else if (task == TaskFixtures.secondTask) {

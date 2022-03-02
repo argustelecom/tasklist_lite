@@ -1,6 +1,7 @@
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:tasklist_lite/graphql/graphql_service.dart';
+import 'package:tasklist_lite/tasklist/model/history_event.dart';
 import 'package:tasklist_lite/tasklist/model/idle_time.dart';
 
 import 'model/task.dart';
@@ -25,6 +26,16 @@ class TaskRemoteClient {
     }
     beginTime
     endTime ''';
+
+  // Comment
+  static const String commentQuery = '''
+    person
+    title
+    text
+    date
+    type
+    important
+   ''';
 
  /// Получение "легкого" Task, без истории
   static const String taskGraphqlQuery = '''id
@@ -78,7 +89,7 @@ class TaskRemoteClient {
   }
 
   Future<List<Task>> getClosedTasks(DateTime day) async {
-    String date = DateFormat('dd.mm.yyyy').format(day);
+    String date = DateFormat('dd.MM.yyyy').format(day);
     String myClosedTasksQuery = '''
  {  
    myClosedTasks(day: "$date") {
@@ -233,4 +244,79 @@ class TaskRemoteClient {
     });
     return result;
   }
+
+  Future<List<HistoryEvent>> getCommentByTask(int taskId) async {
+
+    String getCommentByTaskQuery = '''
+ {  getCommentByTask (taskId:"$taskId") {
+   $commentQuery
+ }
+ }
+''';
+    Future<QueryResult> queryResultFuture =
+    _graphQLService.query(getCommentByTaskQuery);
+    List<HistoryEvent> result = List.of({});
+    await queryResultFuture.then((value) {
+      if (value.hasException) {
+        // need catch 401 error
+        if (value.exception?.linkException is ServerException) {
+          throw Exception("Сервер не доступен");
+        }
+        if (value.exception?.linkException is HttpLinkParserException) {
+          throw Exception("Неавторизован");
+        }
+        throw Exception("Неожиданная ошибка");
+      }
+      if (value.data == null) {
+        return result;
+      }
+      List.from(value.data!["getCommentByTask"]).forEach((element) {
+        result.add(HistoryEvent.fromJson(element));
+      });
+    }, onError: (e) {
+      throw Exception(" onError " + e.toString());
+    });
+    return result;
+  }
+
+  Future<HistoryEvent?> addComment(int taskInstanceId, String text, bool important) async {
+
+    String addCommentQuery = '''
+ mutation {  
+   addComment(
+    taskInstanceId:"$taskInstanceId",
+    text:"$text",
+    important: $important ){
+       $commentQuery
+    }
+ }''';
+
+    Future<QueryResult> mutationResultFuture =
+    _graphQLService.mutate(addCommentQuery);
+    HistoryEvent? result = null;
+    await mutationResultFuture.then((value) {
+      if (value.hasException) {
+        // need catch 401 error
+        if (value.exception?.linkException is ServerException) {
+          throw Exception("Сервер не доступен");
+        }
+        if (value.exception?.linkException is HttpLinkParserException) {
+          throw Exception("Неавторизован");
+        }
+        throw Exception("Неожиданная ошибка");
+      }
+      if (value.data == null || value.data!["addComment"] == null) {
+        return null;
+      }
+      //пока мутации всегда возвращает null. но возможность получать пока оставим
+      result = HistoryEvent.fromJson(value.data!["addComment"]);
+    }, onError: (e) {
+      throw Exception(" onError " + e.toString());
+    });
+    return result;
+  }
+
+
+
+
 }
