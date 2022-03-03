@@ -1,0 +1,16 @@
+image: 192.168.103.210:5000/gitlab-runner:flutter
+# стадии сборки
+stages:
+  - build
+
+variables:
+  IMAGE_TAG: "$CI_COMMIT_REF_NAME"
+  IMAGE_NAME: "$CI_REGISTRY_IMAGE"
+  JAVA_HOME: "/usr/lib/jvm/jdk-11.0.14.1-full"
+
+cache:
+  key: "$CI_PIPELINE_ID"
+  paths:
+    - .gradle/wrapper/
+    - .gradle/caches/
+
