@@ -98,7 +98,7 @@ class ObjectAttachController extends GetxController{
       // см. комент к полю _files
       List<File> _files = <File>[];
       _files.addAll(selectedFiles);
-      _attachRepository.sendObjectAttaches(_files.map((e) => fileToObjectAttach(e)).toList());
+      _attachRepository.sendObjectAttaches(basicAuth, serverAddress,_files.map((e) => fileToObjectAttach(e)).toList());
 
       // TODO: перечитаем репозиторий, для проверки просто сетим выбранные файлы напрямую
       // refreshObjectAttachList()
@@ -120,7 +120,7 @@ class ObjectAttachController extends GetxController{
       // см. комент к полю _images
       List<XFile>? _images = <XFile>[];
       _images.add(photo);
-      _attachRepository.sendObjectAttaches(_images.map((e) => fileXToObjectAttach(e)).toList());
+      _attachRepository.sendObjectAttaches(basicAuth, serverAddress,_images.map((e) => fileXToObjectAttach(e)).toList());
 
       // TODO: перечитаем репозиторий, для проверки просто сетим выбранные файлы напрямую
       // refreshObjectAttachList();
@@ -141,7 +141,7 @@ class ObjectAttachController extends GetxController{
       // см. комент к полю _images
       List<XFile>? _images = <XFile>[];
       _images.addAll(selectedImages);
-      _attachRepository.sendObjectAttaches(_images.map((e) => fileXToObjectAttach(e)).toList());
+      _attachRepository.sendObjectAttaches(basicAuth, serverAddress,_images.map((e) => fileXToObjectAttach(e)).toList());
 
       // TODO: перечитаем репозиторий, для проверки просто сетим выбранные файлы напрямую
       // refreshObjectAttachList();
@@ -156,7 +156,7 @@ class ObjectAttachController extends GetxController{
 
   /// Удаление конкретного вложения
   void deleteAttach(ObjectAttach objectAttach){
-    _attachRepository.deleteObjectAttach(objectAttach);
+    _attachRepository.deleteObjectAttach(basicAuth, serverAddress, objectAttach);
 
     // TODO: для проверки просто удаляем соответствующий аттач из общего листа аттачей
     // refreshObjectAttachList();

@@ -39,7 +39,8 @@ class ObjectAttach{
   }
 
   factory ObjectAttach.fromJson(Map<String, dynamic> json) {
-    return ObjectAttach(id: json['attachedToEntityId'],
+    return ObjectAttach(
+        id: int.parse(json['objectAttachmentId']),
         objectId: json['attachedToId'],
         fileName: json['fileName'],
         filePath: json['sourceFileName'],
@@ -50,13 +51,13 @@ class ObjectAttach{
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['attachedToEntityId'] = this.id;
+    data['objectAttachmentId'] = this.id;
     data['attachedToId'] = this.objectId;
     data['fileName'] = this.fileName;
     data['sourceFileName'] = this.filePath;
     data['createDate'] = this.createDate;
     data['workerName'] = this.workerName;
-
+    data['attachmentData'] = this.attachmentData;
     return data;
   }
 }

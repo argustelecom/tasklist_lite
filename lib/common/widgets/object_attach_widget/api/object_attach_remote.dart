@@ -26,7 +26,7 @@ class ObjectAttachRemote {
     String objectAttachByIdQuery = '''
      {
       objectAttachmentById(objectAttachmentId: $objectAttachId) {
-        attachedToEntityId
+        objectAttachmentId
         attachedToId
         createDate
         fileName
@@ -69,7 +69,7 @@ class ObjectAttachRemote {
     String attachmentsByObjectId = '''
      {
       attachmentsByObjectId(attachedToId: $attachedToId) {
-        attachedToEntityId
+        objectAttachmentId
         attachedToId
         createDate
         fileName
@@ -106,4 +106,82 @@ class ObjectAttachRemote {
     });
     return result;
   }
+
+  /// Добавление отдельного вложения
+  ///
+  Future<ObjectAttach> addObjectAttach(ObjectAttach objectAttach) async {
+    String objectAttachJson = objectAttach.toJson().toString();
+
+    String addObjectAttach = '''
+     mutation{
+      addAttachment(objectAttachment: $objectAttachJson) {
+        attachedToEntityId
+        attachedToId
+        createDate
+        fileName
+        sourceFileName
+        readOnly
+        md5
+        attachType
+        attachmentData
+        tag
+        remoteStoragePath
+        deleteDate
+      }
+    }
+    ''';
+    // #TODO: если это делать в момент запуска приложения, получается долго (сервер отвечает более 1с)
+    // это должен быть push или graphql subscription или что-то вроде
+    Future<QueryResult> queryResultFuture =
+    _graphQLService.mutate(addObjectAttach);
+    late ObjectAttach result;
+    await queryResultFuture.then((value) {
+      if (value.hasException) {
+        throw Exception(value.exception);
+      }
+      if (value.data == null) {
+        throw Exception("value.data == null");
+      }
+      if (!value.isLoading) {
+        result = ObjectAttach.fromJson(value.data!["addAttachment"]);
+        return result;
+      }
+    }, onError: (e) {
+      throw Exception(" onError " + e.toString());
+    });
+    return result;
+  }
+
+
+  Future<ObjectAttach> deleteObjectAttachById(int objectAttachId) async {
+
+    String deleteObjectAttachById = '''
+     mutation{
+      deleteObjectAttachById(objectAttachmentId: $objectAttachId) {
+        objectAttachmentId
+      }
+    }
+    ''';
+    // #TODO: если это делать в момент запуска приложения, получается долго (сервер отвечает более 1с)
+    // это должен быть push или graphql subscription или что-то вроде
+    Future<QueryResult> queryResultFuture =
+    _graphQLService.mutate(deleteObjectAttachById);
+    late ObjectAttach result;
+    await queryResultFuture.then((value) {
+      if (value.hasException) {
+        throw Exception(value.exception);
+      }
+      if (value.data == null) {
+        throw Exception("value.data == null");
+      }
+      if (!value.isLoading) {
+        result = ObjectAttach.fromJson(value.data!["deleteObjectAttachById"]);
+        return result;
+      }
+    }, onError: (e) {
+      throw Exception(" onError " + e.toString());
+    });
+    return result;
+  }
+
 }
