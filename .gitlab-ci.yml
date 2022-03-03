@@ -14,3 +14,12 @@ cache:
     - .gradle/wrapper/
     - .gradle/caches/
 
+# сборка приложения
+build:
+  stage: build
+  script:
+    - date
+  cache:
+    key: "$CI_PIPELINE_ID"
+  tags:
+    - light
