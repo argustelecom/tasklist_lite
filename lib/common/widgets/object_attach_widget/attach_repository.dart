@@ -19,7 +19,7 @@ class AttachRepository extends GetxService{
   }
 
   /// Получение конкретного аттача (известен ID), создает временный файл в системе содержит путь до него в рамках системе
-  Future<ObjectAttach?> getObjectAttach(String basicAuth, String serverAddress, ObjectAttach objectAttach) async{
+  Future<ObjectAttach> getObjectAttach(String basicAuth, String serverAddress, ObjectAttach objectAttach) async{
     ObjectAttachRemote objectAttachRemote =
     ObjectAttachRemote(basicAuth, serverAddress);
     Future<ObjectAttach> result = objectAttachRemote.getObjectAttachById(objectAttach.id);

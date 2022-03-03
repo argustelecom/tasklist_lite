@@ -178,7 +178,8 @@ class ObjectAttachController extends GetxController{
 
   /// Скачивание файла на конечное устройство
   Future<void> downloadFile(ObjectAttach objectAttach, BuildContext context) async {
-    FileManager.instance.downloadFile(objectAttach, context);
+    ObjectAttach attach = await _attachRepository.getObjectAttach(basicAuth, serverAddress, objectAttach);
+    FileManager.instance.downloadFile(attach, context);
   }
 
   /// Конвертация Base64 -> Файл. Сохранение во временном каталоге, возвращает путь до файла
