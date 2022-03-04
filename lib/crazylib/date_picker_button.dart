@@ -24,7 +24,8 @@ class DatePickerButton extends StatelessWidget {
             side: MaterialStateProperty.all(BorderSide(color: Colors.black54)),
             textStyle: MaterialStateProperty.all(TextStyle(
                 inherit: false,
-                fontSize: 14,
+                fontSize: 16,
+                color: themeData.colorScheme.onSurface,
                 fontWeight: FontWeight.normal,
                 fontFamily: 'Roboto'))),
         //TODO голубая обводка при наведении на поле и выборе даты
@@ -57,13 +58,7 @@ class DatePickerButton extends StatelessWidget {
             size: 24,
           ),
           SizedBox(width: 12),
-          Text((value != null) ? DateFormat('dd.MM.yyyy').format(value!) : "",
-              style: TextStyle(
-                  inherit: false,
-                  color: themeData.colorScheme.onSurface,
-                  fontSize: 16,
-                  fontWeight: FontWeight.normal,
-                  fontFamily: 'Roboto'))
+          Text((value != null) ? DateFormat('dd.MM.yyyy').format(value!) : "")
         ]));
   }
 }

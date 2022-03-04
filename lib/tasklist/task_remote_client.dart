@@ -10,14 +10,15 @@ import 'model/task.dart';
 /// Использует graphQL для получения информации
 
 class TaskRemoteClient {
-
-  static const String thirdPartyApiAddress = "/argus/graphql/support-service-thirdparty";
+  static const String thirdPartyApiAddress =
+      "/argus/graphql/support-service-thirdparty";
 
   /// Причина простоя IdleTimeReason
   static const String idleTimeReasonQuery = '''
     id
     name
     ''';
+
   /// Получение простоя IdleTime
   static const String idleTimeQuery = '''    
     id
@@ -37,7 +38,7 @@ class TaskRemoteClient {
     important
    ''';
 
- /// Получение "легкого" Task, без истории
+  /// Получение "легкого" Task, без истории
   static const String taskGraphqlQuery = '''id
   biId
   name
@@ -85,7 +86,6 @@ class TaskRemoteClient {
  }
 ''';
     return getTasks(myOpenedTasksQuery, "myOpenedTasks");
-
   }
 
   Future<List<Task>> getClosedTasks(DateTime day) async {
@@ -97,12 +97,11 @@ class TaskRemoteClient {
    }
  }''';
 
-   return getTasks(myClosedTasksQuery, "myClosedTasks");
+    return getTasks(myClosedTasksQuery, "myClosedTasks");
   }
 
-  Future<List<Task>> getTasks  (String queryString, String queryName) async {
-    Future<QueryResult> queryResultFuture =
-    _graphQLService.query(queryString);
+  Future<List<Task>> getTasks(String queryString, String queryName) async {
+    Future<QueryResult> queryResultFuture = _graphQLService.query(queryString);
     List<Task> result = List.of({});
     await queryResultFuture.then((value) {
       if (value.hasException) {
@@ -128,7 +127,6 @@ class TaskRemoteClient {
   }
 
   Future<List<IdleTimeReason>> getIdleTimeReason() async {
-
     String getIdleTimeReasonQuery = '''
  {  idleTimeReason {
    $idleTimeReasonQuery
@@ -136,7 +134,7 @@ class TaskRemoteClient {
  }
 ''';
     Future<QueryResult> queryResultFuture =
-    _graphQLService.query(getIdleTimeReasonQuery);
+        _graphQLService.query(getIdleTimeReasonQuery);
     List<IdleTimeReason> result = List.of({});
     await queryResultFuture.then((value) {
       if (value.hasException) {
@@ -159,7 +157,6 @@ class TaskRemoteClient {
       throw Exception(" onError " + e.toString());
     });
     return result;
-
   }
 
   Future<IdleTime?> registerIdle(int foreignSiteOrderId, int taskInstanceId,
@@ -205,8 +202,8 @@ class TaskRemoteClient {
     return result;
   }
 
-  Future<IdleTime> finishIdle(int foreignSiteOrderId, int taskInstanceId,
-     DateTime beginTime, DateTime endTime) async {
+  Future<IdleTime?> finishIdle(int foreignSiteOrderId, int taskInstanceId,
+      DateTime beginTime, DateTime endTime) async {
     String beginTimeStr = DateFormat('dd.MM.yyyy HH:mm:ss').format(beginTime);
     String endTimeStr = DateFormat('dd.MM.yyyy HH:mm:ss').format(endTime);
 
@@ -222,7 +219,7 @@ class TaskRemoteClient {
  }''';
 
     Future<QueryResult> mutationResultFuture =
-    _graphQLService.mutate(finishIdleQuery);
+        _graphQLService.mutate(finishIdleQuery);
     late IdleTime result;
     await mutationResultFuture.then((value) {
       if (value.hasException) {
@@ -246,7 +243,6 @@ class TaskRemoteClient {
   }
 
   Future<List<HistoryEvent>> getCommentByTask(int taskId) async {
-
     String getCommentByTaskQuery = '''
  {  getCommentByTask (taskId:"$taskId") {
    $commentQuery
@@ -254,7 +250,7 @@ class TaskRemoteClient {
  }
 ''';
     Future<QueryResult> queryResultFuture =
-    _graphQLService.query(getCommentByTaskQuery);
+        _graphQLService.query(getCommentByTaskQuery);
     List<HistoryEvent> result = List.of({});
     await queryResultFuture.then((value) {
       if (value.hasException) {
@@ -279,8 +275,8 @@ class TaskRemoteClient {
     return result;
   }
 
-  Future<HistoryEvent?> addComment(int taskInstanceId, String text, bool important) async {
-
+  Future<HistoryEvent?> addComment(
+      int taskInstanceId, String text, bool important) async {
     String addCommentQuery = '''
  mutation {  
    addComment(
@@ -292,7 +288,7 @@ class TaskRemoteClient {
  }''';
 
     Future<QueryResult> mutationResultFuture =
-    _graphQLService.mutate(addCommentQuery);
+        _graphQLService.mutate(addCommentQuery);
     HistoryEvent? result = null;
     await mutationResultFuture.then((value) {
       if (value.hasException) {
@@ -315,8 +311,4 @@ class TaskRemoteClient {
     });
     return result;
   }
-
-
-
-
 }

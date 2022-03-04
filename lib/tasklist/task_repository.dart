@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:get/get.dart';
 import 'package:tasklist_lite/state/application_state.dart';
+import 'package:tasklist_lite/tasklist/fixture/idle_time_reason_fixtures.dart';
 import 'package:tasklist_lite/tasklist/fixture/task_fixtures.dart';
 import 'package:tasklist_lite/tasklist/model/idle_time.dart';
 import 'package:tasklist_lite/tasklist/task_remote_client.dart';
@@ -19,7 +20,7 @@ class TaskRepository extends GetxService {
     // TODO: проверить
     TaskRemoteClient taskRemoteClient =
         TaskRemoteClient(basicAuth, serverAddress);
-    List<Task> result = taskRemoteClient.getOpenedTasks() as List<Task> ;
+    List<Task> result = taskRemoteClient.getOpenedTasks() as List<Task>;
     if (result.isNotEmpty) {
       return result;
     }
@@ -68,29 +69,50 @@ class TaskRepository extends GetxService {
     return result.asStream();
   }
 
-  Future<IdleTime?> registerIdle( String basicAuth, String serverAddress, int foreignSiteOrderId,
+  Future<IdleTime?> registerIdle(
+      String basicAuth,
+      String serverAddress,
+      int foreignSiteOrderId,
       int taskInstanceId,
       int reasonId,
       DateTime beginTime,
       DateTime? endTime) async {
+    ApplicationState applicationState = Get.find();
+    if (applicationState.inDemonstrationMode) {
+      await new Future.delayed(const Duration(seconds: 3));
+      return new IdleTime(
+          id: 1,
+          reason: IdleTimeReasonFixtures.idleTimeReason_1,
+          startDate: beginTime,
+          endDate: endTime);
+    }
 
-    TaskRemoteClient taskRemoteClient = TaskRemoteClient(basicAuth, serverAddress);
-     return await taskRemoteClient.registerIdle(foreignSiteOrderId,
-        taskInstanceId,
-        reasonId,
-        beginTime,
-        endTime);
+    TaskRemoteClient taskRemoteClient =
+        TaskRemoteClient(basicAuth, serverAddress);
+    return await taskRemoteClient.registerIdle(
+        foreignSiteOrderId, taskInstanceId, reasonId, beginTime, endTime);
   }
 
-  Future<IdleTime> finishIdle( String basicAuth, String serverAddress, int foreignSiteOrderId,
+  Future<IdleTime?> finishIdle(
+      String basicAuth,
+      String serverAddress,
+      int foreignSiteOrderId,
       int taskInstanceId,
       DateTime beginTime,
       DateTime endTime) async {
+    ApplicationState applicationState = Get.find();
+    if (applicationState.inDemonstrationMode) {
+      await new Future.delayed(const Duration(seconds: 3));
+      return new IdleTime(
+          id: 1,
+          reason: IdleTimeReasonFixtures.idleTimeReason_1,
+          startDate: beginTime,
+          endDate: endTime);
+    }
 
-    TaskRemoteClient taskRemoteClient = TaskRemoteClient(basicAuth, serverAddress);
-    return await taskRemoteClient.finishIdle(foreignSiteOrderId,
-        taskInstanceId,
-        beginTime,
-        endTime);
+    TaskRemoteClient taskRemoteClient =
+        TaskRemoteClient(basicAuth, serverAddress);
+    return await taskRemoteClient.finishIdle(
+        foreignSiteOrderId, taskInstanceId, beginTime, endTime);
   }
 }

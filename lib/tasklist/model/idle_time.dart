@@ -38,9 +38,8 @@ class IdleTime {
     if (getDuration() != null) {
       return prettyDuration(getDuration()!,
           tersity: DurationTersity.minute,
-          abbreviated: true,
           delimiter: " ",
-          spacer: "",
+          spacer: " ",
           locale: RussianDurationLanguage());
     } else
       return "";
@@ -82,7 +81,7 @@ class IdleTimeReason {
 
   factory IdleTimeReason.fromJson(Map<String, dynamic> json) {
     return IdleTimeReason(
-      id: int.parse(json['id']) ,
+      id: int.parse(json['id']),
       name: json['name'],
     );
   }
