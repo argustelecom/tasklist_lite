@@ -322,6 +322,7 @@ class IdleTimeManagerDialogState extends State<IdleTimeManagerDialog> {
                     if (newIdleTime != null)
                       this.setState(() {
                         _operationCompleted = true;
+                        _error = null;
                         _idleTime = newIdleTime;
                       });
                   }
@@ -346,6 +347,7 @@ class IdleTimeManagerDialogState extends State<IdleTimeManagerDialog> {
                     if (newIdleTime != null)
                       this.setState(() {
                         _operationCompleted = true;
+                        _error = null;
                         _idleTime = newIdleTime;
                       });
                   }
