@@ -63,13 +63,6 @@ class ObjectAttachController extends GetxController{
 
   ObjectAttachController(this.objectId);
 
-  AuthController authController = Get.find();
-  ApplicationState state = Get.find();
-
-  //late String basicAuth = authController.getAuth();
-  late String basicAuth = "Basic ZGV2ZWxvcGVyOmRldmVsb3Blcg==";
-  late String serverAddress = state.serverAddress;
-
   @override
   Future<void> onInit() async {
     super.onInit();
@@ -79,35 +72,17 @@ class ObjectAttachController extends GetxController{
 
   /// Обновляем список имеющихся у объекта вложений, перестраиваем компонент
   Future<void> refreshObjectAttachList() async {
-    objectAttachList.value = _attachRepository.getAttachmentsByObjectId(basicAuth, serverAddress, this.objectId);
+    objectAttachList.value = _attachRepository.getAttachmentsByObjectId(this.objectId);
     update();
   }
 
   /// позволяет сформировать список файлов с ограничениями по расширению файлов
   void pickFiles() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-        allowMultiple: true,
-        type: FileType.custom,
-        // допустимые расширения выбираемых файлов
-        // TODO: нужно вынести во входные параметры виджета
-        allowedExtensions: ['doc', 'docx',  'xls', 'xlsx', 'pdf', 'txt', 'log']);
-
-    if (result != null) {
-      List<File> selectedFiles = result.paths.map((path) => File(path!)).toList();
-
-      // см. комент к полю _files
-      List<File> _files = <File>[];
-      _files.addAll(selectedFiles);
-      _attachRepository.sendObjectAttaches(basicAuth, serverAddress,_files.map((e) => fileToObjectAttach(e)).toList());
-
-      // TODO: перечитаем репозиторий, для проверки просто сетим выбранные файлы напрямую
-      // refreshObjectAttachList()
-      //_objectAttachList.addAll(_files.map((e) => fileToObjectAttach(e)).toList());
-
-    } else {
-      // пользователь отменил прикрепления файлов
+    List<ObjectAttach>? oaList = await FileManager.instance.pickFiles(this.objectId);
+    if(oaList != null) {
+      _attachRepository.sendObjectAttaches(oaList);
     }
-    update();
+    refreshObjectAttachList();
   }
 
   /// Позволяет запустить камеру, снимок прикладывается во вложения
@@ -120,7 +95,7 @@ class ObjectAttachController extends GetxController{
       // см. комент к полю _images
       List<XFile>? _images = <XFile>[];
       _images.add(photo);
-      _attachRepository.sendObjectAttaches(basicAuth, serverAddress,_images.map((e) => fileXToObjectAttach(e)).toList());
+      //_attachRepository.sendObjectAttaches(basicAuth, serverAddress,_images.map((e) => fileXToObjectAttach(e)).toList());
 
       // TODO: перечитаем репозиторий, для проверки просто сетим выбранные файлы напрямую
       // refreshObjectAttachList();
@@ -141,7 +116,7 @@ class ObjectAttachController extends GetxController{
       // см. комент к полю _images
       List<XFile>? _images = <XFile>[];
       _images.addAll(selectedImages);
-      _attachRepository.sendObjectAttaches(basicAuth, serverAddress,_images.map((e) => fileXToObjectAttach(e)).toList());
+      //_attachRepository.sendObjectAttaches(basicAuth, serverAddress,_images.map((e) => fileXToObjectAttach(e)).toList());
 
       // TODO: перечитаем репозиторий, для проверки просто сетим выбранные файлы напрямую
       // refreshObjectAttachList();
@@ -156,7 +131,7 @@ class ObjectAttachController extends GetxController{
 
   /// Удаление конкретного вложения
   void deleteAttach(ObjectAttach objectAttach){
-    _attachRepository.deleteObjectAttach(basicAuth, serverAddress, objectAttach);
+    //_attachRepository.deleteObjectAttach(basicAuth, serverAddress, objectAttach);
 
     // TODO: для проверки просто удаляем соответствующий аттач из общего листа аттачей
     // refreshObjectAttachList();
@@ -164,40 +139,10 @@ class ObjectAttachController extends GetxController{
     update();
   }
 
-  /// Конвертация файла в объект для отправки на бэкенд
-  ObjectAttach fileToObjectAttach(File file){
-    return ObjectAttach(id: -1, objectId: objectId, fileName: file.path, filePath: file.path,
-        attachmentData:"" ,createDate: DateTime.now(), workerName: authController.userInfo!.workerName??"Неизвестен");
-  }
-
-  /// Конвертация файла изображения в объект для отправки на бэкенд
-  ObjectAttach fileXToObjectAttach(XFile xFile){
-    return ObjectAttach(id:-1 , objectId: objectId, fileName:xFile.name, filePath:xFile.path,
-        attachmentData:"", createDate: DateTime.now(), workerName: authController.userInfo!.workerName??"Неизвестен");
-  }
-
   /// Скачивание файла на конечное устройство
   Future<void> downloadFile(ObjectAttach objectAttach, BuildContext context) async {
-    ObjectAttach attach = await _attachRepository.getObjectAttach(basicAuth, serverAddress, objectAttach);
+    ObjectAttach attach = await _attachRepository.getObjectAttach(objectAttach);
     FileManager.instance.downloadFile(attach, context);
-  }
-
-  /// Конвертация Base64 -> Файл. Сохранение во временном каталоге, возвращает путь до файла
-  Future<String> _createFileFromString(ObjectAttach objectAttach) async {
-    Uint8List bytes = base64.decode(objectAttach.attachmentData);
-    Directory tempDir = await getTemporaryDirectory();
-    String tempPath = tempDir.path;
-    File file = File(
-        "$tempPath/" + objectAttach.fileName);
-    await file.writeAsBytes(bytes);
-    return file.path;
-  }
-
-  /// Конвертация Файл -> Base64. Для передачи через GraphQL
-  Future<String> _createStringFromFile(String path) async {
-    File file = File(path);
-    List<int> fileBytes = file.readAsBytesSync();
-    return base64Encode(fileBytes);
   }
 
 }
