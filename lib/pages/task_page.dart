@@ -9,8 +9,10 @@ import 'package:tasklist_lite/crazylib/task_due_date_label.dart';
 import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/state/history_event_controller.dart';
 import 'package:tasklist_lite/state/tasklist_controller.dart';
+import 'package:tasklist_lite/tasklist/fixture/task_fixtures.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
 import 'package:tasklist_lite/crazylib/history_event_card.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../common/widgets/object_attach_widget/widgets/object_attach_widget.dart';
 import '../crazylib/adaptive_dialog.dart';
@@ -108,24 +110,216 @@ class _TaskPageState extends State<TaskPage> {
                     ],
                   ),
                 ),
-                //Заменил SizedBox на Expanded, чтобы не ругался на bottom overflow
+
+                /// TODO: Информация по этапу захардкожена,когда будет выполнена доработка API для получения параметров по простою логику отображения нужно доделать
                 Expanded(
                     child: TabBarView(children: [
                   Padding(
                     padding: EdgeInsets.only(left: 12, right: 12, bottom: 12),
                     child: Card(
-                      child: SizedBox(
-                          height: 400.0,
-                          child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: attrGroups.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return AttrGroup(
-                                    task: taskListController.currentTask!,
-                                    attrGroup: attrGroups.elementAt(index));
-                              })),
-                      elevation: 3,
-                    ),
+                        elevation: 3,
+                        child: Column(
+                          children: [
+                            Row(
+                                children: [
+                                  Column(
+                                    children: [
+                                      Padding(
+                                          padding: EdgeInsets.fromLTRB(
+                                              16, 8, 16, 12),
+                                          child: Row(
+                                              children: [
+                                                Text("Наименование этапа"),
+                                              ])),
+                                      Padding(
+                                        padding:
+                                            EdgeInsets.fromLTRB(16, 8, 16, 0),
+                                        child: Row(
+                                            children: [
+                                              Text("КС : 20.12.2021 15.00"),
+                                            ]),
+                                      ),
+                                      Padding(
+                                        padding:
+                                            EdgeInsets.fromLTRB(16, 8, 16, 0),
+                                        child: Row(
+                                            children: [
+                                              Text("КВ : 1ч. 15мин."),
+                                            ]),
+                                      ),
+                                    ],
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                  ),
+                                  //Клизма
+                                  Padding(
+                                    padding: EdgeInsets.only(right: 16),
+                                    child: Column(
+                                      children: [
+                                        IconButton(
+                                            onPressed: () async {
+                                              // Есть map_launcher, но он в вебе не работает (ругается)
+                                              // но можно открывать урл к yandex maps например
+                                              // https://stackoverflow.com/questions/52052232/flutter-url-launcher-google-maps
+                                              String baseUrl =
+                                                  "https://yandex.ru/maps/?l=map&z=11";
+                                              // параметры открытия яндекса см. https://yandex.com/dev/yandex-apps-launch/maps/doc/concepts/yandexmaps-web.html
+                                              // #TODO: если бы у нас были текущиие координаты (а они будут в следующих версиях), можно открывать прям маршрут,
+                                              // см. Plot Route https://yandex.com/dev/yandex-apps-launch/maps/doc/concepts/yandexmaps-web.html#yandexmaps-web__buildroute
+                                              if ((taskListController
+                                                          .currentTask!
+                                                          .latitude !=
+                                                      null) &&
+                                                  (taskListController
+                                                          .currentTask!
+                                                          .longitude !=
+                                                      null)) {
+                                                baseUrl = baseUrl +
+                                                    "&pt=" +
+                                                    taskListController
+                                                        .currentTask!.latitude
+                                                        .toString() +
+                                                    "," +
+                                                    taskListController
+                                                        .currentTask!.longitude
+                                                        .toString();
+                                              } else if (taskListController
+                                                      .currentTask!.address !=
+                                                  null) {
+                                                // если координаты не заданы, поищем по адресу
+                                                baseUrl = baseUrl +
+                                                    "&text=" +
+                                                    taskListController
+                                                        .currentTask!.address!;
+                                              }
+                                              final String encodedURl =
+                                                  Uri.encodeFull(baseUrl);
+                                              // тут можно было бы проверить через canLaunch, но вроде не обязательно
+                                              // в крайнем случае откроет просто карту в неподходящем месте
+                                              launch(encodedURl);
+                                            },
+                                            icon: Column(
+                                              children: [
+                                                Expanded(
+                                                  child: Icon(
+                                                    Icons.place,
+                                                    color: themeData
+                                                        .colorScheme.primary,
+                                                  ),
+                                                ),
+                                                // #TODO: согласно макету, под иконкой должно быть не равномерное подчеркивание,
+                                                // а тень, хитро полученная как тень рамки иконки в figma. Подобного эффекта пока
+                                                // достичь не удалось.
+                                                // Еще вариант -- такая вот иконка https://www.iconfinder.com/icons/2344289/gps_location_map_place_icon
+                                                Expanded(
+                                                  child: Padding(
+                                                    padding: EdgeInsets.only(
+                                                      left: 10,
+                                                      right: 10,
+                                                      top: 20,
+                                                    ),
+                                                    child: Divider(
+                                                      thickness: 3,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            )),
+                                        Text(taskListController
+                                                .currentTask!
+                                                .flexibleAttribs[TaskFixtures
+                                                    .distanceToObjectFlexAttrName]
+                                                ?.toString() ??
+                                            "")
+                                      ],
+                                    ),
+                                  )
+                                ],
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween),
+                            //Прогресс бар для этапов
+                            Row(
+                                children: [
+                                  // Первый этап
+                                  Expanded(
+                                    child: Padding(
+                                        padding: EdgeInsets.only(
+                                            left: 12,
+                                            right: 4,
+                                            bottom: 5,
+                                            top: 12),
+                                        child: LinearProgressIndicator(
+                                          value: 1,
+                                          color: Colors.yellow.shade700,
+                                          minHeight: 12,
+                                          backgroundColor:
+                                              Colors.yellow.shade200,
+                                        )),
+                                  ),
+                                  // Второй этап
+                                  Expanded(
+                                    child: Padding(
+                                        padding: EdgeInsets.only(
+                                            left: 4,
+                                            right: 4,
+                                            bottom: 5,
+                                            top: 12),
+                                        child: LinearProgressIndicator(
+                                          value: 1,
+                                          color: Colors.yellow.shade700,
+                                          minHeight: 12,
+                                          backgroundColor:
+                                              Colors.yellow.shade200,
+                                        )),
+                                  ),
+                                  // Третий этап
+                                  Expanded(
+                                    child: Padding(
+                                        padding: EdgeInsets.only(
+                                            left: 4,
+                                            right: 4,
+                                            bottom: 5,
+                                            top: 12),
+                                        child: LinearProgressIndicator(
+                                          value: 0.73,
+                                          color: Colors.yellow.shade700,
+                                          minHeight: 12,
+                                          backgroundColor:
+                                              Colors.yellow.shade200,
+                                        )),
+                                  ),
+                                  // Четвертый этап
+                                  Expanded(
+                                    child: Padding(
+                                        padding: EdgeInsets.only(
+                                            left: 4,
+                                            right: 12,
+                                            bottom: 5,
+                                            top: 12),
+                                        child: LinearProgressIndicator(
+                                          value: 0,
+                                          color: Colors.yellow.shade700,
+                                          minHeight: 12,
+                                          backgroundColor:
+                                              Colors.yellow.shade200,
+                                        )),
+                                  ),
+                                ],
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween),
+                            SizedBox(
+                                height: 400.0,
+                                child: ListView.builder(
+                                    shrinkWrap: true,
+                                    itemCount: attrGroups.length,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return AttrGroup(
+                                          task: taskListController.currentTask!,
+                                          attrGroup:
+                                              attrGroups.elementAt(index));
+                                    })),
+                          ],
+                        )),
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 32),
@@ -140,8 +334,8 @@ class _TaskPageState extends State<TaskPage> {
                       child: Container(
                           height: 100.0,
                           width: 100.0,
-                          child: ObjectAttachWidget(taskListController.currentTask!.id)
-                      ),
+                          child: ObjectAttachWidget(
+                              taskListController.currentTask!.id)),
                       elevation: 3,
                     ),
                   ),

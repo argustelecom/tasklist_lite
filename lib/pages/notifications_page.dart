@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
+import 'package:tasklist_lite/pages/task_page.dart';
 import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/crazylib/notification_card.dart';
 import 'package:tasklist_lite/state/notification_controller.dart';
 import 'package:tasklist_lite/crazylib/date_row.dart';
+
+import '../state/tasklist_controller.dart';
 
 class NotificationsPage extends StatefulWidget {
   static const String routeName = 'Notifications';
@@ -35,6 +38,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
   @override
   Widget build(BuildContext context) {
     ThemeData themeData = Theme.of(context);
+    TaskListController taskListController = Get.find();
 
     return GetBuilder<NotificationController>(
         init: NotificationController(),
@@ -87,10 +91,20 @@ class _NotificationsPageState extends State<NotificationsPage> {
                             return Dismissible(
                               key: UniqueKey(),
                               child: NotificationCard(
+                                  onTap: () {
+                                    // taskListController.findCurrentTask(controller.getNotifications()[index].task);
+                                    taskListController.setCurrentTask(controller
+                                        .getNotifications()[index]
+                                        .task);
+                                    Navigator.pushNamed(
+                                        context, TaskPage.routeName,
+                                        arguments:
+                                            taskListController.currentTask);
+                                  },
                                   notify: controller.getNotifications()[index],
-                                  task:
-                                      controller.getNotifications()[index].task,
-                                  taskPageRouteName: 'task'),
+                                  task: controller
+                                      .getNotifications()[index]
+                                      .task),
                               onDismissed: (direction) {
                                 // Когда смахиваем уведомление, добавляем его в DeadNotifications и удаляем его из aliveNotifications.
                                 // Возможно DeadNotifications пригодится в будущем для истории уведомлений

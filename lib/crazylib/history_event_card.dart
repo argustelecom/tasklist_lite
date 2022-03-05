@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:tasklist_lite/pages/comment_page.dart';
 
 /// Это карточка исторического события, данные карточки используем на task_page
 /// для представления исторических событий на соответсвующей вкладке

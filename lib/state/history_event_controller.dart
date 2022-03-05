@@ -70,15 +70,6 @@ class HistoryEventController extends GetxController {
     update();
   }
 
-  /// Фокуснода для текстового поля ввода комментария
-  FocusNode focusNodeCommentInput = FocusNode();
-
-  /// Чтобы моментально фокусироваться и получать
-  setFocus() {
-    focusNodeCommentInput.requestFocus();
-    update();
-  }
-
   /// Храним статус фокуса, для отображения кнопки отправить
   var onTextFieldFocused = false;
 
