@@ -16,7 +16,7 @@ class ObjectAttach{
   String fileName;
 
   /// Исходный путь к файлу (непонятно зачем он нужен на бэкенде, но пусть будет)
-  String filePath;
+  String? filePath;
 
   /// Содержание файла. По факту это Blob пережатый в Base64, так как QraphQL не
   /// может в кошерный блоб (информация передается посредством JSON)
@@ -44,7 +44,7 @@ class ObjectAttach{
         objectId: json['attachedToId'],
         fileName: json['fileName'],
         filePath: json['sourceFileName'],
-        attachmentData: json['attachmentData'],
+        attachmentData: json['attachmentData'] == null? "": json['attachmentData'],
         createDate: DateTime.parse(json['createDate']),
         workerName: json['workerName'] == null ? "Неизвестно" : json['workerName']);
   }
@@ -59,5 +59,11 @@ class ObjectAttach{
     data['workerName'] = this.workerName;
     data['attachmentData'] = this.attachmentData;
     return data;
+  }
+
+  String toAddMutation() {
+    String result =
+        '''{ attachedToId: $objectId, fileName: "$fileName", sourceFileName: "$filePath", attachmentData: "$attachmentData" } ''';
+    return result;
   }
 }

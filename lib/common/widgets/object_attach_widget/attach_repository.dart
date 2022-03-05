@@ -9,7 +9,6 @@ import 'model/object_attach.dart';
 /// тут д.б. подключение датасурсов и соответственно запрос по сети всех имеющихся
 /// вложений для объекта
 class AttachRepository extends GetxService{
-
   AuthController authController = Get.find();
   ApplicationState state = Get.find();
 
@@ -17,15 +16,16 @@ class AttachRepository extends GetxService{
   //late String basicAuth = "Basic ZGV2ZWxvcGVyOmRldmVsb3Blcg==";
   late String serverAddress = state.serverAddress;
 
-  /// Заглушка на отправку OA
-  void sendObjectAttaches(List<ObjectAttach> objAttachList) async{
-    //TODO: implement me, bNtch
-    List<ObjectAttach> objAttachList1 = objAttachList;
+  void sendObjectAttaches(List<ObjectAttach> objAttachList) async {
+    ObjectAttachRemote objectAttachRemote =
+        ObjectAttachRemote(basicAuth, serverAddress);
+    objectAttachRemote.addObjectAttachList(objAttachList);
   }
 
-  /// Заглушка на операцию удаления аттача
-  void deleteObjectAttach(ObjectAttach objectAttach) async{
-    //TODO: implement me, bNtch
+  void deleteObjectAttach(ObjectAttach objectAttach) async {
+    ObjectAttachRemote objectAttachRemote =
+        ObjectAttachRemote(basicAuth, serverAddress);
+    objectAttachRemote.deleteObjectAttachById(objectAttach.id);
   }
 
   /// Получение конкретного аттача (известен ID), создает временный файл в системе содержит путь до него в рамках системе

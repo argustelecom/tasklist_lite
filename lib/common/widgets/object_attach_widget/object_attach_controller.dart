@@ -131,12 +131,8 @@ class ObjectAttachController extends GetxController{
 
   /// Удаление конкретного вложения
   void deleteAttach(ObjectAttach objectAttach){
-    //_attachRepository.deleteObjectAttach(basicAuth, serverAddress, objectAttach);
-
-    // TODO: для проверки просто удаляем соответствующий аттач из общего листа аттачей
-    // refreshObjectAttachList();
-    //_objectAttachList.remove(objectAttach);
-    update();
+    _attachRepository.deleteObjectAttach(objectAttach);
+    refreshObjectAttachList();
   }
 
   /// Скачивание файла на конечное устройство
