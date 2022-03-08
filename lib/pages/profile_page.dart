@@ -17,10 +17,12 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ApplicationState applicationState = Get.find();
     //Отступ карточки блока
     EdgeInsets paddingSettingBlock = EdgeInsets.only(bottom: 2);
     return GetX<AuthController>(builder: (authController) {
-      UserInfo userInfo = authController.userInfo as UserInfo;
+      // #TODO: вообще может(но не долго) быть null, если мы нажали f5, и state асинхронно поднимается из хранилища
+      UserInfo userInfo = authController.authState.userInfo.value!;
       return ReflowingScaffold(
           appBar: AppBar(
             // нажатие на заголовок должно возвращать назад
@@ -131,31 +133,19 @@ class ProfilePage extends StatelessWidget {
                                                 activeColor: Color(0xFFFFFF),
                                                 activeTrackColor:
                                                     Color(0xFBC22F),
-                                                value:
-                                                    ApplicationState.of(context)
-                                                            .themeMode ==
-                                                        ThemeMode.dark,
+                                                value: applicationState
+                                                        .themeMode.value ==
+                                                    ThemeMode.dark,
                                                 onChanged: (value) {
                                                   if (value) {
-                                                    ApplicationState.update(
-                                                        context,
-                                                        ApplicationState.of(
-                                                                context)
-                                                            .copyWith(
-                                                                themeMode:
-                                                                    ThemeMode
-                                                                        .dark));
+                                                    applicationState.themeMode
+                                                        .value = ThemeMode.dark;
                                                   } else {
-                                                    ApplicationState.update(
-                                                        context,
-                                                        ApplicationState.of(
-                                                                context)
-                                                            .copyWith(
-                                                                themeMode:
-                                                                    ThemeMode
-                                                                        .light));
+                                                    applicationState
+                                                            .themeMode.value =
+                                                        ThemeMode.light;
                                                   }
-                                                })))
+                                                }))),
                                   ])))),
                   // TASK-126749 з4. прячем лишннее для релизной сборки.
                   // функционал "Запоминать избранные работы" не попадает в релиз первой версии

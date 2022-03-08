@@ -23,11 +23,8 @@ class TaskCard extends StatelessWidget {
   Widget build(BuildContext context) {
     ThemeData themeData = Theme.of(context);
 
-    return
-        //использует state списка задач, например, для highlight`а текста, вводимого в search bar
-        // что выражается вот в такой зависимости от контроллера
-        GetBuilder<TaskListController>(
-      builder: (controller) {
+    return GetBuilder<TaskListController>(
+      builder: (taskListController) {
         // размеры сознательно здесь не заданы, чтобы можно было масштабировать карточку снаружи, по размерам parent`а
         return Card(
           color: (task.isClosed ? Color(0xFFE5E4E4) : themeData.cardColor),
@@ -41,7 +38,7 @@ class TaskCard extends StatelessWidget {
                 Expanded(
                   child: InkWell(
                     onTap: () {
-                      controller.setCurrentTask(task);
+                      taskListController.taskListState.currentTask.value = task;
                       Navigator.pushNamed(
                         context,
                         this.taskPageRouteName,
@@ -63,7 +60,7 @@ class TaskCard extends StatelessWidget {
                                             .foreignOrderIdFlexAttrName]
                                         ?.toString() ??
                                     task.name,
-                                term: controller.searchText,
+                                term: taskListController.searchText,
                                 textStyle: TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 18),
                               ),
@@ -72,7 +69,7 @@ class TaskCard extends StatelessWidget {
                                             TaskFixtures.objectNameFlexAttrName]
                                         ?.toString() ??
                                     "",
-                                term: controller.searchText,
+                                term: taskListController.searchText,
                                 textStyle: TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 18),
                               ),
@@ -90,14 +87,14 @@ class TaskCard extends StatelessWidget {
                                         null
                                     ? task.name
                                     : "",
-                                term: controller.searchText,
+                                term: taskListController.searchText,
                               ),
                               SubstringHighlight(
                                 text: task.flexibleAttribs[TaskFixtures
                                             .orderOperatorNameFlexAttrName]
                                         ?.toString() ??
                                     "",
-                                term: controller.searchText,
+                                term: taskListController.searchText,
                               ),
                             ],
                           ),

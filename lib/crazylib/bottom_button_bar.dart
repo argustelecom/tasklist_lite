@@ -62,7 +62,7 @@ class BottomButtonBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetX<AuthController>(builder: (authController) {
-      return authController.isAuthenticated
+      return authController.authState.isAuthenticated.value
           ? BottomAppBar(
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,

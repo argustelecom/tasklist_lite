@@ -10,7 +10,7 @@ class HistoryEventRepository extends GetxService {
   List<HistoryEvent> getHistoryEvent(Task? task) {
     ApplicationState applicationState = Get.find();
     HistoryEventsFixtures historyEventsFixtures = Get.find();
-    if (applicationState.inDemonstrationMode) {
+    if (applicationState.inDemonstrationMode.value) {
       return historyEventsFixtures.getHistoryEvents(task);
     }
     return historyEventsFixtures.getHistoryEvents(task);

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:tasklist_lite/crazylib/date_picker_button.dart';
 import 'package:tasklist_lite/crazylib/time_picker_button.dart';
-import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/state/tasklist_controller.dart';
 import 'package:tasklist_lite/tasklist/model/idle_time.dart';
 
@@ -20,7 +19,7 @@ class IdleTimeManagerDialog extends StatefulWidget {
 
 class IdleTimeManagerDialogState extends State<IdleTimeManagerDialog> {
   IdleTime? idleTime;
-  IdleTimeReason? reason;
+  String? reason;
   DateTime? startDate;
   TimeOfDay? startTime;
   DateTime? endDate;
@@ -47,9 +46,8 @@ class IdleTimeManagerDialogState extends State<IdleTimeManagerDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<TaskListController>(builder: (controller) {
+    return GetBuilder<TaskListController>(builder: (taskListController) {
       ThemeData themeData = Theme.of(context);
-      ApplicationState applicationState = ApplicationState.of(context);
 
       Widget body =
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -59,9 +57,9 @@ class IdleTimeManagerDialogState extends State<IdleTimeManagerDialog> {
                 style: TextStyle(color: Colors.black54))),
         Padding(
             padding: EdgeInsets.symmetric(vertical: 8),
-            child: CustomDropDownButton<IdleTimeReason>(
+            child: CustomDropDownButton<String>(
               value: reason,
-              itemsList: controller.idleTimeReasons,
+              itemsList: taskListController.taskListState.idleTimeReasons,
               selectedItemBuilder: (BuildContext context) {
                 return controller.idleTimeReasons
                     .map<Widget>((IdleTimeReason item) {
@@ -69,8 +67,7 @@ class IdleTimeManagerDialogState extends State<IdleTimeManagerDialog> {
                       alignment: Alignment.centerLeft,
                       child: (Text(item.name)));
                 }).toList();
-              },
-              hint: "Выберите причину",
+              },hint: "Выберите причину",
               onChanged: (value) {
                 setState(() {
                   reason = value;
@@ -162,7 +159,7 @@ class IdleTimeManagerDialogState extends State<IdleTimeManagerDialog> {
         // TODO: обращение к контроллеру/репозиторию для валидации и формирования запроса
         //  пока просто закрываем диалог
         onPressed: () {
-          (idleTime == null)
+         (idleTime == null)
               ? controller.registerIdle(
               controller.getCurrentTask()!.biId,
               controller.getCurrentTask()!.id,

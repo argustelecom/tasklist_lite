@@ -1,11 +1,9 @@
 import 'dart:async';
 
 import 'package:get/get.dart';
-import 'package:tasklist_lite/tasklist/fixture/notification_fixtures.dart';
+import 'package:tasklist_lite/state/auth_state.dart';
 import 'package:tasklist_lite/tasklist/model/notify.dart';
 import 'package:tasklist_lite/tasklist/notification_repository.dart';
-
-import 'auth_controller.dart';
 
 class NotificationController extends GetxController {
   /// Список уведомлений, которые еще не прочитаны. Его будем выводить на UI
@@ -60,11 +58,20 @@ class NotificationController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    AuthController authController = Get.find();
-    openedNotificationSubscription = resubscribe(openedNotificationSubscription,
-        notificationRepository.streamOpenedNotifications(authController.getAuth(),authController.getServerAddress()), (event) {
-          //Только те, что отсутсвуют в deadNotifications
-          List<Notify> newOpenNotify = event.where((element) => !deadNotifications.map((e) => e.id).contains(element.id)).toList();
+    // к authState можно так обращаться, т.к. он создается очень рано, вместе с AuthController`ом
+    // еще до создания самого приложения в main.
+    AuthState authState = Get.find();
+
+    openedNotificationSubscription = resubscribe(
+        openedNotificationSubscription,
+        notificationRepository.streamOpenedNotifications(
+            authState.authString.value!, authState.serverAddress.value!),
+        (event) {
+      //Только те, что отсутсвуют в deadNotifications
+      List<Notify> newOpenNotify = event
+          .where((element) =>
+              !deadNotifications.map((e) => e.id).contains(element.id))
+          .toList();
       this.aliveNotifications = newOpenNotify;
       update();
     });
@@ -76,18 +83,4 @@ class NotificationController extends GetxController {
     openedNotificationSubscription?.cancel();
     super.onClose();
   }
-
-  /// Используем для того, чтобы получить новый стрим с новыми данными при изменении фикстуры
-  void didChangeDependencies() {
-    AuthController authController = Get.find();
-    openedNotificationSubscription = resubscribe(openedNotificationSubscription,
-        notificationRepository.streamOpenedNotifications(authController.getAuth(),authController.getServerAddress()), (event) {
-      //Только те, что отсутсвуют в deadNotifications
-      List<Notify> newOpenNotify = event.where((element) => !deadNotifications.map((e) => e.id).contains(element.id)).toList();
-
-      this.aliveNotifications = newOpenNotify;
-      update();
-    });
-  }
-
 }

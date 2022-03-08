@@ -5,8 +5,6 @@ import 'package:get/get.dart';
 import 'package:tasklist_lite/auth/auth_service.dart';
 import 'package:tasklist_lite/custom_navigator_observer.dart';
 import 'package:tasklist_lite/pages/about_app_page.dart';
-import 'package:tasklist_lite/pages/alternative_tasklist_page.dart';
-import 'package:tasklist_lite/pages/comment_page.dart';
 import 'package:tasklist_lite/pages/help_page.dart';
 import 'package:tasklist_lite/pages/login_page.dart';
 import 'package:tasklist_lite/pages/notifications_page.dart';
@@ -18,6 +16,7 @@ import 'package:tasklist_lite/pages/tasklist_page.dart';
 import 'package:tasklist_lite/pages/trunk_page.dart';
 import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/state/auth_controller.dart';
+import 'package:tasklist_lite/state/auth_state.dart';
 import 'package:tasklist_lite/tasklist/fixture/history_events_fixtures.dart';
 import 'package:tasklist_lite/tasklist/fixture/notification_fixtures.dart';
 import 'package:tasklist_lite/tasklist/fixture/task_fixtures.dart';
@@ -27,6 +26,7 @@ import 'package:tasklist_lite/tasklist/notification_repository.dart';
 import 'package:tasklist_lite/tasklist/task_repository.dart';
 import 'package:tasklist_lite/theme/tasklist_theme_data.dart';
 
+import 'local_storage/local_storage_service.dart';
 import 'state/common_dropdown_controller.dart';
 
 void main() {
@@ -35,6 +35,12 @@ void main() {
 
 // #TODO: сделать автотесты
 class MyApp extends StatelessWidget {
+  // ApplicationState не имеет своего контроллера, поэтому не может создаваться внутри него.
+  // В то же время, нужен почти сразу, здесь же в методе build, еще до выполнения initialBinding.
+  // #TODO: наверное, не лучший способ инициализации. Хотя бы из-за ворнинга выше.
+  // Можно сделать MyApp stateful, либо же условно (if Get.isRegistered) инициализировать в build.
+  ApplicationState applicationState = Get.put(ApplicationState());
+
   /// эта странца может отображаться довольно часто, поэтому не хочется ее каждый раз пересоздавать.
   static final LoginPage loginPage = LoginPage();
 
@@ -49,16 +55,12 @@ class MyApp extends StatelessWidget {
     TaskPage.routeName: TaskPage(title: "Детальное представление задачи"),
     NotificationsPage.routeName: NotificationsPage(title: "Уведомления"),
     ProfilePage.routeName: ProfilePage(),
-    AlternativeTaskListPage.routeName: AlternativeTaskListPage(
-      title: "Список задач исполнителя",
-    ),
     LoginPage.routeName: loginPage,
     SupportPage.routeName: SupportPage(title: "Служба поддержки"),
     HelpPage.routeName: HelpPage(title: "Помощь"),
     AboutAppPage.routeName: AboutAppPage(title: "О приложении"),
     TrunkPage.routeName: TrunkPage(),
     ReportsPage.routeName: ReportsPage(),
-    CommentPage.routeName: CommentPage()
   };
 
   // то же самое (то есть не пустить на страницу, а отправить на форму входа, если не залогинен)
@@ -67,10 +69,10 @@ class MyApp extends StatelessWidget {
   // Также по фразе route guard ищется много примеров, но в среднем они не сильно лучше решения здесь.
   // Это вовсе не значит, что kostd некуда совершенствоваться. Напротив, целины еще много.
   Route<dynamic> onGenerateRoute(RouteSettings routeSettings) {
-    AuthController authController = Get.find();
+    AuthState authState = Get.find();
     return MaterialPageRoute(
       builder: (context) => Obx(() {
-        if (authController.isAuthenticated ||
+        if (authState.isAuthenticated.value ||
             // без аутентификации можно попасть на страницу настроек
             routeSettings.name == ProfilePage.routeName) {
           return staticRoutes[routeSettings.name] ?? staticRoutes['/']!;
@@ -84,18 +86,15 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // без встраивания Builder не работает, получаем unexpected null value
-    // (внутри ApplicationState.of scope is null). Builder дает какой-то другой контекст по итогу, надо разобраться
-    // https://stackguides.com/questions/69408608/flutter-dependoninheritedwidgetofexacttype-returns-null
-    return ModelBinding(
-      child: Builder(builder: (context) {
-        // что интересно, здесь GetBuilder объявлен снаружи GetMaterialApp, и все равно работает!
-        return GetBuilder<AuthController>(
-            init: AuthController(),
-            builder: (authController) {
+    return Builder(builder: (context) {
+      // что интересно, здесь GetBuilder объявлен снаружи GetMaterialApp, и все равно работает!
+      return GetBuilder<AuthController>(
+          init: AuthController(),
+          builder: (authController) {
+            return Obx(() {
               return GetMaterialApp(
                 title: 'Фигаро',
-                themeMode: ApplicationState.of(context).themeMode,
+                themeMode: applicationState.themeMode.value,
                 theme: TaskListThemeData.lightThemeData.copyWith(
                   platform: defaultTargetPlatform,
                 ),
@@ -124,7 +123,8 @@ class MyApp extends StatelessWidget {
                       Get.put(IdleTimeReasonRepository()),
                       Get.put(HistoryEventsFixtures()),
                       Get.put(HistoryEventRepository()),
-                      Get.put(CommonDropdownController())
+                      Get.put(CommonDropdownController()),
+                      Get.put(LocalStorageService()),
                     }),
                 darkTheme: TaskListThemeData.darkThemeData.copyWith(
                   platform: defaultTargetPlatform,
@@ -147,7 +147,7 @@ class MyApp extends StatelessWidget {
                 ],
               );
             });
-      }),
-    );
+          });
+    });
   }
 }

@@ -9,18 +9,13 @@ class NotificationRepository extends GetxService {
   Stream<List<Notify>> streamOpenedNotifications(
       String basicAuth, String serverAddress) {
     ApplicationState applicationState = Get.find();
-    if (applicationState.inDemonstrationMode) {
+    if (applicationState.inDemonstrationMode.value) {
       NotificationFixtures notificationFixtures = Get.find();
       return notificationFixtures.streamOpenedNotification();
     }
-    Future<List<Notify>> result = Future(() => List.of({}));
-    try {
-      NotifyRemoteClient notifyRemoteClient =
-          NotifyRemoteClient(basicAuth, serverAddress);
-      result = notifyRemoteClient.getNotify();
-    } catch (e) {
-      // TODO fix me do nothing
-    }
+    NotifyRemoteClient notifyRemoteClient =
+        NotifyRemoteClient(basicAuth, serverAddress);
+    Future<List<Notify>> result = notifyRemoteClient.getNotify();
     return result.asStream();
   }
 }

@@ -25,13 +25,14 @@ class TopUserBar extends StatelessWidget implements PreferredSizeWidget {
             title: Column(
               children: [
                 Text(
-                    authController.userInfo == null
+                    authController.authState.userInfo.value == null
                         ? ""
-                        : authController.userInfo!.userName + ",",
+                        : authController.authState.userInfo.value!.userName +
+                            ",",
                     key: ValueKey('$TopUserBar' + '_username')),
-                Text(authController.userInfo == null
+                Text(authController.authState.userInfo.value == null
                     ? ""
-                    : authController.userInfo!.homeRegionName),
+                    : authController.authState.userInfo.value!.homeRegionName),
               ],
             ),
             actions: [

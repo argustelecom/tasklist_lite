@@ -3,17 +3,16 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:tasklist_lite/crazylib/history_event_card.dart';
 import 'package:tasklist_lite/crazylib/idle_time_manager_dialog.dart';
 import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
 import 'package:tasklist_lite/crazylib/task_due_date_label.dart';
-import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/state/history_event_controller.dart';
-import 'package:tasklist_lite/state/tasklist_controller.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
-import 'package:tasklist_lite/crazylib/history_event_card.dart';
 
 import '../crazylib/adaptive_dialog.dart';
 import 'comment_page.dart';
+import '../state/tasklist_state.dart';
 
 class TaskPage extends StatefulWidget {
   static const String routeName = 'task';
@@ -29,137 +28,147 @@ class _TaskPageState extends State<TaskPage> {
   @override
   Widget build(BuildContext context) {
     ThemeData themeData = Theme.of(context);
-    ApplicationState applicationState = ApplicationState.of(context);
     // Это дефолтный контроллер для управления текстовым полем
+    // #Fixme: опрометчиво его создавать в методе build
     TextEditingController commentTextController;
     commentTextController = TextEditingController();
-
-    // Тут ищем тасклистконтроллер
-    TaskListController taskListController = Get.find();
 
     // Это дефолтный скроллконтрроллер, используем на вкладке история, чтобы перематывать на последнее событие т.к. это удобно для пользователя
     ScrollController historyScrollController = new ScrollController();
 
-    if (taskListController.currentTask == null) {
-      /// TODO облагородить или создать страницу ошибки
-      return DefaultTabController(
-          length: 4,
-          child: ReflowingScaffold(
-              body: Text(
-                  "Что-то пошло не так. Вернитесь на главную страницу и попробуйте снова.")));
-    } else {
-      LinkedHashSet<String> attrGroups =
-          taskListController.currentTask!.getAttrGroups();
-
-      return DefaultTabController(
-          length: 4,
-          initialIndex: 0,
-          child: ReflowingScaffold(
-              appBar: TaskAppBar(task: taskListController.currentTask!),
-              body: Column(children: [
-                // нужен чтобы ограничить высоту tabBar`а ниже
-                SizedBox(
-                  height: 40,
-                  // чтобы сделать indicator для unselected tabs в tabBar`е ниже, подложим под него Decoration с подчеркиванием,
-                  // как предлагается https://stackoverflow.com/questions/52028730/how-to-create-unselected-indicator-for-tab-bar-in-flutter
-                  child: Stack(
-                    fit: StackFit.passthrough,
-                    alignment: Alignment.bottomCenter,
-                    children: <Widget>[
-                      Container(
-                        decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                                color: themeData.dividerColor, width: 2.0),
-                          ),
-                        ),
-                      ),
-                      TabBar(
-                        isScrollable: true,
-                        labelColor: Colors.black,
-                        labelStyle: TextStyle(fontSize: 18),
-                        unselectedLabelStyle:
-                            TextStyle(color: Colors.grey, fontSize: 18),
-                        tabs: [
-                          Tab(
-                            child: Text(
-                              "Сведения",
+    return DefaultTabController(
+        length: 4,
+        initialIndex: 0,
+        child: GetBuilder<TaskListController>(
+            init: TaskListController(),
+            builder: (taskListController) {
+              return ReflowingScaffold(
+                  appBar: TaskAppBar(
+                      task:
+                          taskListController.taskListState.currentTask.value ??
+                              Task(
+                                  id: 1,
+                                  name: "",
+                                  flexibleAttribs: LinkedHashMap())),
+                  body: Column(children: [
+                    // нужен чтобы ограничить высоту tabBar`а ниже
+                    SizedBox(
+                      height: 40,
+                      // чтобы сделать indicator для unselected tabs в tabBar`е ниже, подложим под него Decoration с подчеркиванием,
+                      // как предлагается https://stackoverflow.com/questions/52028730/how-to-create-unselected-indicator-for-tab-bar-in-flutter
+                      child: Stack(
+                        fit: StackFit.passthrough,
+                        alignment: Alignment.bottomCenter,
+                        children: <Widget>[
+                          Container(
+                            decoration: BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(
+                                    color: themeData.dividerColor, width: 2.0),
+                              ),
                             ),
                           ),
-                          Tab(
-                            child: Text(
-                              'Работы',
-                            ),
-                          ),
-                          Tab(
-                            child: Text(
-                              "Вложения",
-                            ),
-                          ),
-                          Tab(
-                            child: Text(
-                              "История",
-                            ),
+                          TabBar(
+                            isScrollable: true,
+                            labelColor: Colors.black,
+                            labelStyle: TextStyle(fontSize: 18),
+                            unselectedLabelStyle:
+                                TextStyle(color: Colors.grey, fontSize: 18),
+                            tabs: [
+                              Tab(
+                                child: Text(
+                                  "Сведения",
+                                ),
+                              ),
+                              Tab(
+                                child: Text(
+                                  'Работы',
+                                ),
+                              ),
+                              Tab(
+                                child: Text(
+                                  "Вложения",
+                                ),
+                              ),
+                              Tab(
+                                child: Text(
+                                  "История",
+                                ),
+                              ),
+                            ],
+                            controller: DefaultTabController.of(context),
                           ),
                         ],
-                        controller: DefaultTabController.of(context),
                       ),
-                    ],
-                  ),
-                ),
-                //Заменил SizedBox на Expanded, чтобы не ругался на bottom overflow
-                Expanded(
-                    child: TabBarView(children: [
-                  Padding(
-                    padding: EdgeInsets.only(left: 12, right: 12, bottom: 12),
-                    child: Card(
-                      child: SizedBox(
-                          height: 400.0,
-                          child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: attrGroups.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return AttrGroup(
-                                    task: taskListController.currentTask!,
-                                    attrGroup: attrGroups.elementAt(index));
-                              })),
-                      elevation: 3,
                     ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 32),
-                    child: Card(
-                      child: Text("Здесь будут работы"),
-                      elevation: 3,
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 32),
-                    child: Card(
-                      child: Text("Здесь будут вложения"),
-                      elevation: 3,
-                    ),
-                  ),
-                  GetBuilder<HistoryEventController>(
-                      init: HistoryEventController(),
-                      builder: (historyEventController) {
-                        return Padding(
-                            padding: EdgeInsets.only(
-                                left: 12, right: 12, bottom: 12),
-                            child: Column(
-                              children: [
-                                Expanded(
-                                  child: ListView.builder(
-                                      itemCount: historyEventController
-                                          .getHistoryEvents()
-                                          .length,
-                                      controller: historyScrollController,
-                                      itemBuilder:
-                                          (BuildContext context, int index) {
-                                        return InkWell(
+                    //Заменил SizedBox на Expanded, чтобы не ругался на bottom overflow
+                    Expanded(
+                        child: TabBarView(children: [
+                      Padding(
+                        padding:
+                            EdgeInsets.only(left: 12, right: 12, bottom: 12),
+                        child: Card(
+                          child: SizedBox(
+                              height: 400.0,
+                              child: ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: taskListController
+                                      .taskListState.currentTask.value
+                                      ?.getAttrGroups()
+                                      .length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return AttrGroup(
+                                        task: taskListController.taskListState
+                                                .currentTask.value ??
+                                            Task(
+                                                id: 1,
+                                                name: "",
+                                                flexibleAttribs:
+                                                    LinkedHashMap()),
+                                        attrGroup: taskListController
+                                                .taskListState.currentTask.value
+                                                ?.getAttrGroups()
+                                                .elementAt(index) ??
+                                            "");
+                                  })),
+                          elevation: 3,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 32),
+                        child: Card(
+                          child: Text("Здесь будут работы"),
+                          elevation: 3,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 32),
+                        child: Card(
+                          child: Text("Здесь будут вложения"),
+                          elevation: 3,
+                        ),
+                      ),
+                      GetBuilder<HistoryEventController>(
+                          init: HistoryEventController(),
+                          builder: (historyEventController) {
+                            return Padding(
+                                padding: EdgeInsets.only(
+                                    left: 12, right: 12, bottom: 12),
+                                child: Column(
+                                  children: [
+                                    Expanded(
+                                      child: ListView.builder(
+                                          itemCount: historyEventController
+                                              .getHistoryEvents()
+                                              .length,
+                                          controller: historyScrollController,
+                                          itemBuilder: (BuildContext context,
+                                              int index) {
+                                            return InkWell(
                                             child: HistoryEventCard(
                                                 maxLines: 10,
-                                                comment: historyEventController
+                                               comment: historyEventController
                                                     .getHistoryEvents()[index]),
                                             onTap: () {
                                               historyEventController
@@ -171,134 +180,144 @@ class _TaskPageState extends State<TaskPage> {
                                                   CommentPage.routeName);
                                             });
                                       }),
-                                ),
-                                // Текстовое поле ввода комментария
-                                Padding(
-                                  padding: EdgeInsets.only(top: 16),
-                                  child: Focus(
-                                    onFocusChange: (value) {
-                                      Future.delayed(
-                                          const Duration(milliseconds: 100),
-                                          () {
-                                        historyEventController
-                                            .setOnTextFieldFocused(value);
-                                      });
-                                    },
-                                    child: TextField(
-                                        textInputAction: TextInputAction.send,
-                                        keyboardType: TextInputType.text,
-                                        textAlign: TextAlign.start,
-                                        decoration: InputDecoration(
-                                          hintText: "Ваш комментарий",
-                                          hintStyle: TextStyle(fontSize: 14),
-                                          fillColor:
-                                              themeData.bottomAppBarColor,
-                                          border: InputBorder.none,
-                                          filled: true,
-                                          suffixIcon: IconButton(
-                                            tooltip: 'С уведомлением',
-                                            icon: Icon(
-                                                historyEventController
-                                                        .getIsAlarmComment()
-                                                    ? Icons.notifications
-                                                    : Icons.notifications_off,
-                                                // size: 30,
-                                                color: Colors.black),
-                                            onPressed: () {
-                                              historyEventController
-                                                  .changeIsAlarmComment();
-                                            },
-                                          ),
-                                          isCollapsed: false,
-                                        ),
-                                        onSubmitted: (text) {
-                                          historyEventController.addComment(
-                                              commentTextController.text,
-                                              historyEventController
-                                                  .getIsAlarmComment(),
-                                              taskListController.currentTask!);
-                                          commentTextController.clear();
-                                          historyScrollController.animateTo(
-                                            historyScrollController
-                                                .position.maxScrollExtent,
-                                            curve: Curves.easeOut,
-                                            duration: const Duration(
-                                                milliseconds: 300),
-                                          );
-                                          FocusManager.instance.primaryFocus
-                                              ?.unfocus();
+                                    ),
+                                    // Текстовое поле ввода комментария
+                                    Padding(
+                                      padding: EdgeInsets.only(top: 16),
+                                      child: Focus(
+                                        onFocusChange: (value) {
+                                          Future.delayed(
+                                              const Duration(milliseconds: 100),
+                                              () {
+                                            historyEventController
+                                                .setOnTextFieldFocused(value);
+                                          });
                                         },
-                                        minLines: 1,
-                                        maxLines: 5,
-                                        controller: commentTextController),
-                                  ),
-                                ),
-                                Visibility(
-                                    visible: historyEventController
-                                        .getOnTextFieldFocused(),
-                                    child: Padding(
-                                      padding:
-                                          EdgeInsets.only(top: 8, right: 16),
-                                      child: Row(
-                                          children: [
-                                            TextButton(
-                                              child: Padding(
-                                                padding: EdgeInsets.only(
-                                                    top: 4,
-                                                    right: 8,
-                                                    left: 8,
-                                                    bottom: 4),
-                                                child: const Text('Отправить',
-                                                    style: TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 14)),
+                                        child: TextField(
+                                            textInputAction:
+                                                TextInputAction.send,
+                                            keyboardType: TextInputType.text,
+                                            textAlign: TextAlign.start,
+                                            decoration: InputDecoration(
+                                              hintText: "Ваш комментарий",
+                                              hintStyle:
+                                                  TextStyle(fontSize: 14),
+                                              fillColor:
+                                                  themeData.bottomAppBarColor,
+                                              border: InputBorder.none,
+                                              filled: true,
+                                              suffixIcon: IconButton(
+                                                tooltip: 'С уведомлением',
+                                                icon: Icon(
+                                                    historyEventController
+                                                            .getIsAlarmComment()
+                                                        ? Icons.notifications
+                                                        : Icons
+                                                            .notifications_off,
+                                                    // size: 30,
+                                                    color: Colors.black),
+                                                onPressed: () {
+                                                  historyEventController
+                                                      .changeIsAlarmComment();
+                                                },
                                               ),
-                                              style: ButtonStyle(
-                                                  shape: MaterialStateProperty.all<
-                                                          RoundedRectangleBorder>(
-                                                      RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius.circular(
-                                                                  32))),
-                                                  padding: MaterialStateProperty
-                                                      .all<EdgeInsets>(
+                                              isCollapsed: false,
+                                            ),
+                                            onSubmitted: (text) {
+                                              historyEventController.addComment(
+                                                  commentTextController.text,
+                                                  historyEventController
+                                                      .getIsAlarmComment(),
+                                                  taskListController
+                                                      .taskListState
+                                                      .currentTask
+                                                      .value!);
+                                              commentTextController.clear();
+                                              historyScrollController.animateTo(
+                                                historyScrollController
+                                                    .position.maxScrollExtent,
+                                                curve: Curves.easeOut,
+                                                duration: const Duration(
+                                                    milliseconds: 300),
+                                              );
+                                              FocusManager.instance.primaryFocus
+                                                  ?.unfocus();
+                                            },
+                                            minLines: 1,
+                                            maxLines: 5,
+                                            controller: commentTextController),
+                                      ),
+                                    ),
+                                    Visibility(
+                                        visible: historyEventController
+                                            .getOnTextFieldFocused(),
+                                        child: Padding(
+                                          padding: EdgeInsets.only(
+                                              top: 8, right: 16),
+                                          child: Row(
+                                              children: [
+                                                TextButton(
+                                                  child: Padding(
+                                                    padding: EdgeInsets.only(
+                                                        top: 4,
+                                                        right: 8,
+                                                        left: 8,
+                                                        bottom: 4),
+                                                    child: const Text(
+                                                        'Отправить',
+                                                        style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontSize: 14)),
+                                                  ),
+                                                  style: ButtonStyle(
+                                                      shape: MaterialStateProperty.all<
+                                                              RoundedRectangleBorder>(
+                                                          RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                      32))),
+                                                      padding: MaterialStateProperty.all<
+                                                              EdgeInsets>(
                                                           EdgeInsets.all(2)),
-                                                  backgroundColor:
-                                                      MaterialStateProperty.all<Color>(
-                                                          Colors.yellow.shade700)),
-                                              onPressed: () {
-                                                historyEventController
-                                                    .addComment(
+                                                      backgroundColor:import 'comment_page.dart';
+                                                          MaterialStateProperty.all<Color>(
+                                                              Colors.yellow.shade700)),
+                                                  onPressed: () {
+                                                    historyEventController.addComment(
                                                         commentTextController
                                                             .text,
                                                         historyEventController
                                                             .getIsAlarmComment(),
                                                         taskListController
-                                                            .currentTask!);
-                                                commentTextController.clear();
-                                                historyScrollController
-                                                    .animateTo(
-                                                  historyScrollController
-                                                      .position.maxScrollExtent,
-                                                  curve: Curves.easeOut,
-                                                  duration: const Duration(
-                                                      milliseconds: 300),
-                                                );
-                                                FocusManager
-                                                    .instance.primaryFocus
-                                                    ?.unfocus();
-                                              },
-                                            ),
-                                          ],
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end),
-                                    ))
-                              ],
-                            ));
-                      })
-                ]))
-              ])));
-    }
+                                                            .taskListState
+                                                            .currentTask
+                                                            .value!);
+                                                    commentTextController
+                                                        .clear();
+                                                    historyScrollController
+                                                        .animateTo(
+                                                      historyScrollController
+                                                          .position
+                                                          .maxScrollExtent,
+                                                      curve: Curves.easeOut,
+                                                      duration: const Duration(
+                                                          milliseconds: 300),
+                                                    );
+                                                    FocusManager
+                                                        .instance.primaryFocus
+                                                        ?.unfocus();
+                                                  },
+                                                ),
+                                              ],
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end),
+                                        ))
+                                  ],
+                                ));
+                          })
+                    ]))
+                  ]));
+            }));
   }
 }
 
@@ -309,7 +328,7 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    TaskListController taskListController = Get.find();
+    TaskListState taskListState = Get.find();
     return GetBuilder<HistoryEventController>(
         init: HistoryEventController(),
         builder: (historyEventController) {
@@ -436,8 +455,8 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
                                                         milliseconds: 300));
                                             historyEventController
                                                 .addNewCrashComment(
-                                                    taskListController
-                                                        .currentTask!);
+                                                    taskListState
+                                                        .currentTask.value!);
                                           },
                                         ))
                                   ],

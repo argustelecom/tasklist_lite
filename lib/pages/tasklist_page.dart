@@ -4,7 +4,6 @@ import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
 import 'package:tasklist_lite/crazylib/task_card.dart';
 import 'package:tasklist_lite/crazylib/top_user_bar.dart';
 import 'package:tasklist_lite/pages/task_page.dart';
-import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/state/tasklist_controller.dart';
 
 import '../crazylib/tasklist_filter_bar.dart';
@@ -27,6 +26,7 @@ class TaskList extends StatelessWidget {
   }
 }
 
+// #TODO: ничто не мешает ему быть Stateless
 class TaskListPage extends StatefulWidget {
   static const String routeName = 'tasklist';
 
@@ -39,31 +39,8 @@ class TaskListPage extends StatefulWidget {
 
 class _TaskListPageState extends State<TaskListPage> {
   @override
-  // если поменялись неявные зависимости нашей страницы (например, на странице настроек выбрали другую фикстуру, и теперь
-  // список задач на нашей странице должен измениться в соответствии с этим), фреймворк вызовет метод ниже.
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // при этом, если страница строится в первый раз, то экземпляр TaskListController еще не создан (он появится позже,
-    // в ходе метода build, когда будет строить соответствующий GetBuilder
-    if (Get.isRegistered<TaskListController>()) {
-      ApplicationState applicationState = ApplicationState.of(context);
-      Get.delete<ApplicationState>();
-      // #TODO: в ходе билда будет вызываться логика контроллера, которая вызовет repository, который, в свою очередь, хочет
-      // актуальный экземпляр ApplicationState
-      Get.put(applicationState);
-      TaskListController taskListController = Get.find();
-      taskListController.didChangeDependencies();
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     ThemeData themeData = Theme.of(context);
-    ApplicationState applicationState = ApplicationState.of(context);
-    Get.delete<ApplicationState>();
-    // #TODO: в ходе билда будет вызываться логика контроллера, которая вызовет repository, который, в свою очередь, хочет
-    // актуальный экземпляр ApplicationState
-    Get.put(applicationState);
 
     return GetBuilder<TaskListController>(
       init: TaskListController(),
