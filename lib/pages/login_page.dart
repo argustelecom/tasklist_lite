@@ -9,7 +9,9 @@ import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
 import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/state/auth_controller.dart';
 import 'package:tasklist_lite/state/common_dropdown_controller.dart';
-import 'package:tasklist_lite/user_secure_storage/local_storage_service.dart';
+
+import '../local_storage/local_storage_service.dart';
+import '../state/auth_state.dart';
 
 // #TODO: если делать отдельным виджетом, стоит параметризовать размеры, кривую анимации, длительность
 class AnimatedLogo extends StatefulWidget {
@@ -81,6 +83,9 @@ class LoginPageState extends State<LoginPage> {
   static const _serverAddressSuggestionsStorageKey =
       "serverAddressSuggestionsStorageKey";
 
+  ApplicationState _applicationState = Get.find();
+  AuthState _authState = Get.find();
+
   InputDecoration fieldDecoration(BuildContext context, String text) {
     ThemeData themeData = Theme.of(context);
     return InputDecoration(
@@ -102,29 +107,18 @@ class LoginPageState extends State<LoginPage> {
       print(
           "ошибка чтения serverAddressSuggestions из хранилища: $error, stack = $stackTrace");
     });
-  }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // didChangeDependencies делается часто, например, если пользователь тыкнул галку деморежима
-    // а нам надо только один раз инициализироваться. Делать это в initState не можем, т.к.
-    // нужен доступ к context для получения ApplicationState
-    if (_selectedServer == null) {
-      ApplicationState applicationState = ApplicationState.of(context);
-      _serverAddressEditingController.text = applicationState.serverAddress;
-      Map<String, String> possibleServers = applicationState.possibleServers;
-      if (possibleServers.values.contains(applicationState.serverAddress)) {
-        _selectedServer = possibleServers.keys.firstWhere((element) =>
-            possibleServers[element] == applicationState.serverAddress);
+    _authState.serverAddress.listen((value) {
+      if (_selectedServer == null) {
+        _serverAddressEditingController.text = value ?? "";
       }
-    }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    ApplicationState applicationState = ApplicationState.of(context);
     ThemeData themeData = Theme.of(context);
+
     return GetBuilder<CommonDropdownController>(
         builder: (commonDropdownController) {
       return GetBuilder<AuthController>(builder: (authController) {
@@ -175,7 +169,7 @@ class LoginPageState extends State<LoginPage> {
                           onChanged: (String? value) {
                             setState(() {
                               Map<String?, String> possibleServers =
-                                  applicationState.possibleServers;
+                                  _applicationState.possibleServers;
                               _selectedServer = value;
 
                               _serverAddressEditingController.text =
@@ -184,9 +178,9 @@ class LoginPageState extends State<LoginPage> {
                             });
                           },
                           itemsList:
-                              List.of(applicationState.possibleServers.keys),
+                              List.of(_applicationState.possibleServers.keys),
                           selectedItemBuilder: (BuildContext context) {
-                            return applicationState.possibleServers.keys
+                            return _applicationState.possibleServers.keys
                                 .map<Widget>((String item) {
                               return Align(
                                   alignment: Alignment.centerLeft,
@@ -226,36 +220,28 @@ class LoginPageState extends State<LoginPage> {
                               "\nБудет осуществлен вход без подключения к серверу, "
                               "\nбудут доступны демонстрационные данные. ",
                           key: ValueKey('demo_mode'),
-                          child:
-                              // получается не как в макете, сам чекбокс все же имеет небольшой отступ, а в макете без отступа
-                              // если это не прокатит, то надо If the way CheckboxListTile pads and positions its elements isn't quite
-                              // what you're looking for, you can create custom labeled checkbox widgets by
-                              // combining [Checkbox] with other widgets, such as [Text], [Padding] and
-                              // [InkWell]. (см. каменты в checkbox_list_tile)
-                              CheckboxListTile(
-                            contentPadding: EdgeInsets.zero,
-                            value: ApplicationState.of(context)
-                                .inDemonstrationMode,
-                            onChanged: (value) {
-                              if (value != null) {
-                                ApplicationState newApplicationState =
-                                    ApplicationState.of(context)
-                                        .copyWith(inDemonstrationMode: value);
-                                ApplicationState.update(
-                                    context, newApplicationState);
-                                // kostd: делаем это глупое помещение в контекст перед тем, как слой поведения обратится
-                                // к ApplicationState (см. камент в самом ApplicationState)
-                                // в данном конкретном случае проще всего помещать в контекст при изменении значения inDemonstrationMode
-                                // т.к. оно меняется только в одном месте -- здесь
-                                Get.delete<ApplicationState>();
-                                Get.put(newApplicationState);
-                              }
-                            },
-                            title: Text(
-                              "Демо-режим",
-                            ),
-                            controlAffinity: ListTileControlAffinity.leading,
-                          ),
+                          child: Obx(() {
+                            // получается не как в макете, сам чекбокс все же имеет небольшой отступ, а в макете без отступа
+                            // если это не прокатит, то надо If the way CheckboxListTile pads and positions its elements isn't quite
+                            // what you're looking for, you can create custom labeled checkbox widgets by
+                            // combining [Checkbox] with other widgets, such as [Text], [Padding] and
+                            // [InkWell]. (см. каменты в checkbox_list_tile)
+                            return CheckboxListTile(
+                              contentPadding: EdgeInsets.zero,
+                              value:
+                                  _applicationState.inDemonstrationMode.value,
+                              onChanged: (value) {
+                                if (value != null) {
+                                  _applicationState.inDemonstrationMode.value =
+                                      value;
+                                }
+                              },
+                              title: Text(
+                                "Демо-режим",
+                              ),
+                              controlAffinity: ListTileControlAffinity.leading,
+                            );
+                          }),
                         ),
                         Row(
                           children: [
@@ -280,30 +266,23 @@ class LoginPageState extends State<LoginPage> {
                                   });
                                 }
 
+                                // #TODO: сделать частью какого-то state
                                 LocalStorageService.writeList(
                                     _serverAddressSuggestionsStorageKey,
                                     _serverAddressSuggestions);
 
-                                /// обновляем адрес в ApplicationState
-                                ApplicationState.update(
-                                    context,
-                                    ApplicationState.of(context).copyWith(
-                                        serverAddress:
-                                            _serverAddressEditingController
-                                                .text));
-
                                 /// логинимся
                                 Future<void> loginFuture = authController.login(
-                                    ApplicationState.of(context)
-                                        .inDemonstrationMode,
+                                    _applicationState.inDemonstrationMode.value,
                                     _loginEditingController.text,
                                     _passwordEditingController.text,
-                                    ApplicationState.of(context).serverAddress);
+                                    _serverAddressEditingController.text);
 
                                 /// Если пользователь разлогинился не с домашней странички(а, например, со страницы профиля),
                                 /// надо его возвращать туда, откуда он разлогинился
                                 loginFuture.then((value) {
-                                  if (authController.isAuthenticated) {
+                                  if (authController
+                                      .authState.isAuthenticated.value) {
                                     NavigatorState navigatorState =
                                         Navigator.of(context);
                                     if (navigatorState.canPop()) {

@@ -1,8 +1,8 @@
 import 'dart:collection';
+import 'dart:convert';
 
 import 'package:duration/duration.dart';
 import 'package:duration/locale.dart';
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import 'idle_time.dart';
@@ -12,8 +12,6 @@ class Task {
   final String systemAttrGroup = "Общие сведения";
 
   final int id;
-
-  final int biId;
 
   /// "Номер"
   final String name;
@@ -77,7 +75,7 @@ class Task {
   bool isOutdoor;
 
   /// Гибкие атрибуты
-  LinkedHashMap<String, Object?> flexibleAttribs = LinkedHashMap();
+  Map<String, Object?> flexibleAttribs = LinkedHashMap();
 
   /// Простой
   List<IdleTime>? idleTimeList = <IdleTime>[];
@@ -86,7 +84,6 @@ class Task {
   // что интересно, фигурные скобочки внутри объявления конструктора делают параметры именованными, их теперь можно задавать не по порядку, а по имени. Удобно.
   Task(
       {required this.id,
-      required this.biId,
       required this.name,
       this.desc,
       this.processTypeName,
@@ -206,11 +203,8 @@ class Task {
   }
 
   factory Task.fromJson(Map<String, dynamic> json) {
-    dynamic rawAttributes = json['flexibleAttribute'];
-    dynamic rawIdleTime = json['idleTime'];
-    return Task(
-        id: int.parse(json['id']) ,
-        biId: int.parse(json['biId']) ,
+    Task task = Task(
+        id: json['id'],
         name: json['name'],
         desc: json['desc'],
         processTypeName: json['processTypeName'],
@@ -233,23 +227,17 @@ class Task {
         isVisit: json['isVisit'],
         isPlanned: json['isPlanned'],
         isOutdoor: json['isOutdoor'],
-
-        // TODO
-        flexibleAttribs: LinkedHashMap<String, Object?>.fromIterable(
-            json['flexibleAttribute'],
-            key: (e) => e["key"],
-            value: (e) => e["value"]),
-
-        idleTimeList: rawIdleTime != null && (rawIdleTime as List).isNotEmpty
-        ? (rawIdleTime as List).map((e) => IdleTime.fromJson(e)).toList()
-        : List.of({}));
-
+        flexibleAttribs: Map.of(jsonDecode(json['flexibleAttribute']))
+            .cast<String, Object?>(),
+        idleTimeList: json['idleTime'] != null && (json['idleTime'] as List).isNotEmpty
+            ? (json['idleTime']).map((e) => IdleTime.fromJson(e)).toList()
+            : List.of({}));
+    return task;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
-    data['biId'] = this.biId;
     data['name'] = this.name;
     data['desc'] = this.desc;
     data['processTypeName'] = this.processTypeName;
@@ -269,8 +257,8 @@ class Task {
     data['isVisit'] = this.isVisit;
     data['isPlanned'] = this.isPlanned;
     data['isOutdoor'] = this.isOutdoor;
-    data['flexibleAttribute'] = this.flexibleAttribs;
-    data['idleTimeList'] = this.idleTimeList;
+    data['flexibleAttribute'] = jsonEncode(this.flexibleAttribs);
+    data['idleTimeList'] = jsonEncode(this.idleTimeList);
     return data;
   }
 }

@@ -125,7 +125,9 @@ class TasklistFiltersBar extends StatelessWidget {
                                           child: Text(
                                               DateFormat('dd MMMM', "ru_RU")
                                                   .format(taskListController
-                                                      .currentDate),
+                                                      .taskListState
+                                                      .currentDate
+                                                      .value),
                                               style:
                                                   DefaultTextStyle.of(context)
                                                       .style),
@@ -148,13 +150,17 @@ class TasklistFiltersBar extends StatelessWidget {
                                           tooltip: DateFormat(
                                                   "dd MMMM yyyy", "ru_RU")
                                               .format(taskListController
+                                                  .taskListState
                                                   .currentDate
+                                                  .value
                                                   .subtract(Duration(days: 1))),
                                           icon: const Icon(
                                               Icons.chevron_left_outlined),
                                           onPressed: () {
-                                            taskListController.currentDate =
-                                                taskListController.currentDate
+                                            taskListController.taskListState
+                                                    .currentDate.value =
+                                                taskListController.taskListState
+                                                    .currentDate.value
                                                     .subtract(
                                                         Duration(days: 1));
                                           },
@@ -176,7 +182,9 @@ class TasklistFiltersBar extends StatelessWidget {
                                                 DateFormat(
                                                         'dd MMMM yyyy', "ru_RU")
                                                     .format(taskListController
-                                                        .currentDate),
+                                                        .taskListState
+                                                        .currentDate
+                                                        .value),
                                                 style:
                                                     DefaultTextStyle.of(context)
                                                         .style),
@@ -186,13 +194,17 @@ class TasklistFiltersBar extends StatelessWidget {
                                           tooltip: DateFormat(
                                                   "dd MMMM yyyy", "ru_RU")
                                               .format(taskListController
+                                                  .taskListState
                                                   .currentDate
+                                                  .value
                                                   .add(Duration(days: 1))),
                                           icon: const Icon(
                                               Icons.chevron_right_outlined),
                                           onPressed: () {
-                                            taskListController.currentDate =
-                                                taskListController.currentDate
+                                            taskListController.taskListState
+                                                    .currentDate.value =
+                                                taskListController.taskListState
+                                                    .currentDate.value
                                                     .add(Duration(days: 1));
                                           },
                                         ),
@@ -224,11 +236,11 @@ class InlineCalendar extends StatelessWidget {
           // #TODO: можно конечно сделать свой flutter package, или pull request товарищам,
           // но пока есть более важные дела.
           child: CalendarDatePicker(
-            initialDate: taskListController.currentDate,
+            initialDate: taskListController.taskListState.currentDate.value,
             firstDate: DateTime(2021),
             lastDate: DateTime(2024),
             onDateChanged: (picked) {
-              taskListController.currentDate = picked;
+              taskListController.taskListState.currentDate.value = picked;
               taskListController.calendarOpened = false;
               taskListController.datePickerBarExpanded = false;
             },

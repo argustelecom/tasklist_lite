@@ -11,7 +11,7 @@ class HistoryEventRepository extends GetxService {
   Future<List<HistoryEvent>> getHistoryEvent(String basicAuth, String serverAddress, Task task) {
     ApplicationState applicationState = Get.find();
     HistoryEventsFixtures historyEventsFixtures = Get.find();
-    if (applicationState.inDemonstrationMode) {
+    if (applicationState.inDemonstrationMode.value) {
       return Future.value(historyEventsFixtures.getHistoryEvents(task)) ;
     }
     TaskRemoteClient taskRemoteClient = TaskRemoteClient(basicAuth, serverAddress);

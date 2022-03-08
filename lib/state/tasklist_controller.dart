@@ -2,76 +2,20 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:tasklist_lite/state/application_state.dart';
-import 'package:tasklist_lite/state/auth_controller.dart';
 import 'package:tasklist_lite/tasklist/idle_time_reason_repository.dart';
-import 'package:tasklist_lite/tasklist/model/idle_time.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
 import 'package:tasklist_lite/tasklist/task_repository.dart';
-import 'package:tasklist_lite/user_secure_storage/local_storage_service.dart';
 
 import '../tasklist/fixture/task_fixtures.dart';
 import '../tasklist/history_events_repository.dart';
+import 'auth_state.dart';
+import 'tasklist_state.dart';
 
 /// содержит state списка задач и (возможно в будущем) формы задачи
 class TaskListController extends GetxController {
-  /// открытые задачи. Их перечень не зависит от выбранного числа и обновляется только по необходимости
-  /// (когда на сервере будут изменения)
-  List<Task> openedTasks = List.of({});
+  AuthState authState = Get.find();
 
-  /// закрытые за выбранный день задачи. Как только день перевыбран, должны быть переполучены в репозитории
-  /// (в его функции также может входить кеширование)
-  List<Task> closedTasks = List.of({});
-
-  /// справочные значения причин простоя. Запрашиваем из репозитория при инициализации контролллера
-  /// (далее берем из кэша)
-  /// TODO возможно, стоит перенести
-  List<IdleTimeReason> idleTimeReasons = List.of({});
-
-  /// выбранный в календаре день
-  /// если не выбран, считается "сегодня" (тут есть тех. сложности, т.к. для inherited widget нужно, чтобы
-  /// конструктор initialState был константным, а DateTime.now() никак не константный)
-  DateTime _currentDate = DateUtils.dateOnly(DateTime.now());
-
-  AuthController authController = Get.find();
-
-  DateTime get currentDate => _currentDate;
-
-  set currentDate(DateTime value) {
-    _currentDate = value;
-
-    late String basicAuth = authController.getAuth();
-
-    ApplicationState state = Get.find();
-    String serverAddress = state.serverAddress;
-    closedTasksSubscription = resubscribe(
-        closedTasksSubscription,
-        taskRepository.streamClosedTasks(
-            basicAuth, serverAddress, this.currentDate), (event) {
-      this.closedTasks = event;
-      update();
-    });
-    update();
-  }
-
-  /// выбранный таск.
-  Task? currentTask;
-
-  Future initCurrentTask() async {
-    currentTask = await LocalStorageService.readTask();
-  }
-
-  setCurrentTask(Task? task) {
-    currentTask = task;
-    LocalStorageService.writeTask(task);
-  }
-
-  Task? getCurrentTask() {
-    if (currentTask == null) {
-      initCurrentTask().whenComplete(() => null);
-    }
-    return currentTask;
-  }
+  TaskListState taskListState = Get.put(TaskListState());
 
   /// значение в поле ввода текста. в getTasks отдаются только таски, содержащие в названии этот текст
   String _searchText = "";
@@ -85,11 +29,9 @@ class TaskListController extends GetxController {
     update();
   }
 
-  /// признак раскрытости inline-календаря в списке задач
-  /// #TODO: вообще хотелось state презентации держать в stateful-виджетах
-  /// но этот(а также следующие searchBarExpanded, datePickerBarExpanded) нужен нескольким,
-  /// которые не хочется объединять в uber-stateful. Но можно ведь хотя бы вынести
-  /// в отдельный presentation-контроллер.
+  /// признак раскрытости inline-календаря в списке задач.
+  /// Это state презентации, он не нуждается в персисте в локальную хранилку, поэтому
+  /// живет в контроллере, а не в соответствующем state-классе.
   bool _calendarOpened = false;
   bool _datePickerBarExpanded = false;
   bool _searchBarExpanded = false;
@@ -120,16 +62,17 @@ class TaskListController extends GetxController {
   List<Task> getTasks() {
     /// хотим отображать сначала открытые, упорядоченные по КС (без КС в конце)...
     List<Task> resultList = List.of({});
-    openedTasks.sort((a, b) => a.dueDate == null
+    taskListState.openedTasks.sort((a, b) => a.dueDate == null
         ? 1
         : b.dueDate == null
             ? -1
             : a.dueDate!.compareTo(b.dueDate!));
-    resultList.addAll(openedTasks);
+    resultList.addAll(taskListState.openedTasks);
 
     /// ...затем закрытые, упорядоченные по дате закрытия
-    closedTasks.sort((a, b) => a.closeDate!.compareTo(b.closeDate!));
-    resultList.addAll(closedTasks);
+    taskListState.closedTasks
+        .sort((a, b) => a.closeDate!.compareTo(b.closeDate!));
+    resultList.addAll(taskListState.closedTasks);
     return List.of(resultList
         // фильтруем по наличию введенного (в поле поиска) текста в названии и других полях задачи
         .where((element) => (element.name.toLowerCase().contains(searchText) ||
@@ -149,18 +92,21 @@ class TaskListController extends GetxController {
         // фильтруем по попаданию даты закрытия в текущий день
         .where((element) => ((!element.isClosed ||
             DateUtils.dateOnly(element.closeDate!).millisecondsSinceEpoch ==
-                currentDate.millisecondsSinceEpoch))));
+                taskListState.currentDate.value.millisecondsSinceEpoch))));
   }
 
-  StreamSubscription? openedTasksSubscription;
-  StreamSubscription? closedTasksSubscription;
+  StreamSubscription? _openedTasksSubscription;
+  StreamSubscription? _closedTasksSubscription;
+  StreamSubscription? _authStringSubscription;
+  StreamSubscription? _serverAddressSubscription;
+  StreamSubscription? _currentDateSubscription;
 
   TaskRepository taskRepository = Get.find();
   IdleTimeReasonRepository idleTimeReasonRepository = Get.find();
   HistoryEventRepository historyEventRepository = Get.find();
 
-  StreamSubscription resubscribe(StreamSubscription? streamSubscription,
-      Stream<List<Task>> stream, void onData(List<Task> event)) {
+  StreamSubscription resubscribe<T>(StreamSubscription? streamSubscription,
+      Stream<T> stream, void onData(T event)) {
     streamSubscription?.cancel();
     return stream.listen(onData);
   }
@@ -169,65 +115,80 @@ class TaskListController extends GetxController {
   void onInit() {
     super.onInit();
     // берем stream`ы, на которых висят данные по открытым и закрытым задачам, и заводим их
-    // на изменение соотв. полей контроллера списка.
-    late String basicAuth = authController.getAuth();
-    // TODO fix me
-    ApplicationState state = Get.find();
-    String serverAddress = state.serverAddress;
+    // на изменение соотв. полей контроллера списка. То есть, если изменилась например строка аутентификации,
+    // мы должны сделать resubscribe списков открытых и закрытых задач. То же самое при изменении адреса
+    // сервера или текущей даты.
 
-    openedTasksSubscription = resubscribe(openedTasksSubscription,
-        taskRepository.streamOpenedTasks(basicAuth, serverAddress), (event) {
-      this.openedTasks = event;
-      update();
+    // #TODO: наверняка код ниже можно оптимизировать
+    _authStringSubscription = resubscribe<String?>(
+        _authStringSubscription, authState.authString.stream,
+        (authStringValue) {
+      _openedTasksSubscription = resubscribe<List<Task>>(
+          _openedTasksSubscription,
+          taskRepository.streamOpenedTasks(
+              authStringValue, authState.serverAddress.value), (event) {
+        taskListState.openedTasks.value = event;
+        update();
+      });
+
+      _closedTasksSubscription = resubscribe<List<Task>>(
+          _closedTasksSubscription,
+          taskRepository.streamClosedTasks(
+              authStringValue,
+              authState.serverAddress.value,
+              taskListState.currentDate.value), (event) {
+        taskListState.closedTasks.value = event;
+        update();
+      });
     });
 
-    closedTasksSubscription = resubscribe(
-        closedTasksSubscription,
-        taskRepository.streamClosedTasks(
-            basicAuth, serverAddress, this.currentDate), (event) {
-      this.closedTasks = event;
-      update();
+    _serverAddressSubscription = resubscribe<String?>(
+        _serverAddressSubscription, authState.serverAddress.stream,
+        (serverAddressValue) {
+      _openedTasksSubscription = resubscribe<List<Task>>(
+          _openedTasksSubscription,
+          taskRepository.streamOpenedTasks(
+              authState.authString.value, serverAddressValue), (event) {
+        taskListState.openedTasks.value = event;
+        update();
+      });
+
+      _closedTasksSubscription = resubscribe<List<Task>>(
+          _closedTasksSubscription,
+          taskRepository.streamClosedTasks(authState.authString.value,
+              serverAddressValue, taskListState.currentDate.value), (event) {
+        taskListState.closedTasks.value = event;
+        update();
+      });
     });
 
-    idleTimeReasonRepository
-        .getIdleTimeReasons(basicAuth, serverAddress)
-        .whenComplete(() => null)
-        .then((value) => idleTimeReasons = value);
+    _currentDateSubscription = resubscribe<DateTime>(
+        _currentDateSubscription, taskListState.currentDate.stream,
+        (dateTimeValue) {
+      _closedTasksSubscription = resubscribe<List<Task>>(
+          _closedTasksSubscription,
+          taskRepository.streamClosedTasks(
+              authState.authString.value,
+              authState.serverAddress.value,
+              taskListState.currentDate.value), (event) {
+        taskListState.closedTasks.value = event;
+        update();
+      });
+    });
+
+    // на момент переподписывания здесь, значения в authState уже могли быть
+    // заданы, и нового event`а может не быть очень долго. Чтобы заполнить список,
+    // спровоцируем event явно.
+    authState.serverAddress.refresh();
+
+    taskListState.idleTimeReasons.value =
+        idleTimeReasonRepository.getIdleTimeReasons();
   }
-
-  @override
-  void onClose() {
-    openedTasksSubscription?.cancel();
-    closedTasksSubscription?.cancel();
-    super.onClose();
-  }
-
-  ///***************************************************************************
-  ///**  по замыслу, вызывается, когда изменились неявные зависимости контроллера
-  /// Например, выбрана новая фикстура в настройках, что требует переподписки на
-  /// stream`ы taskRepository
-  ///***************************************************************************
-  void didChangeDependencies() {
-    late String basicAuth = authController.getAuth();
-    ApplicationState state = Get.find();
-    String serverAddress = state.serverAddress;
-    openedTasksSubscription = resubscribe(openedTasksSubscription,
-        taskRepository.streamOpenedTasks(basicAuth, serverAddress), (event) {
-      this.openedTasks = event;
-      update();
-    });
-    closedTasksSubscription = resubscribe(
-        closedTasksSubscription,
-        taskRepository.streamClosedTasks(
-            basicAuth, serverAddress, this.currentDate), (event) {
-      this.closedTasks = event;
-      update();
-    });
-    idleTimeReasonRepository
-        .getIdleTimeReasons(basicAuth, serverAddress)
-        .whenComplete(() => null)
-        .then((value) => idleTimeReasons = value);
-  }
+ IdleTime? registerIdle(int foreignSiteOrderId,
+      int taskInstanceId,
+      int reasonId,
+      DateTime beginTime,
+      DateTime? endTime) {
 
   Future<IdleTime?> registerIdle(int foreignSiteOrderId, int taskInstanceId,
       int reasonId, DateTime beginTime, DateTime? endTime) async {
@@ -238,12 +199,26 @@ class TaskListController extends GetxController {
         foreignSiteOrderId, taskInstanceId, reasonId, beginTime, endTime);
   }
 
-  Future<IdleTime?> finishIdle(int foreignSiteOrderId, int taskInstanceId,
-      DateTime beginTime, DateTime endTime) async {
+
+  Future<IdleTime> finishIdle (int foreignSiteOrderId,
+      int taskInstanceId,
+      DateTime beginTime,
+      DateTime endTime) async{
+
     late String basicAuth = authController.getAuth();
     ApplicationState state = Get.find();
     String serverAddress = state.serverAddress;
-    return await taskRepository.finishIdle(basicAuth, serverAddress,
-        foreignSiteOrderId, taskInstanceId, beginTime, endTime);
+    return await taskRepository.finishIdle(basicAuth, serverAddress, foreignSiteOrderId, taskInstanceId, beginTime, endTime);
+
+  }
+  
+  @override
+  void onClose() {
+    _openedTasksSubscription?.cancel();
+    _closedTasksSubscription?.cancel();
+    _serverAddressSubscription?.cancel();
+    _authStringSubscription?.cancel();
+    _currentDateSubscription?.cancel();
+    super.onClose();
   }
 }

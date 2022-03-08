@@ -22,7 +22,7 @@ class WideScreenNavigationDrawer extends StatelessWidget {
         body: Column(
           children: [
             GetX<AuthController>(builder: (authController) {
-              return authController.isAuthenticated
+              return authController.authState.isAuthenticated.value
                   ? Expanded(
                       child: ListView(
                           padding:

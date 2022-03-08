@@ -3,7 +3,6 @@ import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:intl/intl.dart';
 import 'package:tasklist_lite/crazylib/date_picker_button.dart';
 import 'package:tasklist_lite/crazylib/time_picker_button.dart';
-import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/state/tasklist_controller.dart';
 import 'package:tasklist_lite/tasklist/model/idle_time.dart';
 
