@@ -190,14 +190,10 @@ class TaskListController extends GetxController {
 
   Future<IdleTime?> registerIdle(int foreignSiteOrderId, int taskInstanceId,
       int reasonId, DateTime beginTime, DateTime? endTime) async {
-    Future<IdleTime?> idle = taskRepository.registerIdle(
+    return await taskRepository.registerIdle(
         authState.authString.value!,
         authState.serverAddress.value!,
-    return await taskRepository.registerIdle(basicAuth, serverAddress,
         foreignSiteOrderId, taskInstanceId, reasonId, beginTime, endTime);
-        reasonId,
-        beginTime,
-        endTime);
   }
 
   Future<IdleTime?> finishIdle(int foreignSiteOrderId, int taskInstanceId,

@@ -54,7 +54,6 @@ class IdleTimeManagerDialogState extends State<IdleTimeManagerDialog> {
         builder: (commonDropdownController) {
       return GetBuilder<TaskListController>(builder: (taskListController) {
         ThemeData themeData = Theme.of(context);
-        ApplicationState applicationState = ApplicationState.of(context);
 
         Widget body =
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -74,9 +73,9 @@ class IdleTimeManagerDialogState extends State<IdleTimeManagerDialog> {
                         ? themeData.colorScheme.primary
                         : null,
                     dropdownColor: themeData.colorScheme.primary,
-                    itemsList: taskListController.idleTimeReasons,
+                    itemsList: taskListController.taskListState.idleTimeReasons,
                     selectedItemBuilder: (BuildContext context) {
-                      return taskListController.idleTimeReasons
+                      return taskListController.taskListState.idleTimeReasons
                           .map<Widget>((IdleTimeReason item) {
                         return Align(
                             alignment: Alignment.centerLeft,
@@ -345,8 +344,8 @@ class IdleTimeManagerDialogState extends State<IdleTimeManagerDialog> {
                   } else {
                     try {
                       newIdleTime = await taskListController.finishIdle(
-                          taskListController.getCurrentTask()!.biId,
-                          taskListController.getCurrentTask()!.id,
+                          taskListController.taskListState.currentTask.value!.biId,
+                          taskListController.taskListState.currentTask.value!.id,
                           new DateTime(
                               _startDate!.year,
                               _startDate!.month,
