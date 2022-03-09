@@ -229,23 +229,13 @@ class TaskListController extends GetxController {
         .then((value) => idleTimeReasons = value);
   }
 
-  IdleTime? registerIdle(int foreignSiteOrderId, int taskInstanceId,
-      int reasonId, DateTime beginTime, DateTime? endTime) {
+  Future<IdleTime?> registerIdle(int foreignSiteOrderId, int taskInstanceId,
+      int reasonId, DateTime beginTime, DateTime? endTime) async {
     late String basicAuth = authController.getAuth();
     ApplicationState state = Get.find();
     String serverAddress = state.serverAddress;
-    Future<IdleTime?> idle = taskRepository.registerIdle(
-        basicAuth,
-        serverAddress,
-        foreignSiteOrderId,
-        taskInstanceId,
-        reasonId,
-        beginTime,
-        endTime);
-    IdleTime? idleTime;
-    idle.whenComplete(() => null).then((value) => idleTime = value);
-
-    return idleTime;
+    return await taskRepository.registerIdle(basicAuth, serverAddress,
+        foreignSiteOrderId, taskInstanceId, reasonId, beginTime, endTime);
   }
 
   Future<IdleTime?> finishIdle(int foreignSiteOrderId, int taskInstanceId,
