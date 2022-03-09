@@ -3,6 +3,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get/get.dart';
+import 'package:tasklist_lite/state/persistent_state.dart';
+
+
 
 /// Общие атрибуты приложения: выбранная тема, флажок демо-режима, возможные адреса серверов и т.д.
 class ApplicationState extends PersistentState {

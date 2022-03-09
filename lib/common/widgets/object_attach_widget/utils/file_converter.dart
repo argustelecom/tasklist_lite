@@ -16,13 +16,13 @@ class FileConverter {
   /// Конвертация файла(dart:io) в объект для отправки на бэкенд
   ObjectAttach fileToObjectAttach(File file, int objectId){
     return ObjectAttach(id: -1, objectId: objectId, fileName: file.path, filePath: file.path,
-        attachmentData:base64.encode(file.readAsBytesSync()) ,createDate: DateTime.now(), workerName: authController.userInfo!.workerName??"Неизвестен");
+        attachmentData:base64.encode(file.readAsBytesSync()) ,createDate: DateTime.now(), workerName: authController.authState.userInfo.value!.workerName??"Неизвестен");
   }
 
   /// Конвертация файла изображения(dart:io) в объект для отправки на бэкенд
   ObjectAttach fileXToObjectAttach(XFile xFile, int objectId){
     return ObjectAttach(id:-1 , objectId: objectId, fileName:xFile.name, filePath:xFile.path,
-        attachmentData:"", createDate: DateTime.now(), workerName: authController.userInfo!.workerName??"Неизвестен");
+        attachmentData:"", createDate: DateTime.now(), workerName: authController.authState.userInfo.value!.workerName??"Неизвестен");
   }
 
   /// Конвертация Base64 -> Файл. Сохранение во временном каталоге, возвращает путь до файла

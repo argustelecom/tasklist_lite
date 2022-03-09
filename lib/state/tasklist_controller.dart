@@ -200,7 +200,7 @@ class TaskListController extends GetxController {
         endTime);
   }
 
-  Future<IdleTime> finishIdle(int foreignSiteOrderId, int taskInstanceId,
+  Future<IdleTime?> finishIdle(int foreignSiteOrderId, int taskInstanceId,
       DateTime beginTime, DateTime endTime) async {
     AuthState authState = Get.find();
     return await taskRepository.finishIdle(

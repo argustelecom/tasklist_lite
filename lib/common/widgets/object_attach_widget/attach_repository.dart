@@ -12,9 +12,9 @@ class AttachRepository extends GetxService{
   AuthController authController = Get.find();
   ApplicationState state = Get.find();
 
-  late String basicAuth = authController.getAuth();
+  late String basicAuth = authController.authState.authString.value!;
   //late String basicAuth = "Basic ZGV2ZWxvcGVyOmRldmVsb3Blcg==";
-  late String serverAddress = state.serverAddress;
+  late String serverAddress = authController.authState.serverAddress.value!;
 
   void sendObjectAttaches(List<ObjectAttach> objAttachList) async {
     ObjectAttachRemote objectAttachRemote =

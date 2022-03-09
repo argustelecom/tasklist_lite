@@ -78,13 +78,13 @@ class _NotificationsPageState extends State<NotificationsPage> {
                               child: NotificationCard(
                                   onTap: () {
                                     // taskListController.findCurrentTask(controller.getNotifications()[index].task);
-                                    taskListController.setCurrentTask(controller
+                                    taskListController.taskListState.currentTask.value = controller
                                         .getNotifications()[index]
-                                        .task);
+                                        .task;
                                     Navigator.pushNamed(
                                         context, TaskPage.routeName,
                                         arguments:
-                                            taskListController.currentTask);
+                                            taskListController.taskListState.currentTask.value);
                                   },
                                   notify: controller.getNotifications()[index],
                                   task: controller

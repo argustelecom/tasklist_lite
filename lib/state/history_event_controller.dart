@@ -24,7 +24,8 @@ class HistoryEventController extends GetxController {
     if (task != null) {
       historyEventRepository
           .getHistoryEvent(
-              authController.basicAuth, authController.serverAddress, task)
+              //TODO: изменить метод получения значения?
+              authController.authState.authString.value!, authController.authState.serverAddress.value!, task)
           .whenComplete(() => null)
           .then((value) => historyEventList = value);
     }
@@ -36,7 +37,7 @@ class HistoryEventController extends GetxController {
   /// Метод для добавления комментария по наряду
   addComment(String comment, bool isAlarm, Task task) {
         if (comment.length > 0) {
-      HistoryEventRepository().addNewComment( authController.basicAuth, authController.serverAddress, task, comment, isAlarm);
+      HistoryEventRepository().addNewComment( authController.authState.authString.value!, authController.authState.serverAddress.value!, task, comment, isAlarm);
     }
     update();
   }
@@ -47,7 +48,7 @@ class HistoryEventController extends GetxController {
     String comment =  'Проверка аварии *111*1234#';
     bool isAlarm = false;
 
-    HistoryEventRepository().addNewComment( authController.basicAuth, authController.serverAddress, task, comment, isAlarm);
+    HistoryEventRepository().addNewComment( authController.authState.authString.value!, authController.authState.serverAddress.value!, task, comment, isAlarm);
     update();
   }
 

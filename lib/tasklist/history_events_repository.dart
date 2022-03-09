@@ -23,7 +23,7 @@ class HistoryEventRepository extends GetxService {
   addNewComment(String basicAuth, String serverAddress, Task task, String comment, bool isAlarm) {
     ApplicationState applicationState = Get.find();
     HistoryEventsFixtures historyEventsFixtures = Get.find();
-    if (applicationState.inDemonstrationMode) {
+    if (applicationState.inDemonstrationMode.value) {
       return Future.value(historyEventsFixtures.getHistoryEvents(task)) ;
     }
     TaskRemoteClient taskRemoteClient = TaskRemoteClient(basicAuth, serverAddress);

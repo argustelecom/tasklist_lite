@@ -22,12 +22,18 @@ class DatePickerBar extends StatelessWidget {
             children: [
               IconButton(
                 tooltip: DateFormat("dd MMMM yyyy", "ru_RU").format(
-                    taskListController.currentDate.subtract(Duration(days: 1))),
+                    taskListController
+                        .taskListState
+                        .currentDate
+                        .value.subtract(Duration(days: 1))),
                 icon: const Icon(Icons.chevron_left_outlined),
                 onPressed: () {
-                  taskListController.currentDate = taskListController
+                  taskListController
+                      .taskListState
+                      .currentDate.value = taskListController
+                      .taskListState
                       .currentDate
-                      .subtract(Duration(days: 1));
+                      .value.subtract(Duration(days: 1));
                 },
               ),
               Row(
@@ -44,7 +50,7 @@ class DatePickerBar extends StatelessWidget {
                       // заюзать более кастомизируемый компонент
                       final DateTime? picked = await showDatePicker(
                           context: context,
-                          initialDate: taskListController.currentDate,
+                          initialDate: taskListController.taskListState.currentDate.value,
                           firstDate: DateTime(2021),
                           lastDate: DateTime(2024),
                           helpText: "Укажите день",
@@ -65,23 +71,23 @@ class DatePickerBar extends StatelessWidget {
                                 child: child ?? new Text(""));
                           });
                       if (picked != null &&
-                          picked != taskListController.currentDate) {
+                          picked != taskListController.taskListState.currentDate.value) {
                         // #TODO: мб как минимум через setter вызывать? почему setState не нужен?
-                        taskListController.currentDate = picked;
+                        taskListController.taskListState.currentDate.value = picked;
                       }
                     },
                   ),
                   Text(DateFormat('dd MMMM yyyy', "ru_RU")
-                      .format(taskListController.currentDate)),
+                      .format(taskListController.taskListState.currentDate.value)),
                 ],
               ),
               IconButton(
                 tooltip: DateFormat("dd MMMM yyyy", "ru_RU").format(
-                    taskListController.currentDate.add(Duration(days: 1))),
+                    taskListController.taskListState.currentDate.value.add(Duration(days: 1))),
                 icon: const Icon(Icons.chevron_right_outlined),
                 onPressed: () {
-                  taskListController.currentDate =
-                      taskListController.currentDate.add(Duration(days: 1));
+                  taskListController.taskListState.currentDate.value =
+                      taskListController.taskListState.currentDate.value.add(Duration(days: 1));
                 },
               ),
             ],

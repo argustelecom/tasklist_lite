@@ -63,7 +63,7 @@ class TaskRepository extends GetxService {
         foreignSiteOrderId, taskInstanceId, reasonId, beginTime, endTime);
   }
 
-  Future<IdleTime> finishIdle(
+  Future<IdleTime?> finishIdle(
       String basicAuth,
       String serverAddress,
       int foreignSiteOrderId,

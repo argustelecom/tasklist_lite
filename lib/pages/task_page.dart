@@ -161,31 +161,24 @@ class _TaskPageState extends State<TaskPage> {
                                               // параметры открытия яндекса см. https://yandex.com/dev/yandex-apps-launch/maps/doc/concepts/yandexmaps-web.html
                                               // #TODO: если бы у нас были текущиие координаты (а они будут в следующих версиях), можно открывать прям маршрут,
                                               // см. Plot Route https://yandex.com/dev/yandex-apps-launch/maps/doc/concepts/yandexmaps-web.html#yandexmaps-web__buildroute
-                                              if ((taskListController
-                                                          .currentTask!
-                                                          .latitude !=
+                                              if ((taskListController.taskListState.currentTask.value!.latitude !=
                                                       null) &&
-                                                  (taskListController
-                                                          .currentTask!
+                                                  (taskListController.taskListState.currentTask.value!
                                                           .longitude !=
                                                       null)) {
                                                 baseUrl = baseUrl +
                                                     "&pt=" +
-                                                    taskListController
-                                                        .currentTask!.latitude
+                                                    taskListController.taskListState.currentTask.value!.latitude
                                                         .toString() +
                                                     "," +
-                                                    taskListController
-                                                        .currentTask!.longitude
+                                                    taskListController.taskListState.currentTask.value!.longitude
                                                         .toString();
-                                              } else if (taskListController
-                                                      .currentTask!.address !=
+                                              } else if (taskListController.taskListState.currentTask.value!.address !=
                                                   null) {
                                                 // если координаты не заданы, поищем по адресу
                                                 baseUrl = baseUrl +
                                                     "&text=" +
-                                                    taskListController
-                                                        .currentTask!.address!;
+                                                    taskListController.taskListState.currentTask.value!.address!;
                                               }
                                               final String encodedURl =
                                                   Uri.encodeFull(baseUrl);
@@ -220,8 +213,7 @@ class _TaskPageState extends State<TaskPage> {
                                                 ),
                                               ],
                                             )),
-                                        Text(taskListController
-                                                .currentTask!
+                                        Text(taskListController.taskListState.currentTask.value!
                                                 .flexibleAttribs[TaskFixtures
                                                     .distanceToObjectFlexAttrName]
                                                 ?.toString() ??
@@ -344,7 +336,7 @@ class _TaskPageState extends State<TaskPage> {
                           height: 100.0,
                           width: 100.0,
                           child: ObjectAttachWidget(
-                              taskListController.currentTask!.id)),
+                              taskListController.taskListState.currentTask.value!.id)),
                           elevation: 3,
                         ),
                       ),

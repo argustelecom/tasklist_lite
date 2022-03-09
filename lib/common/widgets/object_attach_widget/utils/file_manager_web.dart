@@ -31,7 +31,7 @@ class FileManagerWeb extends FileManager {
 
   ObjectAttach webFileToObjectAttach(PlatformFile file, int attachedToId){
     return ObjectAttach(id: -1, objectId: attachedToId, fileName: file.name, filePath: "",
-        attachmentData:base64.encode(file.bytes!.toList()) ,createDate: DateTime.now(), workerName: authController.userInfo!.workerName??"Неизвестен");
+        attachmentData:base64.encode(file.bytes!.toList()) ,createDate: DateTime.now(), workerName: authController.authState.userInfo.value!.workerName??"Неизвестен");
   }
 
 }
