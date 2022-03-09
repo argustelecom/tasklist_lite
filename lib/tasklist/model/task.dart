@@ -207,35 +207,40 @@ class Task {
 
   factory Task.fromJson(Map<String, dynamic> json) {
     Task task = Task(
-      id: json['id'],
-      biId: json['biId'],
-      name: json['name'],
-      desc: json['desc'],
-      processTypeName: json['processTypeName'],
-      taskType: json['taskType'],
-      dueDate: json['dueDate'] != null ? DateTime.parse(json['dueDate']) : null,
-      assignee: json['assignee'],
-      address: json['address'],
-      addressComment: json['addressComment'],
-      latitude: json['latitude'],
-      longitude: json['longitude'],
-      comment: json['comment'],
-      createDate: json['createDate'] != null
-          ? DateTime.parse(json['createDate'])
-          : null,
-      closeDate:
-          json['closeDate'] != null ? DateTime.parse(json['closeDate']) : null,
-      isClosed: json['isClosed'],
-      isVisit: json['isVisit'],
-      isPlanned: json['isPlanned'],
-      isOutdoor: json['isOutdoor'],
-      flexibleAttribs:
-          Map.of(jsonDecode(json['flexibleAttribute'])).cast<String, Object?>(),
-      idleTimeList:
-          json['idleTime'] != null && (json['idleTime'] as List).isNotEmpty
-              ? (json['idleTime']).map((e) => IdleTime.fromJson(e)).toList()
-              : List.of({}),
-    );
+        id: int.parse(json['id']),
+        biId: int.parse(json['biId']),
+        name: json['name'],
+        desc: json['desc'],
+        processTypeName: json['processTypeName'],
+        taskType: json['taskType'],
+        dueDate:
+            json['dueDate'] != null ? DateTime.parse(json['dueDate']) : null,
+        assignee: json['assignee'],
+        address: json['address'],
+        addressComment: json['addressComment'],
+        latitude: json['latitude'],
+        longitude: json['longitude'],
+        comment: json['comment'],
+        createDate: json['createDate'] != null
+            ? DateTime.parse(json['createDate'])
+            : null,
+        closeDate: json['closeDate'] != null
+            ? DateTime.parse(json['closeDate'])
+            : null,
+        isClosed: json['isClosed'],
+        isVisit: json['isVisit'],
+        isPlanned: json['isPlanned'],
+        isOutdoor: json['isOutdoor'],
+
+        // TODO
+        flexibleAttribs: LinkedHashMap<String, Object?>.fromIterable(
+            json['flexibleAttribute'],
+            key: (e) => e["key"],
+            value: (e) => e["value"]),
+        idleTimeList:
+            json['idleTime'] != null && (json['idleTime'] as List).isNotEmpty
+                ? (json['idleTime']).map((e) => IdleTime.fromJson(e)).toList()
+                : List.of({}));
     return task;
   }
 
