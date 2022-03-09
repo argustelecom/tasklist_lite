@@ -13,6 +13,8 @@ class Task {
 
   final int id;
 
+  final int biId;
+
   /// "Номер"
   final String name;
 
@@ -85,6 +87,7 @@ class Task {
   Task(
       {required this.id,
       required this.name,
+      required this.biId,
       this.desc,
       this.processTypeName,
       this.taskType,
@@ -204,40 +207,42 @@ class Task {
 
   factory Task.fromJson(Map<String, dynamic> json) {
     Task task = Task(
-        id: json['id'],
-        name: json['name'],
-        desc: json['desc'],
-        processTypeName: json['processTypeName'],
-        taskType: json['taskType'],
-        dueDate:
-            json['dueDate'] != null ? DateTime.parse(json['dueDate']) : null,
-        assignee: json['assignee'],
-        address: json['address'],
-        addressComment: json['addressComment'],
-        latitude: json['latitude'],
-        longitude: json['longitude'],
-        comment: json['comment'],
-        createDate: json['createDate'] != null
-            ? DateTime.parse(json['createDate'])
-            : null,
-        closeDate: json['closeDate'] != null
-            ? DateTime.parse(json['closeDate'])
-            : null,
-        isClosed: json['isClosed'],
-        isVisit: json['isVisit'],
-        isPlanned: json['isPlanned'],
-        isOutdoor: json['isOutdoor'],
-        flexibleAttribs: Map.of(jsonDecode(json['flexibleAttribute']))
-            .cast<String, Object?>(),
-        idleTimeList: json['idleTime'] != null && (json['idleTime'] as List).isNotEmpty
-            ? (json['idleTime']).map((e) => IdleTime.fromJson(e)).toList()
-            : List.of({}));
+      id: json['id'],
+      biId: json['biId'],
+      name: json['name'],
+      desc: json['desc'],
+      processTypeName: json['processTypeName'],
+      taskType: json['taskType'],
+      dueDate: json['dueDate'] != null ? DateTime.parse(json['dueDate']) : null,
+      assignee: json['assignee'],
+      address: json['address'],
+      addressComment: json['addressComment'],
+      latitude: json['latitude'],
+      longitude: json['longitude'],
+      comment: json['comment'],
+      createDate: json['createDate'] != null
+          ? DateTime.parse(json['createDate'])
+          : null,
+      closeDate:
+          json['closeDate'] != null ? DateTime.parse(json['closeDate']) : null,
+      isClosed: json['isClosed'],
+      isVisit: json['isVisit'],
+      isPlanned: json['isPlanned'],
+      isOutdoor: json['isOutdoor'],
+      flexibleAttribs:
+          Map.of(jsonDecode(json['flexibleAttribute'])).cast<String, Object?>(),
+      idleTimeList:
+          json['idleTime'] != null && (json['idleTime'] as List).isNotEmpty
+              ? (json['idleTime']).map((e) => IdleTime.fromJson(e)).toList()
+              : List.of({}),
+    );
     return task;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
+    data['biId'] = this.biId;
     data['name'] = this.name;
     data['desc'] = this.desc;
     data['processTypeName'] = this.processTypeName;

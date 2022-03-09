@@ -19,7 +19,7 @@ class IdleTimeManagerDialog extends StatefulWidget {
 
 class IdleTimeManagerDialogState extends State<IdleTimeManagerDialog> {
   IdleTime? idleTime;
-  String? reason;
+  IdleTimeReason? reason;
   DateTime? startDate;
   TimeOfDay? startTime;
   DateTime? endDate;
@@ -57,17 +57,18 @@ class IdleTimeManagerDialogState extends State<IdleTimeManagerDialog> {
                 style: TextStyle(color: Colors.black54))),
         Padding(
             padding: EdgeInsets.symmetric(vertical: 8),
-            child: CustomDropDownButton<String>(
+            child: CustomDropDownButton<IdleTimeReason>(
               value: reason,
-              itemsList: taskListController.taskListState.idleTimeReasons,
+              itemsList: taskListController.taskListState.idleTimeReasons.value,
               selectedItemBuilder: (BuildContext context) {
-                return controller.idleTimeReasons
+                return taskListController.taskListState.idleTimeReasons
                     .map<Widget>((IdleTimeReason item) {
                   return Align(
                       alignment: Alignment.centerLeft,
                       child: (Text(item.name)));
                 }).toList();
-              },hint: "Выберите причину",
+              },
+              hint: "Выберите причину",
               onChanged: (value) {
                 setState(() {
                   reason = value;
@@ -159,28 +160,26 @@ class IdleTimeManagerDialogState extends State<IdleTimeManagerDialog> {
         // TODO: обращение к контроллеру/репозиторию для валидации и формирования запроса
         //  пока просто закрываем диалог
         onPressed: () {
-         (idleTime == null)
-              ? controller.registerIdle(
-              controller.getCurrentTask()!.biId,
-              controller.getCurrentTask()!.id,
+          (idleTime == null)
+              ? taskListController.registerIdle(
+                  taskListController.taskListState.currentTask.value!.biId,
+                  taskListController.taskListState.currentTask.value!.id,
                   reason!.id,
                   new DateTime(startDate!.year, startDate!.month,
                       startDate!.day, startTime!.hour, startTime!.minute),
-              (endDate != null && endTime != null)
-                      ? new DateTime(endDate!.year, endDate!.month, endDate!.day,
-                          endTime!.hour, endTime!.minute)
+                  (endDate != null && endTime != null)
+                      ? new DateTime(endDate!.year, endDate!.month,
+                          endDate!.day, endTime!.hour, endTime!.minute)
                       : null)
-              : controller.finishIdle(
-              controller.getCurrentTask()!.biId,
-              controller.getCurrentTask()!.id,
-              new DateTime(startDate!.year, startDate!.month,
-                  startDate!.day, startTime!.hour, startTime!.minute),
-              new DateTime(endDate!.year, endDate!.month, endDate!.day,
-                  endTime!.hour, endTime!.minute)
-                  );
+              : taskListController.finishIdle(
+                  taskListController.taskListState.currentTask.value!.biId,
+                  taskListController.taskListState.currentTask.value!.id,
+                  new DateTime(startDate!.year, startDate!.month,
+                      startDate!.day, startTime!.hour, startTime!.minute),
+                  new DateTime(endDate!.year, endDate!.month, endDate!.day,
+                      endTime!.hour, endTime!.minute));
 
           Navigator.of(context).pop();
-
         },
       );
 

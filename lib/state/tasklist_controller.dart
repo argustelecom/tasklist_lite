@@ -8,6 +8,7 @@ import 'package:tasklist_lite/tasklist/task_repository.dart';
 
 import '../tasklist/fixture/task_fixtures.dart';
 import '../tasklist/history_events_repository.dart';
+import '../tasklist/model/idle_time.dart';
 import 'auth_state.dart';
 import 'tasklist_state.dart';
 
@@ -181,37 +182,40 @@ class TaskListController extends GetxController {
     // спровоцируем event явно.
     authState.serverAddress.refresh();
 
-    taskListState.idleTimeReasons.value =
-        idleTimeReasonRepository.getIdleTimeReasons();
+    /* #TODO: должен быть subscription по аналогии с теми, что выше (и отменяться в dispose)
+    taskListState.idleTimeReasons =
+        idleTimeReasonRepository.getIdleTimeReasons(
+            authState.authString.value, authState.serverAddress.value).asStream(); */
   }
- IdleTime? registerIdle(int foreignSiteOrderId,
-      int taskInstanceId,
-      int reasonId,
-      DateTime beginTime,
-      DateTime? endTime) {
 
-    late String basicAuth = authController.getAuth();
-    ApplicationState state = Get.find();
-    String serverAddress = state.serverAddress;
-    Future<IdleTime?> idle = taskRepository.registerIdle(basicAuth, serverAddress, foreignSiteOrderId, taskInstanceId, reasonId, beginTime, endTime);
+  IdleTime? registerIdle(int foreignSiteOrderId, int taskInstanceId,
+      int reasonId, DateTime beginTime, DateTime? endTime) {
+    Future<IdleTime?> idle = taskRepository.registerIdle(
+        authState.authString.value!,
+        authState.serverAddress.value!,
+        foreignSiteOrderId,
+        taskInstanceId,
+        reasonId,
+        beginTime,
+        endTime);
     IdleTime? idleTime;
     idle.whenComplete(() => null).then((value) => idleTime = value);
 
     return idleTime;
   }
 
-
-  Future<IdleTime> finishIdle (int foreignSiteOrderId,
-      int taskInstanceId,
-      DateTime beginTime,
-      DateTime endTime) async{
-
-    late String basicAuth = authController.getAuth();
-    ApplicationState state = Get.find();
-    String serverAddress = state.serverAddress;
-    return await taskRepository.finishIdle(basicAuth, serverAddress, foreignSiteOrderId, taskInstanceId, beginTime, endTime);
-
+  Future<IdleTime> finishIdle(int foreignSiteOrderId, int taskInstanceId,
+      DateTime beginTime, DateTime endTime) async {
+    AuthState authState = Get.find();
+    return await taskRepository.finishIdle(
+        authState.authString.value!,
+        authState.serverAddress.value!,
+        foreignSiteOrderId,
+        taskInstanceId,
+        beginTime,
+        endTime);
   }
+
   @override
   void onClose() {
     _openedTasksSubscription?.cancel();

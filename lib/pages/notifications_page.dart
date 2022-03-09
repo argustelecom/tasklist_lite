@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
-import 'package:tasklist_lite/state/application_state.dart';
-import 'package:tasklist_lite/crazylib/notification_card.dart';
-import 'package:tasklist_lite/state/notification_controller.dart';
 import 'package:tasklist_lite/crazylib/date_row.dart';
+import 'package:tasklist_lite/crazylib/notification_card.dart';
+import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
+import 'package:tasklist_lite/state/notification_controller.dart';
 
 class NotificationsPage extends StatefulWidget {
   static const String routeName = 'Notifications';
@@ -18,20 +17,6 @@ class NotificationsPage extends StatefulWidget {
 }
 
 class _NotificationsPageState extends State<NotificationsPage> {
-  //Обновляем зависимости, в случае, если изменилась фикстура
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (Get.isRegistered<NotificationController>()) {
-      ApplicationState applicationState = ApplicationState.of(context);
-      Get.delete<ApplicationState>();
-      // #TODO: в ходе билда будет вызываться логика контроллера, которая вызовет repository, который, в свою очередь, хочет
-      // актуальный экземпляр ApplicationState
-      Get.put(applicationState);
-      NotificationController notificationController = Get.find();
-      notificationController.didChangeDependencies();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     ThemeData themeData = Theme.of(context);

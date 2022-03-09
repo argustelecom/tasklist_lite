@@ -11,8 +11,9 @@ import 'package:tasklist_lite/state/history_event_controller.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
 
 import '../crazylib/adaptive_dialog.dart';
-import 'comment_page.dart';
+import '../state/tasklist_controller.dart';
 import '../state/tasklist_state.dart';
+import 'comment_page.dart';
 
 class TaskPage extends StatefulWidget {
   static const String routeName = 'task';
@@ -49,7 +50,8 @@ class _TaskPageState extends State<TaskPage> {
                               Task(
                                   id: 1,
                                   name: "",
-                                  flexibleAttribs: LinkedHashMap())),
+                                  flexibleAttribs: LinkedHashMap(),
+                                  biId: 1)),
                   body: Column(children: [
                     // нужен чтобы ограничить высоту tabBar`а ниже
                     SizedBox(
@@ -125,7 +127,8 @@ class _TaskPageState extends State<TaskPage> {
                                                 id: 1,
                                                 name: "",
                                                 flexibleAttribs:
-                                                    LinkedHashMap()),
+                                                    LinkedHashMap(),
+                                                biId: 1),
                                         attrGroup: taskListController
                                                 .taskListState.currentTask.value
                                                 ?.getAttrGroups()
@@ -166,20 +169,21 @@ class _TaskPageState extends State<TaskPage> {
                                           itemBuilder: (BuildContext context,
                                               int index) {
                                             return InkWell(
-                                            child: HistoryEventCard(
-                                                maxLines: 10,
-                                               comment: historyEventController
-                                                    .getHistoryEvents()[index]),
-                                            onTap: () {
-                                              historyEventController
-                                                  .setCurrentComment(
-                                                      historyEventController
-                                                              .getHistoryEvents()[
-                                                          index]);
-                                              Navigator.pushNamed(context,
-                                                  CommentPage.routeName);
-                                            });
-                                      }),
+                                                child: HistoryEventCard(
+                                                    maxLines: 10,
+                                                    comment: historyEventController
+                                                            .getHistoryEvents()[
+                                                        index]),
+                                                onTap: () {
+                                                  historyEventController
+                                                      .setCurrentComment(
+                                                          historyEventController
+                                                                  .getHistoryEvents()[
+                                                              index]);
+                                                  Navigator.pushNamed(context,
+                                                      CommentPage.routeName);
+                                                });
+                                          }),
                                     ),
                                     // Текстовое поле ввода комментария
                                     Padding(
@@ -279,7 +283,7 @@ class _TaskPageState extends State<TaskPage> {
                                                       padding: MaterialStateProperty.all<
                                                               EdgeInsets>(
                                                           EdgeInsets.all(2)),
-                                                      backgroundColor:import 'comment_page.dart';
+                                                      backgroundColor:
                                                           MaterialStateProperty.all<Color>(
                                                               Colors.yellow.shade700)),
                                                   onPressed: () {
