@@ -8,21 +8,20 @@ import 'package:tasklist_lite/tasklist/task_remote_client.dart';
 import 'model/idle_time.dart';
 
 class IdleTimeReasonRepository extends GetxService {
+  List<IdleTimeReason> result = List.of({});
 
-  List<IdleTimeReason> result =  List.of({});
-
-  Future<List<IdleTimeReason>> getIdleTimeReasons(String basicAuth, String serverAddress) {
-    /// TODO: если источник данных не задан (удаленный сервер), нужно получать по graphQL
-    /// если источник данных - фикстура, получаем из нее
+  Future<List<IdleTimeReason>> getIdleTimeReasons(
+      String basicAuth, String serverAddress) {
     ApplicationState applicationState = Get.find();
+
+    /// если включен деморежим, получаем данные из фикстур
     if (applicationState.inDemonstrationMode) {
       Get.put(IdleTimeReasonFixtures());
       IdleTimeReasonFixtures idleTimeReasonFixtures = Get.find();
-        return Future.value(idleTimeReasonFixtures.getIdleTimeReasons()) ;
+      return Future.value(idleTimeReasonFixtures.getIdleTimeReasons());
     }
     TaskRemoteClient taskRemoteClient =
-    TaskRemoteClient(basicAuth, serverAddress);
-    return taskRemoteClient.getIdleTimeReason()
-        .whenComplete(() => null);
+        TaskRemoteClient(basicAuth, serverAddress);
+    return taskRemoteClient.getIdleTimeReason().whenComplete(() => null);
   }
 }
