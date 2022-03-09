@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tasklist_lite/state/persistent_state.dart';
+import 'package:tasklist_lite/tasklist/model/idle_time.dart';
 
 import '../tasklist/model/task.dart';
 
@@ -22,7 +23,7 @@ class TaskListState extends PersistentState {
   /// справочные значения причин простоя. Запрашиваем из репозитория при инициализации контролллера
   /// (далее берем из кэша)
   /// TODO возможно, стоит перенести
-  RxList<String> idleTimeReasons = RxList.of({});
+  RxList<IdleTimeReason> idleTimeReasons = RxList.of({});
 
   /// выбранный в календаре день
   /// если не выбран, считается "сегодня" (тут есть тех. сложности, т.к. для inherited widget нужно, чтобы
@@ -81,7 +82,9 @@ class TaskListState extends PersistentState {
       return Task.fromJson(e);
     }));
     idleTimeReasons.value =
-        List.of(jsonDecode(json['idleTimeReasons'])).cast<String>();
+        List.of(jsonDecode(json['idleTimeReasons']).map<IdleTimeReason>((e) {
+      return IdleTimeReason.fromJson(e);
+    }));
     currentDate.value = (json['currentDate'] == null
         ? DateTime.now()
         : DateTime.parse(json['currentDate']));

@@ -6,6 +6,7 @@ import 'package:tasklist_lite/tasklist/fixture/idle_time_reason_fixtures.dart';
 import 'package:tasklist_lite/tasklist/fixture/task_fixtures.dart';
 import 'package:tasklist_lite/tasklist/task_remote_client.dart';
 
+import 'model/idle_time.dart';
 import 'model/task.dart';
 
 class TaskRepository extends GetxService {
@@ -44,9 +45,10 @@ class TaskRepository extends GetxService {
     }
     TaskRemoteClient taskRemoteClient =
         TaskRemoteClient(basicAuth!, serverAddress!);
-    Future<List<Task>> result = taskRemoteClient.geClosedTasks(day);
+    Future<List<Task>> result = taskRemoteClient.getClosedTasks(day);
     return result.asStream();
   }
+
   Future<IdleTime?> registerIdle(
       String basicAuth,
       String serverAddress,
@@ -55,39 +57,19 @@ class TaskRepository extends GetxService {
       int reasonId,
       DateTime beginTime,
       DateTime? endTime) async {
-    ApplicationState applicationState = Get.find();
-    if (applicationState.inDemonstrationMode) {
-      await new Future.delayed(const Duration(seconds: 3));
-      return new IdleTime(
-          id: 1,
-          reason: IdleTimeReasonFixtures.idleTimeReason_1,
-          startDate: beginTime,
-          endDate: endTime);
-    }
-
     TaskRemoteClient taskRemoteClient =
         TaskRemoteClient(basicAuth, serverAddress);
     return await taskRemoteClient.registerIdle(
         foreignSiteOrderId, taskInstanceId, reasonId, beginTime, endTime);
   }
 
-  Future<IdleTime?> finishIdle(
+  Future<IdleTime> finishIdle(
       String basicAuth,
       String serverAddress,
       int foreignSiteOrderId,
       int taskInstanceId,
       DateTime beginTime,
       DateTime endTime) async {
-    ApplicationState applicationState = Get.find();
-    if (applicationState.inDemonstrationMode) {
-      await new Future.delayed(const Duration(seconds: 3));
-      return new IdleTime(
-          id: 1,
-          reason: IdleTimeReasonFixtures.idleTimeReason_1,
-          startDate: beginTime,
-          endDate: endTime);
-    }
-
     TaskRemoteClient taskRemoteClient =
         TaskRemoteClient(basicAuth, serverAddress);
     return await taskRemoteClient.finishIdle(

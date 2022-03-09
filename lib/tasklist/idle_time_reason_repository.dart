@@ -15,7 +15,6 @@ class IdleTimeReasonRepository extends GetxService {
     ApplicationState applicationState = Get.find();
 
     /// если включен деморежим, получаем данные из фикстур
-    if (applicationState.inDemonstrationMode) {
       Get.put(IdleTimeReasonFixtures());
       IdleTimeReasonFixtures idleTimeReasonFixtures = Get.find();
       return Future.value(idleTimeReasonFixtures.getIdleTimeReasons());

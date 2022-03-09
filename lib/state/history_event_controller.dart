@@ -1,10 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:tasklist_lite/state/tasklist_controller.dart';
 import 'package:tasklist_lite/state/auth_controller.dart';
+
 import '../tasklist/history_events_repository.dart';
 import '../tasklist/model/history_event.dart';
 import '../tasklist/model/task.dart';
-import 'package:tasklist_lite/state/tasklist_controller.dart';
 
 class HistoryEventController extends GetxController {
   /// Ищем нужные нам штуки
@@ -15,7 +16,7 @@ class HistoryEventController extends GetxController {
   /// Инициализируем список событий
   @override
   void onInit() {
-    initHistory(taskListController.getCurrentTask());
+    initHistory(taskListController.taskListState.currentTask.value);
   }
 
   /// Данный метод отвечает за первичное наполнение листа с историческими событиями
