@@ -5,7 +5,6 @@ import 'package:tasklist_lite/tasklist/fixture/idle_time_reason_fixtures.dart';
 import 'package:tasklist_lite/tasklist/model/idle_time.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
 
-import '../idle_time_reason_repository.dart';
 
 /// Служба, возвращающая набор задач по переданному идентификатору фикстуры
 class TaskFixtures {

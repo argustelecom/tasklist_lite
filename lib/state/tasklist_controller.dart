@@ -3,9 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tasklist_lite/tasklist/idle_time_reason_repository.dart';
+import 'package:tasklist_lite/tasklist/model/close_code.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
 import 'package:tasklist_lite/tasklist/task_repository.dart';
 
+import '../tasklist/close_code_repository.dart';
 import '../tasklist/fixture/task_fixtures.dart';
 import '../tasklist/history_events_repository.dart';
 import '../tasklist/model/idle_time.dart';
@@ -101,9 +103,12 @@ class TaskListController extends GetxController {
   StreamSubscription? _authStringSubscription;
   StreamSubscription? _serverAddressSubscription;
   StreamSubscription? _currentDateSubscription;
+  StreamSubscription? _idleTimeReasonsSubscription;
+  StreamSubscription? _closeCodesSubscription;
 
   TaskRepository taskRepository = Get.find();
   IdleTimeReasonRepository idleTimeReasonRepository = Get.find();
+  CloseCodeRepository closeCodeRepository = Get.find();
   HistoryEventRepository historyEventRepository = Get.find();
 
   StreamSubscription resubscribe<T>(StreamSubscription? streamSubscription,
@@ -182,10 +187,25 @@ class TaskListController extends GetxController {
     // спровоцируем event явно.
     authState.serverAddress.refresh();
 
-    /* #TODO: должен быть subscription по аналогии с теми, что выше (и отменяться в dispose)
-    taskListState.idleTimeReasons =
-        idleTimeReasonRepository.getIdleTimeReasons(
-            authState.authString.value, authState.serverAddress.value).asStream(); */
+    _idleTimeReasonsSubscription = resubscribe<List<IdleTimeReason>>(
+        _idleTimeReasonsSubscription,
+        idleTimeReasonRepository
+            .getIdleTimeReasons(
+                authState.authString.value!, authState.serverAddress.value!)
+            .asStream(), (event) {
+      taskListState.idleTimeReasons.value = event;
+      update();
+    });
+
+    _closeCodesSubscription = resubscribe<List<CloseCode>>(
+        _closeCodesSubscription,
+        closeCodeRepository
+            .getCloseCodes(
+                authState.authString.value!, authState.serverAddress.value!)
+            .asStream(), (event) {
+      taskListState.closeCodes.value = event;
+      update();
+    });
   }
 
   Future<IdleTime?> registerIdle(int foreignSiteOrderId, int taskInstanceId,
@@ -193,7 +213,11 @@ class TaskListController extends GetxController {
     return await taskRepository.registerIdle(
         authState.authString.value!,
         authState.serverAddress.value!,
-        foreignSiteOrderId, taskInstanceId, reasonId, beginTime, endTime);
+        foreignSiteOrderId,
+        taskInstanceId,
+        reasonId,
+        beginTime,
+        endTime);
   }
 
   Future<IdleTime?> finishIdle(int foreignSiteOrderId, int taskInstanceId,
@@ -208,6 +232,16 @@ class TaskListController extends GetxController {
         endTime);
   }
 
+  Future<bool?> completeStage(
+      int foreignSiteOrderId, int taskInstanceId, int? closeCodeId) async {
+    return await taskRepository.completeStage(
+        authState.authString.value!,
+        authState.serverAddress.value!,
+        foreignSiteOrderId,
+        taskInstanceId,
+        closeCodeId);
+  }
+
   @override
   void onClose() {
     _openedTasksSubscription?.cancel();
@@ -215,6 +249,8 @@ class TaskListController extends GetxController {
     _serverAddressSubscription?.cancel();
     _authStringSubscription?.cancel();
     _currentDateSubscription?.cancel();
+    _idleTimeReasonsSubscription?.cancel();
+    _closeCodesSubscription?.cancel();
     super.onClose();
   }
 }

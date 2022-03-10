@@ -19,6 +19,7 @@ import 'package:tasklist_lite/pages/trunk_page.dart';
 import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/state/auth_controller.dart';
 import 'package:tasklist_lite/state/auth_state.dart';
+import 'package:tasklist_lite/tasklist/close_code_repository.dart';
 import 'package:tasklist_lite/tasklist/fixture/history_events_fixtures.dart';
 import 'package:tasklist_lite/tasklist/fixture/notification_fixtures.dart';
 import 'package:tasklist_lite/tasklist/fixture/task_fixtures.dart';
@@ -128,6 +129,7 @@ class MyApp extends StatelessWidget {
                       Get.put(NotificationRepository()),
                       Get.put(NotificationFixtures()),
                       Get.put(IdleTimeReasonRepository()),
+                      Get.put(CloseCodeRepository()),
                       Get.put(HistoryEventsFixtures()),
                       Get.put(HistoryEventRepository()),
                       Get.put(CommonDropdownController()),

@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:get/get.dart';
 import 'package:tasklist_lite/state/application_state.dart';
-import 'package:tasklist_lite/tasklist/fixture/idle_time_reason_fixtures.dart';
 import 'package:tasklist_lite/tasklist/fixture/task_fixtures.dart';
 import 'package:tasklist_lite/tasklist/task_remote_client.dart';
 
+import 'fixture/idle_time_reason_fixtures.dart';
 import 'model/idle_time.dart';
 import 'model/task.dart';
 
@@ -57,6 +57,17 @@ class TaskRepository extends GetxService {
       int reasonId,
       DateTime beginTime,
       DateTime? endTime) async {
+    ApplicationState applicationState = Get.find();
+
+    /// если включен деморежим, возвращаем созданный простой
+    if (applicationState.inDemonstrationMode.value) {
+      await new Future.delayed(const Duration(seconds: 3));
+      return new IdleTime(
+          id: 1,
+          reason: IdleTimeReasonFixtures.idleTimeReason_1,
+          startDate: beginTime,
+          endDate: endTime);
+    }
     TaskRemoteClient taskRemoteClient =
         TaskRemoteClient(basicAuth, serverAddress);
     return await taskRemoteClient.registerIdle(
@@ -70,9 +81,34 @@ class TaskRepository extends GetxService {
       int taskInstanceId,
       DateTime beginTime,
       DateTime endTime) async {
+    ApplicationState applicationState = Get.find();
+
+    /// если включен деморежим, возвращаем завершенный простой
+    if (applicationState.inDemonstrationMode.value) {
+      await new Future.delayed(const Duration(seconds: 3));
+      return new IdleTime(
+          id: 1,
+          reason: IdleTimeReasonFixtures.idleTimeReason_1,
+          startDate: beginTime,
+          endDate: endTime);
+    }
     TaskRemoteClient taskRemoteClient =
         TaskRemoteClient(basicAuth, serverAddress);
     return await taskRemoteClient.finishIdle(
         foreignSiteOrderId, taskInstanceId, beginTime, endTime);
+  }
+
+  Future<bool?> completeStage(String basicAuth, String serverAddress,
+      int foreignSiteOrderId, int taskInstanceId, int? closeCodeId) async {
+    ApplicationState applicationState = Get.find();
+
+    /// если включен деморежим, возвращаем успех
+    if (applicationState.inDemonstrationMode.value) {
+      await new Future.delayed(const Duration(seconds: 3));
+      return true;
+    }
+
+    /// TODO: если деморежим выключен, нужно отправлять graphQL запрос
+    return true;
   }
 }

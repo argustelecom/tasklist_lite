@@ -66,6 +66,25 @@ class UserInfo {
       return family;
   }
 
+  /// Имя сотрудника в формате "табельный_номер-Фамилия И.О."
+  String getWorkerNameWithTabNo() {
+    final name = StringBuffer();
+    if (tabNumber != null) {
+      name.write("$tabNumber-");
+    }
+    name.write(family);
+    if (workerName != null) {
+      name.write(" ");
+      name.write(workerName!.substring(0, 1));
+      name.write(".");
+      if (surname != null) {
+        name.write(surname!.substring(0, 1));
+        name.write(".");
+      }
+    }
+    return name.toString();
+  }
+
   /// для возможности сохранения в shared preferences
   /// См. про именованные и фабричные конструкторы в дарте, https://www.freecodecamp.org/news/constructors-in-dart/
   factory UserInfo.fromJson(Map<String, dynamic> json) {

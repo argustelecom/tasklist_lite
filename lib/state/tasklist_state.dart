@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tasklist_lite/state/persistent_state.dart';
+import 'package:tasklist_lite/tasklist/model/close_code.dart';
 import 'package:tasklist_lite/tasklist/model/idle_time.dart';
 
 import '../tasklist/model/task.dart';
@@ -25,6 +26,11 @@ class TaskListState extends PersistentState {
   /// TODO возможно, стоит перенести
   RxList<IdleTimeReason> idleTimeReasons = RxList.of({});
 
+  /// справочные значения шифров закрытия. Запрашиваем из репозитория при инициализации контролллера
+  /// (далее берем из кэша)
+  /// TODO возможно, стоит перенести
+  RxList<CloseCode> closeCodes = RxList.of({});
+
   /// выбранный в календаре день
   /// если не выбран, считается "сегодня" (тут есть тех. сложности, т.к. для inherited widget нужно, чтобы
   /// конструктор initialState был константным, а DateTime.now() никак не константный)
@@ -39,6 +45,7 @@ class TaskListState extends PersistentState {
       openedTasks,
       closedTasks,
       idleTimeReasons,
+      closeCodes,
       currentDate,
       currentTask
     ];
@@ -56,6 +63,7 @@ class TaskListState extends PersistentState {
     data['openedTasks'] = jsonEncode(openedTasks);
     data['closedTasks'] = jsonEncode(closedTasks);
     data['idleTimeReasons'] = jsonEncode(idleTimeReasons);
+    data['closeCodes'] = jsonEncode(closeCodes);
     // если дата = "сегодня", сохраним null, т.к. хранить конкретную дату нет смысла
     DateTime now = DateTime.now();
     if ((currentDate.value.year == now.year) &&
@@ -84,6 +92,10 @@ class TaskListState extends PersistentState {
     idleTimeReasons.value =
         List.of(jsonDecode(json['idleTimeReasons']).map<IdleTimeReason>((e) {
       return IdleTimeReason.fromJson(e);
+    }));
+    closeCodes.value =
+        List.of(jsonDecode(json['closeCodes']).map<CloseCode>((e) {
+      return CloseCode.fromJson(e);
     }));
     currentDate.value = (json['currentDate'] == null
         ? DateTime.now()
