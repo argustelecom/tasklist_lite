@@ -15,6 +15,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../common/widgets/object_attach_widget/widgets/object_attach_widget.dart';
 import '../crazylib/adaptive_dialog.dart';
 import '../crazylib/close_task_dialog.dart';
+import '../crazylib/mark_filter_list.dart';
 import '../state/tasklist_controller.dart';
 import '../state/tasklist_state.dart';
 import 'comment_page.dart';
@@ -42,7 +43,7 @@ class _TaskPageState extends State<TaskPage> {
     ScrollController historyScrollController = new ScrollController();
 
     return DefaultTabController(
-        length: 4,
+        length: 5,
         initialIndex: 0,
         child: GetBuilder<TaskListController>(
             init: TaskListController(),
@@ -99,6 +100,11 @@ class _TaskPageState extends State<TaskPage> {
                               Tab(
                                 child: Text(
                                   "История",
+                                ),
+                              ),
+                              Tab(
+                                child: Text(
+                                  "Баллы",
                                 ),
                               ),
                             ],
@@ -559,7 +565,8 @@ class _TaskPageState extends State<TaskPage> {
                                             ))
                                       ],
                                     ));
-                              })
+                          }),
+                          MarkTypeFilter()
                         ]))
                   ]));
             }));
