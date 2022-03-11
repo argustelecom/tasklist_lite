@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 /// слизано с SimpleDialog, который живет в dialog.dart. Только контент другой
 /// #TODO: наверняка можно поизящней
+/// #TODO: после перевода на навигацию 2.0 не проверялся(и не адаптировался), мб поэтому в чем-то не работает
 class CrazyDialog extends StatelessWidget {
   const CrazyDialog({
     Key? key,

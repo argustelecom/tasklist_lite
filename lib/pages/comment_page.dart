@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:tasklist_lite/crazylib/history_event_card.dart';
 import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
@@ -26,7 +27,8 @@ class _CommentPageState extends State<CommentPage> {
                 leading: IconButton(
                   icon: Icon(Icons.chevron_left_outlined),
                   onPressed: () {
-                    Navigator.pop(context);
+                    GetDelegate routerDelegate = Get.find();
+                    routerDelegate.popRoute();
                   },
                 ),
               ),

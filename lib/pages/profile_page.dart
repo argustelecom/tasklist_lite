@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
 import 'package:tasklist_lite/pages/about_app_page.dart';
 import 'package:tasklist_lite/pages/help_page.dart';
-import 'package:tasklist_lite/pages/login_page.dart';
 import 'package:tasklist_lite/pages/support_page.dart';
 import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/state/auth_controller.dart';
@@ -30,13 +29,15 @@ class ProfilePage extends StatelessWidget {
                 child: Text("Профиль"),
                 highlightShape: BoxShape.rectangle,
                 onTap: () {
-                  Navigator.pop(context);
+                  GetDelegate routerDelegate = Get.find();
+                  routerDelegate.popRoute();
                 }),
             titleTextStyle: TextStyle(fontFamily: "ABeeZee", fontSize: 20),
             leading: IconButton(
               icon: const Icon(Icons.chevron_left_outlined),
               onPressed: () {
-                Navigator.pop(context);
+                GetDelegate routerDelegate = Get.find();
+                routerDelegate.popRoute();
               },
             ),
             toolbarHeight: 50,
@@ -50,7 +51,6 @@ class ProfilePage extends StatelessWidget {
                 icon: const Icon(Icons.exit_to_app_outlined),
                 onPressed: () {
                   authController.logout();
-                  Navigator.pushNamed(context, LoginPage.routeName);
                 },
               )
             ],
@@ -206,8 +206,9 @@ class ProfilePage extends StatelessWidget {
                                       icon: const Icon(
                                           Icons.chevron_right_outlined),
                                       onPressed: () {
-                                        Navigator.pushNamed(
-                                            context, SupportPage.routeName);
+                                        GetDelegate routerDelegate = Get.find();
+                                        routerDelegate
+                                            .toNamed(SupportPage.routeName);
                                       })
                                 ],
                               )))),
@@ -232,8 +233,9 @@ class ProfilePage extends StatelessWidget {
                                       icon: const Icon(
                                           Icons.chevron_right_outlined),
                                       onPressed: () {
-                                        Navigator.pushNamed(
-                                            context, HelpPage.routeName);
+                                        GetDelegate routerDelegate = Get.find();
+                                        routerDelegate
+                                            .toNamed(HelpPage.routeName);
                                       })
                                 ],
                               )))),
@@ -258,8 +260,9 @@ class ProfilePage extends StatelessWidget {
                                       icon: const Icon(
                                           Icons.chevron_right_outlined),
                                       onPressed: () {
-                                        Navigator.pushNamed(
-                                            context, AboutAppPage.routeName);
+                                        GetDelegate routerDelegate = Get.find();
+                                        routerDelegate
+                                            .toNamed(AboutAppPage.routeName);
                                       })
                                 ],
                               ))))

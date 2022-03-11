@@ -2,9 +2,8 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_language_fonts/google_language_fonts.dart';
+import 'package:get/get.dart';
 import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
-import 'package:tasklist_lite/pages/login_page.dart';
 import 'package:tasklist_lite/pages/profile_page.dart';
 
 class AboutAppPage extends StatefulWidget {
@@ -31,7 +30,8 @@ class _AboutAppPageState extends State<AboutAppPage> {
             leading: IconButton(
                 icon: Icon(Icons.chevron_left_outlined),
                 onPressed: () {
-                  Navigator.pop(context);
+                  GetDelegate routerDelegate = Get.find();
+                  routerDelegate.popRoute();
                 })),
         body: ListView(
             padding: EdgeInsets.symmetric(vertical: 7, horizontal: 15),
@@ -40,12 +40,17 @@ class _AboutAppPageState extends State<AboutAppPage> {
               Column(children: [
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                   Image.asset(
-                    "images/logo_figaro.png", bundle: rootBundle, height: 180, width: 180,
+                    "images/logo_figaro.png",
+                    bundle: rootBundle,
+                    height: 180,
+                    width: 180,
                   ),
                   Padding(
                     padding: EdgeInsets.only(bottom: 10),
-                    child: Text("Фигаро - приложение для быстрых выездных специалистов лучшего оператора РФ!",
-                        style: TextStyle(fontSize: 16), textAlign: TextAlign.center),
+                    child: Text(
+                        "Фигаро - приложение для быстрых выездных специалистов лучшего оператора РФ!",
+                        style: TextStyle(fontSize: 16),
+                        textAlign: TextAlign.center),
                   ),
                 ]),
                 Padding(

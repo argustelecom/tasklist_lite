@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:get/get_state_manager/src/simple/get_state.dart';
+import 'package:get/get.dart';
 import 'package:tasklist_lite/crazylib/date_picker_button.dart';
 import 'package:tasklist_lite/crazylib/time_picker_button.dart';
 import 'package:tasklist_lite/state/tasklist_controller.dart';
@@ -179,7 +179,8 @@ class IdleTimeManagerDialogState extends State<IdleTimeManagerDialog> {
                   new DateTime(endDate!.year, endDate!.month, endDate!.day,
                       endTime!.hour, endTime!.minute));
 
-          Navigator.of(context).pop();
+          GetDelegate routerDelegate = Get.find();
+          routerDelegate.popRoute();
         },
       );
 

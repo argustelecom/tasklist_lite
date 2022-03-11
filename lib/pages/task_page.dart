@@ -180,7 +180,9 @@ class _TaskPageState extends State<TaskPage> {
                                                           historyEventController
                                                                   .getHistoryEvents()[
                                                               index]);
-                                                  Navigator.pushNamed(context,
+                                                  GetDelegate routerDelegate =
+                                                      Get.find();
+                                                  routerDelegate.toNamed(
                                                       CommentPage.routeName);
                                                 });
                                           }),
@@ -341,7 +343,8 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
                 iconSize: 40,
                 icon: Icon(Icons.chevron_left_outlined),
                 onPressed: () {
-                  Navigator.pop(context);
+                  GetDelegate routerDelegate = Get.find();
+                  routerDelegate.popRoute();
                 },
               ),
               titleSpacing: 0.0,
@@ -414,7 +417,10 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
                                                   ? "Зарегистрировать простой"
                                                   : "Завершить простой"),
                                           onTap: () {
-                                            Navigator.pop(context, "");
+                                            GetDelegate routerDelegate =
+                                                Get.find();
+                                            routerDelegate.popRoute();
+
                                             showAdaptiveDialog(
                                                 context: context,
                                                 builder:

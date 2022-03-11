@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:tasklist_lite/crazylib/quote_card.dart';
 import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
 import 'package:tasklist_lite/games/beaumarchais_quotes.dart';
@@ -28,7 +29,8 @@ class _SupportPageState extends State<SupportPage> {
             leading: IconButton(
                 icon: Icon(Icons.chevron_left_outlined),
                 onPressed: () {
-                  Navigator.pop(context);
+                  GetDelegate routerDelegate = Get.find();
+                  routerDelegate.popRoute();
                 })),
         body: ListView(children: [
           //TODO: Тут будет информация о службе поддержки и настройка включения debugMode ?
