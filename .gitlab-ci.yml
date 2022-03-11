@@ -64,5 +64,5 @@ build httpd:
     name: $CI_COMMIT_REF_NAME-distrib-artifacts
     expire_in: 7 days
     paths:
-      - build/tmp/httpd-2.4-win32-tasklist-lite_$CI_PIPELINE_ID.tar.gz
+      - tmp/httpd-2.4-win32-tasklist-lite_$CI_PIPELINE_ID.tar.gz
     when: always
