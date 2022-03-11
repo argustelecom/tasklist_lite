@@ -97,7 +97,7 @@ class HistoryEventsFixtures {
   });
 
   /// Метод получения событий по наряду. На вход передаем задачу, по которой хотим получить события
-  List<HistoryEvent> getHistoryEvents(Task task) {
+  List<HistoryEvent> getHistoryEvents(Task? task) {
     if (task == TaskFixtures.firstTask) {
       return firstHistoryEventFixture;
     } else if (task == TaskFixtures.secondTask) {
@@ -105,5 +105,14 @@ class HistoryEventsFixtures {
     } else {
       return thirdHistoryEventFixture;
     }
+  }
+
+  ///Запускаем стрим, который дает список комментов
+  Stream<List<HistoryEvent>> streamComments(Task? task) async* {
+    List<HistoryEvent> notifies = getHistoryEvents(task);
+
+    yield notifies;
+
+    await Future.delayed(Duration(seconds: 10));
   }
 }

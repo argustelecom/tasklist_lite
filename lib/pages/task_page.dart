@@ -16,7 +16,6 @@ import '../common/widgets/object_attach_widget/widgets/object_attach_widget.dart
 import '../crazylib/adaptive_dialog.dart';
 import '../crazylib/close_task_dialog.dart';
 import '../state/tasklist_controller.dart';
-import '../state/tasklist_state.dart';
 import 'comment_page.dart';
 
 class TaskPage extends StatefulWidget {
@@ -50,12 +49,12 @@ class _TaskPageState extends State<TaskPage> {
               return ReflowingScaffold(
                   appBar: TaskAppBar(
                       task:
-                      taskListController.taskListState.currentTask.value ??
-                          Task(
-                              id: 1,
-                              name: "",
-                              flexibleAttribs: LinkedHashMap(),
-                              biId: 1)),
+                          taskListController.taskListState.currentTask.value ??
+                              Task(
+                                  id: 1,
+                                  name: "",
+                                  flexibleAttribs: LinkedHashMap(),
+                                  biId: 1)),
                   body: Column(children: [
                     // нужен чтобы ограничить высоту tabBar`а ниже
                     SizedBox(
@@ -79,7 +78,7 @@ class _TaskPageState extends State<TaskPage> {
                             labelColor: Colors.black,
                             labelStyle: TextStyle(fontSize: 18),
                             unselectedLabelStyle:
-                            TextStyle(color: Colors.grey, fontSize: 18),
+                                TextStyle(color: Colors.grey, fontSize: 18),
                             tabs: [
                               Tab(
                                 child: Text(
@@ -111,456 +110,437 @@ class _TaskPageState extends State<TaskPage> {
                     /// TODO: Информация по этапу захардкожена,когда будет выполнена доработка API для получения параметров по простою логику отображения нужно доделать
                     Expanded(
                         child: TabBarView(children: [
-                          Padding(
-                            padding:
+                      Padding(
+                        padding:
                             EdgeInsets.only(left: 12, right: 12, bottom: 12),
-                            child: Card(
-                                elevation: 3,
-                                child: Column(
-                                  children: [
-                                    Row(
+                        child: Card(
+                            elevation: 3,
+                            child: Column(
+                              children: [
+                                Row(
+                                    children: [
+                                      Column(
                                         children: [
-                                          Column(
-                                            children: [
-                                              Padding(
-                                                  padding: EdgeInsets.fromLTRB(
-                                                      16, 8, 16, 12),
-                                                  child: Row(children: [
-                                                    Text("Наименование этапа"),
-                                                  ])),
-                                              Padding(
-                                                padding:
-                                                EdgeInsets.fromLTRB(
-                                                    16, 8, 16, 0),
-                                                child: Row(children: [
-                                                  Text("КС : 20.12.2021 15.00"),
-                                                ]),
-                                              ),
-                                              Padding(
-                                                padding:
-                                                EdgeInsets.fromLTRB(
-                                                    16, 8, 16, 0),
-                                                child: Row(children: [
-                                                  Text("КВ : 1ч. 15мин."),
-                                                ]),
-                                              ),
-                                            ],
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                          ),
-                                          //Клизма
                                           Padding(
-                                            padding: EdgeInsets.only(right: 16),
-                                            child: Column(
-                                              children: [
-                                                IconButton(
-                                                    onPressed: () async {
-                                                      // Есть map_launcher, но он в вебе не работает (ругается)
-                                                      // но можно открывать урл к yandex maps например
-                                                      // https://stackoverflow.com/questions/52052232/flutter-url-launcher-google-maps
-                                                      String baseUrl =
-                                                          "https://yandex.ru/maps/?l=map&z=11";
-                                                      // параметры открытия яндекса см. https://yandex.com/dev/yandex-apps-launch/maps/doc/concepts/yandexmaps-web.html
-                                                      // #TODO: если бы у нас были текущиие координаты (а они будут в следующих версиях), можно открывать прям маршрут,
-                                                      // см. Plot Route https://yandex.com/dev/yandex-apps-launch/maps/doc/concepts/yandexmaps-web.html#yandexmaps-web__buildroute
-                                                      if ((taskListController
-                                                          .taskListState
-                                                          .currentTask.value!
-                                                          .latitude !=
+                                              padding: EdgeInsets.fromLTRB(
+                                                  16, 8, 16, 12),
+                                              child: Row(children: [
+                                                Text("Наименование этапа"),
+                                              ])),
+                                          Padding(
+                                            padding: EdgeInsets.fromLTRB(
+                                                16, 8, 16, 0),
+                                            child: Row(children: [
+                                              Text("КС : 20.12.2021 15.00"),
+                                            ]),
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.fromLTRB(
+                                                16, 8, 16, 0),
+                                            child: Row(children: [
+                                              Text("КВ : 1ч. 15мин."),
+                                            ]),
+                                          ),
+                                        ],
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                      ),
+                                      //Клизма
+                                      Padding(
+                                        padding: EdgeInsets.only(right: 16),
+                                        child: Column(
+                                          children: [
+                                            IconButton(
+                                                onPressed: () async {
+                                                  // Есть map_launcher, но он в вебе не работает (ругается)
+                                                  // но можно открывать урл к yandex maps например
+                                                  // https://stackoverflow.com/questions/52052232/flutter-url-launcher-google-maps
+                                                  String baseUrl =
+                                                      "https://yandex.ru/maps/?l=map&z=11";
+                                                  // параметры открытия яндекса см. https://yandex.com/dev/yandex-apps-launch/maps/doc/concepts/yandexmaps-web.html
+                                                  // #TODO: если бы у нас были текущиие координаты (а они будут в следующих версиях), можно открывать прям маршрут,
+                                                  // см. Plot Route https://yandex.com/dev/yandex-apps-launch/maps/doc/concepts/yandexmaps-web.html#yandexmaps-web__buildroute
+                                                  if ((taskListController
+                                                              .taskListState
+                                                              .currentTask
+                                                              .value!
+                                                              .latitude !=
                                                           null) &&
-                                                          (taskListController
+                                                      (taskListController
                                                               .taskListState
                                                               .currentTask
                                                               .value!
                                                               .longitude !=
-                                                              null)) {
-                                                        baseUrl = baseUrl +
-                                                            "&pt=" +
-                                                            taskListController
-                                                                .taskListState
-                                                                .currentTask
-                                                                .value!.latitude
-                                                                .toString() +
-                                                            "," +
-                                                            taskListController
-                                                                .taskListState
-                                                                .currentTask
-                                                                .value!
-                                                                .longitude
-                                                                .toString();
-                                                      } else
-                                                      if (taskListController
+                                                          null)) {
+                                                    baseUrl = baseUrl +
+                                                        "&pt=" +
+                                                        taskListController
+                                                            .taskListState
+                                                            .currentTask
+                                                            .value!
+                                                            .latitude
+                                                            .toString() +
+                                                        "," +
+                                                        taskListController
+                                                            .taskListState
+                                                            .currentTask
+                                                            .value!
+                                                            .longitude
+                                                            .toString();
+                                                  } else if (taskListController
                                                           .taskListState
-                                                          .currentTask.value!
+                                                          .currentTask
+                                                          .value!
                                                           .address !=
-                                                          null) {
-                                                        // если координаты не заданы, поищем по адресу
-                                                        baseUrl = baseUrl +
-                                                            "&text=" +
-                                                            taskListController
-                                                                .taskListState
-                                                                .currentTask
-                                                                .value!
-                                                                .address!;
-                                                      }
-                                                      final String encodedURl =
+                                                      null) {
+                                                    // если координаты не заданы, поищем по адресу
+                                                    baseUrl = baseUrl +
+                                                        "&text=" +
+                                                        taskListController
+                                                            .taskListState
+                                                            .currentTask
+                                                            .value!
+                                                            .address!;
+                                                  }
+                                                  final String encodedURl =
                                                       Uri.encodeFull(baseUrl);
-                                                      // тут можно было бы проверить через canLaunch, но вроде не обязательно
-                                                      // в крайнем случае откроет просто карту в неподходящем месте
-                                                      launch(encodedURl);
-                                                    },
-                                                    icon: Column(
-                                                      children: [
-                                                        Expanded(
-                                                          child: Icon(
-                                                            Icons.place,
-                                                            color: themeData
-                                                                .colorScheme
-                                                                .primary,
-                                                          ),
+                                                  // тут можно было бы проверить через canLaunch, но вроде не обязательно
+                                                  // в крайнем случае откроет просто карту в неподходящем месте
+                                                  launch(encodedURl);
+                                                },
+                                                icon: Column(
+                                                  children: [
+                                                    Expanded(
+                                                      child: Icon(
+                                                        Icons.place,
+                                                        color: themeData
+                                                            .colorScheme
+                                                            .primary,
+                                                      ),
+                                                    ),
+                                                    // #TODO: согласно макету, под иконкой должно быть не равномерное подчеркивание,
+                                                    // а тень, хитро полученная как тень рамки иконки в figma. Подобного эффекта пока
+                                                    // достичь не удалось.
+                                                    // Еще вариант -- такая вот иконка https://www.iconfinder.com/icons/2344289/gps_location_map_place_icon
+                                                    Expanded(
+                                                      child: Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                          left: 10,
+                                                          right: 10,
+                                                          top: 20,
                                                         ),
-                                                        // #TODO: согласно макету, под иконкой должно быть не равномерное подчеркивание,
-                                                        // а тень, хитро полученная как тень рамки иконки в figma. Подобного эффекта пока
-                                                        // достичь не удалось.
-                                                        // Еще вариант -- такая вот иконка https://www.iconfinder.com/icons/2344289/gps_location_map_place_icon
-                                                        Expanded(
-                                                          child: Padding(
-                                                            padding: EdgeInsets
-                                                                .only(
-                                                              left: 10,
-                                                              right: 10,
-                                                              top: 20,
-                                                            ),
-                                                            child: Divider(
-                                                              thickness: 3,
-                                                            ),
-                                                          ),
+                                                        child: Divider(
+                                                          thickness: 3,
                                                         ),
-                                                      ],
-                                                    )),
-                                                Text(taskListController
-                                                    .taskListState.currentTask
+                                                      ),
+                                                    ),
+                                                  ],
+                                                )),
+                                            Text(taskListController
+                                                    .taskListState
+                                                    .currentTask
                                                     .value!
                                                     .flexibleAttribs[TaskFixtures
-                                                    .distanceToObjectFlexAttrName]
+                                                        .distanceToObjectFlexAttrName]
                                                     ?.toString() ??
-                                                    "")
-                                              ],
-                                            ),
-                                          )
-                                        ],
-                                        mainAxisAlignment:
+                                                "")
+                                          ],
+                                        ),
+                                      )
+                                    ],
+                                    mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween),
-                                    //Прогресс бар для этапов
-                                    Row(
-                                        children: [
-                                          // Первый этап
-                                          Expanded(
-                                            child: Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: 12,
-                                                    right: 4,
-                                                    bottom: 5,
-                                                    top: 12),
-                                                child: LinearProgressIndicator(
-                                                  value: 1,
-                                                  color: Colors.yellow.shade700,
-                                                  minHeight: 12,
-                                                  backgroundColor:
+                                //Прогресс бар для этапов
+                                Row(
+                                    children: [
+                                      // Первый этап
+                                      Expanded(
+                                        child: Padding(
+                                            padding: EdgeInsets.only(
+                                                left: 12,
+                                                right: 4,
+                                                bottom: 5,
+                                                top: 12),
+                                            child: LinearProgressIndicator(
+                                              value: 1,
+                                              color: Colors.yellow.shade700,
+                                              minHeight: 12,
+                                              backgroundColor:
                                                   Colors.yellow.shade200,
-                                                )),
-                                          ),
-                                          // Второй этап
-                                          Expanded(
-                                            child: Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: 4,
-                                                    right: 4,
-                                                    bottom: 5,
-                                                    top: 12),
-                                                child: LinearProgressIndicator(
-                                                  value: 1,
-                                                  color: Colors.yellow.shade700,
-                                                  minHeight: 12,
-                                                  backgroundColor:
+                                            )),
+                                      ),
+                                      // Второй этап
+                                      Expanded(
+                                        child: Padding(
+                                            padding: EdgeInsets.only(
+                                                left: 4,
+                                                right: 4,
+                                                bottom: 5,
+                                                top: 12),
+                                            child: LinearProgressIndicator(
+                                              value: 1,
+                                              color: Colors.yellow.shade700,
+                                              minHeight: 12,
+                                              backgroundColor:
                                                   Colors.yellow.shade200,
-                                                )),
-                                          ),
-                                          // Третий этап
-                                          Expanded(
-                                            child: Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: 4,
-                                                    right: 4,
-                                                    bottom: 5,
-                                                    top: 12),
-                                                child: LinearProgressIndicator(
-                                                  value: 0.73,
-                                                  color: Colors.yellow.shade700,
-                                                  minHeight: 12,
-                                                  backgroundColor:
+                                            )),
+                                      ),
+                                      // Третий этап
+                                      Expanded(
+                                        child: Padding(
+                                            padding: EdgeInsets.only(
+                                                left: 4,
+                                                right: 4,
+                                                bottom: 5,
+                                                top: 12),
+                                            child: LinearProgressIndicator(
+                                              value: 0.73,
+                                              color: Colors.yellow.shade700,
+                                              minHeight: 12,
+                                              backgroundColor:
                                                   Colors.yellow.shade200,
-                                                )),
-                                          ),
-                                          // Четвертый этап
-                                          Expanded(
-                                            child: Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: 4,
-                                                    right: 12,
-                                                    bottom: 5,
-                                                    top: 12),
-                                                child: LinearProgressIndicator(
-                                                  value: 0,
-                                                  color: Colors.yellow.shade700,
-                                                  minHeight: 12,
-                                                  backgroundColor:
+                                            )),
+                                      ),
+                                      // Четвертый этап
+                                      Expanded(
+                                        child: Padding(
+                                            padding: EdgeInsets.only(
+                                                left: 4,
+                                                right: 12,
+                                                bottom: 5,
+                                                top: 12),
+                                            child: LinearProgressIndicator(
+                                              value: 0,
+                                              color: Colors.yellow.shade700,
+                                              minHeight: 12,
+                                              backgroundColor:
                                                   Colors.yellow.shade200,
-                                                )),
-                                          ),
-                                        ],
-                                        mainAxisAlignment:
+                                            )),
+                                      ),
+                                    ],
+                                    mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween),
-                                    SizedBox(
-                                        height: 400.0,
-                                        child: ListView.builder(
-                                            shrinkWrap: true,
-                                            itemCount: taskListController
-                                                .taskListState.currentTask.value
-                                                ?.getAttrGroups()
-                                                .length,
-                                            itemBuilder:
-                                                (BuildContext context,
-                                                int index) {
-                                              return AttrGroup(
-                                                  task: taskListController
+                                SizedBox(
+                                    height: 400.0,
+                                    child: ListView.builder(
+                                        shrinkWrap: true,
+                                        itemCount: taskListController
+                                            .taskListState.currentTask.value
+                                            ?.getAttrGroups()
+                                            .length,
+                                        itemBuilder:
+                                            (BuildContext context, int index) {
+                                          return AttrGroup(
+                                              task: taskListController
                                                       .taskListState
-                                                      .currentTask.value ??
-                                                      Task(
-                                                          id: 1,
-                                                          name: "",
-                                                          flexibleAttribs:
+                                                      .currentTask
+                                                      .value ??
+                                                  Task(
+                                                      id: 1,
+                                                      name: "",
+                                                      flexibleAttribs:
                                                           LinkedHashMap(),
-                                                          biId: 1),
-                                                  attrGroup: taskListController
-                                                      .taskListState.currentTask
+                                                      biId: 1),
+                                              attrGroup: taskListController
+                                                      .taskListState
+                                                      .currentTask
                                                       .value
                                                       ?.getAttrGroups()
                                                       .elementAt(index) ??
-                                                      "");
-                                            })),
-                                  ],
-                                )),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 32),
-                            child: Card(
-                              child: Text("Здесь будут работы"),
-                              elevation: 3,
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 32),
-                            child: Card(
-                              child: Container(
-                                  height: 100.0,
-                                  width: 100.0,
-                                  child: ObjectAttachWidget(
-                                      taskListController.taskListState
-                                          .currentTask.value!.id)),
-                              elevation: 3,
-                            ),
-                          ),
-                          GetBuilder<HistoryEventController>(
-                              init: HistoryEventController(),
-                              builder: (historyEventController) {
-                                return Padding(
-                                    padding: EdgeInsets.only(
-                                        left: 12, right: 12, bottom: 12),
-                                    child: Column(
-                                      children: [
-                                        Expanded(
-                                          child: ListView.builder(
-                                              itemCount: historyEventController
-                                                  .getHistoryEvents()
-                                                  .length,
-                                              controller: historyScrollController,
-                                              itemBuilder: (
-                                                  BuildContext context,
-                                                  int index) {
-                                                return InkWell(
-                                                    child: HistoryEventCard(
-                                                        maxLines: 10,
-                                                        comment: historyEventController
+                                                  "");
+                                        })),
+                              ],
+                            )),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 32),
+                        child: Card(
+                          child: Text("Здесь будут работы"),
+                          elevation: 3,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 32),
+                        child: Card(
+                          child: Container(
+                              height: 100.0,
+                              width: 100.0,
+                              child: ObjectAttachWidget(taskListController
+                                  .taskListState.currentTask.value!.id)),
+                          elevation: 3,
+                        ),
+                      ),
+                      GetBuilder<HistoryEventController>(
+                          init: HistoryEventController(),
+                          builder: (historyEventController) {
+                            return Padding(
+                                padding: EdgeInsets.only(
+                                    left: 12, right: 12, bottom: 12),
+                                child: Column(
+                                  children: [
+                                    Expanded(
+                                      child: ListView.builder(
+                                          itemCount: historyEventController
+                                              .getHistoryEvents()
+                                              .length,
+                                          controller: historyScrollController,
+                                          itemBuilder: (BuildContext context,
+                                              int index) {
+                                            return InkWell(
+                                                child: HistoryEventCard(
+                                                    maxLines: 10,
+                                                    comment: historyEventController
                                                             .getHistoryEvents()[
                                                         index]),
-                                                    onTap: () {
-                                                      historyEventController
-                                                          .setCurrentComment(
-                                                          historyEventController
-                                                              .getHistoryEvents()[
-                                                          index]);
-                                                      Navigator.pushNamed(
-                                                          context,
-                                                          CommentPage
-                                                              .routeName);
-                                                    });
-                                              }),
-                                        ),
-                                        // Текстовое поле ввода комментария
-                                        Padding(
-                                          padding: EdgeInsets.only(top: 16),
-                                          child: Focus(
-                                            onFocusChange: (value) {
-                                              Future.delayed(
-                                                  const Duration(
-                                                      milliseconds: 100),
-                                                      () {
-                                                    historyEventController
-                                                        .setOnTextFieldFocused(
-                                                        value);
-                                                  });
-                                            },
-                                            child: TextField(
-                                                textInputAction:
-                                                TextInputAction.send,
-                                                keyboardType: TextInputType
-                                                    .text,
-                                                textAlign: TextAlign.start,
-                                                decoration: InputDecoration(
-                                                  hintText: "Ваш комментарий",
-                                                  hintStyle:
-                                                  TextStyle(fontSize: 14),
-                                                  fillColor:
-                                                  themeData.bottomAppBarColor,
-                                                  border: InputBorder.none,
-                                                  filled: true,
-                                                  suffixIcon: IconButton(
-                                                    tooltip: 'С уведомлением',
-                                                    icon: Icon(
-                                                        historyEventController
-                                                            .getIsAlarmComment()
-                                                            ? Icons
-                                                            .notifications
-                                                            : Icons
-                                                            .notifications_off,
-                                                        // size: 30,
-                                                        color: Colors.black),
-                                                    onPressed: () {
-                                                      historyEventController
-                                                          .changeIsAlarmComment();
-                                                    },
-                                                  ),
-                                                  isCollapsed: false,
-                                                ),
-                                                onSubmitted: (text) {
+                                                onTap: () {
                                                   historyEventController
-                                                      .addComment(
-                                                      commentTextController
-                                                          .text,
-                                                      historyEventController
-                                                          .getIsAlarmComment(),
-                                                      taskListController
-                                                          .taskListState
-                                                          .currentTask
-                                                          .value!);
-                                                  commentTextController.clear();
-                                                  historyScrollController
-                                                      .animateTo(
-                                                    historyScrollController
-                                                        .position
-                                                        .maxScrollExtent,
-                                                    curve: Curves.easeOut,
-                                                    duration: const Duration(
-                                                        milliseconds: 300),
+                                                      .setCurrentComment(
+                                                          historyEventController
+                                                                  .getHistoryEvents()[
+                                                              index]);
+                                                  Navigator.pushNamed(
+                                                    context,
+                                                    CommentPage.routeName,
                                                   );
-                                                  FocusManager.instance
-                                                      .primaryFocus
-                                                      ?.unfocus();
+                                                });
+                                          }),
+                                    ),
+                                    // Текстовое поле ввода комментария
+                                    Padding(
+                                      padding: EdgeInsets.only(top: 16),
+                                      child: Focus(
+                                        onFocusChange: (value) {
+                                          Future.delayed(
+                                              const Duration(milliseconds: 100),
+                                              () {
+                                            historyEventController
+                                                .setOnTextFieldFocused(value);
+                                          });
+                                        },
+                                        child: TextField(
+                                            textInputAction:
+                                                TextInputAction.send,
+                                            keyboardType: TextInputType.text,
+                                            textAlign: TextAlign.start,
+                                            decoration: InputDecoration(
+                                              hintText: "Ваш комментарий",
+                                              hintStyle:
+                                                  TextStyle(fontSize: 14),
+                                              fillColor:
+                                                  themeData.bottomAppBarColor,
+                                              border: InputBorder.none,
+                                              filled: true,
+                                              suffixIcon: IconButton(
+                                                tooltip: 'С уведомлением',
+                                                icon: Icon(
+                                                    historyEventController
+                                                            .getIsAlarmComment()
+                                                        ? Icons.notifications
+                                                        : Icons
+                                                            .notifications_off,
+                                                    // size: 30,
+                                                    color: Colors.black),
+                                                onPressed: () {
+                                                  historyEventController
+                                                      .changeIsAlarmComment();
                                                 },
-                                                minLines: 1,
-                                                maxLines: 5,
-                                                controller: commentTextController),
-                                          ),
-                                        ),
-                                        Visibility(
-                                            visible: historyEventController
-                                                .getOnTextFieldFocused(),
-                                            child: Padding(
-                                              padding: EdgeInsets.only(
-                                                  top: 8, right: 16),
-                                              child: Row(
-                                                  children: [
-                                                    TextButton(
-                                                      child: Padding(
-                                                        padding: EdgeInsets
-                                                            .only(
-                                                            top: 4,
-                                                            right: 8,
-                                                            left: 8,
-                                                            bottom: 4),
-                                                        child: const Text(
-                                                            'Отправить',
-                                                            style: TextStyle(
-                                                                color: Colors
-                                                                    .black,
-                                                                fontSize: 14)),
-                                                      ),
-                                                      style: ButtonStyle(
-                                                          shape: MaterialStateProperty
-                                                              .all<
+                                              ),
+                                              isCollapsed: false,
+                                            ),
+                                            onSubmitted: (text) {
+                                              historyEventController.addComment(
+                                                  commentTextController.text,
+                                                  historyEventController
+                                                      .getIsAlarmComment(),
+                                                  taskListController
+                                                      .taskListState
+                                                      .currentTask
+                                                      .value!);
+                                              commentTextController.clear();
+                                              historyScrollController.animateTo(
+                                                historyScrollController
+                                                    .position.maxScrollExtent,
+                                                curve: Curves.easeOut,
+                                                duration: const Duration(
+                                                    milliseconds: 300),
+                                              );
+                                              FocusManager.instance.primaryFocus
+                                                  ?.unfocus();
+                                            },
+                                            minLines: 1,
+                                            maxLines: 5,
+                                            controller: commentTextController),
+                                      ),
+                                    ),
+                                    Visibility(
+                                        visible: historyEventController
+                                            .getOnTextFieldFocused(),
+                                        child: Padding(
+                                          padding: EdgeInsets.only(
+                                              top: 8, right: 16),
+                                          child: Row(
+                                              children: [
+                                                TextButton(
+                                                  child: Padding(
+                                                    padding: EdgeInsets.only(
+                                                        top: 4,
+                                                        right: 8,
+                                                        left: 8,
+                                                        bottom: 4),
+                                                    child: const Text(
+                                                        'Отправить',
+                                                        style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontSize: 14)),
+                                                  ),
+                                                  style: ButtonStyle(
+                                                      shape: MaterialStateProperty.all<
                                                               RoundedRectangleBorder>(
-                                                              RoundedRectangleBorder(
-                                                                  borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
+                                                          RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
                                                                       32))),
-                                                          padding: MaterialStateProperty
-                                                              .all<
+                                                      padding: MaterialStateProperty.all<
                                                               EdgeInsets>(
-                                                              EdgeInsets.all(
-                                                                  2)),
-                                                          backgroundColor:
-                                                          MaterialStateProperty
-                                                              .all<Color>(
-                                                              Colors.yellow
-                                                                  .shade700)),
-                                                      onPressed: () {
-                                                        historyEventController
-                                                            .addComment(
-                                                            commentTextController
-                                                                .text,
-                                                            historyEventController
-                                                                .getIsAlarmComment(),
-                                                            taskListController
-                                                                .taskListState
-                                                                .currentTask
-                                                                .value!);
+                                                          EdgeInsets.all(2)),
+                                                      backgroundColor:
+                                                          MaterialStateProperty.all<Color>(
+                                                              Colors.yellow.shade700)),
+                                                  onPressed: () {
+                                                    historyEventController.addComment(
                                                         commentTextController
-                                                            .clear();
-                                                        historyScrollController
-                                                            .animateTo(
-                                                          historyScrollController
-                                                              .position
-                                                              .maxScrollExtent,
-                                                          curve: Curves.easeOut,
-                                                          duration: const Duration(
-                                                              milliseconds: 300),
-                                                        );
-                                                        FocusManager
-                                                            .instance
-                                                            .primaryFocus
-                                                            ?.unfocus();
-                                                      },
-                                                    ),
-                                                  ],
-                                                  mainAxisAlignment:
+                                                            .text,
+                                                        historyEventController
+                                                            .getIsAlarmComment(),
+                                                        taskListController
+                                                            .taskListState
+                                                            .currentTask
+                                                            .value!);
+                                                    commentTextController
+                                                        .clear();
+                                                    historyScrollController
+                                                        .animateTo(
+                                                      historyScrollController
+                                                          .position
+                                                          .maxScrollExtent,
+                                                      curve: Curves.easeOut,
+                                                      duration: const Duration(
+                                                          milliseconds: 300),
+                                                    );
+                                                    FocusManager
+                                                        .instance.primaryFocus
+                                                        ?.unfocus();
+                                                  },
+                                                ),
+                                              ],
+                                              mainAxisAlignment:
                                                   MainAxisAlignment.end),
-                                            ))
-                                      ],
-                                    ));
-                              })
-                        ]))
+                                        ))
+                                  ],
+                                ));
+                          })
+                    ]))
                   ]));
             }));
   }
@@ -637,11 +617,11 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
                                   elevation: 3,
                                   offset: Offset(0, 50),
                                   itemBuilder: (BuildContext context) =>
-                                  <PopupMenuEntry>[
+                                      <PopupMenuEntry>[
                                     PopupMenuItem(
                                       child: ListTile(
                                           leading:
-                                          Icon(Icons.check_circle_outline),
+                                              Icon(Icons.check_circle_outline),
                                           title: Text('Завершить этап'),
                                           onTap: () async {
                                             // TODO поправить проверку после нормальной реализации модели этапов
@@ -659,14 +639,17 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
                                               try {
                                                 await taskListController
                                                     .completeStage(
-                                                    taskListController
-                                                        .taskListState
-                                                        .currentTask.value!
-                                                        .biId,
-                                                    taskListController
-                                                        .taskListState
-                                                        .currentTask.value!.id,
-                                                    null);
+                                                        taskListController
+                                                            .taskListState
+                                                            .currentTask
+                                                            .value!
+                                                            .biId,
+                                                        taskListController
+                                                            .taskListState
+                                                            .currentTask
+                                                            .value!
+                                                            .id,
+                                                        null);
                                               } catch (e) {
                                                 // TODO сообщение об ошибке
                                               } finally {
@@ -684,7 +667,7 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
                                           leading: Icon(Icons.access_time),
                                           title: Text(
                                               (task.getCurrentIdleTime() ==
-                                                  null)
+                                                      null)
                                                   ? "Зарегистрировать простой"
                                                   : "Завершить простой"),
                                           onTap: () {
@@ -710,13 +693,15 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
                                           onTap: () {
                                             DefaultTabController.of(context)!
                                                 .animateTo(3,
-                                                curve: Curves.easeOut,
-                                                duration: const Duration(
-                                                    milliseconds: 300));
+                                                    curve: Curves.easeOut,
+                                                    duration: const Duration(
+                                                        milliseconds: 300));
                                             historyEventController
                                                 .addNewCrashComment(
-                                                taskListController.taskListState
-                                                    .currentTask.value!);
+                                                    taskListController
+                                                        .taskListState
+                                                        .currentTask
+                                                        .value!);
                                           },
                                         ))
                                   ],
@@ -741,7 +726,7 @@ class AttrGroup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     LinkedHashMap<String, Object?> attribValuesByGroup =
-    task.getAttrValuesByGroup(attrGroup);
+        task.getAttrValuesByGroup(attrGroup);
 
     return Column(children: [
       Container(
@@ -750,14 +735,14 @@ class AttrGroup extends StatelessWidget {
               style: const TextStyle(fontSize: 18, color: Colors.grey))),
       SizedBox(
           child: ListView.builder(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            shrinkWrap: true,
-            itemCount: attribValuesByGroup.length,
-            itemBuilder: (BuildContext context, int index) {
-              return AttribValueRow(
-                  attribValue: attribValuesByGroup.entries.elementAt(index));
-            },
-          ))
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        shrinkWrap: true,
+        itemCount: attribValuesByGroup.length,
+        itemBuilder: (BuildContext context, int index) {
+          return AttribValueRow(
+              attribValue: attribValuesByGroup.entries.elementAt(index));
+        },
+      ))
     ]);
   }
 }
@@ -774,9 +759,9 @@ class AttribValueRow extends StatelessWidget {
     String attrValue = (attribValue.value == null)
         ? ""
         : (attribValue.value.runtimeType == DateTime
-        ? DateFormat("dd.MM.yyyy HH:mm")
-        .format(DateTime.parse(attribValue.value.toString()))
-        : attribValue.value.toString());
+            ? DateFormat("dd.MM.yyyy HH:mm")
+                .format(DateTime.parse(attribValue.value.toString()))
+            : attribValue.value.toString());
 
     return Row(children: [
       Expanded(
@@ -789,11 +774,10 @@ class AttribValueRow extends StatelessWidget {
                           color: Color(0xFF646363),
                           fontWeight: FontWeight.normal),
                       children: <TextSpan>[
-                        TextSpan(text: "$attrKey:   "),
-                        TextSpan(
-                            text: attrValue,
-                            style: TextStyle(color: Colors.black))
-                      ]))))
+                    TextSpan(text: "$attrKey:   "),
+                    TextSpan(
+                        text: attrValue, style: TextStyle(color: Colors.black))
+                  ]))))
     ]);
   }
 }

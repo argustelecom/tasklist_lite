@@ -42,7 +42,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
               body: Padding(
                   padding: EdgeInsets.symmetric(vertical: 0, horizontal: 32),
                   child: SizedBox(
-                    width: 600,
+                    width: MediaQuery.of(context).size.width,
                     child: ListView(
                       shrinkWrap: true,
                       children: [
@@ -67,7 +67,10 @@ class _NotificationsPageState extends State<NotificationsPage> {
                             }
                             // Если нет плашки, то выкладываем разделитель.
                             // Без него крашится, сделал пока бесцеветным-незаметным
-                            return Divider(color: themeData.highlightColor);
+                            return Divider(
+                              color: themeData.highlightColor,
+                              height: 0,
+                            );
                           },
                           shrinkWrap: true,
                           itemCount: controller.getNotifications().length,
@@ -78,13 +81,15 @@ class _NotificationsPageState extends State<NotificationsPage> {
                               child: NotificationCard(
                                   onTap: () {
                                     // taskListController.findCurrentTask(controller.getNotifications()[index].task);
-                                    taskListController.taskListState.currentTask.value = controller
-                                        .getNotifications()[index]
-                                        .task;
+                                    taskListController
+                                            .taskListState.currentTask.value =
+                                        controller
+                                            .getNotifications()[index]
+                                            .task;
                                     Navigator.pushNamed(
                                         context, TaskPage.routeName,
-                                        arguments:
-                                            taskListController.taskListState.currentTask.value);
+                                        arguments: taskListController
+                                            .taskListState.currentTask.value);
                                   },
                                   notify: controller.getNotifications()[index],
                                   task: controller

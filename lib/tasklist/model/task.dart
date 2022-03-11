@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:duration/duration.dart';
 import 'package:duration/locale.dart';
 import 'package:intl/intl.dart';
+import 'package:tasklist_lite/tasklist/model/stage.dart';
 
 import 'idle_time.dart';
 
@@ -17,6 +18,9 @@ class Task {
 
   /// "Номер"
   final String name;
+
+  /// Этап наряда
+  Stage? stage;
 
   /// "Название"
   final String? desc;
@@ -88,6 +92,7 @@ class Task {
       {required this.id,
       required this.name,
       required this.biId,
+      this.stage,
       this.desc,
       this.processTypeName,
       this.taskType,

@@ -1,8 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:tasklist_lite/state/persistent_state.dart';
 
@@ -15,7 +13,6 @@ class ApplicationState extends PersistentState {
   //для проверки из-под эмулятора используй этот адрес, если не работает дефолт
   //static const defaultServerAddress = "http://10.0.2.2:8080";
 
-  static const defaultServerAddress = "http://192.168.100.84:8080";
     "jboss12": "http://jboss12:8080"
   };
 
