@@ -54,7 +54,9 @@ build httpd:
     - echo "Coping web to ./tmp/Apache24/htdocs/"
     - cp -r ./web/* ./tmp/Apache24/htdocs/
     - cd ./tmp
-    - tar cvfz httpd-2.4-win32-tasklist-lite_$CI_PIPELINE_ID.tar.gz ./*    
+    - tar cvfz httpd-2.4-win32-tasklist-lite_$CI_PIPELINE_ID.tar.gz ./*
+    - pwd
+    - ls -l
   tags:
     - light
   needs: [build web]
