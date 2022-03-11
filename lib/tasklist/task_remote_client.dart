@@ -107,10 +107,10 @@ class TaskRemoteClient {
       if (value.hasException) {
         // need catch 401 error
         if (value.exception?.linkException is ServerException) {
-          throw Exception("Сервер не доступен");
+          throw Exception("Сервер недоступен");
         }
         if (value.exception?.linkException is HttpLinkParserException) {
-          throw Exception("Неавторизован");
+          throw Exception("Не авторизован");
         }
         throw Exception("Неожиданная ошибка");
       }
@@ -140,10 +140,10 @@ class TaskRemoteClient {
       if (value.hasException) {
         // need catch 401 error
         if (value.exception?.linkException is ServerException) {
-          throw Exception("Сервер не доступен");
+          throw Exception("Сервер недоступен");
         }
         if (value.exception?.linkException is HttpLinkParserException) {
-          throw Exception("Неавторизован");
+          throw Exception("Не авторизован");
         }
         throw Exception("Неожиданная ошибка");
       }
@@ -185,10 +185,10 @@ class TaskRemoteClient {
       if (value.hasException) {
         // need catch 401 error
         if (value.exception?.linkException is ServerException) {
-          throw Exception("Сервер не доступен");
+          throw Exception("Сервер недоступен");
         }
         if (value.exception?.linkException is HttpLinkParserException) {
-          throw Exception("Неавторизован");
+          throw Exception("Не авторизован");
         }
         throw Exception("Неожиданная ошибка");
       }
@@ -225,10 +225,10 @@ class TaskRemoteClient {
       if (value.hasException) {
         // need catch 401 error
         if (value.exception?.linkException is ServerException) {
-          throw Exception("Сервер не доступен");
+          throw Exception("Сервер недоступен");
         }
         if (value.exception?.linkException is HttpLinkParserException) {
-          throw Exception("Неавторизован");
+          throw Exception("Не авторизован");
         }
         throw Exception("Неожиданная ошибка");
       }
@@ -256,10 +256,10 @@ class TaskRemoteClient {
       if (value.hasException) {
         // need catch 401 error
         if (value.exception?.linkException is ServerException) {
-          throw Exception("Сервер не доступен");
+          throw Exception("Сервер недоступен");
         }
         if (value.exception?.linkException is HttpLinkParserException) {
-          throw Exception("Неавторизован");
+          throw Exception("Не авторизован");
         }
         throw Exception("Неожиданная ошибка");
       }
@@ -294,10 +294,10 @@ class TaskRemoteClient {
       if (value.hasException) {
         // need catch 401 error
         if (value.exception?.linkException is ServerException) {
-          throw Exception("Сервер не доступен");
+          throw Exception("Сервер недоступен");
         }
         if (value.exception?.linkException is HttpLinkParserException) {
-          throw Exception("Неавторизован");
+          throw Exception("Не авторизован");
         }
         throw Exception("Неожиданная ошибка");
       }
@@ -306,6 +306,39 @@ class TaskRemoteClient {
       }
       //пока мутации всегда возвращает null. но возможность получать пока оставим
       result = HistoryEvent.fromJson(value.data!["addComment"]);
+    }, onError: (e) {
+      throw Exception(" onError " + e.toString());
+    });
+    return result;
+  }
+
+  Future<Task> endStage(int foreignSiteOrderId) async {
+    String endStageQuery = '''
+ mutation {  
+   endStage(
+    foreignSiteOrderId:"$foreignSiteOrderId"){
+       id
+    }
+ }''';
+
+    Future<QueryResult> mutationResultFuture =
+        _graphQLService.mutate(endStageQuery);
+    late Task result;
+    await mutationResultFuture.then((value) {
+      if (value.hasException) {
+        // need catch 401 error
+        if (value.exception?.linkException is ServerException) {
+          throw Exception("Сервер недоступен");
+        }
+        if (value.exception?.linkException is HttpLinkParserException) {
+          throw Exception("Не авторизован");
+        }
+        throw Exception("Неожиданная ошибка");
+      }
+      if (value.data == null || value.data!["id"] == null) {
+        return null;
+      }
+      result = Task.fromJson(value.data!["id"]);
     }, onError: (e) {
       throw Exception(" onError " + e.toString());
     });
