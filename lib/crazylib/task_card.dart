@@ -6,18 +6,15 @@ import 'package:tasklist_lite/state/tasklist_controller.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../pages/task_page.dart';
 import '../tasklist/fixture/task_fixtures.dart';
 
 /// визуальное представление задачи в списке задач
-/// #TODO: также используется и в старой карусели в AlternativeTaskListPage, но никто даже не смотрел, как оно там выглядит
 class TaskCard extends StatelessWidget {
   final Task task;
-  final String taskPageRouteName;
 
   static const double taskCardElevation = 2;
-  const TaskCard(
-      {Key? key, required this.task, required this.taskPageRouteName})
-      : super(key: key);
+  const TaskCard({Key? key, required this.task}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -39,11 +36,9 @@ class TaskCard extends StatelessWidget {
                   child: InkWell(
                     onTap: () {
                       taskListController.taskListState.currentTask.value = task;
-                      Navigator.pushNamed(
-                        context,
-                        this.taskPageRouteName,
-                        arguments: this.task,
-                      );
+                      GetDelegate routerDelegate = Get.find();
+                      routerDelegate.toNamed(TaskPage.routeName,
+                          arguments: this.task);
                     },
                     child: Column(
                       children: [

@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:tasklist_lite/pages/reports_page.dart';
 import 'package:tasklist_lite/pages/trunk_page.dart';
 
-import '../pages/tasklist_page.dart';
 import '../state/auth_controller.dart';
 
 /// перечень всех пунктов меню в bottom_bar и в widescreen-slider`е
@@ -15,14 +14,13 @@ class MenuAction {
   MenuAction(
       {required this.icon, required this.caption, required this.callback});
 
-  // в callback`ах не может использовать Navigator.pushNamed, т.к. здесь нет buildContext`а.
-  // Но тут нас выручает Get с возможностью навигации без контекста
   static final List<MenuAction> mainActionList = List.of({
     MenuAction(
         icon: Image.asset("images/ibob_backpack_icon.png"),
         caption: "Рюкзак",
         callback: () {
-          Get.toNamed(TrunkPage.routeName);
+          GetDelegate routerDelegate = Get.find();
+          routerDelegate.toNamed(TrunkPage.routeName);
         }),
     MenuAction(
         icon: Icon(Icons.event_available_outlined),
@@ -30,18 +28,15 @@ class MenuAction {
         // список задач имеет корневой маршрут "/". Это значит, что он уже был
         // по-любому открыт, и нам надо делать pop, а не push, чтобы попасть туда.
         callback: () {
-          Get.until(
-            (route) {
-              return ((Get.currentRoute == "/") ||
-                  (Get.currentRoute == "/" + TaskListPage.routeName));
-            },
-          );
+          GetDelegate routerDelegate = Get.find();
+          routerDelegate.backUntil("/");
         }),
     MenuAction(
         icon: Icon(Icons.insert_chart_outlined),
         caption: "Отчеты",
         callback: () {
-          Get.toNamed(ReportsPage.routeName);
+          GetDelegate routerDelegate = Get.find();
+          routerDelegate.toNamed(ReportsPage.routeName);
         }),
     MenuAction(
         icon: Icon(Icons.report_problem_outlined),

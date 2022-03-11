@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:tasklist_lite/tasklist/model/notify.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
 
@@ -10,14 +11,17 @@ class NotificationCard extends StatelessWidget {
   final VoidCallback onTap;
 
   const NotificationCard(
-      {Key? key, required this.notify, required this.task, required this.onTap})
+      {Key? key,
+      required this.notify,
+      required this.task,
+      required this.taskPageRouteName})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     ThemeData themeData = Theme.of(context);
     return Container(
-        width: MediaQuery.of(context).size.width,
+          width: MediaQuery.of(context).size.width,
         child: Card(
           child: Padding(
             padding: EdgeInsets.only(left: 12, top: 4, right: 12, bottom: 4),

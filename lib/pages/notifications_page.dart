@@ -35,7 +35,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
                 leading: IconButton(
                   icon: Icon(Icons.chevron_left_outlined),
                   onPressed: () {
-                    Navigator.pop(context);
+                    GetDelegate routerDelegate = Get.find();
+                    routerDelegate.popRoute();
                   },
                 ),
               ),
@@ -120,7 +121,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
                 leading: IconButton(
                   icon: Icon(Icons.chevron_left_outlined),
                   onPressed: () {
-                    Navigator.pop(context);
+                    GetDelegate routerDelegate = Get.find();
+                    routerDelegate.popRoute();
                   },
                 ),
               ),

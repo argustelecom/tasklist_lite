@@ -272,26 +272,14 @@ class LoginPageState extends State<LoginPage> {
                                     _serverAddressSuggestions);
 
                                 /// логинимся
-                                Future<void> loginFuture = authController.login(
+                                /// Если пользователь разлогинился не с домашней странички(а, например, со страницы профиля),
+                                /// надо его возвращать туда, откуда он разлогинился. Но это произойдет само, т.к.
+                                /// authState у нас теперь реактивный, а при логауте url мы не меняем
+                                authController.login(
                                     _applicationState.inDemonstrationMode.value,
                                     _loginEditingController.text,
                                     _passwordEditingController.text,
                                     _serverAddressEditingController.text);
-
-                                /// Если пользователь разлогинился не с домашней странички(а, например, со страницы профиля),
-                                /// надо его возвращать туда, откуда он разлогинился
-                                loginFuture.then((value) {
-                                  if (authController
-                                      .authState.isAuthenticated.value) {
-                                    NavigatorState navigatorState =
-                                        Navigator.of(context);
-                                    if (navigatorState.canPop()) {
-                                      navigatorState.pop();
-                                    } else {
-                                      navigatorState.pushNamed("/");
-                                    }
-                                  }
-                                });
                               },
                               padding: EdgeInsets.symmetric(vertical: 8),
                             ),

@@ -19,7 +19,6 @@ import 'package:tasklist_lite/pages/tasklist_page.dart';
 import 'package:tasklist_lite/pages/trunk_page.dart';
 import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/state/auth_controller.dart';
-import 'package:tasklist_lite/state/auth_state.dart';
 import 'package:tasklist_lite/tasklist/close_code_repository.dart';
 import 'package:tasklist_lite/tasklist/fixture/history_events_fixtures.dart';
 import 'package:tasklist_lite/tasklist/fixture/mark_fixtures.dart';
@@ -38,22 +37,44 @@ import 'state/common_dropdown_controller.dart';
 void main() async {
   // Читаем настройки переменные среды
   WidgetsFlutterBinding.ensureInitialized();
-  //по https://pub.dev/packages/flutter_dotenv
+  // по https://pub.dev/packages/flutter_dotenv
   await dotenv.load(fileName: "config/app.env");
 
+  // некоторые "бины" должны быть созданы еще до того, как отработает initialBinding у MaterialApp
+  Get.put(ApplicationState());
+  Get.put(Get.createDelegate(navigatorObservers: [
+    CustomNavigatorObserver(
+      onPop: (route, previousRoute) {
+        // _DropdownRoute<String> является приватным, поэтому проверить здесь через is не можем
+        // route.settings.name у _DropdownRoute<String> равен null, тоже прекрасно
+        // но воля к костылям несокрушима, поэтому:
+        if (route.runtimeType.toString().startsWith("_DropdownRoute")) {
+          CommonDropdownController commonDropdownController = Get.find();
+          commonDropdownController.someDropdownTapped = false;
+        }
+      },
+    )
+  ]));
   runApp(MyApp());
 }
 
-// #TODO: сделать автотесты
+// kostd, 11.03.2022: переехали на навигацию 2.0 (она же navigator 2.0, nav2 или router).
+// Т.к. навигация 1.0 позволяла все, кроме restore маршрутов после f5 в браузере. А наша основная цель -- веб,
+// поэтому нам совершенно необходимо восстанавливать маршруты после f5. Для переезда на nav2 надо 1) отказаться от
+// onGenerateRoute (теперь та же логика перебралась в описание списка pages в GetMaterialApp); 2) создавать GetMaterialApp
+// не дефолтным конструктором, а его вариантом GetMaterialApp.router и 3) выполнять pushNamed и pop не через static-методы
+// Navigator`а, а через (доступный через Get.find благодаря put`у здесь) GetDelegate (использовать методы toNamed и popRoute
+// соответственно). Теперь после f5 работает как программный pop, так и браузерный back, причем используем штатные возможности
+// библиотки Get, ничего дополнительно подключать не пришлось.
+// #TODO: пока не работает deep linking в смысле параметров в url, параметры передаются не через url (см. например открытие
+// TaskPage из карточки TaskCard). Пока вроде и не надо.
 class MyApp extends StatelessWidget {
-  // ApplicationState не имеет своего контроллера, поэтому не может создаваться внутри него.
-  // В то же время, нужен почти сразу, здесь же в методе build, еще до выполнения initialBinding.
-  // #TODO: наверное, не лучший способ инициализации. Хотя бы из-за ворнинга выше.
-  // Можно сделать MyApp stateful, либо же условно (if Get.isRegistered) инициализировать в build.
-  ApplicationState applicationState = Get.put(ApplicationState());
+  final ApplicationState _applicationState = Get.find();
+
+  final GetDelegate _routerDelegate = Get.find();
 
   /// эта странца может отображаться довольно часто, поэтому не хочется ее каждый раз пересоздавать.
-  static final LoginPage loginPage = LoginPage();
+  static final LoginPage _loginPage = LoginPage();
 
   /// карта всех маршрутов. Если сделал новую страничку, добавь маршрут к ней суда
   final Map<String, Widget> staticRoutes = {
@@ -66,7 +87,7 @@ class MyApp extends StatelessWidget {
     TaskPage.routeName: TaskPage(title: "Детальное представление задачи"),
     NotificationsPage.routeName: NotificationsPage(title: "Уведомления"),
     ProfilePage.routeName: ProfilePage(),
-    LoginPage.routeName: loginPage,
+    LoginPage.routeName: _loginPage,
     SupportPage.routeName: SupportPage(),
     HelpPage.routeName: HelpPage(),
     AboutPage.routeName: AboutPage(),
@@ -74,27 +95,6 @@ class MyApp extends StatelessWidget {
     ReportsPage.routeName: ReportsPage(),
     CommentPage.routeName: CommentPage()
   };
-
-  // то же самое (то есть не пустить на страницу, а отправить на форму входа, если не залогинен)
-  // в приличном обществе делают через route guard`ы. Например, https://blog.logrocket.com/implementing-route-guards-flutter-web-apps/
-  // Но в этом примере не нравится генерация маршрутов (от кодогенерации хочется держаться подальше, если можно).
-  // Также по фразе route guard ищется много примеров, но в среднем они не сильно лучше решения здесь.
-  // Это вовсе не значит, что kostd некуда совершенствоваться. Напротив, целины еще много.
-  Route<dynamic> onGenerateRoute(RouteSettings routeSettings) {
-    AuthState authState = Get.find();
-    return MaterialPageRoute(
-      builder: (context) => Obx(() {
-        if (authState.isAuthenticated.value ||
-            // без аутентификации можно попасть на страницу настроек
-            routeSettings.name == ProfilePage.routeName) {
-          return staticRoutes[routeSettings.name] ?? staticRoutes['/']!;
-        } else {
-          return loginPage;
-        }
-      }),
-      settings: routeSettings,
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -104,17 +104,27 @@ class MyApp extends StatelessWidget {
           init: AuthController(),
           builder: (authController) {
             return Obx(() {
-              return GetMaterialApp(
+              return GetMaterialApp.router(
                 title: 'Фигаро',
-                themeMode: applicationState.themeMode.value,
+                themeMode: _applicationState.themeMode.value,
                 theme: TaskListThemeData.lightThemeData.copyWith(
                   platform: defaultTargetPlatform,
                 ),
-                // к сожалению,  пришлось отказаться от перечисления маршрутов здесь, т.к. иначе не вызывается onGenerateRoute,
-                // в которой хитрая логика редиректа на страницу входа в систему
-                onGenerateRoute: onGenerateRoute,
-                // случай onUnknown тоже будет корректно обработан внутри onGenerateRoute
-                onUnknownRoute: onGenerateRoute,
+                routerDelegate: _routerDelegate,
+                getPages: List.of(staticRoutes.entries.map((e) {
+                  return GetPage(
+                      // navigator2 (он же router) ожидает, что маршруты начинаются со слеша "/" (а navigator1 наоборот)
+                      name: e.key.startsWith("/") ? e.key : "/" + e.key,
+                      page: () {
+                        return Obx(() {
+                          if (!authController.authState.isAuthenticated.value) {
+                            return _loginPage;
+                          } else {
+                            return e.value;
+                          }
+                        });
+                      });
+                })),
                 localizationsDelegates: [
                   GlobalMaterialLocalizations.delegate,
                   // Добавил из-за ошбики "A CupertinoLocalizations delegate that supports the ru locale was not found."
@@ -144,22 +154,6 @@ class MyApp extends StatelessWidget {
                 darkTheme: TaskListThemeData.darkThemeData.copyWith(
                   platform: defaultTargetPlatform,
                 ),
-                navigatorObservers: [
-                  CustomNavigatorObserver(
-                    onPop: (route, previousRoute) {
-                      // _DropdownRoute<String> является приватным, поэтому проверить здесь через is не можем
-                      // route.settings.name у _DropdownRoute<String> равен null, тоже прекрасно
-                      // но воля к костылям несокрушима, поэтому:
-                      if (route.runtimeType
-                          .toString()
-                          .startsWith("_DropdownRoute")) {
-                        CommonDropdownController commonDropdownController =
-                            Get.find();
-                        commonDropdownController.someDropdownTapped = false;
-                      }
-                    },
-                  )
-                ],
               );
             });
           });

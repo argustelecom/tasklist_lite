@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
 import '../layout/adaptive.dart';
 
 class AdaptiveDialog extends StatelessWidget {
@@ -111,7 +113,8 @@ class AdaptiveDialog extends StatelessWidget {
                         Spacer(),
                         InkWell(
                           onTap: () {
-                            Navigator.of(context).pop();
+                            GetDelegate routerDelegate = Get.find();
+                            routerDelegate.popRoute();
                           },
                           child: Icon(
                             Icons.close,
