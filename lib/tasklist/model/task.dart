@@ -22,6 +22,10 @@ class Task {
   /// Этап наряда
   Stage? stage;
 
+  //используем в кнопке проверка аварии
+  /// Внешний номер объекта в наряде
+  String? ttmsId;
+
   /// "Название"
   final String? desc;
 
@@ -94,6 +98,7 @@ class Task {
       required this.biId,
       this.stage,
       this.desc,
+      this.ttmsId,
       this.processTypeName,
       this.taskType,
       this.dueDate,

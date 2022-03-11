@@ -45,6 +45,14 @@ class HistoryEventController extends GetxController {
       List<HistoryEvent> comments = event;
       this.historyEventList = comments;
     });
+    update();
+  }
+
+  /// Сбрасываем стрим
+  @override
+  void onClose() {
+    commentSubscription?.cancel();
+    super.onClose();
   }
 
   /// Метод для добавления комментария по наряду
@@ -56,6 +64,14 @@ class HistoryEventController extends GetxController {
           task,
           comment,
           isAlarm);
+      // TODO: Костыль для корректного постороеня UI т.к. пока не реализованы подписки.
+      // При добавлении нового коммента он улетает на сервер и дополнительно добавляется в список в контроллере для отображения
+      historyEventList.add(HistoryEvent(
+          type: "Комментарий",
+          person: "Администратор",
+          date: DateTime.now(),
+          isAlarm: isAlarm,
+          content: comment));
     }
     update();
   }
@@ -63,7 +79,7 @@ class HistoryEventController extends GetxController {
   /// Добавлеяем новый коммент с проверкой аварии(для кнопки проверка аварии)
   addNewCrashComment(Task task) {
     // TODO генерировать правильный комментарий
-    String comment = 'Проверка аварии *111*1234#';
+    String comment = '#203*TTMSId#';
     bool isAlarm = false;
 
     HistoryEventRepository().addNewComment(
@@ -72,6 +88,13 @@ class HistoryEventController extends GetxController {
         task,
         comment,
         isAlarm);
+    // TODO: тут такой же костыль - исправить когда будут subscriptions
+    historyEventList.add(HistoryEvent(
+        type: "Комментарий",
+        person: "Администратор",
+        date: DateTime.now(),
+        isAlarm: isAlarm,
+        content: comment));
     update();
   }
 
