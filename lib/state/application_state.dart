@@ -10,21 +10,17 @@ import 'package:tasklist_lite/state/persistent_state.dart';
 /// Общие атрибуты приложения: выбранная тема, флажок демо-режима, возможные адреса серверов и т.д.
 class ApplicationState extends PersistentState {
   static const Map<String, String> _defaultPossibleServers = const {
-    "localhost": "http://localhost:8080",
-  //для проверки из-под эмулятора используй этот адрес, если не работает дефолт
-  //static const defaultServerAddress = "http://10.0.2.2:8080";
-
-    "jboss12": "http://jboss12:8080"
+      "localhost": "http://localhost:8080",
+    "jboss5": "http://jboss5:8080"
   };
 
-  Rx<ThemeMode> themeMode = ThemeMode.system.obs;
+  final Rx<ThemeMode> themeMode = ThemeMode.system.obs;
 
-  Rx<bool> inDemonstrationMode = false.obs;
+  final Rx<bool> inDemonstrationMode = false.obs;
 
-  RxMap<String, String> possibleServers = RxMap.of(_defaultPossibleServers);
-  //TODO: научиться прокидывать значение в настройки в const-конструктор.
-  // final Map<String, String> possibleServers = Map<String, String>.from(jsonDecode(dotenv.get('URL_SERVERS', fallback:
-  // "{\"localhost\": \"$defaultServerAddress\", \"jboss12\": \"http://jboss12:8080\"}")));
+  final RxMap<String, String> possibleServers =
+      RxMap.of(_defaultPossibleServers);
+
 
   ApplicationState();
 

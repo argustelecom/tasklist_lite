@@ -15,16 +15,16 @@ class TaskListState extends PersistentState {
 
   /// открытые задачи. Их перечень не зависит от выбранного числа и обновляется только по необходимости
   /// (когда на сервере будут изменения)
-  RxList<Task> openedTasks = RxList.of({});
+  final RxList<Task> openedTasks = RxList.of({});
 
   /// закрытые за выбранный день задачи. Как только день перевыбран, должны быть переполучены в репозитории
   /// (в его функции также может входить кеширование)
-  RxList<Task> closedTasks = RxList.of({});
+  final RxList<Task> closedTasks = RxList.of({});
 
   /// справочные значения причин простоя. Запрашиваем из репозитория при инициализации контролллера
   /// (далее берем из кэша)
   /// TODO возможно, стоит перенести
-  RxList<IdleTimeReason> idleTimeReasons = RxList.of({});
+  final RxList<IdleTimeReason> idleTimeReasons = RxList.of({});
 
   /// справочные значения шифров закрытия. Запрашиваем из репозитория при инициализации контролллера
   /// (далее берем из кэша)
@@ -34,10 +34,10 @@ class TaskListState extends PersistentState {
   /// выбранный в календаре день
   /// если не выбран, считается "сегодня" (тут есть тех. сложности, т.к. для inherited widget нужно, чтобы
   /// конструктор initialState был константным, а DateTime.now() никак не константный)
-  Rx<DateTime> currentDate = DateUtils.dateOnly(DateTime.now()).obs;
+  final Rx<DateTime> currentDate = DateUtils.dateOnly(DateTime.now()).obs;
 
   /// выбранный таск.
-  Rx<Task?> currentTask = Rxn<Task?>();
+  final Rx<Task?> currentTask = Rxn<Task?>();
 
   @override
   List<RxInterface> getPersistentReactiveAttrs() {
