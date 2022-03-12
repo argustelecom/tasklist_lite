@@ -54,8 +54,7 @@ class _TaskPageState extends State<TaskPage> {
                               Task(
                                   id: 1,
                                   name: "",
-                                  flexibleAttribs: LinkedHashMap(),
-                                  biId: 1)),
+                                  flexibleAttribs: LinkedHashMap())),
                   body: Column(children: [
                     // нужен чтобы ограничить высоту tabBar`а ниже
                     SizedBox(
@@ -346,8 +345,7 @@ class _TaskPageState extends State<TaskPage> {
                                                       id: 1,
                                                       name: "",
                                                       flexibleAttribs:
-                                                          LinkedHashMap(),
-                                                      biId: 1),
+                                                          LinkedHashMap()),
                                               attrGroup: taskListController
                                                       .taskListState
                                                       .currentTask
@@ -646,11 +644,6 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
                                               try {
                                                 await taskListController
                                                     .completeStage(
-                                                        taskListController
-                                                            .taskListState
-                                                            .currentTask
-                                                            .value!
-                                                            .biId,
                                                         taskListController
                                                             .taskListState
                                                             .currentTask

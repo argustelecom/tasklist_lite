@@ -14,8 +14,6 @@ class Task {
 
   final int id;
 
-  final int biId;
-
   /// "Номер"
   final String name;
 
@@ -95,7 +93,6 @@ class Task {
   Task(
       {required this.id,
       required this.name,
-      required this.biId,
       this.stage,
       this.desc,
       this.ttmsId,
@@ -218,7 +215,6 @@ class Task {
   factory Task.fromJson(Map<String, dynamic> json) {
     Task task = Task(
         id: int.parse(json['id']),
-        biId: int.parse(json['biId']),
         name: json['name'],
         desc: json['desc'],
         processTypeName: json['processTypeName'],
@@ -257,7 +253,6 @@ class Task {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
-    data['biId'] = this.biId;
     data['name'] = this.name;
     data['desc'] = this.desc;
     data['processTypeName'] = this.processTypeName;

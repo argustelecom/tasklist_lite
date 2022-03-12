@@ -159,7 +159,7 @@ class TaskRemoteClient {
     return result;
   }
 
-  Future<IdleTime?> registerIdle(int foreignSiteOrderId, int taskInstanceId,
+  Future<IdleTime?> registerIdle(int taskInstanceId,
       int reasonId, DateTime beginTime, DateTime? endTime) async {
     String beginTimeStr = DateFormat('dd.MM.yyyy HH:mm:ss').format(beginTime);
     String endTimeStr = '';
@@ -169,7 +169,6 @@ class TaskRemoteClient {
     String registerIdleQuery = '''
  mutation {  
    registerIdleTime(
-    foreignSiteOrderId:"$foreignSiteOrderId",
     taskInstanceId:"$taskInstanceId",
     reasonId:"$reasonId",
     beginTime:"$beginTimeStr",
@@ -202,7 +201,7 @@ class TaskRemoteClient {
     return result;
   }
 
-  Future<IdleTime?> finishIdle(int foreignSiteOrderId, int taskInstanceId,
+  Future<IdleTime?> finishIdle(int taskInstanceId,
       DateTime beginTime, DateTime endTime) async {
     String beginTimeStr = DateFormat('dd.MM.yyyy HH:mm:ss').format(beginTime);
     String endTimeStr = DateFormat('dd.MM.yyyy HH:mm:ss').format(endTime);
@@ -210,7 +209,6 @@ class TaskRemoteClient {
     String finishIdleQuery = '''
  mutation {  
    finishIdleTime(
-    foreignSiteOrderId:"$foreignSiteOrderId",
     taskInstanceId:"$taskInstanceId",
     beginTime:"$beginTimeStr",
     endTime:"$endTimeStr"){
@@ -312,11 +310,11 @@ class TaskRemoteClient {
     return result;
   }
 
-  Future<Task> endStage(int foreignSiteOrderId) async {
+  Future<Task> endStage(int taskInstanceId) async {
     String endStageQuery = '''
  mutation {  
    endStage(
-    foreignSiteOrderId:"$foreignSiteOrderId"){
+    taskInstanceId:"$taskInstanceId"){
        id
     }
  }''';

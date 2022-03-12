@@ -109,8 +109,6 @@ class CloseTaskDialogState extends State<CloseTaskDialog> {
                     _operationCompleted =
                         (await taskListController.completeStage(
                             taskListController
-                                .taskListState.currentTask.value!.biId,
-                            taskListController
                                 .taskListState.currentTask.value!.id,
                             _closeCode!.id))!;
                   } catch (e) {

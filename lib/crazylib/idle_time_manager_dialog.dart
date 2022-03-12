@@ -313,8 +313,6 @@ class IdleTimeManagerDialogState extends State<IdleTimeManagerDialog> {
                     try {
                       newIdleTime = await taskListController.registerIdle(
                           taskListController
-                              .taskListState.currentTask.value!.biId,
-                          taskListController
                               .taskListState.currentTask.value!.id,
                           _reason!.id,
                           new DateTime(
@@ -346,8 +344,6 @@ class IdleTimeManagerDialogState extends State<IdleTimeManagerDialog> {
                   } else {
                     try {
                       newIdleTime = await taskListController.finishIdle(
-                          taskListController
-                              .taskListState.currentTask.value!.biId,
                           taskListController
                               .taskListState.currentTask.value!.id,
                           new DateTime(

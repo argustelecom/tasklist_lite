@@ -52,7 +52,6 @@ class TaskRepository extends GetxService {
   Future<IdleTime?> registerIdle(
       String basicAuth,
       String serverAddress,
-      int foreignSiteOrderId,
       int taskInstanceId,
       int reasonId,
       DateTime beginTime,
@@ -71,13 +70,12 @@ class TaskRepository extends GetxService {
     TaskRemoteClient taskRemoteClient =
         TaskRemoteClient(basicAuth, serverAddress);
     return await taskRemoteClient.registerIdle(
-        foreignSiteOrderId, taskInstanceId, reasonId, beginTime, endTime);
+       taskInstanceId, reasonId, beginTime, endTime);
   }
 
   Future<IdleTime?> finishIdle(
       String basicAuth,
       String serverAddress,
-      int foreignSiteOrderId,
       int taskInstanceId,
       DateTime beginTime,
       DateTime endTime) async {
@@ -95,11 +93,11 @@ class TaskRepository extends GetxService {
     TaskRemoteClient taskRemoteClient =
         TaskRemoteClient(basicAuth, serverAddress);
     return await taskRemoteClient.finishIdle(
-        foreignSiteOrderId, taskInstanceId, beginTime, endTime);
+        taskInstanceId, beginTime, endTime);
   }
 
   Future<bool?> completeStage(String basicAuth, String serverAddress,
-      int foreignSiteOrderId, int taskInstanceId, int? closeCodeId) async {
+      int taskInstanceId, int? closeCodeId) async {
     ApplicationState applicationState = Get.find();
 
     /// если включен деморежим, возвращаем успех

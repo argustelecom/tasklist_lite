@@ -208,36 +208,33 @@ class TaskListController extends GetxController {
     });
   }
 
-  Future<IdleTime?> registerIdle(int foreignSiteOrderId, int taskInstanceId,
+  Future<IdleTime?> registerIdle(int taskInstanceId,
       int reasonId, DateTime beginTime, DateTime? endTime) async {
     return await taskRepository.registerIdle(
         authState.authString.value!,
         authState.serverAddress.value!,
-        foreignSiteOrderId,
         taskInstanceId,
         reasonId,
         beginTime,
         endTime);
   }
 
-  Future<IdleTime?> finishIdle(int foreignSiteOrderId, int taskInstanceId,
+  Future<IdleTime?> finishIdle(int taskInstanceId,
       DateTime beginTime, DateTime endTime) async {
     AuthState authState = Get.find();
     return await taskRepository.finishIdle(
         authState.authString.value!,
         authState.serverAddress.value!,
-        foreignSiteOrderId,
         taskInstanceId,
         beginTime,
         endTime);
   }
 
   Future<bool?> completeStage(
-      int foreignSiteOrderId, int taskInstanceId, int? closeCodeId) async {
+      int taskInstanceId, int? closeCodeId) async {
     return await taskRepository.completeStage(
         authState.authString.value!,
         authState.serverAddress.value!,
-        foreignSiteOrderId,
         taskInstanceId,
         closeCodeId);
   }
