@@ -11,11 +11,12 @@ class ApplicationState extends PersistentState {
     "jboss12": "http://jboss12:8080"
   };
 
-  Rx<ThemeMode> themeMode = ThemeMode.system.obs;
+  final Rx<ThemeMode> themeMode = ThemeMode.system.obs;
 
-  Rx<bool> inDemonstrationMode = false.obs;
+  final Rx<bool> inDemonstrationMode = false.obs;
 
-  RxMap<String, String> possibleServers = RxMap.of(_defaultPossibleServers);
+  final RxMap<String, String> possibleServers =
+      RxMap.of(_defaultPossibleServers);
 
   ApplicationState();
 

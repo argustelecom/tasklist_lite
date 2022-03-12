@@ -9,18 +9,18 @@ import '../tasklist/model/user_info.dart';
 /// признак аутентифицированности, инфу о пользователе, адрес сервера и т.д.
 class AuthState extends PersistentState {
   /// Состоялся ли успешный логин в рамках этого сеанса работы.
-  Rx<bool> isAuthenticated = false.obs;
+  final Rx<bool> isAuthenticated = false.obs;
 
   /// в такой нотации получаем Expected a value of type 'Null', but got one of type 'UserInfo'
   /// при попытке установить любое значение value:
   /// Rx<UserInfo?> _userInfo = null.obs;
   /// Вариант с (null as UserInfo?).obs приводит к обратной ошибке, Expected a value of type 'UserInfo', but got one of type 'Null'
   /// вместо этого надо вот так (см. https://stackoverflow.com/questions/68125824/flutter-getx-initial-value-of-obs-variable-set-to-null ):
-  Rx<UserInfo?> userInfo = Rxn<UserInfo?>();
+  final Rx<UserInfo?> userInfo = Rxn<UserInfo?>();
 
-  Rx<String?> authString = Rxn<String?>();
+  final Rx<String?> authString = Rxn<String?>();
 
-  Rx<String?> serverAddress = Rxn<String?>();
+  final Rx<String?> serverAddress = Rxn<String?>();
 
   @override
   List<RxInterface> getPersistentReactiveAttrs() {
