@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:tasklist_lite/state/persistent_state.dart';
 
@@ -41,9 +42,8 @@ class ApplicationState extends PersistentState {
 
   @override
   Future<void> doPriorAsyncInit() {
-    // #TODO[ВС]: написать сюда код чтения настроек из переменных окружения.
-    // (ессно, удалить при этом вызов super)
-    return super.doPriorAsyncInit();
+    possibleServers.value = Map.of(jsonDecode(dotenv.get('possibleServers'))).cast<String, String>();
+    return Future<void>.value();
   }
 
   @override
