@@ -8,6 +8,7 @@ stages:
 before_script:
   - chmod 777 ./*
   - dos2unix ./*
+  - sed -i "s/^version.*/version: 1.0.0+$CI_PIPELINE_ID/g" pubspec.yaml
   - echo "Get projects dependencies"
   - flutter pub get
 
