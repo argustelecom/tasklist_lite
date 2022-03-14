@@ -130,20 +130,45 @@ class _TaskPageState extends State<TaskPage> {
                                               padding: EdgeInsets.fromLTRB(
                                                   16, 8, 16, 12),
                                               child: Row(children: [
-                                                Text("Наименование этапа"),
+                                                Text(
+                                                    "${taskListController.taskListState.currentTask.value!.stage!.name}"),
                                               ])),
                                           Padding(
                                             padding: EdgeInsets.fromLTRB(
                                                 16, 8, 16, 0),
                                             child: Row(children: [
-                                              Text("КС : 20.12.2021 15.00"),
+                                              Text(
+                                                  "КС : ${taskListController.taskListState.currentTask.value!.stage!.dueDate}",
+                                                  style: taskListController
+                                                          .taskListState
+                                                          .currentTask
+                                                          .value!
+                                                          .stage!
+                                                          .dueDate
+                                                          .isBefore(
+                                                              DateTime.now())
+                                                      ? TextStyle(
+                                                          color: Colors.red)
+                                                      : TextStyle(
+                                                          color: Colors.green)),
                                             ]),
                                           ),
                                           Padding(
                                             padding: EdgeInsets.fromLTRB(
                                                 16, 8, 16, 0),
                                             child: Row(children: [
-                                              Text("КВ : 1ч. 15мин."),
+                                              Text(
+                                                  "${taskListController.taskListState.currentTask.value!.getTimeLeftStageText()}",
+                                                  style: taskListController
+                                                          .taskListState
+                                                          .currentTask
+                                                          .value!
+                                                          .getTimeLeftStageText()
+                                                          .contains('СКВ')
+                                                      ? TextStyle(
+                                                          color: Colors.red)
+                                                      : TextStyle(
+                                                          color: Colors.green)),
                                             ]),
                                           ),
                                         ],
@@ -268,7 +293,17 @@ class _TaskPageState extends State<TaskPage> {
                                                 bottom: 5,
                                                 top: 12),
                                             child: LinearProgressIndicator(
-                                              value: 1,
+                                              value: taskListController
+                                                  .taskListState
+                                                  .currentTask
+                                                  .value!
+                                                  .getStageProgressStatus(
+                                                      1,
+                                                      taskListController
+                                                          .taskListState
+                                                          .currentTask
+                                                          .value!
+                                                          .stage!),
                                               color: Colors.yellow.shade700,
                                               minHeight: 12,
                                               backgroundColor:
@@ -284,7 +319,17 @@ class _TaskPageState extends State<TaskPage> {
                                                 bottom: 5,
                                                 top: 12),
                                             child: LinearProgressIndicator(
-                                              value: 1,
+                                              value: taskListController
+                                                  .taskListState
+                                                  .currentTask
+                                                  .value!
+                                                  .getStageProgressStatus(
+                                                      2,
+                                                      taskListController
+                                                          .taskListState
+                                                          .currentTask
+                                                          .value!
+                                                          .stage!),
                                               color: Colors.yellow.shade700,
                                               minHeight: 12,
                                               backgroundColor:
@@ -300,7 +345,17 @@ class _TaskPageState extends State<TaskPage> {
                                                 bottom: 5,
                                                 top: 12),
                                             child: LinearProgressIndicator(
-                                              value: 0.73,
+                                              value: taskListController
+                                                  .taskListState
+                                                  .currentTask
+                                                  .value!
+                                                  .getStageProgressStatus(
+                                                      3,
+                                                      taskListController
+                                                          .taskListState
+                                                          .currentTask
+                                                          .value!
+                                                          .stage!),
                                               color: Colors.yellow.shade700,
                                               minHeight: 12,
                                               backgroundColor:
@@ -316,7 +371,17 @@ class _TaskPageState extends State<TaskPage> {
                                                 bottom: 5,
                                                 top: 12),
                                             child: LinearProgressIndicator(
-                                              value: 0,
+                                              value: taskListController
+                                                  .taskListState
+                                                  .currentTask
+                                                  .value!
+                                                  .getStageProgressStatus(
+                                                      4,
+                                                      taskListController
+                                                          .taskListState
+                                                          .currentTask
+                                                          .value!
+                                                          .stage!),
                                               color: Colors.yellow.shade700,
                                               minHeight: 12,
                                               backgroundColor:
@@ -327,7 +392,7 @@ class _TaskPageState extends State<TaskPage> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween),
                                 SizedBox(
-                                    height: 400.0,
+                                    height: 500.0,
                                     child: ListView.builder(
                                         shrinkWrap: true,
                                         itemCount: taskListController
@@ -544,7 +609,7 @@ class _TaskPageState extends State<TaskPage> {
                                   ],
                                 ));
                           }),
-                          MarkTypeFilter()
+                      MarkTypeFilter()
                     ]))
                   ]));
             }));

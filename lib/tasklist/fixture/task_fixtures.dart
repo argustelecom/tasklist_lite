@@ -3,8 +3,8 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:tasklist_lite/tasklist/fixture/idle_time_reason_fixtures.dart';
 import 'package:tasklist_lite/tasklist/model/idle_time.dart';
+import 'package:tasklist_lite/tasklist/model/stage.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
-
 
 /// Служба, возвращающая набор задач по переданному идентификатору фикстуры
 class TaskFixtures {
@@ -30,6 +30,13 @@ class TaskFixtures {
           DateUtils.dateOnly(DateTime.now()).add(const Duration(hours: -6)),
       isClosed: false,
       isOutdoor: true,
+      ttmsId: "HM04598",
+      stage: Stage(
+          name: "Выезд на объект",
+          number: 2,
+          isLast: false,
+          dueDate: DateUtils.dateOnly(DateTime.now())
+              .add(const Duration(hours: 20))),
       flexibleAttribs: new LinkedHashMap.of({
         orderOperatorNameFlexAttrName: "Tele2",
         foreignOrderIdFlexAttrName: "INT33564",
@@ -67,6 +74,12 @@ class TaskFixtures {
       latitude: "56.888854",
       longitude: "60.612602",
       comment: "Муфта М172",
+      stage: Stage(
+          name: "В работе",
+          number: 3,
+          isLast: false,
+          dueDate:
+              DateUtils.dateOnly(DateTime.now()).add(const Duration(hours: 6))),
       createDate: DateUtils.dateOnly(DateTime.now())
           .add(const Duration(hours: 24 * 2 - 22)),
       isClosed: false,
@@ -99,6 +112,12 @@ class TaskFixtures {
           .add(const Duration(hours: 24 * 2 - 22)),
       isClosed: false,
       isOutdoor: true,
+      stage: Stage(
+          name: "Ожидание закрытия в TTMS",
+          number: 4,
+          isLast: true,
+          dueDate: DateUtils.dateOnly(DateTime.now())
+              .add(const Duration(hours: -6))),
       flexibleAttribs: new LinkedHashMap.of({
         orderOperatorNameFlexAttrName: "Tele2",
         foreignOrderIdFlexAttrName: "INT36197",

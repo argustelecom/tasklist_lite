@@ -68,7 +68,7 @@ class HistoryEventController extends GetxController {
       // При добавлении нового коммента он улетает на сервер и дополнительно добавляется в список в контроллере для отображения
       historyEventList.add(HistoryEvent(
           type: "Комментарий",
-          person: "Администратор",
+          person: "Текущий пользователь",
           date: DateTime.now(),
           isAlarm: isAlarm,
           content: comment));
@@ -79,7 +79,8 @@ class HistoryEventController extends GetxController {
   /// Добавлеяем новый коммент с проверкой аварии(для кнопки проверка аварии)
   addNewCrashComment(Task task) {
     // TODO генерировать правильный комментарий
-    String comment = '#203*TTMSId#';
+    String comment =
+        '#203*${taskListController.taskListState.currentTask.value!.ttmsId}#';
     bool isAlarm = false;
 
     HistoryEventRepository().addNewComment(
@@ -91,7 +92,7 @@ class HistoryEventController extends GetxController {
     // TODO: тут такой же костыль - исправить когда будут subscriptions
     historyEventList.add(HistoryEvent(
         type: "Комментарий",
-        person: "Администратор",
+        person: "Текущий пользователь",
         date: DateTime.now(),
         isAlarm: isAlarm,
         content: comment));

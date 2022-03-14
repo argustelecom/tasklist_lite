@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tasklist_lite/tasklist/idle_time_reason_repository.dart';
 import 'package:tasklist_lite/tasklist/model/close_code.dart';
+import 'package:tasklist_lite/tasklist/model/stage.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
 import 'package:tasklist_lite/tasklist/task_repository.dart';
 
@@ -208,8 +209,8 @@ class TaskListController extends GetxController {
     });
   }
 
-  Future<IdleTime?> registerIdle(int taskInstanceId,
-      int reasonId, DateTime beginTime, DateTime? endTime) async {
+  Future<IdleTime?> registerIdle(int taskInstanceId, int reasonId,
+      DateTime beginTime, DateTime? endTime) async {
     return await taskRepository.registerIdle(
         authState.authString.value!,
         authState.serverAddress.value!,
@@ -219,24 +220,16 @@ class TaskListController extends GetxController {
         endTime);
   }
 
-  Future<IdleTime?> finishIdle(int taskInstanceId,
-      DateTime beginTime, DateTime endTime) async {
+  Future<IdleTime?> finishIdle(
+      int taskInstanceId, DateTime beginTime, DateTime endTime) async {
     AuthState authState = Get.find();
-    return await taskRepository.finishIdle(
-        authState.authString.value!,
-        authState.serverAddress.value!,
-        taskInstanceId,
-        beginTime,
-        endTime);
+    return await taskRepository.finishIdle(authState.authString.value!,
+        authState.serverAddress.value!, taskInstanceId, beginTime, endTime);
   }
 
-  Future<bool?> completeStage(
-      int taskInstanceId, int? closeCodeId) async {
-    return await taskRepository.completeStage(
-        authState.authString.value!,
-        authState.serverAddress.value!,
-        taskInstanceId,
-        closeCodeId);
+  Future<bool?> completeStage(int taskInstanceId, int? closeCodeId) async {
+    return await taskRepository.completeStage(authState.authString.value!,
+        authState.serverAddress.value!, taskInstanceId, closeCodeId);
   }
 
   @override

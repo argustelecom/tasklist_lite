@@ -4,7 +4,7 @@ class Stage {
   final String name;
 
   /// Номер этапа
-  final int number;
+  late final int number;
 
   /// Является ли этап последним?
   final bool isLast;
