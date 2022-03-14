@@ -118,6 +118,10 @@ class Task {
     return (dueDate != null) && (dueDate!.isBefore((DateTime.now())));
   }
 
+  bool isStageOverdue() {
+    return (dueDate != null) && (stage!.dueDate.isBefore((DateTime.now())));
+  }
+
   // возвращает абсолютную величину интервала от/до КC задачи
   Duration? getTimeLeftAbs() {
     if (dueDate != null) {
@@ -131,6 +135,36 @@ class Task {
                 dueDate!.millisecondsSinceEpoch);
     } else
       return null;
+  }
+
+  // возвращает абсолютную величину интервала от/до КC этапа
+  Duration? getTimeLeftStage() {
+    if (dueDate != null) {
+      if (dueDate!.isAfter(DateTime.now())) {
+        return new Duration(
+            milliseconds: stage!.dueDate.millisecondsSinceEpoch -
+                DateTime.now().millisecondsSinceEpoch);
+      } else
+        return new Duration(
+            milliseconds: DateTime.now().millisecondsSinceEpoch -
+                stage!.dueDate.millisecondsSinceEpoch);
+    } else
+      return null;
+  }
+
+// Возвращаем КВ по этапу
+  String getTimeLeftStageText() {
+    Duration? timeLeft = getTimeLeftStage();
+    if (timeLeft != null)
+      return (isStageOverdue() ? "СКВ: " : "КВ: ") +
+          prettyDuration(timeLeft,
+              tersity: DurationTersity.minute,
+              abbreviated: true,
+              delimiter: " ",
+              spacer: "",
+              locale: RussianDurationLanguage());
+    else
+      return "";
   }
 
   String getTimeLeftText() {
@@ -203,6 +237,17 @@ class Task {
           attrValues.addAll({key.substring(key.indexOf("/") + 1): value});
       });
     return attrValues;
+  }
+
+  /// Получаем состояние для прогрессбариков
+  getStageProgressStatus(int num, Stage stage) {
+    if (num < stage.number) {
+      return 1;
+    } else if (num == stage.number) {
+      return 0.73;
+    } else {
+      return 0;
+    }
   }
 
   IdleTime? getCurrentIdleTime() {
