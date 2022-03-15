@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 
@@ -50,7 +51,9 @@ abstract class PersistentState extends GetxService {
   @override
   @mustCallSuper
   void onInit() {
+    incrementBusyCount();
     super.onInit();
+
     doPriorAsyncInit().whenComplete(() {
       _readIfKeyExists(getKeyName(), (value) {
         copyFromJson(jsonDecode(value!));
@@ -59,6 +62,8 @@ abstract class PersistentState extends GetxService {
         // Иначе получим кучку лишних пересохранений недоинициализированного state,
         // которые, к тому же, могут помешать и чтению state из хранилища.
         initLocalPersistence();
+      }).whenComplete(() {
+        decrementBusyCount();
       });
     });
   }
@@ -106,5 +111,24 @@ abstract class PersistentState extends GetxService {
         await _storage.write(key: getKeyName(), value: jsonEncode(this));
       },
     );
+  }
+
+  /// счетчик запросов на "занятость" приложения. Доступ к нему только через экземпляр
+  /// ApplicationState, а здесь нужен только чтобы единообразно помечать приложение занятым
+  /// на время начального чтения state из хранилища. См. также камент у
+  /// ApplicationState.applicationIsBusy
+  @protected
+  static int busyClaimCount = 0;
+
+  @protected
+  static void incrementBusyCount() {
+    // #TODO: а не надо ли тут atomic или его dart-аналога?
+    busyClaimCount++;
+  }
+
+  @protected
+  static void decrementBusyCount() {
+    busyClaimCount--;
+    assert(busyClaimCount >= 0);
   }
 }
