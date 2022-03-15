@@ -5,6 +5,7 @@ import 'package:tasklist_lite/tasklist/model/history_event.dart';
 import 'package:tasklist_lite/tasklist/model/idle_time.dart';
 import 'package:tasklist_lite/tasklist/model/stage.dart';
 
+import 'model/close_code.dart';
 import 'model/task.dart';
 
 /// Получает информацию о  задачах сотрудника по переданному basicAuth.
@@ -28,6 +29,12 @@ class TaskRemoteClient {
     }
     beginTime
     endTime ''';
+
+  /// Причина простоя IdleTimeReason
+  static const String closeCodeQuery = '''
+    id
+    objectName
+    ''';
 
   // Comment
   static const String commentQuery = '''
@@ -57,6 +64,8 @@ class TaskRemoteClient {
   isClosed
   latitude
   longitude
+  commentary
+  ttmsId
   flexibleAttribute {
      key
      value
@@ -344,6 +353,39 @@ class TaskRemoteClient {
         return null;
       }
       result = Task.fromJson(value.data!["id"]);
+    }, onError: (e) {
+      throw Exception(" onError " + e.toString());
+    });
+    return result;
+  }
+
+  Future<List<CloseCode>> getCloseCodes() async {
+    String getCloseCodes = '''
+ {  closeCode {
+   $closeCodeQuery
+ }
+ }
+''';
+    Future<QueryResult> queryResultFuture =
+    _graphQLService.query(getCloseCodes);
+    List<CloseCode> result = List.of({});
+    await queryResultFuture.then((value) {
+      if (value.hasException) {
+        // need catch 401 error
+        if (value.exception?.linkException is ServerException) {
+          throw Exception("Сервер недоступен");
+        }
+        if (value.exception?.linkException is HttpLinkParserException) {
+          throw Exception("Не авторизован");
+        }
+        throw Exception("Неожиданная ошибка");
+      }
+      if (value.data == null) {
+        return result;
+      }
+      List.from(value.data!["closeCode"]).forEach((element) {
+        result.add(CloseCode.fromJson(element));
+      });
     }, onError: (e) {
       throw Exception(" onError " + e.toString());
     });
