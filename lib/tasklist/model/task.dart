@@ -119,7 +119,7 @@ class Task {
   }
 
   bool isStageOverdue() {
-    return (dueDate != null) && (stage!.dueDate.isBefore((DateTime.now())));
+    return (dueDate != null) && (stage!.dueDate!.isBefore((DateTime.now())));
   }
 
   // возвращает абсолютную величину интервала от/до КC задачи
@@ -142,12 +142,12 @@ class Task {
     if (dueDate != null) {
       if (dueDate!.isAfter(DateTime.now())) {
         return new Duration(
-            milliseconds: stage!.dueDate.millisecondsSinceEpoch -
+            milliseconds: stage!.dueDate!.millisecondsSinceEpoch -
                 DateTime.now().millisecondsSinceEpoch);
       } else
         return new Duration(
             milliseconds: DateTime.now().millisecondsSinceEpoch -
-                stage!.dueDate.millisecondsSinceEpoch);
+                stage!.dueDate!.millisecondsSinceEpoch);
     } else
       return null;
   }
@@ -241,7 +241,8 @@ class Task {
 
   /// Получаем состояние для прогрессбариков
   getStageProgressStatus(int num, Stage stage) {
-    if (num < stage.number) {
+    var _stageNumber = stage.number?.toInt() ?? 0;
+    if (num < _stageNumber) {
       return 1;
     } else if (num == stage.number) {
       return 0.73;
@@ -291,7 +292,8 @@ class Task {
         idleTimeList:
             json['idleTime'] != null && (json['idleTime'] as List).isNotEmpty
                 ? (json['idleTime']).map((e) => IdleTime.fromJson(e)).toList()
-                : List.of({}));
+                : List.of({}),
+        stage: Stage.fromJson(json['stage']));
     return task;
   }
 
@@ -319,6 +321,7 @@ class Task {
     data['isOutdoor'] = this.isOutdoor;
     data['flexibleAttribute'] = jsonEncode(this.flexibleAttribs);
     data['idleTimeList'] = jsonEncode(this.idleTimeList);
+    data['stage'] = jsonEncode(this.stage);
     return data;
   }
 }

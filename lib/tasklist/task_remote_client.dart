@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:tasklist_lite/graphql/graphql_service.dart';
 import 'package:tasklist_lite/tasklist/model/history_event.dart';
 import 'package:tasklist_lite/tasklist/model/idle_time.dart';
+import 'package:tasklist_lite/tasklist/model/stage.dart';
 
 import 'model/task.dart';
 
@@ -62,6 +63,12 @@ class TaskRemoteClient {
   }
   idleTimePeriod {
     $idleTimeQuery
+  }
+  stage {
+      name
+      number
+      isLast
+      dueDate
   }
   ''';
 

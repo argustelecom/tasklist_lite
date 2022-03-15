@@ -17,6 +17,7 @@ import '../crazylib/adaptive_dialog.dart';
 import '../crazylib/close_task_dialog.dart';
 import '../crazylib/mark_filter_list.dart';
 import '../state/tasklist_controller.dart';
+import '../tasklist/model/stage.dart';
 import 'comment_page.dart';
 
 class TaskPage extends StatefulWidget {
@@ -144,7 +145,7 @@ class _TaskPageState extends State<TaskPage> {
                                                           .currentTask
                                                           .value!
                                                           .stage!
-                                                          .dueDate
+                                                          .dueDate!
                                                           .isBefore(
                                                               DateTime.now())
                                                       ? TextStyle(

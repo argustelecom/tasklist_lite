@@ -3,8 +3,9 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:tasklist_lite/tasklist/fixture/idle_time_reason_fixtures.dart';
 import 'package:tasklist_lite/tasklist/model/idle_time.dart';
-import 'package:tasklist_lite/tasklist/model/stage.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
+
+import '../model/stage.dart';
 
 /// Служба, возвращающая набор задач по переданному идентификатору фикстуры
 class TaskFixtures {
@@ -399,4 +400,9 @@ class TaskFixtures {
       await Future.delayed(Duration(seconds: 10));
     }
   }
+/*
+  Stage getStage() {
+    return new Stage(name: "Временный этап", number: 1, isLast: false, dueDate:  DateUtils.dateOnly(DateTime.now())
+        .add(const Duration(hours: 24 * 7 + 14)),);
+  }*/
 }
