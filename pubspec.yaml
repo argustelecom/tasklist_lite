@@ -54,6 +54,8 @@ dependencies:
 
   flutter_secure_storage: ^5.0.2
 
+  percent_indicator: ^4.0.0
+
 dev_dependencies:
   # для unit тестов
   test: ^1.17.0

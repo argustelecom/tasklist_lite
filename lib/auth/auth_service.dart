@@ -3,8 +3,6 @@ import 'package:tasklist_lite/auth/auth_remote_client.dart';
 import 'package:tasklist_lite/tasklist/fixture/auth_fixtures.dart';
 import 'package:tasklist_lite/tasklist/model/user_info.dart';
 
-import '../state/application_state.dart';
-
 class AuthService extends GetxService {
   Future<UserInfo> login(
       String basicAuth, String serverAddress, bool inDemonstrationMode) async {

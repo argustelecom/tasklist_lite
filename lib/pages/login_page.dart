@@ -4,6 +4,7 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get/get.dart';
 import 'package:google_language_fonts/google_language_fonts.dart';
 import 'package:tasklist_lite/crazylib/crazy_button.dart';
+import 'package:tasklist_lite/crazylib/crazy_progress_dialog.dart';
 import 'package:tasklist_lite/crazylib/dropdown_button.dart';
 import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
 import 'package:tasklist_lite/state/application_state.dart';
@@ -275,11 +276,16 @@ class LoginPageState extends State<LoginPage> {
                                 /// Если пользователь разлогинился не с домашней странички(а, например, со страницы профиля),
                                 /// надо его возвращать туда, откуда он разлогинился. Но это произойдет само, т.к.
                                 /// authState у нас теперь реактивный, а при логауте url мы не меняем
-                                authController.login(
-                                    _applicationState.inDemonstrationMode.value,
-                                    _loginEditingController.text,
-                                    _passwordEditingController.text,
-                                    _serverAddressEditingController.text);
+                                asyncShowProgressIndicatorOverlay(
+                                  asyncFunction: () {
+                                    return authController.login(
+                                        _applicationState
+                                            .inDemonstrationMode.value,
+                                        _loginEditingController.text,
+                                        _passwordEditingController.text,
+                                        _serverAddressEditingController.text);
+                                  },
+                                );
                               },
                               padding: EdgeInsets.symmetric(vertical: 8),
                             ),

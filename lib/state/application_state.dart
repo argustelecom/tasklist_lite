@@ -59,4 +59,27 @@ class ApplicationState extends PersistentState {
     possibleServers.value =
         Map.of(jsonDecode(json['possibleServers'])).cast<String, String>();
   }
+
+  /// Флажок "приложение занято". Если выставлен, будет отображен CrazyProgressDialog.
+  /// Не сохраняется в secure storage, т.к. относится к краткоживущему state.
+  ///
+  /// Поскольку запрос на "занятость" приложения может одновременно поступить из нескольких
+  /// мест кода, а считать приложение "свободным" можно, только если все эти запросы завершены,
+  /// под капотом флажка спрятан счетчик, который инкрементится при послуплении запроса на
+  /// "занятость" и декрементится при снятии запроса. То есть приложение "освобождается" (
+  /// и индикатор прогресса скрывается) только когда не будет ни одного действующего запроса.
+  Rx<bool> isApplicationBusy() {
+    return (!(PersistentState.busyClaimCount == 0)).obs;
+  }
+
+  /// пометить приложение как "занятое". На время "занятости" будет отображен индикатор прогресса
+  /// CrazyProgressIndicator.
+  void claimApplicationIsBusy() {
+    PersistentState.incrementBusyCount();
+  }
+
+  /// снять пометку "занятости" приложения
+  void unClaimApplicationIsBusy() {
+    PersistentState.decrementBusyCount();
+  }
 }
