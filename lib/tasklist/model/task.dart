@@ -62,7 +62,7 @@ class Task {
   String? longitude;
 
   /// "Примечание"
-  String? comment;
+  String? commentary;
 
   /// "Дата создания задачи"
   DateTime? createDate;
@@ -104,7 +104,7 @@ class Task {
       this.addressComment,
       this.latitude,
       this.longitude,
-      this.comment,
+      this.commentary,
       this.createDate,
       this.closeDate,
       this.isClosed = false,
@@ -229,7 +229,7 @@ class Task {
         "Адресное примечание": addressComment,
         "Широта": latitude,
         "Долгота": longitude,
-        "Примечание": comment
+        "Примечание": commentary
       }));
     } else
       flexibleAttribs.forEach((key, value) {
@@ -272,7 +272,7 @@ class Task {
         addressComment: json['addressComment'],
         latitude: json['latitude'],
         longitude: json['longitude'],
-        comment: json['comment'],
+        commentary: json['comment'],
         createDate: json['createDate'] != null
             ? DateTime.parse(json['createDate'])
             : null,
@@ -310,7 +310,7 @@ class Task {
     data['addressComment'] = this.addressComment;
     data['latitude'] = this.latitude;
     data['longitude'] = this.longitude;
-    data['comment'] = this.comment;
+    data['comment'] = this.commentary;
     data['createDate'] =
         this.createDate != null ? this.createDate.toString() : null;
     data['closeDate'] =

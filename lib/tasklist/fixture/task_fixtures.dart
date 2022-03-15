@@ -26,7 +26,7 @@ class TaskFixtures {
       address: "г.Вологда, ул.Садовая, 101",
       latitude: "56.863148",
       longitude: "60.642127",
-      comment: "По вопросам доступа Филиппов Е.А. +79207654321",
+      commentary: "По вопросам доступа Филиппов Е.А. +79207654321",
       createDate:
           DateUtils.dateOnly(DateTime.now()).add(const Duration(hours: -6)),
       isClosed: false,
@@ -74,7 +74,7 @@ class TaskFixtures {
       address: null,
       latitude: "56.888854",
       longitude: "60.612602",
-      comment: "Муфта М172",
+      commentary: "Муфта М172",
       stage: Stage(
           name: "В работе",
           number: 3,
@@ -107,7 +107,7 @@ class TaskFixtures {
       address: "г.Вологда, ул.Лесопарковая, 9Б",
       latitude: null,
       longitude: null,
-      comment:
+      commentary:
           "ТРЦ Радуга. Работы только в ночное время. Дежурный инженер Семенов И.С. +79501234567",
       createDate: DateUtils.dateOnly(DateTime.now())
           .add(const Duration(hours: 24 * 2 - 22)),
@@ -141,7 +141,7 @@ class TaskFixtures {
       address: "г.Вологда, ул.Северная, 27",
       latitude: null,
       longitude: null,
-      comment: "",
+      commentary: "",
       createDate: DateUtils.dateOnly(DateTime.now())
           .add(const Duration(hours: 24 * 2 - 22)),
       isClosed: false,
@@ -168,7 +168,7 @@ class TaskFixtures {
       address: "г.Вологда, пр.Мира, 16",
       latitude: null,
       longitude: null,
-      comment: "",
+      commentary: "",
       createDate:
           DateUtils.dateOnly(DateTime.now()).add(const Duration(hours: -12)),
       isClosed: false,
@@ -195,7 +195,7 @@ class TaskFixtures {
       address: "г.Вологда, ул.Правды, 99",
       latitude: null,
       longitude: null,
-      comment: "",
+      commentary: "",
       createDate: DateUtils.dateOnly(DateTime.now())
           .add(const Duration(hours: -24 * 4 + 12)),
       closeDate: DateUtils.dateOnly(DateTime.now())
@@ -224,7 +224,7 @@ class TaskFixtures {
       address: "г.Вологда, ул.Нагорная, 17",
       latitude: null,
       longitude: null,
-      comment: "",
+      commentary: "",
       createDate: DateUtils.dateOnly(DateTime.now())
           .add(const Duration(hours: -24 * 4 + 12)),
       closeDate: DateUtils.dateOnly(DateTime.now())
@@ -253,7 +253,7 @@ class TaskFixtures {
       address: "г.Вологда, пер.Привокзальный, 3",
       latitude: null,
       longitude: null,
-      comment: "",
+      commentary: "",
       createDate: DateUtils.dateOnly(DateTime.now())
           .add(const Duration(hours: -24 * 4 + 12)),
       closeDate: DateUtils.dateOnly(DateTime.now())
@@ -282,7 +282,7 @@ class TaskFixtures {
       address: "г.Вологда, пр.Лесной, 113",
       latitude: null,
       longitude: null,
-      comment: "",
+      commentary: "",
       createDate: DateUtils.dateOnly(DateTime.now())
           .add(const Duration(hours: -24 * 4 + 12)),
       closeDate: DateUtils.dateOnly(DateTime.now())
@@ -325,7 +325,7 @@ class TaskFixtures {
         address: "г.Вологда, пр.Космонавтов, 23a",
         latitude: null,
         longitude: null,
-        comment: "По вопросам доступа в диспетчерскую, вход с торца",
+        commentary: "По вопросам доступа в диспетчерскую, вход с торца",
         createDate: DateUtils.dateOnly(DateTime.now())
             .add(const Duration(hours: 24 * 4 - 20)),
         isClosed: false,
@@ -351,7 +351,7 @@ class TaskFixtures {
         address: "г.Вологда, ул.Лермонтова, 11",
         latitude: null,
         longitude: null,
-        comment: "",
+        commentary: "",
         createDate: DateUtils.dateOnly(DateTime.now())
             .add(const Duration(hours: -24 * 0 + 11)),
         isClosed: false,
