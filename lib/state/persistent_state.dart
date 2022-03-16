@@ -118,17 +118,17 @@ abstract class PersistentState extends GetxService {
   /// на время начального чтения state из хранилища. См. также камент у
   /// ApplicationState.applicationIsBusy
   @protected
-  static int busyClaimCount = 0;
+  static Rx<int> busyClaimCount = 0.obs;
 
   @protected
   static void incrementBusyCount() {
     // #TODO: а не надо ли тут atomic или его dart-аналога?
-    busyClaimCount++;
+    busyClaimCount.value++;
   }
 
   @protected
   static void decrementBusyCount() {
-    busyClaimCount--;
-    assert(busyClaimCount >= 0);
+    busyClaimCount.value--;
+    assert(busyClaimCount.value >= 0);
   }
 }

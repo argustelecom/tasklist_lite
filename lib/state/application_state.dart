@@ -35,7 +35,7 @@ class ApplicationState extends PersistentState {
   }
 
   @override
-  Future<void> doPriorAsyncInit() async {
+  Future<void> doPriorAsyncInit(){
     return dotenv.load(fileName: "config/app.env").whenComplete(() {
       possibleServers.value = Map.of(jsonDecode(dotenv.get('possibleServers')))
           .cast<String, String>();
@@ -73,7 +73,8 @@ class ApplicationState extends PersistentState {
   /// "занятость" и декрементится при снятии запроса. То есть приложение "освобождается" (
   /// и индикатор прогресса скрывается) только когда не будет ни одного действующего запроса.
   Rx<bool> isApplicationBusy() {
-    return (!(PersistentState.busyClaimCount == 0)).obs;
+    // #TODO: obs тут вроде лишний
+    return (!(PersistentState.busyClaimCount.value == 0)).obs;
   }
 
   /// пометить приложение как "занятое". На время "занятости" будет отображен индикатор прогресса
