@@ -44,7 +44,7 @@ abstract class PersistentState extends GetxService {
   /// Внимание! инициализация вне этого метода может привести к ненужным и несвоевременным
   /// сохранениям не полностью проинициализированного state.
   Future<void> doPriorAsyncInit() async {
-    return Future<void>.value();
+    return Future<void>.value(null);
   }
 
   /// обеспечивает чтение из хранилища при инициализации

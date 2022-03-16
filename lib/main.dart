@@ -1,7 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'package:tasklist_lite/auth/auth_service.dart';
@@ -34,12 +32,7 @@ import 'package:tasklist_lite/theme/tasklist_theme_data.dart';
 import 'local_storage/local_storage_service.dart';
 import 'state/common_dropdown_controller.dart';
 
-void main() async {
-  // Читаем настройки переменные среды
-  WidgetsFlutterBinding.ensureInitialized();
-  // по https://pub.dev/packages/flutter_dotenv
-  await dotenv.load(fileName: "config/app.env");
-
+void main() {
   // некоторые "бины" должны быть созданы еще до того, как отработает initialBinding у MaterialApp
   Get.put(ApplicationState());
   Get.put(Get.createDelegate(navigatorObservers: [

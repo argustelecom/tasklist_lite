@@ -1,11 +1,10 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:tasklist_lite/state/persistent_state.dart';
-
-
 
 /// Общие атрибуты приложения: выбранная тема, флажок демо-режима, возможные адреса серверов и т.д.
 class ApplicationState extends PersistentState {
@@ -20,7 +19,6 @@ class ApplicationState extends PersistentState {
 
   final RxMap<String, String> possibleServers =
       RxMap.of(_defaultPossibleServers);
-
 
   ApplicationState();
 
@@ -37,9 +35,12 @@ class ApplicationState extends PersistentState {
   }
 
   @override
-  Future<void> doPriorAsyncInit() {
-    possibleServers.value = Map.of(jsonDecode(dotenv.get('possibleServers'))).cast<String, String>();
-    return Future<void>.value();
+  Future<void> doPriorAsyncInit() async {
+    return dotenv.load(fileName: "config/app.env").whenComplete(() {
+      possibleServers.value = Map.of(jsonDecode(dotenv.get('possibleServers')))
+          .cast<String, String>();
+      return Future<void>.value(null);
+    });
   }
 
   @override
