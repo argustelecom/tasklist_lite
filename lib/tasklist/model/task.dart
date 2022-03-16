@@ -218,6 +218,7 @@ class Task {
     return attrGroups;
   }
 
+  // TODO: Используется в закрытии наряда. НИ надо будет поправить потом?
   // LinkedHashMap выбран намеренно, чтобы выводить параметры в том порядке, в котором получили
   LinkedHashMap<String, Object?> getAttrValuesByGroup(String group) {
     LinkedHashMap<String, Object?> attrValues =
@@ -236,6 +237,25 @@ class Task {
         if (key.startsWith("$group/"))
           attrValues.addAll({key.substring(key.indexOf("/") + 1): value});
       });
+    return attrValues;
+  }
+
+  /// Получаем атрибуты для вкладки сведения
+  LinkedHashMap<String, Object?> getAttrValuesByTask() {
+    LinkedHashMap<String, Object?> attrValues =
+        new LinkedHashMap<String, Object?>();
+    attrValues.addAll(new LinkedHashMap.of({
+      "Наименование": flexibleAttribs["Объект/Название"],
+      "ID заявки оператора": flexibleAttribs["Наряд/ID заявки оператора"],
+      "Адресное примечание": addressComment,
+      "Оператор": flexibleAttribs["Наряд/Оператор"],
+      "Договор": flexibleAttribs["Наряд/Договор"],
+      "Примечание": commentary,
+      "Представитель заказчика": flexibleAttribs["Представитель заказчика"],
+      "Исполнители": assignee,
+      "Приоритет": flexibleAttribs["Наряд/Приоритет"],
+      "Кластер": flexibleAttribs["Кластер"],
+    }));
     return attrValues;
   }
 

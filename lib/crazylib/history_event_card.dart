@@ -27,9 +27,8 @@ class HistoryEventCard extends StatelessWidget {
                 child: Padding(
                   padding: EdgeInsets.only(left: 16, top: 8),
                   child: Text("${comment.person}",
-                      style: TextStyle(
-                        fontSize: 14,
-                      )),
+                      style:
+                          TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
                 ),
               ),
               Padding(

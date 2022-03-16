@@ -132,7 +132,10 @@ class _TaskPageState extends State<TaskPage> {
                                                   16, 8, 16, 12),
                                               child: Row(children: [
                                                 Text(
-                                                    "${taskListController.taskListState.currentTask.value!.stage!.name}"),
+                                                    "${taskListController.taskListState.currentTask.value!.stage!.name}",
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold)),
                                               ])),
                                           Padding(
                                             padding: EdgeInsets.fromLTRB(
@@ -392,34 +395,14 @@ class _TaskPageState extends State<TaskPage> {
                                     ],
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween),
-                                SizedBox(
-                                    height: 500.0,
-                                    child: ListView.builder(
-                                        shrinkWrap: true,
-                                        itemCount: taskListController
-                                            .taskListState.currentTask.value
-                                            ?.getAttrGroups()
-                                            .length,
-                                        itemBuilder:
-                                            (BuildContext context, int index) {
-                                          return AttrGroup(
-                                              task: taskListController
-                                                      .taskListState
-                                                      .currentTask
-                                                      .value ??
-                                                  Task(
-                                                      id: 1,
-                                                      name: "",
-                                                      flexibleAttribs:
-                                                          LinkedHashMap()),
-                                              attrGroup: taskListController
-                                                      .taskListState
-                                                      .currentTask
-                                                      .value
-                                                      ?.getAttrGroups()
-                                                      .elementAt(index) ??
-                                                  "");
-                                        })),
+                                Padding(
+                                    padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
+                                    child: LimitedBox(
+                                        maxHeight: 450.0,
+                                        child: AttribValue(
+                                          task: taskListController
+                                              .taskListState.currentTask.value!,
+                                        ))),
                               ],
                             )),
                       ),
@@ -785,6 +768,84 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
   Size get preferredSize => const Size.fromHeight(60.0);
 }
 
+/// Вывод строки Параметр: Значение для версии 1.0
+/// Тут мы не используем группы, они нам не нужны
+/// ListView.separated выбран для реализации кнопки показать все
+class AttribValue extends StatelessWidget {
+  final Task task;
+  TaskListController taskListController = Get.find();
+
+  AttribValue({Key? key, required this.task}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    ThemeData themeData = Theme.of(context);
+    LinkedHashMap<String, Object?> attributes = task.getAttrValuesByTask();
+
+    return ListView.separated(
+        separatorBuilder: (BuildContext context, int index) {
+          if (attributes.keys.elementAt(index) == 'Примечание' &&
+              attributes.values.elementAt(index).toString().length > 100) {
+            return TextButton(
+                child: taskListController.maxLines == 5
+                    ? Text("прочитать полностью ↓",
+                        style: TextStyle(fontWeight: FontWeight.w100))
+                    : Text("скрыть ↑",
+                        style: TextStyle(fontWeight: FontWeight.w100)),
+                onPressed: () {
+                  taskListController.maxLines == 5
+                      ? taskListController.viewMore()
+                      : taskListController.hideCommentary();
+                });
+          }
+          return Divider(
+              height: 0, thickness: 0, color: themeData.highlightColor);
+        },
+        itemCount: attributes.length,
+        itemBuilder: (BuildContext context, int index) {
+          return Column(children: [
+            Row(children: [
+              Expanded(
+                  child: Container(
+                      padding: EdgeInsets.symmetric(vertical: 6),
+                      child: RichText(
+                          maxLines: taskListController.maxLines,
+                          overflow: TextOverflow.ellipsis,
+                          text: TextSpan(
+                              style: const TextStyle(
+                                  fontSize: 16.0,
+                                  color: Color(0xFF646363),
+                                  fontWeight: FontWeight.normal),
+                              children: <TextSpan>[
+                                TextSpan(
+                                    text:
+                                        "${attributes.keys.elementAt(index)}:   "),
+                                TextSpan(
+                                    text: attributes.values.elementAt(index) ==
+                                            null
+                                        ? ""
+                                        : (attributes.values
+                                                    .elementAt(index)
+                                                    .runtimeType ==
+                                                DateTime
+                                            ? DateFormat("dd.MM.yyyy HH:mm")
+                                                .format(DateTime.parse(
+                                                    attributes.values
+                                                        .elementAt(index)
+                                                        .toString()))
+                                            : attributes.values
+                                                .elementAt(index)
+                                                .toString()),
+                                    style: TextStyle(color: Colors.black))
+                              ]))))
+            ]),
+          ]);
+        });
+  }
+}
+
+/// Ниже старая реализация гибких атрибутов через группы, остается тут на случай если она нам еще понадобится
+// TODO: Используется в закрытии наряда НИ надо будет поправить потом?
 // Вывод группы параметров
 class AttrGroup extends StatelessWidget {
   final Task task;
@@ -799,10 +860,10 @@ class AttrGroup extends StatelessWidget {
         task.getAttrValuesByGroup(attrGroup);
 
     return Column(children: [
-      Container(
-          padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
-          child: Text(attrGroup,
-              style: const TextStyle(fontSize: 18, color: Colors.grey))),
+      // Container(
+      //     padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
+      //     child: Text(attrGroup,
+      //         style: const TextStyle(fontSize: 18, color: Colors.grey))),
       SizedBox(
           child: ListView.builder(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -820,6 +881,7 @@ class AttrGroup extends StatelessWidget {
 // Вывод строки Параметр: Значение
 class AttribValueRow extends StatelessWidget {
   final MapEntry<String, Object?> attribValue;
+  final maxLines = 5;
 
   const AttribValueRow({Key? key, required this.attribValue}) : super(key: key);
 
@@ -838,16 +900,19 @@ class AttribValueRow extends StatelessWidget {
           child: Container(
               padding: EdgeInsets.symmetric(vertical: 6),
               child: RichText(
+                  maxLines: maxLines,
+                  overflow: TextOverflow.ellipsis,
                   text: TextSpan(
                       style: const TextStyle(
                           fontSize: 16.0,
                           color: Color(0xFF646363),
                           fontWeight: FontWeight.normal),
                       children: <TextSpan>[
-                    TextSpan(text: "$attrKey:   "),
-                    TextSpan(
-                        text: attrValue, style: TextStyle(color: Colors.black))
-                  ]))))
+                        TextSpan(text: "$attrKey:   "),
+                        TextSpan(
+                            text: attrValue,
+                            style: TextStyle(color: Colors.black))
+                      ]))))
     ]);
   }
 }

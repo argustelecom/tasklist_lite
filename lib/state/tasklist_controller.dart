@@ -243,4 +243,19 @@ class TaskListController extends GetxController {
     _closeCodesSubscription?.cancel();
     super.onClose();
   }
+
+  /// Храним сколько максимально линий может быть в примечании в карточке задачи
+  late int maxLines = 5;
+
+  /// Изменяем кол-во отображаемых строк, чтобы посмотреть больше в примечании в карточке задачи
+  viewMore() {
+    maxLines = 500;
+    update();
+  }
+
+  /// Изменяем кол-во отображаемых строк, чтобы скрыть в примечании в карточке задачи
+  hideCommentary() {
+    maxLines = 5;
+    update();
+  }
 }
