@@ -292,7 +292,7 @@ class Task {
         addressComment: json['addressComment'],
         latitude: json['latitude'],
         longitude: json['longitude'],
-        commentary: json['comment'],
+        commentary: json['commentary'],
         createDate: json['createDate'] != null
             ? DateTime.parse(json['createDate'])
             : null,
