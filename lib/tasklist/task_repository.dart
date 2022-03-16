@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:get/get.dart';
-import 'package:tasklist_lite/crazylib/crazy_progress_dialog.dart';
 import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/tasklist/fixture/task_fixtures.dart';
 import 'package:tasklist_lite/tasklist/task_remote_client.dart';
@@ -29,11 +28,13 @@ class TaskRepository extends GetxService {
     // но это только в деморежиме ( то есть до вызова remote не дойдет)
     TaskRemoteClient taskRemoteClient =
         TaskRemoteClient(basicAuth!, serverAddress!);
-    Future<List<Task>> result = asyncShowProgressIndicatorOverlay(
-      asyncFunction: () {
-        return taskRemoteClient.getOpenedTasks();
-      },
-    );
+    Future<List<Task>>
+        result = /* asyncShowProgressIndicatorOverlay(
+      asyncFunction: () { */
+        //  return
+        taskRemoteClient.getOpenedTasks();
+    // },
+    //);
     return result.asStream();
   }
 
@@ -50,11 +51,13 @@ class TaskRepository extends GetxService {
     }
     TaskRemoteClient taskRemoteClient =
         TaskRemoteClient(basicAuth!, serverAddress!);
-    Future<List<Task>> result = asyncShowProgressIndicatorOverlay(
+    Future<List<Task>>
+        result = /*asyncShowProgressIndicatorOverlay(
       asyncFunction: () {
-        return taskRemoteClient.getClosedTasks(day);
-      },
-    );
+        return*/
+        taskRemoteClient.getClosedTasks(day);
+    /*},
+    );*/
     return result.asStream();
   }
 
@@ -79,15 +82,11 @@ class TaskRepository extends GetxService {
     TaskRemoteClient taskRemoteClient =
         TaskRemoteClient(basicAuth, serverAddress);
     return await taskRemoteClient.registerIdle(
-       taskInstanceId, reasonId, beginTime, endTime);
+        taskInstanceId, reasonId, beginTime, endTime);
   }
 
-  Future<IdleTime?> finishIdle(
-      String basicAuth,
-      String serverAddress,
-      int taskInstanceId,
-      DateTime beginTime,
-      DateTime endTime) async {
+  Future<IdleTime?> finishIdle(String basicAuth, String serverAddress,
+      int taskInstanceId, DateTime beginTime, DateTime endTime) async {
     ApplicationState applicationState = Get.find();
 
     /// если включен деморежим, возвращаем завершенный простой
