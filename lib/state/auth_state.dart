@@ -22,9 +22,11 @@ class AuthState extends PersistentState {
 
   final Rx<String?> serverAddress = Rxn<String?>();
 
+  final Rx<List<String>?> serverAddressSuggestions = Rxn<List<String>?>();
+
   @override
   List<RxInterface> getPersistentReactiveAttrs() {
-    return [isAuthenticated, userInfo, serverAddress, authString];
+    return [isAuthenticated, userInfo, serverAddress, authString, serverAddressSuggestions];
   }
 
   AuthState();
@@ -46,6 +48,7 @@ class AuthState extends PersistentState {
         userInfo.value != null ? jsonEncode(userInfo.value) : null;
     data['authString'] = authString.value;
     data['serverAddress'] = serverAddress.value;
+    data['serverAddressSuggestions'] = jsonEncode(serverAddressSuggestions.value) ;
     return data;
   }
 
@@ -58,5 +61,6 @@ class AuthState extends PersistentState {
         : UserInfo.fromJson(jsonDecode(json['userInfo']));
     authString.value = json['authString'];
     serverAddress.value = json['serverAddress'];
+    serverAddressSuggestions.value = List<String>.from(jsonDecode(json['serverAddressSuggestions']));
   }
 }

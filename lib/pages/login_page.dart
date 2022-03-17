@@ -100,18 +100,13 @@ class LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
 
-    LocalStorageService.readList(_serverAddressSuggestionsStorageKey)
-        .then((value) => _serverAddressSuggestions = value,
-            onError: (Object error, StackTrace stackTrace) {
-      // #TODO: завести нормальный лог вместо print. И вообще, хорошо бы спрятать обработку
-      // ошибок в UserSecureStorageService
-      print(
-          "ошибка чтения serverAddressSuggestions из хранилища: $error, stack = $stackTrace");
+    _authState.serverAddressSuggestions.listen((onData) {
+      _serverAddressSuggestions = onData ?? List.of({});
     });
 
-    _authState.serverAddress.listen((value) {
+    _authState.serverAddress.listen((onData) {
       if (_selectedServer == null) {
-        _serverAddressEditingController.text = value ?? "";
+        _serverAddressEditingController.text = onData ?? "";
       }
     });
   }
@@ -267,10 +262,7 @@ class LoginPageState extends State<LoginPage> {
                                   });
                                 }
 
-                                // #TODO: сделать частью какого-то state
-                                LocalStorageService.writeList(
-                                    _serverAddressSuggestionsStorageKey,
-                                    _serverAddressSuggestions);
+                                _authState.serverAddressSuggestions.value = _serverAddressSuggestions;
 
                                 /// логинимся
                                 /// Если пользователь разлогинился не с домашней странички(а, например, со страницы профиля),
