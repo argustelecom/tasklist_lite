@@ -31,7 +31,7 @@ class Stage {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['name'] = this.name;
     data['number'] = this.number;
-    data['isLast'] = this.isLast.toString();
+    data['isLast'] = this.isLast;
     data['endDate'] = this.dueDate != null ? this.dueDate.toString() : null;
     return data;
   }

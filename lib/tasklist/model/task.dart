@@ -319,7 +319,7 @@ class Task {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
+    data['id'] = this.id.toString();
     data['name'] = this.name;
     data['desc'] = this.desc;
     data['processTypeName'] = this.processTypeName;
@@ -339,9 +339,17 @@ class Task {
     data['isVisit'] = this.isVisit;
     data['isPlanned'] = this.isPlanned;
     data['isOutdoor'] = this.isOutdoor;
-    data['flexibleAttribute'] = jsonEncode(this.flexibleAttribs);
-    data['idleTimeList'] = jsonEncode(this.idleTimeList);
-    data['stage'] = jsonEncode(this.stage);
+    data['flexibleAttribute'] =  this.flexibleAttribs.entries.map((e)=> toMapJson(e)).toList();
+    data['idleTimeList'] = this.idleTimeList != null? jsonEncode(this.idleTimeList): null;
+    data['stage'] =this.stage != null ? this.stage!.toJson(): null;
     return data;
+  }
+
+  Map<String, Object?> toMapJson(MapEntry mapEntry) {
+    Map<String, Object?> map = Map();
+    map.putIfAbsent("__typename", () => "FlexibleAttribute");
+    map.putIfAbsent("key", () => mapEntry.key.toString());
+    map.putIfAbsent("value", () => mapEntry.value);
+    return map;
   }
 }
