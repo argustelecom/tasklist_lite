@@ -68,7 +68,7 @@ class HistoryEventController extends GetxController {
       // При добавлении нового коммента он улетает на сервер и дополнительно добавляется в список в контроллере для отображения
       historyEventList.add(HistoryEvent(
           type: "Комментарий",
-          person: "Текущий пользователь",
+          person: "Вы",
           date: DateTime.now(),
           isAlarm: isAlarm,
           content: comment));
@@ -92,7 +92,7 @@ class HistoryEventController extends GetxController {
     // TODO: тут такой же костыль - исправить когда будут subscriptions
     historyEventList.add(HistoryEvent(
         type: "Комментарий",
-        person: "Текущий пользователь",
+        person: "Вы",
         date: DateTime.now(),
         isAlarm: isAlarm,
         content: comment));

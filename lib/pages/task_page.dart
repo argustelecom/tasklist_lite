@@ -77,7 +77,8 @@ class _TaskPageState extends State<TaskPage> {
                           ),
                           TabBar(
                             isScrollable: true,
-                            labelColor: Colors.black,
+                            labelColor: Colors.blue,
+                            unselectedLabelColor: Colors.black,
                             labelStyle: TextStyle(fontSize: 18),
                             unselectedLabelStyle:
                                 TextStyle(color: Colors.grey, fontSize: 18),
