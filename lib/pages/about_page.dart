@@ -2,11 +2,9 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_language_fonts/google_language_fonts.dart';
-import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
-import 'package:tasklist_lite/pages/login_page.dart';
-import 'package:tasklist_lite/pages/profile_page.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
+import 'package:tasklist_lite/pages/profile_page.dart';
 
 class AboutPage extends StatelessWidget {
   static const String routeName = 'about';
@@ -28,7 +26,8 @@ class AboutPage extends StatelessWidget {
             leading: IconButton(
                 icon: Icon(Icons.chevron_left_outlined),
                 onPressed: () {
-                  Navigator.pop(context);
+                  GetDelegate routerDelegate = Get.find();
+                  routerDelegate.popRoute();
                 })),
         body: ListView(
             padding: EdgeInsets.symmetric(vertical: 7, horizontal: 15),
@@ -76,7 +75,8 @@ class AboutPage extends StatelessWidget {
                                       children: [
                                         TextWithLabelColumn(
                                             label: "Версия приложения:",
-                                            value: "${data.version}.${data.buildNumber}"),
+                                            value:
+                                                "${data.version}.${data.buildNumber}"),
                                       ],
                                     );
                                   }),
