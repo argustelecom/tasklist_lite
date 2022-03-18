@@ -230,8 +230,13 @@ class TaskListController extends GetxController {
         authState.serverAddress.value!, taskInstanceId, beginTime, endTime);
   }
 
-  Future<bool?> completeStage(int taskInstanceId, int? closeCodeId) async {
+  Future<bool?> completeStage(int taskInstanceId) async {
     return await taskRepository.completeStage(authState.authString.value!,
+        authState.serverAddress.value!, taskInstanceId);
+  }
+
+  Future<bool?> completeOrder(int taskInstanceId, int closeCodeId) async {
+    return await taskRepository.completeOrder(authState.authString.value!,
         authState.serverAddress.value!, taskInstanceId, closeCodeId);
   }
 

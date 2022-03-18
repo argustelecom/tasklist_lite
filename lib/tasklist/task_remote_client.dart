@@ -6,6 +6,7 @@ import 'package:tasklist_lite/tasklist/model/idle_time.dart';
 import 'package:tasklist_lite/tasklist/model/stage.dart';
 
 import 'model/close_code.dart';
+import 'model/mark.dart';
 import 'model/task.dart';
 
 /// Получает информацию о  задачах сотрудника по переданному basicAuth.
@@ -44,6 +45,15 @@ class TaskRemoteClient {
     date
     type
     important
+   ''';
+
+  // Mark
+  static const String markQuery = '''
+    reason
+    createDate
+    worker
+    value
+    type
    ''';
 
   /// Получение "легкого" Task, без истории
@@ -326,18 +336,16 @@ class TaskRemoteClient {
     return result;
   }
 
-  Future<Task> endStage(int taskInstanceId) async {
+  Future<bool?> endStage(int taskInstanceId) async {
     String endStageQuery = '''
  mutation {  
    endStage(
-    taskInstanceId:"$taskInstanceId"){
-       id
-    }
+    taskInstanceId:"$taskInstanceId")
  }''';
 
     Future<QueryResult> mutationResultFuture =
         _graphQLService.mutate(endStageQuery);
-    late Task result;
+    late String result;
     await mutationResultFuture.then((value) {
       if (value.hasException) {
         // need catch 401 error
@@ -349,14 +357,51 @@ class TaskRemoteClient {
         }
         throw Exception("Неожиданная ошибка");
       }
-      if (value.data == null || value.data!["id"] == null) {
+      if (value.data == null) {
         return null;
       }
-      result = Task.fromJson(value.data!["id"]);
+      result = value.data!["endStage"];
     }, onError: (e) {
       throw Exception(" onError " + e.toString());
     });
-    return result;
+    if (result == "true") {
+      return true;
+    }
+    return false;
+  }
+
+  Future<bool?> completeOrder(int taskInstanceId, int closeCodeId) async {
+    String completeOrderQuery = '''
+ mutation {  
+   completeOrder(
+    taskInstanceId:"$taskInstanceId", closeCodeId:"$closeCodeId")
+ }''';
+
+    Future<QueryResult> mutationResultFuture =
+    _graphQLService.mutate(completeOrderQuery);
+    late String result;
+    await mutationResultFuture.then((value) {
+      if (value.hasException) {
+        // need catch 401 error
+        if (value.exception?.linkException is ServerException) {
+          throw Exception("Сервер недоступен");
+        }
+        if (value.exception?.linkException is HttpLinkParserException) {
+          throw Exception("Не авторизован");
+        }
+        throw Exception("Неожиданная ошибка");
+      }
+      if (value.data == null) {
+        return null;
+      }
+      result = value.data!["completeOrder"];
+    }, onError: (e) {
+      throw Exception(" onError " + e.toString());
+    });
+    if (result == "true") {
+      return true;
+    }
+    return false;
   }
 
   Future<List<CloseCode>> getCloseCodes() async {
@@ -385,6 +430,39 @@ class TaskRemoteClient {
       }
       List.from(value.data!["closeCode"]).forEach((element) {
         result.add(CloseCode.fromJson(element));
+      });
+    }, onError: (e) {
+      throw Exception(" onError " + e.toString());
+    });
+    return result;
+  }
+
+  Future<List<Mark>> getMarks(int taskId) async {
+    String getMarksQuery = '''
+ {  getMarks (taskId:"$taskId") {
+   $markQuery
+ }
+ }
+''';
+    Future<QueryResult> queryResultFuture =
+    _graphQLService.query(getMarksQuery);
+    List<Mark> result = List.of({});
+    await queryResultFuture.then((value) {
+      if (value.hasException) {
+        // need catch 401 error
+        if (value.exception?.linkException is ServerException) {
+          throw Exception("Сервер недоступен");
+        }
+        if (value.exception?.linkException is HttpLinkParserException) {
+          throw Exception("Не авторизован");
+        }
+        throw Exception("Неожиданная ошибка");
+      }
+      if (value.data == null) {
+        return result;
+      }
+      List.from(value.data!["getMarks"]).forEach((element) {
+        result.add(Mark.fromJson(element));
       });
     }, onError: (e) {
       throw Exception(" onError " + e.toString());

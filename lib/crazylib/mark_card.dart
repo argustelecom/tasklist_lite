@@ -48,7 +48,7 @@ class MarkCard extends StatelessWidget {
                 child: Padding(
                     padding: EdgeInsets.only(top: 8, left: 16, right: 16),
                     child: Text(
-                      "${mark.name}",
+                      "${mark.reason}",
                       style: const TextStyle(fontSize: 14),
                       maxLines: maxLines,
                       overflow: TextOverflow.ellipsis,
@@ -70,7 +70,7 @@ class MarkCard extends StatelessWidget {
                 padding: EdgeInsets.only(top: 8, right: 16),
                 child: Container(
                   child: Text(
-                      "${DateFormat('dd.MM.yyyy HH:mm', "ru_RU").format(mark.date)}",
+                      "${DateFormat('dd.MM.yyyy HH:mm', "ru_RU").format(mark.createDate)}",
                       style: const TextStyle(fontSize: 12, color: Colors.grey)),
                 ))
           ],

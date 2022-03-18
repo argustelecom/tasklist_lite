@@ -743,8 +743,7 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
                                                             .taskListState
                                                             .currentTask
                                                             .value!
-                                                            .id,
-                                                        null);
+                                                            .id);
                                               } catch (e) {
                                                 // TODO сообщение об ошибке
                                               } finally {
