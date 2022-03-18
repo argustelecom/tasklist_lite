@@ -1,13 +1,17 @@
 import 'dart:async';
 
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide Worker;
 import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/tasklist/fixture/task_fixtures.dart';
+import 'package:tasklist_lite/tasklist/fixture/worker_fixtures.dart';
+import 'package:tasklist_lite/tasklist/model/worker.dart';
 import 'package:tasklist_lite/tasklist/task_remote_client.dart';
 
 import 'fixture/idle_time_reason_fixtures.dart';
+import 'fixture/work_type_fixtures.dart';
 import 'model/idle_time.dart';
 import 'model/task.dart';
+import 'model/work.dart';
 
 class TaskRepository extends GetxService {
   // TODO переделать текущую реализацию вывова TaskRemoteClient,
@@ -70,15 +74,11 @@ class TaskRepository extends GetxService {
     TaskRemoteClient taskRemoteClient =
         TaskRemoteClient(basicAuth, serverAddress);
     return await taskRemoteClient.registerIdle(
-       taskInstanceId, reasonId, beginTime, endTime);
+        taskInstanceId, reasonId, beginTime, endTime);
   }
 
-  Future<IdleTime?> finishIdle(
-      String basicAuth,
-      String serverAddress,
-      int taskInstanceId,
-      DateTime beginTime,
-      DateTime endTime) async {
+  Future<IdleTime?> finishIdle(String basicAuth, String serverAddress,
+      int taskInstanceId, DateTime beginTime, DateTime endTime) async {
     ApplicationState applicationState = Get.find();
 
     /// если включен деморежим, возвращаем завершенный простой
@@ -108,5 +108,60 @@ class TaskRepository extends GetxService {
 
     /// TODO: если деморежим выключен, нужно отправлять graphQL запрос
     return true;
+  }
+
+  Future<Work> registerWorkDetail(
+      String basicAuth,
+      String serverAddress,
+      int taskInstanceId,
+      int workTypeId,
+      bool notRequired,
+      double? amount,
+      List<int>? workers) async {
+    ApplicationState applicationState = Get.find();
+
+    /// если включен деморежим, возвращаем успех
+    if (applicationState.inDemonstrationMode.value) {
+      await new Future.delayed(const Duration(seconds: 3));
+
+      WorkType workType =
+          WorkTypeFixtures.workTypes.firstWhere((e) => e.id == workTypeId);
+      if (notRequired) {
+        return new Work(workType: workType, workDetail: [], notRequired: true);
+      }
+
+      double marksPerWorker = workType.marks * amount! / workers!.length;
+      Iterable<Worker> workerList = workers.expand(
+          (e1) => [WorkerFixtures.workers.firstWhere((e2) => e2.id == e1)]);
+      Map<Worker, double> workerMarks = Map<Worker, double>.fromIterable(
+          workerList,
+          key: (item) => item,
+          value: (item) => marksPerWorker);
+
+      return new Work(workType: workType, workDetail: [
+        new WorkDetail(
+            id: 1,
+            amount: amount,
+            date: DateTime.now(),
+            workerMarks: workerMarks)
+      ]);
+    }
+
+    /// TODO: если деморежим выключен, нужно отправлять graphQL запрос
+    throw Exception("API в разработке");
+  }
+
+  Future<bool?> deleteWorkDetail(String basicAuth, String serverAddress,
+      int taskInstanceId, int workDetailId) async {
+    ApplicationState applicationState = Get.find();
+
+    /// если включен деморежим, возвращаем успех
+    if (applicationState.inDemonstrationMode.value) {
+      await new Future.delayed(const Duration(seconds: 3));
+      return true;
+    }
+
+    /// TODO: если деморежим выключен, нужно отправлять graphQL запрос
+    throw Exception("API в разработке");
   }
 }

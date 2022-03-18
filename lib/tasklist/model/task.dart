@@ -5,6 +5,8 @@ import 'package:duration/duration.dart';
 import 'package:duration/locale.dart';
 import 'package:intl/intl.dart';
 import 'package:tasklist_lite/tasklist/model/stage.dart';
+import 'package:tasklist_lite/tasklist/model/work.dart';
+import 'package:tasklist_lite/tasklist/model/worker.dart';
 
 import 'idle_time.dart';
 
@@ -41,9 +43,7 @@ class Task {
   ///int? priority;
 
   /// "Исполнители"
-  String? assignee;
-
-  /// TODO: телефон, контактное лицо нужны?
+  List<Worker> assignee;
 
   /// TODO: должен ли быть системным?
   /// "Объект работ"
@@ -88,6 +88,9 @@ class Task {
   /// Простой
   List<IdleTime>? idleTimeList = <IdleTime>[];
 
+  /// Работы
+  List<Work>? works = <Work>[];
+
   // null safety: здесь null`ами не может быть только id, name (т.к. они обязательны) и булевы свойства (т.к. для них задан дефолт в дефолтном конструкторе)
   // что интересно, фигурные скобочки внутри объявления конструктора делают параметры именованными, их теперь можно задавать не по порядку, а по имени. Удобно.
   Task(
@@ -99,7 +102,7 @@ class Task {
       this.processTypeName,
       this.taskType,
       this.dueDate,
-      this.assignee,
+      required this.assignee,
       this.address,
       this.addressComment,
       this.latitude,
@@ -112,7 +115,12 @@ class Task {
       this.isPlanned = false,
       this.isOutdoor = false,
       required this.flexibleAttribs,
-      this.idleTimeList});
+      this.idleTimeList,
+      this.works});
+
+  String getAssigneeListToText(List<Worker> workers) {
+    return workers.map((e) => e.getWorkerShortName()).join(', ');
+  }
 
   bool isOverdue() {
     return (dueDate != null) && (dueDate!.isBefore((DateTime.now())));
@@ -190,7 +198,7 @@ class Task {
         new LinkedHashMap<String, Object?>();
     if (group.compareTo(systemAttrGroup) == 0) {
       attrValues.addAll(new LinkedHashMap.of({
-        "Исполнители": assignee,
+        "Исполнители": getAssigneeListToText(assignee),
         "Адрес": address,
         "Адресное примечание": addressComment,
         "Широта": latitude,

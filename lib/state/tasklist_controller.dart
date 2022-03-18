@@ -11,6 +11,7 @@ import '../tasklist/close_code_repository.dart';
 import '../tasklist/fixture/task_fixtures.dart';
 import '../tasklist/history_events_repository.dart';
 import '../tasklist/model/idle_time.dart';
+import '../tasklist/model/work.dart';
 import 'auth_state.dart';
 import 'tasklist_state.dart';
 
@@ -208,8 +209,8 @@ class TaskListController extends GetxController {
     });
   }
 
-  Future<IdleTime?> registerIdle(int taskInstanceId,
-      int reasonId, DateTime beginTime, DateTime? endTime) async {
+  Future<IdleTime?> registerIdle(int taskInstanceId, int reasonId,
+      DateTime beginTime, DateTime? endTime) async {
     return await taskRepository.registerIdle(
         authState.authString.value!,
         authState.serverAddress.value!,
@@ -219,24 +220,33 @@ class TaskListController extends GetxController {
         endTime);
   }
 
-  Future<IdleTime?> finishIdle(int taskInstanceId,
-      DateTime beginTime, DateTime endTime) async {
+  Future<IdleTime?> finishIdle(
+      int taskInstanceId, DateTime beginTime, DateTime endTime) async {
     AuthState authState = Get.find();
-    return await taskRepository.finishIdle(
-        authState.authString.value!,
-        authState.serverAddress.value!,
-        taskInstanceId,
-        beginTime,
-        endTime);
+    return await taskRepository.finishIdle(authState.authString.value!,
+        authState.serverAddress.value!, taskInstanceId, beginTime, endTime);
   }
 
-  Future<bool?> completeStage(
-      int taskInstanceId, int? closeCodeId) async {
-    return await taskRepository.completeStage(
+  Future<bool?> completeStage(int taskInstanceId, int? closeCodeId) async {
+    return await taskRepository.completeStage(authState.authString.value!,
+        authState.serverAddress.value!, taskInstanceId, closeCodeId);
+  }
+
+  Future<Work> registerWorkDetail(int taskInstanceId, int workTypeId,
+      bool notRequired, double? amount, List<int>? workers) async {
+    return await taskRepository.registerWorkDetail(
         authState.authString.value!,
         authState.serverAddress.value!,
         taskInstanceId,
-        closeCodeId);
+        workTypeId,
+        notRequired,
+        amount,
+        workers);
+  }
+
+  Future<bool?> deleteWorkDetail(int taskInstanceId, int workDetailId) async {
+    return await taskRepository.deleteWorkDetail(authState.authString.value!,
+        authState.serverAddress.value!, taskInstanceId, workDetailId);
   }
 
   @override

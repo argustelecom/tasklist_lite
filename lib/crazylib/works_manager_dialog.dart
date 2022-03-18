@@ -1,0 +1,422 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:get/get_state_manager/src/simple/get_state.dart';
+import 'package:intl/intl.dart';
+
+import '../state/tasklist_controller.dart';
+import '../tasklist/model/task.dart';
+import '../tasklist/model/work.dart';
+import '../tasklist/model/worker.dart';
+import 'adaptive_dialog.dart';
+
+class WorksManagerDialog extends StatefulWidget {
+  WorksManagerDialog({Key? key, required this.work}) : super(key: key);
+
+  Work work;
+
+  @override
+  WorksManagerDialogState createState() => WorksManagerDialogState();
+}
+
+class WorksManagerDialogState extends State<WorksManagerDialog> {
+  // исходные данные о работе и отметках
+  late Work _work;
+
+  // текущие значения параметров диалога, указываемые пользователем
+  bool _notRequired = false;
+  double? _amount;
+  List<Worker> _workers = [];
+
+  // кол-во баллов на сотрудника за ед.работы
+  late double _marksPerWorker;
+
+  // режим регистрации работы
+  late bool _registrationMode;
+
+  // выполнена ли операция
+  bool _operationCompleted = false;
+
+  // ошибка валидации или ошибка сервера
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _work = widget.work;
+    _registrationMode =
+        (_work.workDetail == null || _work.workDetail!.isEmpty) &&
+            !_work.notRequired;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GetBuilder<TaskListController>(builder: (taskListController) {
+      ThemeData themeData = Theme.of(context);
+      Task? task = taskListController.taskListState.currentTask.value;
+      if (task == null) {
+        return Padding(
+            padding: EdgeInsets.symmetric(vertical: 8),
+            child: Text(
+                "Что-то пошло не так. Вернитесь на главную страницу и попробуйте снова."));
+      }
+      List<Worker>? workers = task.assignee;
+      Widget body;
+      Widget buttonBar;
+
+      // тело диалога
+      // работа еще не зарегистрирована, но отемечена как требующаяся
+      if (_registrationMode && !_operationCompleted) {
+        body = Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Padding(
+              padding: EdgeInsets.symmetric(vertical: 8),
+              child: Text(_work.workType.name,
+                  style: TextStyle(color: Colors.black54))),
+          Padding(
+              padding: EdgeInsets.symmetric(vertical: 8),
+              child: Row(children: [
+                Text("Выполнять не требуется",
+                    style: TextStyle(color: Colors.black54)),
+                SizedBox(width: 20),
+                Switch(
+                    activeColor: Color(0xFFFFFFFF),
+                    activeTrackColor: Color(0xFFFBC22F),
+                    value: _notRequired,
+                    onChanged: (value) {
+                      setState(() {
+                        _notRequired = value;
+                      });
+                    })
+              ])),
+          if (!_notRequired) ...[
+            Padding(
+                padding: EdgeInsets.symmetric(vertical: 8),
+                child: Text("Объем работ (шт):",
+                    style: TextStyle(color: Colors.black54))),
+            Container(
+                margin: EdgeInsets.symmetric(vertical: 8),
+                height: 40,
+                child: TextField(
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      focusedBorder: OutlineInputBorder(
+                          borderSide:
+                              BorderSide(width: 1, color: Color(0xFF287BF6)))),
+                  cursorWidth: 1,
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(r'(^\d*\.?\d*)'))
+                  ],
+                  onChanged: (value) {
+                    if (value == "") {
+                      _amount = null;
+                    } else {
+                      _amount = double.parse(value);
+                    }
+                  },
+                )),
+            Padding(
+                padding: EdgeInsets.symmetric(vertical: 8),
+                child: Text("Исполнители:",
+                    style: TextStyle(color: Colors.black54))),
+            ListView.builder(
+                shrinkWrap: true,
+                itemCount: workers.length,
+                itemBuilder: (context, index) {
+                  return CheckboxListTile(
+                    contentPadding: EdgeInsets.all(0),
+                    activeColor: Color(0xFF646363),
+                    value: _workers.contains(workers[index]),
+                    onChanged: (value) {
+                      if (value == true) {
+                        _workers.add(workers[index]);
+                      }
+                      if (value == false) {
+                        _workers.remove(workers[index]);
+                      }
+                      setState(() {
+                        _marksPerWorker = (_workers.length == 0)
+                            ? 0
+                            : _work.workType.marks / _workers.length;
+                      });
+                    },
+                    title: Text(
+                      workers[index].getWorkerShortNameWithTabNo(),
+                    ),
+                    controlAffinity: ListTileControlAffinity.leading,
+                  );
+                }),
+            if (_workers.isNotEmpty)
+              Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8),
+                  child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(
+                          Icons.info,
+                          color: Color(0xFF287BF6),
+                          size: 24,
+                        ),
+                        SizedBox(width: 12),
+                        Flexible(
+                            child: Text(
+                                "Каждому исполнителю, выполнившему работу, будет начислено $_marksPerWorker балла(-ов) за одну единицу работы.",
+                                style: TextStyle(
+                                    fontFamily: 'Roboto',
+                                    color: Color(0xFF287BF6)),
+                                textWidthBasis: TextWidthBasis.parent,
+                                maxLines: 4))
+                      ]))
+          ],
+          if (_error != null)
+            Padding(
+                padding: EdgeInsets.symmetric(vertical: 8),
+                child: Text(_error!,
+                    maxLines: 3,
+                    overflow: TextOverflow.clip,
+                    style: TextStyle(color: Colors.red, fontFamily: 'Roboto')))
+        ]);
+      }
+      // работа зарегистрирована или отмечена как не требующаяся
+      else {
+        body = Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Padding(
+              padding: EdgeInsets.symmetric(vertical: 8),
+              child: Text(_work.workType.name,
+                  style: TextStyle(color: Color(0xFF646363)))),
+          if (!_work.notRequired) ...[
+            SizedBox(height: 20),
+            SizedBox(
+                child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: _work.workDetail!.length,
+                    itemBuilder: (context, index1) {
+                      return Column(children: [
+                        Row(children: [
+                          Expanded(
+                              child: ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: _work
+                                      .workDetail![index1].workerMarks.length,
+                                  itemBuilder: (context, index2) {
+                                    return Column(children: [
+                                      Table(children: [
+                                        TableRow(children: [
+                                          Text(
+                                              _work.workDetail![index1]
+                                                  .workerMarks.entries
+                                                  .elementAt(index2)
+                                                  .key
+                                                  .getWorkerShortNameWithTabNo(),
+                                              style: TextStyle(
+                                                  color: Color(0xFF646363))),
+                                          Text(
+                                              _work.workDetail![index1].amount
+                                                      .toString() +
+                                                  " " +
+                                                  (_work.workType.units ??
+                                                      "шт.") +
+                                                  "\n",
+                                              style: TextStyle(
+                                                  color: Color(0xFF646363)))
+                                        ]),
+                                        TableRow(children: [
+                                          Text(
+                                              DateFormat("dd.MM.yyyy HH:mm")
+                                                  .format(_work
+                                                      .workDetail![index1]
+                                                      .date),
+                                              style: TextStyle(
+                                                  color: Color(0xFF646363))),
+                                          Text(
+                                              _work.workDetail![index1]
+                                                      .workerMarks.entries
+                                                      .elementAt(index2)
+                                                      .value
+                                                      .toString() +
+                                                  ' балла(-ов)',
+                                              style: TextStyle(
+                                                  color: Color(0xFF646363)))
+                                        ])
+                                      ]),
+                                      if (index2 !=
+                                          _work.workDetail![index1].workerMarks
+                                                  .length -
+                                              1)
+                                        SizedBox(height: 28)
+                                    ]);
+                                  })),
+                          Icon(Icons.delete_outlined, color: Color(0xFF646363))
+                        ]),
+                        if (index1 != _work.workDetail!.length - 1)
+                          Padding(
+                              padding: EdgeInsets.symmetric(vertical: 12),
+                              child: Divider())
+                      ]);
+                    }))
+          ],
+          if (_work.notRequired)
+            Padding(
+                padding: EdgeInsets.symmetric(vertical: 20),
+                child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(
+                        Icons.info,
+                        color: Color(0xFF287BF6),
+                        size: 24,
+                      ),
+                      SizedBox(width: 12),
+                      Flexible(
+                          child: Text(
+                              "Работа отмечена как не требующаяся к выполнению.",
+                              style: TextStyle(
+                                  fontFamily: 'Roboto',
+                                  color: Color(0xFF287BF6)),
+                              textWidthBasis: TextWidthBasis.parent,
+                              maxLines: 4))
+                    ]))
+        ]);
+      }
+
+      // панель кнопок
+      // кнопка для регистрации работы на сервере
+      if (_registrationMode && !_operationCompleted) {
+        buttonBar = ElevatedButton(
+            style: ButtonStyle(
+                backgroundColor:
+                    MaterialStateProperty.all(Colors.yellow.shade700),
+                padding: MaterialStateProperty.all(
+                    EdgeInsets.symmetric(horizontal: 80, vertical: 16)),
+                elevation: MaterialStateProperty.all(3.0),
+                shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30)))),
+            child: Text(
+              "Зарегистрировать",
+              style: TextStyle(
+                  inherit: false,
+                  color: themeData.colorScheme.onSurface,
+                  fontWeight: FontWeight.normal,
+                  fontSize: 16),
+            ),
+            onPressed: () async {
+              Work? newWork;
+              if (_notRequired) {
+                try {
+                  newWork = (await taskListController.registerWorkDetail(
+                      taskListController.taskListState.currentTask.value!.id,
+                      _work.workType.id,
+                      true,
+                      null,
+                      null));
+                } catch (e) {
+                  this.setState(() {
+                    _error = e.toString();
+                  });
+                } finally {
+                  if (newWork != null) {
+                    this.setState(() {
+                      _operationCompleted = true;
+                      _error = null;
+                      _work = newWork!;
+                    });
+                  }
+                }
+              } else if (_amount == null) {
+                {
+                  this.setState(() {
+                    _error = "Укажите объем работ";
+                  });
+                }
+              } else if (_workers.isEmpty) {
+                {
+                  this.setState(() {
+                    _error = "Укажите исполнителей";
+                  });
+                }
+              } else {
+                try {
+                  newWork = (await taskListController.registerWorkDetail(
+                      taskListController.taskListState.currentTask.value!.id,
+                      _work.workType.id,
+                      false,
+                      _amount,
+                      _workers.expand((e) => [e.id]).toList()));
+                } catch (e) {
+                  this.setState(() {
+                    _error = e.toString();
+                  });
+                } finally {
+                  if (newWork != null) {
+                    this.setState(() {
+                      _operationCompleted = true;
+                      _error = null;
+                      _work = newWork!;
+                    });
+                  }
+                }
+              }
+            });
+      }
+      // кнопка для закрытия диалога после регистрации
+      else if (_registrationMode && _operationCompleted) {
+        buttonBar = ElevatedButton(
+          style: ButtonStyle(
+              backgroundColor:
+                  MaterialStateProperty.all(Colors.yellow.shade700),
+              padding: MaterialStateProperty.all(
+                  EdgeInsets.symmetric(horizontal: 80, vertical: 16)),
+              elevation: MaterialStateProperty.all(3.0),
+              shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30)))),
+          child: Text(
+            "Ок",
+            style: TextStyle(
+                inherit: false,
+                color: themeData.colorScheme.onSurface,
+                fontWeight: FontWeight.normal,
+                fontSize: 16),
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        );
+      }
+      // кнопка для перехода к диалогу регистрации работы
+      else {
+        buttonBar = ElevatedButton(
+            style: ButtonStyle(
+                backgroundColor:
+                    MaterialStateProperty.all(Colors.yellow.shade700),
+                padding: MaterialStateProperty.all(
+                    EdgeInsets.symmetric(horizontal: 80, vertical: 16)),
+                elevation: MaterialStateProperty.all(3.0),
+                shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30)))),
+            child: Text(
+              "Зарегистрировать",
+              style: TextStyle(
+                  inherit: false,
+                  color: themeData.colorScheme.onSurface,
+                  fontWeight: FontWeight.normal,
+                  fontSize: 16),
+            ),
+            onPressed: () async {
+              this.setState(() {
+                _registrationMode = true;
+              });
+            });
+      }
+
+      return AdaptiveDialog(
+          titleIcon:
+              _operationCompleted ? Icons.check_circle_outline : Icons.build,
+          titleIconColor: _operationCompleted ? Colors.green : null,
+          titleText: _registrationMode && !_operationCompleted
+              ? "Регистрация работы"
+              : "Зарегистрирована работа",
+          body: body,
+          buttonBar: buttonBar);
+    });
+  }
+}
