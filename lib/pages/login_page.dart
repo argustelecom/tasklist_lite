@@ -11,7 +11,6 @@ import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/state/auth_controller.dart';
 import 'package:tasklist_lite/state/common_dropdown_controller.dart';
 
-import '../local_storage/local_storage_service.dart';
 import '../state/auth_state.dart';
 
 // #TODO: если делать отдельным виджетом, стоит параметризовать размеры, кривую анимации, длительность
@@ -211,6 +210,10 @@ class LoginPageState extends State<LoginPage> {
                         ),
                         Tooltip(
                           textStyle: TextStyle(fontSize: 16),
+                          waitDuration: Duration(seconds: 2),
+                          decoration: BoxDecoration(
+                              color: themeData.cardColor,
+                              border: Border.all(width: 1)),
                           message:
                               "Можно указать любое имя пользователя и пароль. "
                               "\nБудет осуществлен вход без подключения к серверу, "
@@ -243,6 +246,10 @@ class LoginPageState extends State<LoginPage> {
                           children: [
                             CrazyButton(
                               title: "Войти",
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: 18),
                               key: ValueKey('login_button'),
                               onPressed: () {
                                 /// пополняем коллекцию suggestions
@@ -262,7 +269,8 @@ class LoginPageState extends State<LoginPage> {
                                   });
                                 }
 
-                                _authState.serverAddressSuggestions.value = _serverAddressSuggestions;
+                                _authState.serverAddressSuggestions.value =
+                                    _serverAddressSuggestions;
 
                                 /// логинимся
                                 /// Если пользователь разлогинился не с домашней странички(а, например, со страницы профиля),
