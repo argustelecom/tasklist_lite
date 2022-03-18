@@ -8,6 +8,7 @@ import 'package:tasklist_lite/tasklist/model/idle_time.dart';
 
 import '../state/common_dropdown_controller.dart';
 import 'adaptive_dialog.dart';
+import 'crazy_progress_dialog.dart';
 import 'dropdown_button.dart';
 
 class IdleTimeManagerDialog extends StatefulWidget {
@@ -311,24 +312,27 @@ class IdleTimeManagerDialogState extends State<IdleTimeManagerDialog> {
                   IdleTime? newIdleTime;
                   if (_idleTime == null) {
                     try {
-                      newIdleTime = await taskListController.registerIdle(
-                          taskListController
-                              .taskListState.currentTask.value!.id,
-                          _reason!.id,
-                          new DateTime(
-                              _startDate!.year,
-                              _startDate!.month,
-                              _startDate!.day,
-                              _startTime!.hour,
-                              _startTime!.minute),
-                          (_endDate != null && _endTime != null)
-                              ? new DateTime(
-                                  _endDate!.year,
-                                  _endDate!.month,
-                                  _endDate!.day,
-                                  _endTime!.hour,
-                                  _endTime!.minute)
-                              : null);
+                      newIdleTime = await asyncShowProgressIndicatorOverlay(
+                          asyncFunction: () {
+                        return taskListController.registerIdle(
+                            taskListController
+                                .taskListState.currentTask.value!.id,
+                            _reason!.id,
+                            new DateTime(
+                                _startDate!.year,
+                                _startDate!.month,
+                                _startDate!.day,
+                                _startTime!.hour,
+                                _startTime!.minute),
+                            (_endDate != null && _endTime != null)
+                                ? new DateTime(
+                                    _endDate!.year,
+                                    _endDate!.month,
+                                    _endDate!.day,
+                                    _endTime!.hour,
+                                    _endTime!.minute)
+                                : null);
+                      });
                     } catch (e) {
                       this.setState(() {
                         _error = e.toString();
@@ -343,17 +347,24 @@ class IdleTimeManagerDialogState extends State<IdleTimeManagerDialog> {
                     }
                   } else {
                     try {
-                      newIdleTime = await taskListController.finishIdle(
-                          taskListController
-                              .taskListState.currentTask.value!.id,
-                          new DateTime(
-                              _startDate!.year,
-                              _startDate!.month,
-                              _startDate!.day,
-                              _startTime!.hour,
-                              _startTime!.minute),
-                          new DateTime(_endDate!.year, _endDate!.month,
-                              _endDate!.day, _endTime!.hour, _endTime!.minute));
+                      newIdleTime = await asyncShowProgressIndicatorOverlay(
+                          asyncFunction: () {
+                        return taskListController.finishIdle(
+                            taskListController
+                                .taskListState.currentTask.value!.id,
+                            new DateTime(
+                                _startDate!.year,
+                                _startDate!.month,
+                                _startDate!.day,
+                                _startTime!.hour,
+                                _startTime!.minute),
+                            new DateTime(
+                                _endDate!.year,
+                                _endDate!.month,
+                                _endDate!.day,
+                                _endTime!.hour,
+                                _endTime!.minute));
+                      });
                     } catch (e) {
                       this.setState(() {
                         _error = e.toString();
@@ -387,8 +398,8 @@ class IdleTimeManagerDialogState extends State<IdleTimeManagerDialog> {
                       fontSize: 16),
                 ),
                 onPressed: () {
-          GetDelegate routerDelegate = Get.find();
-          routerDelegate.popRoute();
+                  GetDelegate routerDelegate = Get.find();
+                  routerDelegate.popRoute();
                 },
               );
 
