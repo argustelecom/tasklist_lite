@@ -97,7 +97,7 @@ class TaskListController extends GetxController {
                 .toString()
                 .toLowerCase()
                 .contains(searchText) ||
-            element.getAddressDescription().contains(searchText)))
+            element.getAddressDescription().toLowerCase().contains(searchText)))
         // фильтруем по попаданию даты закрытия в текущий день
         .where((element) => ((!element.isClosed ||
             DateUtils.dateOnly(element.closeDate!).millisecondsSinceEpoch ==

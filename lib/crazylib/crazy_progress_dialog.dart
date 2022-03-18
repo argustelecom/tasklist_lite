@@ -141,20 +141,16 @@ class CrazyProgressDialog extends StatelessWidget {
     // Поэтому используем Stack, а чтобы под индикатором прогресса ничего не нажималось -- ModalBarrier
     return Obx(() {
       return Stack(
-          children: [
-            this.child,
-            if (applicationState
-                .isApplicationBusy()
-                .value)
-              ModalBarrier(
-                dismissible: false,
-                color: Colors.transparent,
-              ),
-            if (applicationState
-                .isApplicationBusy()
-                .value)
-              CrazyProgressIndicator(),
-          ],
+        children: [
+          this.child,
+          if (applicationState.isApplicationBusy().value)
+            ModalBarrier(
+              dismissible: false,
+              color: Colors.transparent.withOpacity(0.2),
+            ),
+          if (applicationState.isApplicationBusy().value)
+            CrazyProgressIndicator(),
+        ],
       );
     });
   }
