@@ -28,13 +28,7 @@ class TaskRepository extends GetxService {
     // но это только в деморежиме ( то есть до вызова remote не дойдет)
     TaskRemoteClient taskRemoteClient =
         TaskRemoteClient(basicAuth!, serverAddress!);
-    Future<List<Task>>
-        result = /* asyncShowProgressIndicatorOverlay(
-      asyncFunction: () { */
-        //  return
-        taskRemoteClient.getOpenedTasks();
-    // },
-    //);
+    Future<List<Task>> result = taskRemoteClient.getOpenedTasks();
     return result.asStream();
   }
 
@@ -51,13 +45,8 @@ class TaskRepository extends GetxService {
     }
     TaskRemoteClient taskRemoteClient =
         TaskRemoteClient(basicAuth!, serverAddress!);
-    Future<List<Task>>
-        result = /*asyncShowProgressIndicatorOverlay(
-      asyncFunction: () {
-        return*/
-        taskRemoteClient.getClosedTasks(day);
-    /*},
-    );*/
+    Future<List<Task>> result = taskRemoteClient.getClosedTasks(day);
+
     return result.asStream();
   }
 

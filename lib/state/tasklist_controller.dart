@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/tasklist/idle_time_reason_repository.dart';
 import 'package:tasklist_lite/tasklist/model/close_code.dart';
-import 'package:tasklist_lite/tasklist/model/stage.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
 import 'package:tasklist_lite/tasklist/task_repository.dart';
 
@@ -18,6 +18,7 @@ import 'tasklist_state.dart';
 /// содержит state списка задач и (возможно в будущем) формы задачи
 class TaskListController extends GetxController {
   AuthState authState = Get.find();
+  ApplicationState _applicationState = Get.find();
 
   TaskListState taskListState = Get.put(TaskListState());
 
@@ -74,8 +75,12 @@ class TaskListController extends GetxController {
     resultList.addAll(taskListState.openedTasks);
 
     /// ...затем закрытые, упорядоченные по дате закрытия
-    taskListState.closedTasks
-        .sort((a, b) => a.closeDate!.compareTo(b.closeDate!));
+    // #TODO: возможно, дата закрытия с сервера по задачам не получается.
+    // иначе сложно объснитьь, почему в закрытых тасках эта дата null
+    // в любом случае, надо проверять, что там на сервере. Затычки ниже
+    // нерабочие, просто чтобы не падало.
+    taskListState.closedTasks.sort(
+        (a, b) => a.closeDate?.compareTo(b.closeDate ?? DateTime.now()) ?? 0);
     resultList.addAll(taskListState.closedTasks);
     return List.of(resultList
         // фильтруем по наличию введенного (в поле поиска) текста в названии и других полях задачи
@@ -113,9 +118,29 @@ class TaskListController extends GetxController {
   HistoryEventRepository historyEventRepository = Get.find();
 
   StreamSubscription resubscribe<T>(StreamSubscription? streamSubscription,
-      Stream<T> stream, void onData(T event)) {
+      Stream<T> stream, void onData(T event),
+      {bool showProgress = false}) {
     streamSubscription?.cancel();
-    return stream.listen(onData);
+
+    if (showProgress) {
+      // на время, пока не вернется первая пачка данных, покажем progress-
+      // индикатор. Потом (в последующих пачках) не надо, т.к. state уже будет
+      // непустой, пользователь сможет работать с данными в state.
+      // Здесь можно было бы вызвать asyncShowProgressIndicatorOverlay, но т.к.
+      // нас вызывают в onInit, когда build-контекста еще нет, будут ошибки.
+      _applicationState.claimApplicationIsBusy();
+      Stream<T> broadcastStream =
+          stream.isBroadcast ? stream : stream.asBroadcastStream();
+      broadcastStream.first.whenComplete(
+        () {
+          _applicationState.unClaimApplicationIsBusy();
+          return null;
+        },
+      );
+      return broadcastStream.listen(onData);
+    } else {
+      return stream.listen(onData);
+    }
   }
 
   @override
@@ -126,7 +151,10 @@ class TaskListController extends GetxController {
     // мы должны сделать resubscribe списков открытых и закрытых задач. То же самое при изменении адреса
     // сервера или текущей даты.
 
-    // #TODO: наверняка код ниже можно оптимизировать
+    // #TODO: тут вложенный resubscribe, из-за того, что адрес сервера и authString
+    // при f5 асинхронно дочитываются, а без вложенного resubscribe будет использоваться
+    // null вместо адреса и authString. Проблема бы решилась, если адрес и authString
+    // не пробрасывать параметром, а брать напрямую
     _authStringSubscription = resubscribe<String?>(
         _authStringSubscription, authState.authString.stream,
         (authStringValue) {
@@ -136,7 +164,7 @@ class TaskListController extends GetxController {
               authStringValue, authState.serverAddress.value), (event) {
         taskListState.openedTasks.value = event;
         update();
-      });
+      }, showProgress: true);
 
       _closedTasksSubscription = resubscribe<List<Task>>(
           _closedTasksSubscription,
@@ -146,7 +174,7 @@ class TaskListController extends GetxController {
               taskListState.currentDate.value), (event) {
         taskListState.closedTasks.value = event;
         update();
-      });
+      }, showProgress: true);
     });
 
     _serverAddressSubscription = resubscribe<String?>(
@@ -158,7 +186,7 @@ class TaskListController extends GetxController {
               authState.authString.value, serverAddressValue), (event) {
         taskListState.openedTasks.value = event;
         update();
-      });
+      }, showProgress: true);
 
       _closedTasksSubscription = resubscribe<List<Task>>(
           _closedTasksSubscription,
@@ -166,7 +194,7 @@ class TaskListController extends GetxController {
               serverAddressValue, taskListState.currentDate.value), (event) {
         taskListState.closedTasks.value = event;
         update();
-      });
+      }, showProgress: true);
     });
 
     _currentDateSubscription = resubscribe<DateTime>(
@@ -180,7 +208,7 @@ class TaskListController extends GetxController {
               taskListState.currentDate.value), (event) {
         taskListState.closedTasks.value = event;
         update();
-      });
+      }, showProgress: true);
     });
 
     // на момент переподписывания здесь, значения в authState уже могли быть
