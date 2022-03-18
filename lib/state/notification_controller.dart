@@ -5,6 +5,8 @@ import 'package:tasklist_lite/state/auth_state.dart';
 import 'package:tasklist_lite/tasklist/model/notify.dart';
 import 'package:tasklist_lite/tasklist/notification_repository.dart';
 
+import '../common/resubscribe.dart';
+
 class NotificationController extends GetxController {
   /// Список уведомлений, которые еще не прочитаны. Его будем выводить на UI
   List<Notify> aliveNotifications = List.of({});
@@ -47,13 +49,6 @@ class NotificationController extends GetxController {
   /// Ищем репозиторий уведомлений
   NotificationRepository notificationRepository = Get.find();
 
-  /// Метод переподписки, скидывает старый стрим и слушает новый
-  StreamSubscription resubscribe(StreamSubscription? streamSubscription,
-      Stream<List<Notify>> stream, void onData(List<Notify> event)) {
-    streamSubscription?.cancel();
-    return stream.listen(onData);
-  }
-
   /// При инициализации ловим стрим и наполняем aliveNotifications
   @override
   void onInit() {
@@ -62,7 +57,7 @@ class NotificationController extends GetxController {
     // еще до создания самого приложения в main.
     AuthState authState = Get.find();
 
-    openedNotificationSubscription = resubscribe(
+    openedNotificationSubscription = resubscribe<List<Notify>>(
         openedNotificationSubscription,
         notificationRepository.streamOpenedNotifications(
             authState.authString.value!, authState.serverAddress.value!),

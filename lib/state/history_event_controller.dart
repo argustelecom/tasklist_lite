@@ -1,9 +1,10 @@
 import 'dart:async';
 
 import 'package:get/get.dart';
-import 'package:tasklist_lite/state/tasklist_controller.dart';
 import 'package:tasklist_lite/state/auth_controller.dart';
+import 'package:tasklist_lite/state/tasklist_controller.dart';
 
+import '../common/resubscribe.dart';
 import '../tasklist/history_events_repository.dart';
 import '../tasklist/model/history_event.dart';
 import '../tasklist/model/task.dart';
@@ -22,21 +23,12 @@ class HistoryEventController extends GetxController {
   /// Подписка на комментарии
   StreamSubscription? commentSubscription;
 
-  /// Метод переподписки, скидывает старый стрим и слушает новый
-  StreamSubscription resubscribe(
-      StreamSubscription? streamSubscription,
-      Stream<List<HistoryEvent>> stream,
-      void onData(List<HistoryEvent> event)) {
-    streamSubscription?.cancel();
-    return stream.listen(onData);
-  }
-
   /// Инициализируем список событий
   @override
   void onInit() {
     super.onInit();
 
-    commentSubscription = resubscribe(
+    commentSubscription = resubscribe<List<HistoryEvent>>(
         commentSubscription,
         historyEventRepository.streamComments(
             authState.authString.value!,

@@ -8,6 +8,7 @@ import 'package:tasklist_lite/tasklist/model/close_code.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
 import 'package:tasklist_lite/tasklist/task_repository.dart';
 
+import '../common/resubscribe.dart';
 import '../tasklist/close_code_repository.dart';
 import '../tasklist/fixture/task_fixtures.dart';
 import '../tasklist/history_events_repository.dart';
@@ -116,32 +117,6 @@ class TaskListController extends GetxController {
   IdleTimeReasonRepository idleTimeReasonRepository = Get.find();
   CloseCodeRepository closeCodeRepository = Get.find();
   HistoryEventRepository historyEventRepository = Get.find();
-
-  StreamSubscription resubscribe<T>(StreamSubscription? streamSubscription,
-      Stream<T> stream, void onData(T event),
-      {bool showProgress = false}) {
-    streamSubscription?.cancel();
-
-    if (showProgress) {
-      // на время, пока не вернется первая пачка данных, покажем progress-
-      // индикатор. Потом (в последующих пачках) не надо, т.к. state уже будет
-      // непустой, пользователь сможет работать с данными в state.
-      // Здесь можно было бы вызвать asyncShowProgressIndicatorOverlay, но т.к.
-      // нас вызывают в onInit, когда build-контекста еще нет, будут ошибки.
-      _applicationState.claimApplicationIsBusy();
-      Stream<T> broadcastStream =
-          stream.isBroadcast ? stream : stream.asBroadcastStream();
-      broadcastStream.first.whenComplete(
-        () {
-          _applicationState.unClaimApplicationIsBusy();
-          return null;
-        },
-      );
-      return broadcastStream.listen(onData);
-    } else {
-      return stream.listen(onData);
-    }
-  }
 
   @override
   void onInit() {
