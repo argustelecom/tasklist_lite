@@ -33,6 +33,19 @@ class HistoryEventsFixtures {
             "Время отсчета контрольного срока: 31.10.2021 18:42 (+05:00); Сдвиг: 2229 час. 12 мин.; Примечание: ?;  ",
         date: DateTime.now().subtract(Duration(days: 2)),
         isAlarm: false),
+    new HistoryEvent(
+        person: "RT_TTMS_USER",
+        type: "Уведомление",
+        content:
+        """                <div>Follow<a class='sup'><sup>pl</sup></a> 
+                  Below hr
+                    <b>Bold<b>
+                <h1>what was sent down to you from your Lord</h1>, 
+                and do not follow other guardians apart from Him. Little do 
+                <span class='h'>you remind yourselves</span><a class='f'><sup f=2437>1</sup></a></div>
+                """,
+        date: DateTime.now().subtract(Duration(days: 2)),
+        isAlarm: false),
   });
 
   static List<HistoryEvent> secondHistoryEventFixture = List.of({

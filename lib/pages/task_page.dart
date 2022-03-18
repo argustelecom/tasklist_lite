@@ -9,6 +9,7 @@ import 'package:tasklist_lite/crazylib/idle_time_manager_dialog.dart';
 import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
 import 'package:tasklist_lite/crazylib/task_due_date_label.dart';
 import 'package:tasklist_lite/state/history_event_controller.dart';
+import 'package:tasklist_lite/state/textFieldColoraizer.dart';
 import 'package:tasklist_lite/tasklist/fixture/task_fixtures.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -18,7 +19,6 @@ import '../crazylib/adaptive_dialog.dart';
 import '../crazylib/close_task_dialog.dart';
 import '../crazylib/mark_filter_list.dart';
 import '../state/tasklist_controller.dart';
-import '../tasklist/model/stage.dart';
 import 'comment_page.dart';
 
 class TaskPage extends StatefulWidget {
@@ -35,10 +35,20 @@ class _TaskPageState extends State<TaskPage> {
   @override
   Widget build(BuildContext context) {
     ThemeData themeData = Theme.of(context);
-    // Это дефолтный контроллер для управления текстовым полем
+
     // #Fixme: опрометчиво его создавать в методе build
-    TextEditingController commentTextController;
-    commentTextController = TextEditingController();
+    //Создаем кастомный TextEditingController. Используем для управления стилями текста в TextField и не только
+    TextEditingController commentTextController = TextFieldColorizer(
+      {
+        r'_(.*?)\_': TextStyle(
+            fontStyle: FontStyle.italic, shadows: kElevationToShadow[2]),
+        '~(.*?)~': TextStyle(
+            decoration: TextDecoration.lineThrough,
+            shadows: kElevationToShadow[2]),
+        r'\*(.*?)\*': TextStyle(
+            fontWeight: FontWeight.bold, shadows: kElevationToShadow[2]),
+      },
+    );
 
     // Это дефолтный скроллконтрроллер, используем на вкладке история, чтобы перематывать на последнее событие т.к. это удобно для пользователя
     ScrollController historyScrollController = new ScrollController();
@@ -114,450 +124,423 @@ class _TaskPageState extends State<TaskPage> {
                         ],
                       ),
                     ),
-
-                    /// TODO: Информация по этапу захардкожена,когда будет выполнена доработка API для получения параметров по простою логику отображения нужно доделать
-                    Expanded(
-                        child: TabBarView(children: [
-                      Padding(
-                        padding:
-                            EdgeInsets.only(left: 12, right: 12, bottom: 12),
-                        child: Card(
-                            elevation: 3,
-                            child: Column(
-                              children: [
-                                Row(
-                                    children: [
-                                      Column(
-                                        children: [
-                                          Padding(
-                                              padding: EdgeInsets.fromLTRB(
-                                                  16, 8, 16, 12),
-                                              child: Row(children: [
-                                                Text(
-                                                    "${taskListController.taskListState.currentTask.value!.stage!.name}",
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold)),
-                                              ])),
-                                          Padding(
-                                            padding: EdgeInsets.fromLTRB(
-                                                16, 8, 16, 0),
-                                            child: Row(children: [
-                                              Text(
-                                                  "КС : ${taskListController.taskListState.currentTask.value!.stage!.dueDate}",
-                                                  style: taskListController
-                                                          .taskListState
-                                                          .currentTask
-                                                          .value!
-                                                          .stage!
-                                                          .dueDate!
-                                                          .isBefore(
-                                                              DateTime.now())
-                                                      ? TextStyle(
-                                                          color: Colors.red)
-                                                      : TextStyle(
-                                                          color: Colors.green)),
-                                            ]),
+                    if (taskListController
+                            .taskListState.currentTask.value!.stage !=
+                        null)
+                      Expanded(
+                          child: TabBarView(children: [
+                        Padding(
+                          padding:
+                              EdgeInsets.only(left: 12, right: 12, bottom: 12),
+                          child: Card(
+                              elevation: 3,
+                              child: Column(
+                                children: [
+                                  Row(
+                                      children: [
+                                        //Это тут для того, чтобы наряды ТО у нас не падали т.к. у них нет этапа
+                                        if (taskListController.taskListState
+                                                .currentTask.value!.stage !=
+                                            null)
+                                          Column(
+                                            children: [
+                                              Padding(
+                                                  padding: EdgeInsets.fromLTRB(
+                                                      16, 8, 16, 12),
+                                                  child: Row(children: [
+                                                    Text(
+                                                        "${taskListController.taskListState.currentTask.value!.stage!.name}",
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold)),
+                                                  ])),
+                                              Padding(
+                                                padding: EdgeInsets.fromLTRB(
+                                                    16, 8, 16, 0),
+                                                child: Row(children: [
+                                                  Text(
+                                                      "КС : ${taskListController.taskListState.currentTask.value!.stage!.dueDate}",
+                                                      style: taskListController
+                                                              .taskListState
+                                                              .currentTask
+                                                              .value!
+                                                              .stage!
+                                                              .dueDate!
+                                                              .isBefore(DateTime
+                                                                  .now())
+                                                          ? TextStyle(
+                                                              color: Colors.red)
+                                                          : TextStyle(
+                                                              color: Colors
+                                                                  .green)),
+                                                ]),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.fromLTRB(
+                                                    16, 8, 16, 0),
+                                                child: Row(children: [
+                                                  Text(
+                                                      "${taskListController.taskListState.currentTask.value!.getTimeLeftStageText()}",
+                                                      style: taskListController
+                                                              .taskListState
+                                                              .currentTask
+                                                              .value!
+                                                              .getTimeLeftStageText()
+                                                              .contains('СКВ')
+                                                          ? TextStyle(
+                                                              color: Colors.red)
+                                                          : TextStyle(
+                                                              color: Colors
+                                                                  .green)),
+                                                ]),
+                                              ),
+                                            ],
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                           ),
+                                        //Клизма
+                                        //Это тут для того, чтобы наряды ТО у нас не падали т.к. у них нет этапа
+                                        if (taskListController.taskListState
+                                                .currentTask.value!.stage !=
+                                            null)
                                           Padding(
-                                            padding: EdgeInsets.fromLTRB(
-                                                16, 8, 16, 0),
-                                            child: Row(children: [
-                                              Text(
-                                                  "${taskListController.taskListState.currentTask.value!.getTimeLeftStageText()}",
-                                                  style: taskListController
-                                                          .taskListState
-                                                          .currentTask
-                                                          .value!
-                                                          .getTimeLeftStageText()
-                                                          .contains('СКВ')
-                                                      ? TextStyle(
-                                                          color: Colors.red)
-                                                      : TextStyle(
-                                                          color: Colors.green)),
-                                            ]),
-                                          ),
-                                        ],
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                      ),
-                                      //Клизма
-                                      Padding(
-                                          padding: EdgeInsets.only(right: 50),
-                                          child: Expanded(
-                                            child: InkWell(
-                                              onTap: () async {
-                                                // Есть map_launcher, но он в вебе не работает (ругается)
-                                                // но можно открывать урл к yandex maps например
-                                                // https://stackoverflow.com/questions/52052232/flutter-url-launcher-google-maps
-                                                String baseUrl =
-                                                    "https://yandex.ru/maps/?l=map&z=11";
-                                                // параметры открытия яндекса см. https://yandex.com/dev/yandex-apps-launch/maps/doc/concepts/yandexmaps-web.html
-                                                // #TODO: если бы у нас были текущиие координаты (а они будут в следующих версиях), можно открывать прям маршрут,
-                                                // см. Plot Route https://yandex.com/dev/yandex-apps-launch/maps/doc/concepts/yandexmaps-web.html#yandexmaps-web__buildroute
-                                                if ((taskListController
-                                                            .taskListState
-                                                            .currentTask
-                                                            .value!
-                                                            .latitude !=
-                                                        null) &&
-                                                    (taskListController
-                                                            .taskListState
-                                                            .currentTask
-                                                            .value!
-                                                            .longitude !=
-                                                        null)) {
-                                                  baseUrl = baseUrl +
-                                                      "&pt=" +
-                                                      taskListController
-                                                          .taskListState
-                                                          .currentTask
-                                                          .value!
-                                                          .latitude
-                                                          .toString() +
-                                                      "," +
-                                                      taskListController
-                                                          .taskListState
-                                                          .currentTask
-                                                          .value!
-                                                          .longitude
-                                                          .toString();
-                                                } else if (taskListController
+                                            padding: EdgeInsets.only(
+                                                left: 12, right: 16),
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                // #TODO: в макете у иконки еще elevation присутствует, с ходу не получилось сделать
+                                                IconButton(
+                                                    onPressed: () async {
+                                                      // Есть map_launcher, но он в вебе не работает (ругается)
+                                                      // но можно открывать урл к yandex maps например
+                                                      // https://stackoverflow.com/questions/52052232/flutter-url-launcher-google-maps
+                                                      String baseUrl =
+                                                          "https://yandex.ru/maps/?l=map&z=11";
+                                                      // параметры открытия яндекса см. https://yandex.com/dev/yandex-apps-launch/maps/doc/concepts/yandexmaps-web.html
+                                                      // #TODO: если бы у нас были текущиие координаты (а они будут в следующих версиях), можно открывать прям маршрут,
+                                                      // см. Plot Route https://yandex.com/dev/yandex-apps-launch/maps/doc/concepts/yandexmaps-web.html#yandexmaps-web__buildroute
+                                                      if ((taskListController
+                                                                  .taskListState
+                                                                  .currentTask
+                                                                  .value!
+                                                                  .latitude !=
+                                                              null) &&
+                                                          (taskListController
+                                                                  .taskListState
+                                                                  .currentTask
+                                                                  .value!
+                                                                  .longitude !=
+                                                              null)) {
+                                                        baseUrl = baseUrl +
+                                                            "&pt=" +
+                                                            taskListController
+                                                                .taskListState
+                                                                .currentTask
+                                                                .value!
+                                                                .latitude
+                                                                .toString() +
+                                                            "," +
+                                                            taskListController
+                                                                .taskListState
+                                                                .currentTask
+                                                                .value!
+                                                                .longitude
+                                                                .toString();
+                                                      } else if (taskListController
+                                                              .taskListState
+                                                              .currentTask
+                                                              .value!
+                                                              .address !=
+                                                          null) {
+                                                        // если координаты не заданы, поищем по адресу
+                                                        baseUrl = baseUrl +
+                                                            "&text=" +
+                                                            taskListController
+                                                                .taskListState
+                                                                .currentTask
+                                                                .value!
+                                                                .address!;
+                                                      }
+                                                      final String encodedURl =
+                                                          Uri.encodeFull(
+                                                              baseUrl);
+                                                      // тут можно было бы проверить через canLaunch, но вроде не обязательно
+                                                      // в крайнем случае откроет просто карту в неподходящем месте
+                                                      launch(encodedURl);
+                                                    },
+                                                    icon: Column(
+                                                      children: [
+                                                        Expanded(
+                                                          child: Icon(
+                                                            Icons.place,
+                                                            color: themeData
+                                                                .colorScheme
+                                                                .primary,
+                                                          ),
+                                                        ),
+                                                        // #TODO: согласно макету, под иконкой должно быть не равномерное подчеркивание,
+                                                        // а тень, хитро полученная как тень рамки иконки в figma. Подобного эффекта пока
+                                                        // достичь не удалось.
+                                                        // Еще вариант -- такая вот иконка https://www.iconfinder.com/icons/2344289/gps_location_map_place_icon
+                                                        Expanded(
+                                                          child: Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                              left: 10,
+                                                              right: 10,
+                                                              top: 20,
+                                                            ),
+                                                            child: Divider(
+                                                              thickness: 3,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    )),
+                                                Text(taskListController
                                                         .taskListState
                                                         .currentTask
                                                         .value!
-                                                        .address !=
-                                                    null) {
-                                                  // если координаты не заданы, поищем по адресу
-                                                  baseUrl = baseUrl +
-                                                      "&text=" +
-                                                      taskListController
-                                                          .taskListState
-                                                          .currentTask
-                                                          .value!
-                                                          .address!;
-                                                }
-                                                final String encodedURl =
-                                                    Uri.encodeFull(baseUrl);
-                                                // тут можно было бы проверить через canLaunch, но вроде не обязательно
-                                                // в крайнем случае откроет просто карту в неподходящем месте
-                                                launch(encodedURl);
-                                              },
-                                              onLongPress: () {
-                                                Clipboard.setData(ClipboardData(
-                                                    text:
-                                                        "${taskListController.taskListState.currentTask.value!.longitude},${taskListController.taskListState.currentTask.value!.latitude} "));
-                                              },
-                                              child: Column(
-                                                children: [
-                                                  Icon(
-                                                    Icons.place,
-                                                    size: 35,
-                                                    color: themeData
-                                                        .colorScheme.primary,
-                                                  ),
-                                                  Padding(
-                                                      padding: EdgeInsets.only(
-                                                          top: 4, bottom: 4),
-                                                      child: Container(
-                                                          color: Colors.black12,
-                                                          height: 2.5,
-                                                          width: 12)),
-                                                  Text(taskListController
-                                                          .taskListState
-                                                          .currentTask
-                                                          .value!
-                                                          .flexibleAttribs[
-                                                              TaskFixtures
-                                                                  .distanceToObjectFlexAttrName]
-                                                          ?.toString() ??
-                                                      "")
-                                                ],
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(100),
+                                                        .flexibleAttribs[
+                                                            TaskFixtures
+                                                                .distanceToObjectFlexAttrName]
+                                                        ?.toString() ??
+                                                    "")
+                                              ],
                                             ),
-                                          )),
-                                    ],
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween),
-                                //Прогресс бар для этапов
-                                Row(
-                                    children: [
-                                      // Первый этап
-                                      Expanded(
-                                        child: Padding(
-                                            padding: EdgeInsets.only(
-                                                left: 12,
-                                                right: 4,
-                                                bottom: 5,
-                                                top: 12),
-                                            child: LinearProgressIndicator(
-                                              value: taskListController
-                                                  .taskListState
-                                                  .currentTask
-                                                  .value!
-                                                  .getStageProgressStatus(
-                                                      1,
-                                                      taskListController
-                                                          .taskListState
-                                                          .currentTask
-                                                          .value!
-                                                          .stage!),
-                                              color: Colors.yellow.shade700,
-                                              minHeight: 12,
-                                              backgroundColor:
-                                                  Colors.yellow.shade200,
-                                            )),
-                                      ),
-                                      // Второй этап
-                                      Expanded(
-                                        child: Padding(
-                                            padding: EdgeInsets.only(
-                                                left: 4,
-                                                right: 4,
-                                                bottom: 5,
-                                                top: 12),
-                                            child: LinearProgressIndicator(
-                                              value: taskListController
-                                                  .taskListState
-                                                  .currentTask
-                                                  .value!
-                                                  .getStageProgressStatus(
-                                                      2,
-                                                      taskListController
-                                                          .taskListState
-                                                          .currentTask
-                                                          .value!
-                                                          .stage!),
-                                              color: Colors.yellow.shade700,
-                                              minHeight: 12,
-                                              backgroundColor:
-                                                  Colors.yellow.shade200,
-                                            )),
-                                      ),
-                                      // Третий этап
-                                      Expanded(
-                                        child: Padding(
-                                            padding: EdgeInsets.only(
-                                                left: 4,
-                                                right: 4,
-                                                bottom: 5,
-                                                top: 12),
-                                            child: LinearProgressIndicator(
-                                              value: taskListController
-                                                  .taskListState
-                                                  .currentTask
-                                                  .value!
-                                                  .getStageProgressStatus(
-                                                      3,
-                                                      taskListController
-                                                          .taskListState
-                                                          .currentTask
-                                                          .value!
-                                                          .stage!),
-                                              color: Colors.yellow.shade700,
-                                              minHeight: 12,
-                                              backgroundColor:
-                                                  Colors.yellow.shade200,
-                                            )),
-                                      ),
-                                      // Четвертый этап
-                                      Expanded(
-                                        child: Padding(
-                                            padding: EdgeInsets.only(
-                                                left: 4,
-                                                right: 12,
-                                                bottom: 5,
-                                                top: 12),
-                                            child: LinearProgressIndicator(
-                                              value: taskListController
-                                                  .taskListState
-                                                  .currentTask
-                                                  .value!
-                                                  .getStageProgressStatus(
-                                                      4,
-                                                      taskListController
-                                                          .taskListState
-                                                          .currentTask
-                                                          .value!
-                                                          .stage!),
-                                              color: Colors.yellow.shade700,
-                                              minHeight: 12,
-                                              backgroundColor:
-                                                  Colors.yellow.shade200,
-                                            )),
-                                      ),
-                                    ],
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween),
-                                Padding(
-                                    padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
-                                    child: LimitedBox(
-                                        maxHeight: 450.0,
-                                        child: AttribValue(
-                                          task: taskListController
-                                              .taskListState.currentTask.value!,
-                                        ))),
-                              ],
-                            )),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 32),
-                        child: Card(
-                          child: Text("Здесь будут работы"),
-                          elevation: 3,
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 32),
-                        child: Card(
-                          child: Container(
-                              height: 100.0,
-                              width: 100.0,
-                              child: ObjectAttachWidget(taskListController
-                                  .taskListState.currentTask.value!.id)),
-                          elevation: 3,
-                        ),
-                      ),
-                      GetBuilder<HistoryEventController>(
-                          init: HistoryEventController(),
-                          builder: (historyEventController) {
-                            return Padding(
-                                padding: EdgeInsets.only(
-                                    left: 12, right: 12, bottom: 12),
-                                child: Column(
-                                  children: [
-                                    Expanded(
-                                      child: ListView.builder(
-                                          itemCount: historyEventController
-                                              .getHistoryEvents()
-                                              .length,
-                                          controller: historyScrollController,
-                                          itemBuilder: (BuildContext context,
-                                              int index) {
-                                            return InkWell(
-                                                child: HistoryEventCard(
-                                                    maxLines: 10,
-                                                    comment: historyEventController
-                                                            .getHistoryEvents()[
-                                                        index]),
-                                                onTap: () {
-                                                  historyEventController
-                                                      .setCurrentComment(
-                                                          historyEventController
-                                                                  .getHistoryEvents()[
-                                                              index]);
-                                                  GetDelegate routerDelegate =
-                                                      Get.find();
-                                                  routerDelegate.toNamed(
-                                                      CommentPage.routeName);
-                                                });
-                                          }),
-                                    ),
-                                    // Текстовое поле ввода комментария
-                                    Padding(
-                                      padding: EdgeInsets.only(top: 16),
-                                      child: Focus(
-                                        onFocusChange: (value) {
-                                          Future.delayed(
-                                              const Duration(milliseconds: 100),
-                                              () {
-                                            historyEventController
-                                                .setOnTextFieldFocused(value);
-                                          });
-                                        },
-                                        child: TextField(
-                                            textInputAction:
-                                                TextInputAction.send,
-                                            keyboardType: TextInputType.text,
-                                            textAlign: TextAlign.start,
-                                            decoration: InputDecoration(
-                                              hintText: "Ваш комментарий",
-                                              hintStyle:
-                                                  TextStyle(fontSize: 14),
-                                              fillColor:
-                                                  themeData.bottomAppBarColor,
-                                              border: InputBorder.none,
-                                              filled: true,
-                                              suffixIcon: IconButton(
-                                                tooltip: 'С уведомлением',
-                                                icon: Icon(
-                                                    historyEventController
-                                                            .getIsAlarmComment()
-                                                        ? Icons.notifications
-                                                        : Icons
-                                                            .notifications_off,
-                                                    // size: 30,
-                                                    color: Colors.black),
-                                                onPressed: () {
-                                                  historyEventController
-                                                      .changeIsAlarmComment();
-                                                },
-                                              ),
-                                              isCollapsed: false,
-                                            ),
-                                            onSubmitted: (text) {
-                                              historyEventController.addComment(
-                                                  commentTextController.text,
-                                                  historyEventController
-                                                      .getIsAlarmComment(),
-                                                  taskListController
+                                          )
+                                      ],
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween),
+                                  //Прогресс бар для этапов
+                                  if (taskListController.taskListState
+                                          .currentTask.value!.stage !=
+                                      null)
+                                    Row(
+                                        children: [
+                                          // Первый этап
+                                          Expanded(
+                                            child: Padding(
+                                                padding: EdgeInsets.only(
+                                                    left: 12,
+                                                    right: 4,
+                                                    bottom: 5,
+                                                    top: 12),
+                                                child: LinearProgressIndicator(
+                                                  value: taskListController
                                                       .taskListState
                                                       .currentTask
-                                                      .value!);
-                                              commentTextController.clear();
-                                              historyScrollController.animateTo(
-                                                historyScrollController
-                                                    .position.maxScrollExtent,
-                                                curve: Curves.easeOut,
-                                                duration: const Duration(
-                                                    milliseconds: 300),
-                                              );
-                                              FocusManager.instance.primaryFocus
-                                                  ?.unfocus();
-                                            },
-                                            minLines: 1,
-                                            maxLines: 5,
-                                            controller: commentTextController),
+                                                      .value!
+                                                      .getStageProgressStatus(
+                                                          1,
+                                                          taskListController
+                                                              .taskListState
+                                                              .currentTask
+                                                              .value!
+                                                              .stage!),
+                                                  color: Colors.yellow.shade700,
+                                                  minHeight: 12,
+                                                  backgroundColor:
+                                                      Colors.yellow.shade200,
+                                                )),
+                                          ),
+                                          // Второй этап
+                                          Expanded(
+                                            child: Padding(
+                                                padding: EdgeInsets.only(
+                                                    left: 4,
+                                                    right: 4,
+                                                    bottom: 5,
+                                                    top: 12),
+                                                child: LinearProgressIndicator(
+                                                  value: taskListController
+                                                      .taskListState
+                                                      .currentTask
+                                                      .value!
+                                                      .getStageProgressStatus(
+                                                          2,
+                                                          taskListController
+                                                              .taskListState
+                                                              .currentTask
+                                                              .value!
+                                                              .stage!),
+                                                  color: Colors.yellow.shade700,
+                                                  minHeight: 12,
+                                                  backgroundColor:
+                                                      Colors.yellow.shade200,
+                                                )),
+                                          ),
+                                          // Третий этап
+                                          Expanded(
+                                            child: Padding(
+                                                padding: EdgeInsets.only(
+                                                    left: 4,
+                                                    right: 4,
+                                                    bottom: 5,
+                                                    top: 12),
+                                                child: LinearProgressIndicator(
+                                                  value: taskListController
+                                                      .taskListState
+                                                      .currentTask
+                                                      .value!
+                                                      .getStageProgressStatus(
+                                                          3,
+                                                          taskListController
+                                                              .taskListState
+                                                              .currentTask
+                                                              .value!
+                                                              .stage!),
+                                                  color: Colors.yellow.shade700,
+                                                  minHeight: 12,
+                                                  backgroundColor:
+                                                      Colors.yellow.shade200,
+                                                )),
+                                          ),
+                                          // Четвертый этап
+                                          Expanded(
+                                            child: Padding(
+                                                padding: EdgeInsets.only(
+                                                    left: 4,
+                                                    right: 12,
+                                                    bottom: 5,
+                                                    top: 12),
+                                                child: LinearProgressIndicator(
+                                                  value: taskListController
+                                                      .taskListState
+                                                      .currentTask
+                                                      .value!
+                                                      .getStageProgressStatus(
+                                                          4,
+                                                          taskListController
+                                                              .taskListState
+                                                              .currentTask
+                                                              .value!
+                                                              .stage!),
+                                                  color: Colors.yellow.shade700,
+                                                  minHeight: 12,
+                                                  backgroundColor:
+                                                      Colors.yellow.shade200,
+                                                )),
+                                          ),
+                                        ],
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween),
+                                  Padding(
+                                      padding:
+                                          EdgeInsets.fromLTRB(16, 8, 16, 0),
+                                      child: LimitedBox(
+                                          maxHeight: 450.0,
+                                          child: AttribValue(
+                                            task: taskListController
+                                                .taskListState
+                                                .currentTask
+                                                .value!,
+                                          ))),
+                                ],
+                              )),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 32),
+                          child: Card(
+                            child: Text("Здесь будут работы"),
+                            elevation: 3,
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 32),
+                          child: Card(
+                            child: Container(
+                                height: 100.0,
+                                width: 100.0,
+                                child: ObjectAttachWidget(taskListController
+                                    .taskListState.currentTask.value!.id)),
+                            elevation: 3,
+                          ),
+                        ),
+                        GetBuilder<HistoryEventController>(
+                            init: HistoryEventController(),
+                            builder: (historyEventController) {
+                              return Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 12, right: 12, bottom: 12),
+                                  child: Column(
+                                    children: [
+                                      Expanded(
+                                        child: ListView.builder(
+                                            itemCount: historyEventController
+                                                .getHistoryEvents()
+                                                .length,
+                                            controller: historyScrollController,
+                                            itemBuilder: (BuildContext context,
+                                                int index) {
+                                              return InkWell(
+                                                  child: HistoryEventCard(
+                                                      maxLines: 10,
+                                                      comment:
+                                                          historyEventController
+                                                                  .getHistoryEvents()[
+                                                              index]),
+                                                  onTap: () {
+                                                    historyEventController
+                                                        .setCurrentComment(
+                                                            historyEventController
+                                                                    .getHistoryEvents()[
+                                                                index]);
+                                                    GetDelegate routerDelegate =
+                                                        Get.find();
+                                                    routerDelegate.toNamed(
+                                                        CommentPage.routeName);
+                                                  });
+                                            }),
                                       ),
-                                    ),
-                                    Visibility(
-                                        visible: historyEventController
-                                            .getOnTextFieldFocused(),
-                                        child: Padding(
-                                          padding: EdgeInsets.only(
-                                              top: 8, right: 16),
-                                          child: Row(
-                                              children: [
-                                                TextButton(
-                                                  child: Padding(
-                                                    padding: EdgeInsets.only(
-                                                        top: 4,
-                                                        right: 8,
-                                                        left: 8,
-                                                        bottom: 4),
-                                                    child: const Text(
-                                                        'Отправить',
-                                                        style: TextStyle(
-                                                            color: Colors.black,
-                                                            fontSize: 14)),
-                                                  ),
-                                                  style: ButtonStyle(
-                                                      shape: MaterialStateProperty.all<
-                                                              RoundedRectangleBorder>(
-                                                          RoundedRectangleBorder(
-                                                              borderRadius:
-                                                                  BorderRadius.circular(
-                                                                      32))),
-                                                      padding: MaterialStateProperty.all<
-                                                              EdgeInsets>(
-                                                          EdgeInsets.all(2)),
-                                                      backgroundColor:
-                                                          MaterialStateProperty.all<Color>(
-                                                              Colors.yellow.shade700)),
+                                      // Текстовое поле ввода комментария
+                                      Padding(
+                                        padding: EdgeInsets.only(top: 16),
+                                        child: Focus(
+                                          onFocusChange: (value) {
+                                            Future.delayed(
+                                                const Duration(
+                                                    milliseconds: 100), () {
+                                              historyEventController
+                                                  .setOnTextFieldFocused(value);
+                                            });
+                                          },
+                                          child: TextField(
+                                              textInputAction:
+                                                  TextInputAction.send,
+                                              keyboardType: TextInputType.text,
+                                              textAlign: TextAlign.start,
+                                              decoration: InputDecoration(
+                                                hintText: "Ваш комментарий",
+                                                hintStyle:
+                                                    TextStyle(fontSize: 14),
+                                                fillColor:
+                                                    themeData.bottomAppBarColor,
+                                                border: InputBorder.none,
+                                                filled: true,
+                                                suffixIcon: IconButton(
+                                                  tooltip: 'С уведомлением',
+                                                  icon: Icon(
+                                                      historyEventController
+                                                              .getIsAlarmComment()
+                                                          ? Icons.notifications
+                                                          : Icons
+                                                              .notifications_off,
+                                                      // size: 30,
+                                                      color: Colors.black),
                                                   onPressed: () {
-                                                    historyEventController.addComment(
+                                                    historyEventController
+                                                        .changeIsAlarmComment();
+                                                  },
+                                                ),
+                                                isCollapsed: false,
+                                              ),
+                                              onSubmitted: (text) {
+                                                historyEventController
+                                                    .addComment(
                                                         commentTextController
                                                             .text,
                                                         historyEventController
@@ -566,31 +549,97 @@ class _TaskPageState extends State<TaskPage> {
                                                             .taskListState
                                                             .currentTask
                                                             .value!);
-                                                    commentTextController
-                                                        .clear();
-                                                    historyScrollController
-                                                        .animateTo(
+                                                commentTextController.clear();
+                                                historyScrollController
+                                                    .animateTo(
+                                                  historyScrollController
+                                                      .position.maxScrollExtent,
+                                                  curve: Curves.easeOut,
+                                                  duration: const Duration(
+                                                      milliseconds: 300),
+                                                );
+                                                FocusManager
+                                                    .instance.primaryFocus
+                                                    ?.unfocus();
+                                              },
+                                              minLines: 1,
+                                              maxLines: 5,
+                                              controller:
+                                                  commentTextController),
+                                        ),
+                                      ),
+                                      Visibility(
+                                          visible: historyEventController
+                                              .getOnTextFieldFocused(),
+                                          child: Padding(
+                                            padding: EdgeInsets.only(
+                                                top: 8, right: 16),
+                                            child: Row(
+                                                children: [
+                                                  TextButton(
+                                                    child: Padding(
+                                                      padding: EdgeInsets.only(
+                                                          top: 4,
+                                                          right: 8,
+                                                          left: 8,
+                                                          bottom: 4),
+                                                      child: const Text(
+                                                          'Отправить',
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.black,
+                                                              fontSize: 14)),
+                                                    ),
+                                                    style: ButtonStyle(
+                                                        shape: MaterialStateProperty.all<
+                                                                RoundedRectangleBorder>(
+                                                            RoundedRectangleBorder(
+                                                                borderRadius:
+                                                                    BorderRadius.circular(
+                                                                        32))),
+                                                        padding: MaterialStateProperty.all<
+                                                                EdgeInsets>(
+                                                            EdgeInsets.all(2)),
+                                                        backgroundColor:
+                                                            MaterialStateProperty.all<Color>(
+                                                                Colors.yellow.shade700)),
+                                                    onPressed: () {
+                                                      historyEventController.addComment(
+                                                          commentTextController
+                                                              .text,
+                                                          historyEventController
+                                                              .getIsAlarmComment(),
+                                                          taskListController
+                                                              .taskListState
+                                                              .currentTask
+                                                              .value!);
+                                                      commentTextController
+                                                          .clear();
                                                       historyScrollController
-                                                          .position
-                                                          .maxScrollExtent,
-                                                      curve: Curves.easeOut,
-                                                      duration: const Duration(
-                                                          milliseconds: 300),
-                                                    );
-                                                    FocusManager
-                                                        .instance.primaryFocus
-                                                        ?.unfocus();
-                                                  },
-                                                ),
-                                              ],
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.end),
-                                        ))
-                                  ],
-                                ));
-                          }),
-                      MarkTypeFilter()
-                    ]))
+                                                          .animateTo(
+                                                        historyScrollController
+                                                            .position
+                                                            .maxScrollExtent,
+                                                        curve: Curves.easeOut,
+                                                        duration:
+                                                            const Duration(
+                                                                milliseconds:
+                                                                    300),
+                                                      );
+                                                      FocusManager
+                                                          .instance.primaryFocus
+                                                          ?.unfocus();
+                                                    },
+                                                  ),
+                                                ],
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.end),
+                                          ))
+                                    ],
+                                  ));
+                            }),
+                        MarkTypeFilter()
+                      ]))
                   ]));
             }));
   }

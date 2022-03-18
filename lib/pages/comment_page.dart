@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:tasklist_lite/crazylib/history_event_card.dart';
 import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
+import 'package:tasklist_lite/pages/task_page.dart';
 import 'package:tasklist_lite/state/history_event_controller.dart';
 
 class CommentPage extends StatefulWidget {
@@ -28,7 +29,7 @@ class _CommentPageState extends State<CommentPage> {
                   icon: Icon(Icons.chevron_left_outlined),
                   onPressed: () {
                     GetDelegate routerDelegate = Get.find();
-                    routerDelegate.popRoute();
+                    routerDelegate.toNamed(TaskPage.routeName);
                   },
                 ),
               ),

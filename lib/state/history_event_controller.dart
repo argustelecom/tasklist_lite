@@ -57,6 +57,37 @@ class HistoryEventController extends GetxController {
 
   /// Метод для добавления комментария по наряду
   addComment(String comment, bool isAlarm, Task task) {
+    /// Лист с регулярными выражениями для определения стилей вводимого текста
+    List<RegExp> patterns = List.of({
+      new RegExp(r'\*(.*?)\*'),
+      new RegExp(r'~(.*?)~'),
+      new RegExp(r'_(.*?)\_')
+    });
+
+    /// Заменяем спецсимволы на HTML теги перед отправкой коммента
+    for (RegExp pattern in patterns) {
+      Iterable<Match> matches = pattern.allMatches(comment);
+      if (pattern == patterns[0]) {
+        for (Match m in matches) {
+          var formatText = m[0]!.replaceFirst("*", "<b>");
+          comment =
+              comment.replaceAll(pattern, formatText.replaceFirst("*", "</b>"));
+        }
+      } else if (pattern == patterns[1]) {
+        for (Match m in matches) {
+          var formatText = m[0]!.replaceFirst('~', '<del>');
+          comment = comment.replaceAll(
+              pattern, formatText.replaceFirst('~', '</del>'));
+        }
+      } else if (pattern == patterns[2]) {
+        for (Match m in matches) {
+          var formatText = m[0]!.replaceFirst('_', '<i>');
+          comment =
+              comment.replaceAll(pattern, formatText.replaceFirst('_', "</i>"));
+        }
+      }
+    }
+
     if (comment.length > 0) {
       HistoryEventRepository().addNewComment(
           authController.authState.authString.value!,
