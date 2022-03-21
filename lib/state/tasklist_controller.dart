@@ -244,7 +244,7 @@ class TaskListController extends GetxController {
         workers);
   }
 
-  Future<bool?> deleteWorkDetail(int taskInstanceId, int workDetailId) async {
+  Future<Work?> deleteWorkDetail(int taskInstanceId, int workDetailId) async {
     return await taskRepository.deleteWorkDetail(authState.authString.value!,
         authState.serverAddress.value!, taskInstanceId, workDetailId);
   }

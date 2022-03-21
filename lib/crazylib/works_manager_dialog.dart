@@ -34,6 +34,12 @@ class WorksManagerDialogState extends State<WorksManagerDialog> {
   // режим регистрации работы
   late bool _registrationMode;
 
+  // режим подтверждения удаления
+  late bool _confirmationMode = false;
+
+  // индекс удаляемой отметки
+  int _i = 0;
+
   // выполнена ли операция
   bool _operationCompleted = false;
 
@@ -178,7 +184,7 @@ class WorksManagerDialogState extends State<WorksManagerDialog> {
         ]);
       }
       // работа зарегистрирована или отмечена как не требующаяся
-      else {
+      else if (!_confirmationMode) {
         body = Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Padding(
               padding: EdgeInsets.symmetric(vertical: 8),
@@ -246,7 +252,17 @@ class WorksManagerDialogState extends State<WorksManagerDialog> {
                                         SizedBox(height: 28)
                                     ]);
                                   })),
-                          Icon(Icons.delete_outlined, color: Color(0xFF646363))
+                          // кнопка удаления отметки о работе, открывает диалог подтверждения
+                          IconButton(
+                            icon: Icon(Icons.delete_outlined),
+                            color: Color(0xFF646363),
+                            onPressed: () async {
+                              this.setState(() {
+                                _confirmationMode = true;
+                                _i = index1;
+                              });
+                            },
+                          )
                         ]),
                         if (index1 != _work.workDetail!.length - 1)
                           Padding(
@@ -276,6 +292,58 @@ class WorksManagerDialogState extends State<WorksManagerDialog> {
                               textWidthBasis: TextWidthBasis.parent,
                               maxLines: 4))
                     ]))
+        ]);
+      }
+      // диалог подтвреждения удаления отметки
+      else {
+        body = Column(children: [
+          Padding(
+              padding: EdgeInsets.symmetric(vertical: 8),
+              child: Text(
+                  "факт регистрации работы:\n\n" +
+                      "${_work.workType.name}\n" +
+                      "от ${DateFormat("dd.MM.yyyy HH:mm").format(_work.workDetail![_i].date)}\n",
+                  style: TextStyle(color: Colors.black54),
+                  textAlign: TextAlign.center)),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+            // по нажатию на НЕТ возвращаемся в режим просмотра
+            TextButton(
+                onPressed: () {
+                  this.setState(() {
+                    _confirmationMode = false;
+                  });
+                },
+                child: Text("НЕТ", style: TextStyle(color: Color(0x99FBC22F)))),
+            // по нажатию на ДА удаляем отметку
+            // если еще есть отметки о работе, возвращаемся в режим просмотра
+            // если нет, переходим в режим регистрации
+            TextButton(
+                onPressed: () async {
+                  Work? newWork;
+                  WorkDetail workDetail = _work.workDetail![_i];
+                  try {
+                    newWork = (await taskListController.deleteWorkDetail(
+                        taskListController.taskListState.currentTask.value!.id,
+                        workDetail.id));
+                  } catch (e) {
+                    this.setState(() {
+                      _error = e.toString();
+                    });
+                  } finally {
+                    this.setState(() {
+                      if (newWork != null) {
+                        _work = newWork;
+                        _operationCompleted = true;
+                      } else {
+                        _registrationMode = true;
+                      }
+                      _confirmationMode = false;
+                      _error = null;
+                    });
+                  }
+                },
+                child: Text("ДА", style: TextStyle(color: Color(0xFFFBC22F))))
+          ])
         ]);
       }
 
@@ -382,8 +450,8 @@ class WorksManagerDialogState extends State<WorksManagerDialog> {
           },
         );
       }
-      // кнопка для перехода к диалогу регистрации работы
-      else {
+      // кнопка для перехода к диалогу регистрации работы из режима просмотра
+      else if (!_confirmationMode) {
         buttonBar = ElevatedButton(
             style: ButtonStyle(
                 backgroundColor:
@@ -407,14 +475,24 @@ class WorksManagerDialogState extends State<WorksManagerDialog> {
               });
             });
       }
+      // в режиме подтвреждения нижняя панель кнопок отсутствует
+      else
+        buttonBar = Center();
 
       return AdaptiveDialog(
-          titleIcon:
-              _operationCompleted ? Icons.check_circle_outline : Icons.build,
+          titleIcon: _confirmationMode
+              ? null
+              : (_operationCompleted
+                  ? Icons.check_circle_outline
+                  : Icons.build),
           titleIconColor: _operationCompleted ? Colors.green : null,
-          titleText: _registrationMode && !_operationCompleted
-              ? "Регистрация работы"
-              : "Зарегистрирована работа",
+          titleText: _confirmationMode
+              ? "Удалить?"
+              : (_operationCompleted
+                  ? "Зарегистрирована работа"
+                  : (_registrationMode
+                      ? "Регистрация работы"
+                      : "Работа зарегистрирована")),
           body: body,
           buttonBar: buttonBar);
     });

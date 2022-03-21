@@ -151,14 +151,14 @@ class TaskRepository extends GetxService {
     throw Exception("API в разработке");
   }
 
-  Future<bool?> deleteWorkDetail(String basicAuth, String serverAddress,
+  Future<Work?> deleteWorkDetail(String basicAuth, String serverAddress,
       int taskInstanceId, int workDetailId) async {
     ApplicationState applicationState = Get.find();
 
     /// если включен деморежим, возвращаем успех
     if (applicationState.inDemonstrationMode.value) {
       await new Future.delayed(const Duration(seconds: 3));
-      return true;
+      return null;
     }
 
     /// TODO: если деморежим выключен, нужно отправлять graphQL запрос
