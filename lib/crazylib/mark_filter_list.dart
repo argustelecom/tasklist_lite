@@ -23,33 +23,30 @@ class CastFilterState extends State<MarkTypeFilter> {
         init: MarkController(),
         builder: (markController) {
           return Padding(
-              padding: EdgeInsets.only(left: 12, right: 12, bottom: 12),
+              padding: EdgeInsets.only(left: 10, right: 10),
               child: Column(children: [
-                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  SizedBox(
-                      width: 250,
-                      height: 50,
-                      child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: _choices.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return ChoiceChip(
-                              label: Text(_choices[index]),
-                              selected: _defaultChoiceIndex == index,
-                              selectedColor: Colors.yellow.shade700,
-                              onSelected: (bool selected) {
-                                setState(() {
-                                  _defaultChoiceIndex = selected ? index : 0;
-                                  markController.update();
-                                });
-                              },
-                              backgroundColor: Colors.white,
-                              labelStyle: TextStyle(color: Colors.black),
-                            );
-                          })),
-                ]),
-                SizedBox(
-                  height: 400,
+                Wrap(
+                    spacing: 8,
+                    children: List.generate(_choices.length, (index) {
+                      return ChoiceChip(
+                        side: BorderSide(color: Colors.yellow.shade700),
+                        label: Text(_choices[index]),
+                        labelStyle: TextStyle(
+                            fontFamily: "ABeeZee",
+                            fontSize: 10,
+                            color: Colors.black),
+                        selected: _defaultChoiceIndex == index,
+                        selectedColor: Colors.yellow.shade700,
+                        onSelected: (bool selected) {
+                          setState(() {
+                            _defaultChoiceIndex = selected ? index : 0;
+                            markController.update();
+                          });
+                        },
+                        backgroundColor: Colors.white,
+                      );
+                    })),
+                Expanded(
                   child: ListView.builder(
                       itemCount:
                           markController.getMarks(_defaultChoiceIndex).length,
