@@ -2,7 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
+import 'package:logging/logging.dart';
 import 'package:tasklist_lite/auth/auth_service.dart';
+import 'package:tasklist_lite/crazylib/error_dialog.dart';
 import 'package:tasklist_lite/custom_navigator_observer.dart';
 import 'package:tasklist_lite/pages/about_page.dart';
 import 'package:tasklist_lite/pages/comment_page.dart';
@@ -47,6 +49,37 @@ void main() {
       },
     )
   ]));
+  Logger.root.level = Level.ALL;
+  Logger.root.onRecord.listen((event) {
+    // print
+    // подключить dart:developer https://api.flutter.dev/flutter/dart-developer/dart-developer-library.html
+    // писать последние 100 event`ов
+    // при нажатии кнопки отчета об ошибке отркывать отправку почты на figaro-support@argustelecom.ru
+    // скидывать туда 100 последних записей в логе и стек исключения.
+    final String delim = " ";
+    String message = event.sequenceNumber.toString() +
+        delim +
+        event.time.toString() +
+        delim +
+        event.level.toString() +
+        delim +
+        "[" +
+        event.loggerName +
+        "]" +
+        delim +
+        event.message +
+        delim +
+        (event.stackTrace != null ? event.stackTrace.toString() : "") +
+        delim +
+        (event.error != null ? event.error.toString() : "");
+    print(message);
+    lastMessages.add(message);
+    if (lastMessages.length > 100) {
+      lastMessages.removeAt(0);
+    }
+  });
+  Logger log = Logger("main.dart");
+  log.info("Инициализация выполнена. Запускается приложение Фигаро.");
   runApp(MyApp());
 }
 

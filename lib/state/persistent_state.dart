@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
+import 'package:logging/logging.dart';
 
 ///*******************************************************************************
 /// Базовый предок для реактивного state, которое хочет сохраняться в локальное
@@ -63,6 +64,8 @@ abstract class PersistentState extends GetxService {
         // которые, к тому же, могут помешать и чтению state из хранилища.
         initLocalPersistence();
       }).whenComplete(() {
+        Logger log = Logger(this.runtimeType.toString());
+        log.info("restored");
         decrementBusyCount();
       });
     });

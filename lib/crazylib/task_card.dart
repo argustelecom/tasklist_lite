@@ -32,7 +32,8 @@ class CrazyHighlight extends StatelessWidget {
       child: SubstringHighlight(
         text: text,
         term: term,
-        textStyle: textStyle ?? TextStyle(color: Theme.of(context).hintColor),
+        textStyle: textStyle ??
+            TextStyle(color: Theme.of(context).colorScheme.onPrimary),
         textStyleHighlight:
             textStyleHighlight ?? TextStyle(color: Colors.yellow.shade700),
       ),
@@ -88,7 +89,8 @@ class TaskCard extends StatelessWidget {
                                     task.name,
                                 term: taskListController.searchText,
                                 textStyle: TextStyle(
-                                    color: Theme.of(context).hintColor,
+                                    color:
+                                        Theme.of(context).colorScheme.onPrimary,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 18),
                               ),
@@ -100,7 +102,8 @@ class TaskCard extends StatelessWidget {
                                 term: taskListController.searchText,
                                 width: MediaQuery.of(context).size.width * 0.3,
                                 textStyle: TextStyle(
-                                    color: Theme.of(context).hintColor,
+                                    color:
+                                        Theme.of(context).colorScheme.onPrimary,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 18),
                               ),
