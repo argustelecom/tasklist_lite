@@ -60,4 +60,26 @@ class Worker {
     }
     return result.toString();
   }
+
+  factory Worker.fromJson(Map<String, dynamic> json) {
+    return Worker(
+      id: int.parse(json['id']),
+      name: json['name'],
+      family: json['family'],
+      surname: json['surname'],
+      mainWorksite: json['mainWorksite'],
+      tabNumber: json['tabNumber']
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['name'] = this.name;
+    data['family'] = this.family;
+    data['surname'] = this.surname;
+    data['mainWorksite'] = this.mainWorksite;
+    data['tabNumber'] = this.tabNumber;
+    return data;
+  }
 }

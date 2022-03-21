@@ -28,6 +28,15 @@ class TaskRemoteClient {
     beginTime
     endTime ''';
 
+  /// Получение назначенных сотрудников
+  static const String assigneeQuery = '''    
+      id
+      family
+      name
+      surname
+      tabNumber
+      mainWorksite ''';
+
   // Comment
   static const String commentQuery = '''
     person
@@ -46,7 +55,6 @@ class TaskRemoteClient {
   processTypeName
   taskType
   dueDate
-  assignee
   address
   addressComment
   createDate
@@ -62,6 +70,9 @@ class TaskRemoteClient {
   }
   idleTimePeriod {
     $idleTimeQuery
+  }
+  assignee {
+    $assigneeQuery
   }
   ''';
 

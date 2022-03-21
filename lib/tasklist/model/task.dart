@@ -43,7 +43,7 @@ class Task {
   ///int? priority;
 
   /// "Исполнители"
-  List<Worker> assignee;
+  List<Worker> assignee = <Worker>[];
 
   /// TODO: должен ли быть системным?
   /// "Объект работ"
@@ -229,7 +229,6 @@ class Task {
         taskType: json['taskType'],
         dueDate:
             json['dueDate'] != null ? DateTime.parse(json['dueDate']) : null,
-        assignee: json['assignee'],
         address: json['address'],
         addressComment: json['addressComment'],
         latitude: json['latitude'],
@@ -254,6 +253,10 @@ class Task {
         idleTimeList:
             json['idleTime'] != null && (json['idleTime'] as List).isNotEmpty
                 ? (json['idleTime']).map((e) => IdleTime.fromJson(e)).toList()
+                : List.of({}),
+        assignee:
+            json['assignee'] != null && (json['assignee'] as List).isNotEmpty
+                ? (json['assignee']).map((e) => Worker.fromJson(e)).toList()
                 : List.of({}));
     return task;
   }
@@ -266,7 +269,6 @@ class Task {
     data['processTypeName'] = this.processTypeName;
     data['taskType'] = this.taskType;
     data['dueDate'] = this.dueDate != null ? this.dueDate.toString() : null;
-    data['assignee'] = this.assignee;
     data['address'] = this.address;
     data['addressComment'] = this.addressComment;
     data['latitude'] = this.latitude;
@@ -282,6 +284,7 @@ class Task {
     data['isOutdoor'] = this.isOutdoor;
     data['flexibleAttribute'] = jsonEncode(this.flexibleAttribs);
     data['idleTimeList'] = jsonEncode(this.idleTimeList);
+    data['assignee'] = jsonEncode(this.assignee);
     return data;
   }
 }
