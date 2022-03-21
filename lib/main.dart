@@ -29,7 +29,6 @@ import 'package:tasklist_lite/tasklist/notification_repository.dart';
 import 'package:tasklist_lite/tasklist/task_repository.dart';
 import 'package:tasklist_lite/theme/tasklist_theme_data.dart';
 
-import 'local_storage/local_storage_service.dart';
 import 'state/common_dropdown_controller.dart';
 
 void main() {
@@ -142,7 +141,6 @@ class MyApp extends StatelessWidget {
                       Get.put(CommonDropdownController()),
                       Get.put(MarkRepository()),
                       Get.put(MarkFixtures()),
-                      Get.put(LocalStorageService()),
                     }),
                 darkTheme: TaskListThemeData.darkThemeData.copyWith(
                   platform: defaultTargetPlatform,
