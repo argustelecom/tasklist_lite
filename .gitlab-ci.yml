@@ -52,9 +52,9 @@ build httpd:
   stage: build-httpd
   script:
     - echo "Download httpd-2.4.53-win32-VS16.zip"
-    - curl https://www.apachelounge.com/download/VS16/binaries/httpd-2.4.53-win32-VS16.zip --output httpd-2.4.53.zip
+    - curl https://www.apachelounge.com/download/VS16/binaries/httpd-2.4.53-win32-VS16.zip --output httpd-2.4.zip
     - echo "Unpacking httpd-2.4.53-win32-VS16.zip to ./tmp" 
-    - unzip httpd-2.4.52.zip -d ./tmp
+    - unzip httpd-2.4.zip -d ./tmp
     - echo "Coping web to ./tmp/Apache24/htdocs/"
     - cp -r ./web/* ./tmp/Apache24/htdocs/
     - cd ./tmp
