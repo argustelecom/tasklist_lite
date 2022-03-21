@@ -58,6 +58,7 @@ class TaskRemoteClient {
   address
   addressComment
   createDate
+  closeDate
   isVisit
   isPlanned
   isOutdoor

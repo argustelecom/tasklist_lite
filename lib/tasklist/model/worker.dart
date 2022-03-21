@@ -74,7 +74,7 @@ class Worker {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
+    data['id'] = this.id.toString();
     data['name'] = this.name;
     data['family'] = this.family;
     data['surname'] = this.surname;
