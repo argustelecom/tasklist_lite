@@ -129,8 +129,6 @@ class Task {
     return (dueDate != null) && (dueDate!.isBefore((DateTime.now())));
   }
 
-        stage!.dueDate != null &&
-        stage!.dueDate!.isBefore((DateTime.now()));
   // возвращает абсолютную величину интервала от/до КC задачи
   Duration? getTimeLeftAbs() {
     if (dueDate != null) {

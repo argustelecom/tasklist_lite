@@ -175,8 +175,8 @@ class _TaskPageState extends State<TaskPage> {
                                                           taskListController
                                                               .taskListState
                                                               .currentTask
-                                                              .value!
-                                                              .isStageOverdue()
+                                                              .value!.stage!
+                                                              .isStageOverdue())
                                                     ]),
                                                   ),
                                                   Padding(
