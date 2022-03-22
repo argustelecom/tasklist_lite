@@ -19,7 +19,7 @@ class Task {
   /// "Номер"
   final String name;
 
-  /// Этап наряда
+  /// Этап задачи
   Stage? stage;
 
   //используем в кнопке проверка аварии
@@ -35,8 +35,7 @@ class Task {
   /// "Тип задачи"
   String? taskType;
 
-  /// TODO задачи или этапа? нужен ли еще один параметр?
-  /// "Контрольный срок"
+  /// "Контрольный срок задачи"
   DateTime? dueDate;
 
   /// TODO: должен ли быть системным?
@@ -127,7 +126,9 @@ class Task {
   }
 
   bool isStageOverdue() {
-    return (dueDate != null) && (stage!.dueDate!.isBefore((DateTime.now())));
+    return stage != null &&
+        stage!.dueDate != null &&
+        stage!.dueDate!.isBefore((DateTime.now()));
   }
 
   // возвращает абсолютную величину интервала от/до КC задачи
@@ -147,8 +148,8 @@ class Task {
 
   // возвращает абсолютную величину интервала от/до КC этапа
   Duration? getTimeLeftStage() {
-    if (dueDate != null) {
-      if (dueDate!.isAfter(DateTime.now())) {
+    if (stage != null && stage!.dueDate != null) {
+      if (stage!.dueDate!.isAfter(DateTime.now())) {
         return new Duration(
             milliseconds: stage!.dueDate!.millisecondsSinceEpoch -
                 DateTime.now().millisecondsSinceEpoch);
@@ -269,7 +270,10 @@ class Task {
 
   /// Получаем состояние для прогрессбариков
   getStageProgressStatus(int num, Stage stage) {
-    var _stageNumber = stage.number?.toInt() ?? 0;
+    if (isClosed) {
+      return 1;
+    }
+    var _stageNumber = stage.number.toInt();
     if (num < _stageNumber) {
       return 1;
     } else if (num == stage.number) {
