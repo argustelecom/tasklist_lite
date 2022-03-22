@@ -17,6 +17,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../common/widgets/object_attach_widget/widgets/object_attach_widget.dart';
 import '../crazylib/adaptive_dialog.dart';
 import '../crazylib/close_task_dialog.dart';
+import '../crazylib/crazy_progress_dialog.dart';
 import '../crazylib/mark_filter_list.dart';
 import '../crazylib/works_tab.dart';
 import '../state/tasklist_controller.dart';
@@ -126,9 +127,6 @@ class _TaskPageState extends State<TaskPage> {
                         ],
                       ),
                     ),
-                    if (taskListController
-                        .taskListState.currentTask.value!.stage !=
-                        null)
                       Expanded(
                           child: TabBarView(children: [
                             Padding(
@@ -178,8 +176,7 @@ class _TaskPageState extends State<TaskPage> {
                                                               .taskListState
                                                               .currentTask
                                                               .value!
-                                                              .stage!
-                                                              .isStageOverdue())
+                                                              .isStageOverdue()
                                                     ]),
                                                   ),
                                                   Padding(
@@ -755,10 +752,10 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
                                           Icon(Icons.check_circle_outline),
                                           title: Text('Завершить этап'),
                                           onTap: () async {
-                                            // TODO поправить проверку после нормальной реализации модели этапов
                                             // если завершаем последний этап, отобразим дилог закрытия для выбора ШЗ
-                                            if (task.taskType ==
-                                                "Выполнение работ") {
+                                            // у нарядов ТО этапов нет, поэтому всегда переходим к диалогу закрытию
+                                            if (task.stage == null ||
+                                                task.stage!.isLast) {
                                               Navigator.pop(context, "");
                                               showAdaptiveDialog(
                                                   context: context,
@@ -767,21 +764,22 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
                                                     return CloseTaskDialog();
                                                   });
                                             } else {
+                                              Navigator.pop(context, "");
                                               try {
-                                                await taskListController
-                                                    .completeStage(
-                                                    taskListController
-                                                        .taskListState
-                                                        .currentTask
-                                                        .value!
-                                                        .id);
+                                                await asyncShowProgressIndicatorOverlay(
+                                                    asyncFunction: () {
+                                                      return taskListController
+                                                          .completeStage(
+                                                          taskListController
+                                                              .taskListState
+                                                              .currentTask
+                                                              .value!
+                                                              .id);
+                                                    });
                                               } catch (e) {
                                                 // TODO сообщение об ошибке
                                               } finally {
-                                                // TODO блокировка экрана и сообщение об успешном выполнении
                                                 // TODO обновление сведений
-                                                // временный костыль, чтобы понимать, что что-то происходит - не закрываем меню, пока не получили ответ
-                                                Navigator.pop(context, "");
                                               }
                                             }
                                           }),

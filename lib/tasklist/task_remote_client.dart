@@ -381,15 +381,15 @@ class TaskRemoteClient {
     return false;
   }
 
-  Future<bool?> completeOrder(int taskInstanceId, int closeCodeId) async {
-    String completeOrderQuery = '''
+  Future<bool?> closeOrder(int taskInstanceId, int closeCodeId) async {
+    String closeOrderQuery = '''
  mutation {  
-   completeOrder(
+   closeOrder(
     taskInstanceId:"$taskInstanceId", closeCodeId:"$closeCodeId")
  }''';
 
     Future<QueryResult> mutationResultFuture =
-        _graphQLService.mutate(completeOrderQuery);
+        _graphQLService.mutate(closeOrderQuery);
     late String result;
     await mutationResultFuture.then((value) {
       if (value.hasException) {

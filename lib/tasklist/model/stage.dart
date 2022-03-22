@@ -5,22 +5,24 @@ import 'package:intl/intl.dart';
 /// Представление об этапе
 class Stage {
   /// Наименование этапа
-  final String? name;
+  final String name;
 
-  /// Номер этапа
-  final int? number;
+  /// Порядковый номер этапа
+  /// в нарядах О2О АВР и РР их 4:
+  /// 1-Назначение наряда бригаде, 2-Выезд на объект, 3-Прибытие на объект, 4-Выполнение работ
+  final int number;
 
   /// Является ли этап последним?
-  final bool? isLast;
+  final bool isLast;
 
-  /// Контрольное время по этапу
+  /// Контрольный срок этапа
   final DateTime? dueDate;
 
   Stage(
       {required this.name,
       required this.number,
       required this.isLast,
-      required this.dueDate});
+      this.dueDate});
 
   String getDueDateFullText() {
     if (dueDate == null)

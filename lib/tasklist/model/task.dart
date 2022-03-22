@@ -19,7 +19,7 @@ class Task {
   /// "Номер"
   final String name;
 
-  /// Этап наряда
+  /// Этап задачи
   Stage? stage;
 
   //используем в кнопке проверка аварии
@@ -35,8 +35,7 @@ class Task {
   /// "Тип задачи"
   String? taskType;
 
-  /// TODO задачи или этапа? нужен ли еще один параметр?
-  /// "Контрольный срок"
+  /// "Контрольный срок задачи"
   DateTime? dueDate;
 
   /// TODO: должен ли быть системным?
@@ -120,14 +119,18 @@ class Task {
       this.idleTimeList,
       this.works});
 
-  String getAssigneeListToText(List<Worker> workers) {
-    return workers.map((e) => e.getWorkerShortName()).join(', ');
+  String getAssigneeListToText(bool withTabNo) {
+    return withTabNo
+        ? assignee.map((e) => e.getWorkerShortNameWithTabNo()).join(', ')
+        : assignee.map((e) => e.getWorkerShortName()).join(', ');
   }
 
   bool isTaskOverdue() {
     return (dueDate != null) && (dueDate!.isBefore((DateTime.now())));
   }
 
+        stage!.dueDate != null &&
+        stage!.dueDate!.isBefore((DateTime.now()));
   // возвращает абсолютную величину интервала от/до КC задачи
   Duration? getTimeLeftAbs() {
     if (dueDate != null) {
@@ -201,7 +204,7 @@ class Task {
         new LinkedHashMap<String, Object?>();
     if (group.compareTo(systemAttrGroup) == 0) {
       attrValues.addAll(new LinkedHashMap.of({
-        "Исполнители": getAssigneeListToText(assignee),
+        "Исполнители": getAssigneeListToText(false),
         "Адрес": address,
         "Адресное примечание": addressComment,
         "Широта": latitude,
@@ -228,7 +231,7 @@ class Task {
       "Договор": flexibleAttribs["Наряд/Договор"],
       "Примечание": commentary,
       "Представитель заказчика": flexibleAttribs["Представитель заказчика"],
-      "Исполнители": getAssigneeListToText(assignee),
+      "Исполнители": getAssigneeListToText(false),
       "Приоритет": flexibleAttribs["Наряд/Приоритет"],
       "Кластер": flexibleAttribs["Кластер"],
     }));
@@ -237,7 +240,10 @@ class Task {
 
   /// Получаем состояние для прогрессбариков
   getStageProgressStatus(int num, Stage stage) {
-    var _stageNumber = stage.number?.toInt() ?? 0;
+    if (isClosed) {
+      return 1;
+    }
+    var _stageNumber = stage.number.toInt();
     if (num < _stageNumber) {
       return 1;
     } else if (num == stage.number) {
@@ -288,7 +294,7 @@ class Task {
             json['idleTime'] != null && (json['idleTime'] as List).isNotEmpty
                 ? (json['idleTime']).map((e) => IdleTime.fromJson(e)).toList()
                 : List.of({}),
-        stage: Stage.fromJson(json['stage']),
+        stage: json['idleTime'] != null ? Stage.fromJson(json['stage']) : null,
         assignee: List<Worker>.from(
             (json['assignee']).map((e) => Worker.fromJson(e)).toList()));
     return task;

@@ -236,8 +236,8 @@ class TaskListController extends GetxController {
         authState.serverAddress.value!, taskInstanceId);
   }
 
-  Future<bool?> completeOrder(int taskInstanceId, int closeCodeId) async {
-    return await taskRepository.completeOrder(authState.authString.value!,
+  Future<bool?> closeOrder(int taskInstanceId, int closeCodeId) async {
+    return await taskRepository.closeOrder(authState.authString.value!,
         authState.serverAddress.value!, taskInstanceId, closeCodeId);
   }
 
