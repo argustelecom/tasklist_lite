@@ -292,7 +292,7 @@ class Task {
             json['idleTime'] != null && (json['idleTime'] as List).isNotEmpty
                 ? (json['idleTime']).map((e) => IdleTime.fromJson(e)).toList()
                 : List.of({}),
-        stage: json['idleTime'] != null ? Stage.fromJson(json['stage']) : null,
+        stage: json['stage'] != null ? Stage.fromJson(json['stage']) : null,
         assignee: List<Worker>.from(
             (json['assignee']).map((e) => Worker.fromJson(e)).toList()));
     return task;
