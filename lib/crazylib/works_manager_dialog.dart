@@ -34,8 +34,8 @@ class WorksManagerDialogState extends State<WorksManagerDialog> {
   // режим регистрации работы
   late bool _registrationMode;
 
-  // режим подтверждения удаления
-  late bool _confirmationMode = false;
+  // режим удаления отметки
+  bool _deletionMode = false;
 
   // индекс удаляемой отметки
   int _i = 0;
@@ -71,7 +71,7 @@ class WorksManagerDialogState extends State<WorksManagerDialog> {
       Widget buttonBar;
 
       // тело диалога
-      // работа еще не зарегистрирована, но отемечена как требующаяся
+      // работа еще не зарегистрирована, но отемечена как требующаяся (режим регистрации)
       if (_registrationMode && !_operationCompleted) {
         body = Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Padding(
@@ -183,8 +183,67 @@ class WorksManagerDialogState extends State<WorksManagerDialog> {
                     style: TextStyle(color: Colors.red, fontFamily: 'Roboto')))
         ]);
       }
-      // работа зарегистрирована или отмечена как не требующаяся
-      else if (!_confirmationMode) {
+      // диалог подтверждения удаления отметки (режим удаления)
+      else if (_deletionMode && !_operationCompleted) {
+        body = Column(children: [
+          Padding(
+              padding: EdgeInsets.symmetric(vertical: 8),
+              child: Text(
+                  "факт регистрации работы:\n\n" +
+                      "${_work.workType.name}\n" +
+                      "от ${DateFormat("dd.MM.yyyy HH:mm").format(_work.workDetail![_i].date)}\n",
+                  style: TextStyle(color: Colors.black54),
+                  textAlign: TextAlign.center)),
+          if (_error != null)
+            Padding(
+                padding: EdgeInsets.symmetric(vertical: 8),
+                child: Text(_error!,
+                    maxLines: 3,
+                    overflow: TextOverflow.clip,
+                    style: TextStyle(color: Colors.red, fontFamily: 'Roboto'))),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+            // по нажатию на НЕТ возвращаемся в режим просмотра
+            TextButton(
+                onPressed: () {
+                  this.setState(() {
+                    _deletionMode = false;
+                  });
+                },
+                child: Text("НЕТ", style: TextStyle(color: Color(0x99FBC22F)))),
+            // по нажатию на ДА удаляем отметку
+            // если еще есть отметки о работе, возвращаемся в режим просмотра
+            // если нет, переходим в режим регистрации
+            TextButton(
+                onPressed: () async {
+                  Work? newWork;
+                  WorkDetail workDetail = _work.workDetail![_i];
+                  try {
+                    newWork = (await taskListController.deleteWorkDetail(
+                        taskListController.taskListState.currentTask.value!.id,
+                        workDetail.id));
+                  } catch (e) {
+                    this.setState(() {
+                      _error = e.toString();
+                    });
+                  } finally {
+                    this.setState(() {
+                      if (newWork != null) {
+                        _operationCompleted = true;
+                        _work = newWork;
+                      } else {
+                        _registrationMode = true;
+                      }
+                      _deletionMode = false;
+                      _error = null;
+                    });
+                  }
+                },
+                child: Text("ДА", style: TextStyle(color: Color(0xFFFBC22F))))
+          ])
+        ]);
+      }
+      // работа зарегистрирована или отмечена как не требующаяся (режим просмотра)
+      else {
         body = Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Padding(
               padding: EdgeInsets.symmetric(vertical: 8),
@@ -258,7 +317,9 @@ class WorksManagerDialogState extends State<WorksManagerDialog> {
                             color: Color(0xFF646363),
                             onPressed: () async {
                               this.setState(() {
-                                _confirmationMode = true;
+                                _operationCompleted = false;
+                                _registrationMode = false;
+                                _deletionMode = true;
                                 _i = index1;
                               });
                             },
@@ -292,58 +353,6 @@ class WorksManagerDialogState extends State<WorksManagerDialog> {
                               textWidthBasis: TextWidthBasis.parent,
                               maxLines: 4))
                     ]))
-        ]);
-      }
-      // диалог подтвреждения удаления отметки
-      else {
-        body = Column(children: [
-          Padding(
-              padding: EdgeInsets.symmetric(vertical: 8),
-              child: Text(
-                  "факт регистрации работы:\n\n" +
-                      "${_work.workType.name}\n" +
-                      "от ${DateFormat("dd.MM.yyyy HH:mm").format(_work.workDetail![_i].date)}\n",
-                  style: TextStyle(color: Colors.black54),
-                  textAlign: TextAlign.center)),
-          Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-            // по нажатию на НЕТ возвращаемся в режим просмотра
-            TextButton(
-                onPressed: () {
-                  this.setState(() {
-                    _confirmationMode = false;
-                  });
-                },
-                child: Text("НЕТ", style: TextStyle(color: Color(0x99FBC22F)))),
-            // по нажатию на ДА удаляем отметку
-            // если еще есть отметки о работе, возвращаемся в режим просмотра
-            // если нет, переходим в режим регистрации
-            TextButton(
-                onPressed: () async {
-                  Work? newWork;
-                  WorkDetail workDetail = _work.workDetail![_i];
-                  try {
-                    newWork = (await taskListController.deleteWorkDetail(
-                        taskListController.taskListState.currentTask.value!.id,
-                        workDetail.id));
-                  } catch (e) {
-                    this.setState(() {
-                      _error = e.toString();
-                    });
-                  } finally {
-                    this.setState(() {
-                      if (newWork != null) {
-                        _work = newWork;
-                        _operationCompleted = true;
-                      } else {
-                        _registrationMode = true;
-                      }
-                      _confirmationMode = false;
-                      _error = null;
-                    });
-                  }
-                },
-                child: Text("ДА", style: TextStyle(color: Color(0xFFFBC22F))))
-          ])
         ]);
       }
 
@@ -387,10 +396,13 @@ class WorksManagerDialogState extends State<WorksManagerDialog> {
                       _operationCompleted = true;
                       _error = null;
                       _work = newWork!;
+                      _notRequired = false;
+                      _amount = null;
+                      _workers = [];
                     });
                   }
                 }
-              } else if (_amount == null) {
+              } else if (_amount == null || _amount == 0) {
                 {
                   this.setState(() {
                     _error = "Укажите объем работ";
@@ -420,38 +432,20 @@ class WorksManagerDialogState extends State<WorksManagerDialog> {
                       _operationCompleted = true;
                       _error = null;
                       _work = newWork!;
+                      _notRequired = false;
+                      _amount = null;
+                      _workers = [];
                     });
                   }
                 }
               }
             });
       }
-      // кнопка для закрытия диалога после регистрации
-      else if (_registrationMode && _operationCompleted) {
-        buttonBar = ElevatedButton(
-          style: ButtonStyle(
-              backgroundColor:
-                  MaterialStateProperty.all(Colors.yellow.shade700),
-              padding: MaterialStateProperty.all(
-                  EdgeInsets.symmetric(horizontal: 80, vertical: 16)),
-              elevation: MaterialStateProperty.all(3.0),
-              shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30)))),
-          child: Text(
-            "Ок",
-            style: TextStyle(
-                inherit: false,
-                color: themeData.colorScheme.onSurface,
-                fontWeight: FontWeight.normal,
-                fontSize: 16),
-          ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        );
-      }
+      // в диалоге подтверждения удаления нижняя панель кнопок отсутствует
+      else if (_deletionMode & !_operationCompleted)
+        buttonBar = Center();
       // кнопка для перехода к диалогу регистрации работы из режима просмотра
-      else if (!_confirmationMode) {
+      else if (!_registrationMode && !_deletionMode && !_operationCompleted) {
         buttonBar = ElevatedButton(
             style: ButtonStyle(
                 backgroundColor:
@@ -475,21 +469,42 @@ class WorksManagerDialogState extends State<WorksManagerDialog> {
               });
             });
       }
-      // в режиме подтвреждения нижняя панель кнопок отсутствует
-      else
-        buttonBar = Center();
+      // кнопка для закрытия диалога после регистрации
+      else {
+        buttonBar = ElevatedButton(
+          style: ButtonStyle(
+              backgroundColor:
+                  MaterialStateProperty.all(Colors.yellow.shade700),
+              padding: MaterialStateProperty.all(
+                  EdgeInsets.symmetric(horizontal: 80, vertical: 16)),
+              elevation: MaterialStateProperty.all(3.0),
+              shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30)))),
+          child: Text(
+            "Ок",
+            style: TextStyle(
+                inherit: false,
+                color: themeData.colorScheme.onSurface,
+                fontWeight: FontWeight.normal,
+                fontSize: 16),
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        );
+      }
 
       return AdaptiveDialog(
-          titleIcon: _confirmationMode
+          titleIcon: _deletionMode
               ? null
               : (_operationCompleted
                   ? Icons.check_circle_outline
                   : Icons.build),
           titleIconColor: _operationCompleted ? Colors.green : null,
-          titleText: _confirmationMode
-              ? "Удалить?"
-              : (_operationCompleted
-                  ? "Зарегистрирована работа"
+          titleText: _operationCompleted
+              ? "Зарегистрирована работа"
+              : (_deletionMode
+                  ? "Удалить?"
                   : (_registrationMode
                       ? "Регистрация работы"
                       : "Работа зарегистрирована")),

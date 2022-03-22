@@ -159,6 +159,15 @@ class TaskRepository extends GetxService {
     if (applicationState.inDemonstrationMode.value) {
       await new Future.delayed(const Duration(seconds: 3));
       return null;
+
+      // можно раскомментировать для отладки кейса, когда удалена не последняя отметка
+      // return new Work(workType: WorkTypeFixtures.workType_1, workDetail: [
+      //   new WorkDetail(
+      //       id: 1,
+      //       amount: 2,
+      //       date: DateTime.now(),
+      //       workerMarks: {WorkerFixtures.worker_1: 10})
+      // ]);
     }
 
     /// TODO: если деморежим выключен, нужно отправлять graphQL запрос
