@@ -84,25 +84,13 @@ build web for customers:
   script:
     - echo "Prepare web application for cutomers"
     - echo "prepare ural"
-    - cd ./build/web/assets/config
-    - sed -i "s/^possibleServers=.*/possibleServers=$URAL_SERVERS/g" app.env
-    - cd ../../
-    - zip -r ../../web-ural-$VERSION_ARTIFACTS.zip ./*
+    - ./.linuxbuild/prepare_web_customer.sh "ural" $VERSION_ARTIFACTS $URAL_SERVERS
     - echo "prepare south"
-    - cd ./build/web/assets/config
-    - sed -i "s/^possibleServers=.*/possibleServers=$SOUTH_SERVERS/g" app.env
-    - cd ../../
-    - zip -r ../../web-south-$VERSION_ARTIFACTS.zip ./*
+    - ./.linuxbuild/prepare_web_customer.sh "south" $VERSION_ARTIFACTS $SOUTH_SERVERS
     - echo "prepare nwt"
-    - cd ./build/web/assets/config
-    - sed -i "s/^possibleServers=.*/possibleServers=$NWT_SERVERS/g" app.env
-    - cd ../../
-    - zip -r ../../web-nwt-$VERSION_ARTIFACTS.zip ./*
+    - ./.linuxbuild/prepare_web_customer.sh "nwt" $VERSION_ARTIFACTS $NWT_SERVERS
     - echo "prepare volga"
-    - cd ./build/web/assets/config
-    - sed -i "s/^possibleServers=.*/possibleServers=$VOLGA_SERVERS/g" app.env
-    - cd ../../
-    - zip -r ../../web-volga-$VERSION_ARTIFACTS.zip ./*
+    - ./.linuxbuild/prepare_web_customer.sh "volga" $VERSION_ARTIFACTS $VOLGA_SERVERS
   tags:
     - light
   needs: [build web]
