@@ -405,7 +405,7 @@ class TaskRemoteClient {
       if (value.data == null) {
         return null;
       }
-      result = value.data!["completeOrder"];
+      result = value.data!["closeOrder"];
     }, onError: (e) {
       throw Exception(" onError " + e.toString());
     });
