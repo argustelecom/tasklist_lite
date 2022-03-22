@@ -83,7 +83,6 @@ build web for customers:
   stage: prepare-artifact
   script:
     - echo "Prepare web application for cutomers"
-    - unzip $CI_COMMIT_REF_NAME-distrib-artifacts.zip -d .
     - echo "prepare ural"
     - cd ./build/web/assets/config
     - sed -i "s/^possibleServers=.*/possibleServers=$URAL_SERVERS/g" app.env
