@@ -111,7 +111,7 @@ class TaskRepository extends GetxService {
     return await taskRemoteClient.endStage(taskInstanceId);
   }
 
-  Future<bool?> completeOrder(String basicAuth, String serverAddress,
+  Future<bool?> closeOrder(String basicAuth, String serverAddress,
       int taskInstanceId, int closeCodeId) async {
     ApplicationState applicationState = Get.find();
 
@@ -122,7 +122,7 @@ class TaskRepository extends GetxService {
     }
     TaskRemoteClient taskRemoteClient =
         TaskRemoteClient(basicAuth, serverAddress);
-    return await taskRemoteClient.completeOrder(taskInstanceId, closeCodeId);
+    return await taskRemoteClient.closeOrder(taskInstanceId, closeCodeId);
   }
 
   Future<Work> registerWorkDetail(

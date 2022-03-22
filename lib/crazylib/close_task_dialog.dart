@@ -107,7 +107,7 @@ class CloseTaskDialogState extends State<CloseTaskDialog> {
                 onPressed: () async {
                   try {
                     _operationCompleted =
-                        (await taskListController.completeOrder(
+                        (await taskListController.closeOrder(
                             taskListController
                                 .taskListState.currentTask.value!.id,
                             _closeCode!.id))!;

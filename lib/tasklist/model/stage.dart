@@ -18,7 +18,7 @@ class Stage {
       {required this.name,
       required this.number,
       required this.isLast,
-      required this.dueDate});
+      this.dueDate});
 
   factory Stage.fromJson(Map<String, dynamic> json) {
     return Stage(
