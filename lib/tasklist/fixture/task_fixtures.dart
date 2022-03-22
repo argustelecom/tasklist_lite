@@ -119,7 +119,7 @@ class TaskFixtures {
       taskType: "Разовые работы О2О",
       dueDate:
           DateUtils.dateOnly(DateTime.now()).add(const Duration(hours: 15)),
-      assignee: [WorkerFixtures.worker_1],
+      assignee: [WorkerFixtures.worker_1, WorkerFixtures.worker_2],
       address: null,
       latitude: "56.888854",
       longitude: "60.612602",

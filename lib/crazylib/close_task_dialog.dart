@@ -74,8 +74,8 @@ class CloseTaskDialogState extends State<CloseTaskDialog> {
                     child: AttribValueRow(
                         attribValue: MapEntry(
                             "Исполнитель",
-                            taskListController.authState.userInfo.value!
-                                .getWorkerNameWithTabNo()))),
+                            taskListController.taskListState.currentTask.value!
+                                .getAssigneeListToText(true)))),
                 if (_error != null)
                   Padding(
                       padding: EdgeInsets.symmetric(vertical: 8),

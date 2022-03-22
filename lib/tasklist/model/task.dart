@@ -117,8 +117,10 @@ class Task {
       this.idleTimeList,
       this.works});
 
-  String getAssigneeListToText(List<Worker> workers) {
-    return workers.map((e) => e.getWorkerShortName()).join(', ');
+  String getAssigneeListToText(bool withTabNo) {
+    return withTabNo
+        ? assignee.map((e) => e.getWorkerShortNameWithTabNo()).join(', ')
+        : assignee.map((e) => e.getWorkerShortName()).join(', ');
   }
 
   bool isOverdue() {
@@ -234,7 +236,7 @@ class Task {
         new LinkedHashMap<String, Object?>();
     if (group.compareTo(systemAttrGroup) == 0) {
       attrValues.addAll(new LinkedHashMap.of({
-        "Исполнители": getAssigneeListToText(assignee),
+        "Исполнители": getAssigneeListToText(false),
         "Адрес": address,
         "Адресное примечание": addressComment,
         "Широта": latitude,
@@ -261,7 +263,7 @@ class Task {
       "Договор": flexibleAttribs["Наряд/Договор"],
       "Примечание": commentary,
       "Представитель заказчика": flexibleAttribs["Представитель заказчика"],
-      "Исполнители": getAssigneeListToText(assignee),
+      "Исполнители": getAssigneeListToText(false),
       "Приоритет": flexibleAttribs["Наряд/Приоритет"],
       "Кластер": flexibleAttribs["Кластер"],
     }));
