@@ -19,7 +19,7 @@ class Task {
   /// "Номер"
   final String name;
 
-  /// Этап наряда
+  /// Этап задачи
   Stage? stage;
 
   //используем в кнопке проверка аварии
@@ -35,8 +35,7 @@ class Task {
   /// "Тип задачи"
   String? taskType;
 
-  /// TODO задачи или этапа? нужен ли еще один параметр?
-  /// "Контрольный срок"
+  /// "Контрольный срок задачи"
   DateTime? dueDate;
 
   /// TODO: должен ли быть системным?
@@ -44,6 +43,8 @@ class Task {
 
   /// "Исполнители"
   List<Worker> assignee = <Worker>[];
+
+  /// TODO: телефон, контактное лицо нужны?
 
   /// TODO: должен ли быть системным?
   /// "Объект работ"
@@ -62,7 +63,7 @@ class Task {
   String? longitude;
 
   /// "Примечание"
-  String? comment;
+  String? commentary;
 
   /// "Дата создания задачи"
   DateTime? createDate;
@@ -107,7 +108,7 @@ class Task {
       this.addressComment,
       this.latitude,
       this.longitude,
-      this.comment,
+      this.commentary,
       this.createDate,
       this.closeDate,
       this.isClosed = false,
@@ -118,11 +119,13 @@ class Task {
       this.idleTimeList,
       this.works});
 
-  String getAssigneeListToText(List<Worker> workers) {
-    return workers.map((e) => e.getWorkerShortName()).join(', ');
+  String getAssigneeListToText(bool withTabNo) {
+    return withTabNo
+        ? assignee.map((e) => e.getWorkerShortNameWithTabNo()).join(', ')
+        : assignee.map((e) => e.getWorkerShortName()).join(', ');
   }
 
-  bool isOverdue() {
+  bool isTaskOverdue() {
     return (dueDate != null) && (dueDate!.isBefore((DateTime.now())));
   }
 
@@ -144,7 +147,7 @@ class Task {
   String getTimeLeftText() {
     Duration? timeLeft = getTimeLeftAbs();
     if (timeLeft != null)
-      return (isOverdue() ? "СКВ: " : "КВ: ") +
+      return (isTaskOverdue() ? "СКВ: " : "КВ: ") +
           prettyDuration(timeLeft,
               tersity: DurationTersity.minute,
               abbreviated: true,
@@ -192,18 +195,19 @@ class Task {
     return attrGroups;
   }
 
+  // TODO: Используется в закрытии наряда. НИ надо будет поправить потом?
   // LinkedHashMap выбран намеренно, чтобы выводить параметры в том порядке, в котором получили
   LinkedHashMap<String, Object?> getAttrValuesByGroup(String group) {
     LinkedHashMap<String, Object?> attrValues =
         new LinkedHashMap<String, Object?>();
     if (group.compareTo(systemAttrGroup) == 0) {
       attrValues.addAll(new LinkedHashMap.of({
-        "Исполнители": getAssigneeListToText(assignee),
+        "Исполнители": getAssigneeListToText(false),
         "Адрес": address,
         "Адресное примечание": addressComment,
         "Широта": latitude,
         "Долгота": longitude,
-        "Примечание": comment
+        "Примечание": commentary
       }));
     } else
       flexibleAttribs.forEach((key, value) {
@@ -211,6 +215,40 @@ class Task {
           attrValues.addAll({key.substring(key.indexOf("/") + 1): value});
       });
     return attrValues;
+  }
+
+  /// Получаем атрибуты для вкладки сведения
+  LinkedHashMap<String, Object?> getAttrValuesByTask() {
+    LinkedHashMap<String, Object?> attrValues =
+        new LinkedHashMap<String, Object?>();
+    attrValues.addAll(new LinkedHashMap.of({
+      "Наименование": flexibleAttribs["Объект/Название"],
+      "ID заявки оператора": flexibleAttribs["Наряд/ID заявки оператора"],
+      "Адресное примечание": addressComment,
+      "Оператор": flexibleAttribs["Наряд/Оператор"],
+      "Договор": flexibleAttribs["Наряд/Договор"],
+      "Примечание": commentary,
+      "Представитель заказчика": flexibleAttribs["Представитель заказчика"],
+      "Исполнители": getAssigneeListToText(false),
+      "Приоритет": flexibleAttribs["Наряд/Приоритет"],
+      "Кластер": flexibleAttribs["Кластер"],
+    }));
+    return attrValues;
+  }
+
+  /// Получаем состояние для прогрессбариков
+  getStageProgressStatus(int num, Stage stage) {
+    if (isClosed) {
+      return 1;
+    }
+    var _stageNumber = stage.number.toInt();
+    if (num < _stageNumber) {
+      return 1;
+    } else if (num == stage.number) {
+      return 0.73;
+    } else {
+      return 0;
+    }
   }
 
   IdleTime? getCurrentIdleTime() {
@@ -233,7 +271,7 @@ class Task {
         addressComment: json['addressComment'],
         latitude: json['latitude'],
         longitude: json['longitude'],
-        comment: json['comment'],
+        commentary: json['commentary'],
         createDate: json['createDate'] != null
             ? DateTime.parse(json['createDate'])
             : null,
@@ -254,13 +292,15 @@ class Task {
             json['idleTime'] != null && (json['idleTime'] as List).isNotEmpty
                 ? (json['idleTime']).map((e) => IdleTime.fromJson(e)).toList()
                 : List.of({}),
-        assignee: List<Worker>.from((json['assignee']).map((e) => Worker.fromJson(e)).toList()));
+        stage: json['stage'] != null ? Stage.fromJson(json['stage']) : null,
+        assignee: List<Worker>.from(
+            (json['assignee']).map((e) => Worker.fromJson(e)).toList()));
     return task;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
+    data['id'] = this.id.toString();
     data['name'] = this.name;
     data['desc'] = this.desc;
     data['processTypeName'] = this.processTypeName;
@@ -270,7 +310,7 @@ class Task {
     data['addressComment'] = this.addressComment;
     data['latitude'] = this.latitude;
     data['longitude'] = this.longitude;
-    data['comment'] = this.comment;
+    data['comment'] = this.commentary;
     data['createDate'] =
         this.createDate != null ? this.createDate.toString() : null;
     data['closeDate'] =
@@ -279,9 +319,20 @@ class Task {
     data['isVisit'] = this.isVisit;
     data['isPlanned'] = this.isPlanned;
     data['isOutdoor'] = this.isOutdoor;
-    data['flexibleAttribute'] = jsonEncode(this.flexibleAttribs);
-    data['idleTimeList'] = jsonEncode(this.idleTimeList);
+    data['flexibleAttribute'] =
+        this.flexibleAttribs.entries.map((e) => toMapJson(e)).toList();
+    data['idleTimeList'] =
+        this.idleTimeList != null ? jsonEncode(this.idleTimeList) : null;
+    data['stage'] = this.stage != null ? this.stage!.toJson() : null;
     data['assignee'] = jsonEncode(this.assignee);
     return data;
+  }
+
+  Map<String, Object?> toMapJson(MapEntry mapEntry) {
+    Map<String, Object?> map = Map();
+    map.putIfAbsent("__typename", () => "FlexibleAttribute");
+    map.putIfAbsent("key", () => mapEntry.key.toString());
+    map.putIfAbsent("value", () => mapEntry.value);
+    return map;
   }
 }

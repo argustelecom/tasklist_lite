@@ -50,6 +50,7 @@ class TaskRepository extends GetxService {
     TaskRemoteClient taskRemoteClient =
         TaskRemoteClient(basicAuth!, serverAddress!);
     Future<List<Task>> result = taskRemoteClient.getClosedTasks(day);
+
     return result.asStream();
   }
 
@@ -96,8 +97,8 @@ class TaskRepository extends GetxService {
         taskInstanceId, beginTime, endTime);
   }
 
-  Future<bool?> completeStage(String basicAuth, String serverAddress,
-      int taskInstanceId, int? closeCodeId) async {
+  Future<bool?> completeStage(
+      String basicAuth, String serverAddress, int taskInstanceId) async {
     ApplicationState applicationState = Get.find();
 
     /// если включен деморежим, возвращаем успех
@@ -105,9 +106,23 @@ class TaskRepository extends GetxService {
       await new Future.delayed(const Duration(seconds: 3));
       return true;
     }
+    TaskRemoteClient taskRemoteClient =
+        TaskRemoteClient(basicAuth, serverAddress);
+    return await taskRemoteClient.endStage(taskInstanceId);
+  }
 
-    /// TODO: если деморежим выключен, нужно отправлять graphQL запрос
-    return true;
+  Future<bool?> closeOrder(String basicAuth, String serverAddress,
+      int taskInstanceId, int closeCodeId) async {
+    ApplicationState applicationState = Get.find();
+
+    /// если включен деморежим, возвращаем успех
+    if (applicationState.inDemonstrationMode.value) {
+      await new Future.delayed(const Duration(seconds: 3));
+      return true;
+    }
+    TaskRemoteClient taskRemoteClient =
+        TaskRemoteClient(basicAuth, serverAddress);
+    return await taskRemoteClient.closeOrder(taskInstanceId, closeCodeId);
   }
 
   Future<Work> registerWorkDetail(

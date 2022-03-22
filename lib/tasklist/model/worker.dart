@@ -63,13 +63,12 @@ class Worker {
 
   factory Worker.fromJson(Map<String, dynamic> json) {
     return Worker(
-      id: int.parse(json['id']),
-      name: json['name'],
-      family: json['family'],
-      surname: json['surname'],
-      mainWorksite: json['mainWorksite'],
-      tabNumber: json['tabNumber']
-    );
+        id: int.parse(json['id']),
+        name: json['name'],
+        family: json['family'],
+        surname: json['surname'],
+        mainWorksite: json['mainWorksite'],
+        tabNumber: json['tabNumber']);
   }
 
   Map<String, dynamic> toJson() {

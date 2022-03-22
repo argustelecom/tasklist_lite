@@ -1,23 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:substring_highlight/substring_highlight.dart';
-import 'package:tasklist_lite/crazylib/task_due_date_label.dart';
+import 'package:tasklist_lite/crazylib/due_date_label.dart';
+import 'package:tasklist_lite/crazylib/due_date_label.dart';
 import 'package:tasklist_lite/state/tasklist_controller.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../pages/task_page.dart';
 import '../tasklist/fixture/task_fixtures.dart';
 
+class CrazyHighlight extends StatelessWidget {
+  final String text;
+  final String term;
+  final double? width;
+  final TextStyle? textStyle;
+  final TextStyle? textStyleHighlight;
+
+  CrazyHighlight(
+      {required this.text,
+      required this.term,
+      this.width,
+      this.textStyle,
+      this.textStyleHighlight});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      constraints: BoxConstraints(
+        maxWidth: width ?? MediaQuery.of(context).size.width * 0.6,
+      ),
+      child: SubstringHighlight(
+        text: text,
+        term: term,
+        textStyle: textStyle ??
+            TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+        textStyleHighlight:
+            textStyleHighlight ?? TextStyle(color: Colors.yellow.shade700),
+      ),
+    );
+  }
+}
+
 /// визуальное представление задачи в списке задач
-/// #TODO: также используется и в старой карусели в AlternativeTaskListPage, но никто даже не смотрел, как оно там выглядит
 class TaskCard extends StatelessWidget {
   final Task task;
-  final String taskPageRouteName;
 
   static const double taskCardElevation = 2;
-  const TaskCard(
-      {Key? key, required this.task, required this.taskPageRouteName})
-      : super(key: key);
+
+  const TaskCard({Key? key, required this.task}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -39,11 +70,9 @@ class TaskCard extends StatelessWidget {
                   child: InkWell(
                     onTap: () {
                       taskListController.taskListState.currentTask.value = task;
-                      Navigator.pushNamed(
-                        context,
-                        this.taskPageRouteName,
-                        arguments: this.task,
-                      );
+                      GetDelegate routerDelegate = Get.find();
+                      routerDelegate.toNamed(TaskPage.routeName,
+                          arguments: this.task);
                     },
                     child: Column(
                       children: [
@@ -53,7 +82,7 @@ class TaskCard extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               // обеспечит подсветку текста, введенного в строку поиска, и присутствующего среди названий заадач
-                              SubstringHighlight(
+                              CrazyHighlight(
                                 // если есть номер заявки оператора, отображаем его. Если нет, отображаем номер из Аргуса
                                 // при этом, если показали номер Аргуса, не показываем его ниже (см. соответсна ниже)
                                 text: task.flexibleAttribs[TaskFixtures
@@ -62,16 +91,23 @@ class TaskCard extends StatelessWidget {
                                     task.name,
                                 term: taskListController.searchText,
                                 textStyle: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 18),
+                                    color:
+                                        Theme.of(context).colorScheme.onPrimary,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18),
                               ),
-                              SubstringHighlight(
+                              CrazyHighlight(
                                 text: task.flexibleAttribs[
                                             TaskFixtures.objectNameFlexAttrName]
                                         ?.toString() ??
                                     "",
                                 term: taskListController.searchText,
+                                width: MediaQuery.of(context).size.width * 0.3,
                                 textStyle: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 18),
+                                    color:
+                                        Theme.of(context).colorScheme.onPrimary,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18),
                               ),
                             ],
                           ),
@@ -81,7 +117,7 @@ class TaskCard extends StatelessWidget {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              SubstringHighlight(
+                              CrazyHighlight(
                                 text: task.flexibleAttribs[TaskFixtures
                                             .foreignOrderIdFlexAttrName] !=
                                         null
@@ -89,11 +125,12 @@ class TaskCard extends StatelessWidget {
                                     : "",
                                 term: taskListController.searchText,
                               ),
-                              SubstringHighlight(
+                              CrazyHighlight(
                                 text: task.flexibleAttribs[TaskFixtures
                                             .orderOperatorNameFlexAttrName]
                                         ?.toString() ??
                                     "",
+                                width: MediaQuery.of(context).size.width * 0.3,
                                 term: taskListController.searchText,
                               ),
                             ],
@@ -103,7 +140,12 @@ class TaskCard extends StatelessWidget {
                           padding: EdgeInsets.only(top: 8, bottom: 4, left: 16),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
-                            children: [TaskDueDateLabel(task: task)],
+                            children: [
+                              DueDateLabel(
+                                dueDate: task.getDueDateFullText(),
+                                isOverdue: task.isTaskOverdue(),
+                              )
+                            ],
                           ),
                         ),
                         Padding(
@@ -111,10 +153,9 @@ class TaskCard extends StatelessWidget {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Text(
-                                task.getAddressDescription(),
-                                softWrap: true,
-                              ),
+                              CrazyHighlight(
+                                  text: task.getAddressDescription(),
+                                  term: taskListController.searchText),
                             ],
                           ),
                         ),

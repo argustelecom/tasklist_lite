@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:tasklist_lite/crazylib/history_event_card.dart';
 import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
-import 'package:tasklist_lite/state/history_event_controller.dart';
+import 'package:tasklist_lite/pages/task_page.dart';
+import 'package:tasklist_lite/state/comment_controller.dart';
 
 class CommentPage extends StatefulWidget {
   static const String routeName = 'Comment';
@@ -17,8 +19,8 @@ class _CommentPageState extends State<CommentPage> {
   Widget build(BuildContext context) {
     ThemeData themeData = Theme.of(context);
 
-    return GetBuilder<HistoryEventController>(
-        init: HistoryEventController(),
+    return GetBuilder<CommentController>(
+        init: CommentController(),
         builder: (historyEventController) {
           return ReflowingScaffold(
               appBar: AppBar(
@@ -26,20 +28,20 @@ class _CommentPageState extends State<CommentPage> {
                 leading: IconButton(
                   icon: Icon(Icons.chevron_left_outlined),
                   onPressed: () {
-                    Navigator.pop(context);
+                    GetDelegate routerDelegate = Get.find();
+                    routerDelegate.toNamed(TaskPage.routeName);
                   },
                 ),
               ),
               body: Padding(
                   padding: EdgeInsets.only(left: 12, right: 12, bottom: 12),
-                  child: Expanded(
                       child: ListView(
                     children: [
                       HistoryEventCard(
                           maxLines: 500,
                           comment: historyEventController.selectedComment)
                     ],
-                  ))));
+                  )));
         });
   }
 }

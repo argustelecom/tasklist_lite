@@ -2,14 +2,16 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/tasklist/idle_time_reason_repository.dart';
 import 'package:tasklist_lite/tasklist/model/close_code.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
 import 'package:tasklist_lite/tasklist/task_repository.dart';
 
+import '../common/resubscribe.dart';
 import '../tasklist/close_code_repository.dart';
 import '../tasklist/fixture/task_fixtures.dart';
-import '../tasklist/history_events_repository.dart';
+import '../tasklist/comments_repository.dart';
 import '../tasklist/model/idle_time.dart';
 import '../tasklist/model/work.dart';
 import 'auth_state.dart';
@@ -18,6 +20,7 @@ import 'tasklist_state.dart';
 /// содержит state списка задач и (возможно в будущем) формы задачи
 class TaskListController extends GetxController {
   AuthState authState = Get.find();
+  ApplicationState _applicationState = Get.find();
 
   TaskListState taskListState = Get.put(TaskListState());
 
@@ -74,8 +77,12 @@ class TaskListController extends GetxController {
     resultList.addAll(taskListState.openedTasks);
 
     /// ...затем закрытые, упорядоченные по дате закрытия
-    taskListState.closedTasks
-        .sort((a, b) => a.closeDate!.compareTo(b.closeDate!));
+    // #TODO: возможно, дата закрытия с сервера по задачам не получается.
+    // иначе сложно объснитьь, почему в закрытых тасках эта дата null
+    // в любом случае, надо проверять, что там на сервере. Затычки ниже
+    // нерабочие, просто чтобы не падало.
+    taskListState.closedTasks.sort(
+        (a, b) => a.closeDate?.compareTo(b.closeDate ?? DateTime.now()) ?? 0);
     resultList.addAll(taskListState.closedTasks);
     return List.of(resultList
         // фильтруем по наличию введенного (в поле поиска) текста в названии и других полях задачи
@@ -92,7 +99,7 @@ class TaskListController extends GetxController {
                 .toString()
                 .toLowerCase()
                 .contains(searchText) ||
-            element.getAddressDescription().contains(searchText)))
+            element.getAddressDescription().toLowerCase().contains(searchText)))
         // фильтруем по попаданию даты закрытия в текущий день
         .where((element) => ((!element.isClosed ||
             DateUtils.dateOnly(element.closeDate!).millisecondsSinceEpoch ==
@@ -110,13 +117,7 @@ class TaskListController extends GetxController {
   TaskRepository taskRepository = Get.find();
   IdleTimeReasonRepository idleTimeReasonRepository = Get.find();
   CloseCodeRepository closeCodeRepository = Get.find();
-  HistoryEventRepository historyEventRepository = Get.find();
-
-  StreamSubscription resubscribe<T>(StreamSubscription? streamSubscription,
-      Stream<T> stream, void onData(T event)) {
-    streamSubscription?.cancel();
-    return stream.listen(onData);
-  }
+  CommentRepository historyEventRepository = Get.find();
 
   @override
   void onInit() {
@@ -126,7 +127,10 @@ class TaskListController extends GetxController {
     // мы должны сделать resubscribe списков открытых и закрытых задач. То же самое при изменении адреса
     // сервера или текущей даты.
 
-    // #TODO: наверняка код ниже можно оптимизировать
+    // #TODO: тут вложенный resubscribe, из-за того, что адрес сервера и authString
+    // при f5 асинхронно дочитываются, а без вложенного resubscribe будет использоваться
+    // null вместо адреса и authString. Проблема бы решилась, если адрес и authString
+    // не пробрасывать параметром, а брать напрямую
     _authStringSubscription = resubscribe<String?>(
         _authStringSubscription, authState.authString.stream,
         (authStringValue) {
@@ -136,7 +140,7 @@ class TaskListController extends GetxController {
               authStringValue, authState.serverAddress.value), (event) {
         taskListState.openedTasks.value = event;
         update();
-      });
+      }, showProgress: true);
 
       _closedTasksSubscription = resubscribe<List<Task>>(
           _closedTasksSubscription,
@@ -146,7 +150,7 @@ class TaskListController extends GetxController {
               taskListState.currentDate.value), (event) {
         taskListState.closedTasks.value = event;
         update();
-      });
+      }, showProgress: true);
     });
 
     _serverAddressSubscription = resubscribe<String?>(
@@ -158,7 +162,7 @@ class TaskListController extends GetxController {
               authState.authString.value, serverAddressValue), (event) {
         taskListState.openedTasks.value = event;
         update();
-      });
+      }, showProgress: true);
 
       _closedTasksSubscription = resubscribe<List<Task>>(
           _closedTasksSubscription,
@@ -166,7 +170,7 @@ class TaskListController extends GetxController {
               serverAddressValue, taskListState.currentDate.value), (event) {
         taskListState.closedTasks.value = event;
         update();
-      });
+      }, showProgress: true);
     });
 
     _currentDateSubscription = resubscribe<DateTime>(
@@ -180,7 +184,7 @@ class TaskListController extends GetxController {
               taskListState.currentDate.value), (event) {
         taskListState.closedTasks.value = event;
         update();
-      });
+      }, showProgress: true);
     });
 
     // на момент переподписывания здесь, значения в authState уже могли быть
@@ -227,8 +231,13 @@ class TaskListController extends GetxController {
         authState.serverAddress.value!, taskInstanceId, beginTime, endTime);
   }
 
-  Future<bool?> completeStage(int taskInstanceId, int? closeCodeId) async {
+  Future<bool?> completeStage(int taskInstanceId) async {
     return await taskRepository.completeStage(authState.authString.value!,
+        authState.serverAddress.value!, taskInstanceId);
+  }
+
+  Future<bool?> closeOrder(int taskInstanceId, int closeCodeId) async {
+    return await taskRepository.closeOrder(authState.authString.value!,
         authState.serverAddress.value!, taskInstanceId, closeCodeId);
   }
 
@@ -259,5 +268,20 @@ class TaskListController extends GetxController {
     _idleTimeReasonsSubscription?.cancel();
     _closeCodesSubscription?.cancel();
     super.onClose();
+  }
+
+  /// Храним сколько максимально линий может быть в примечании в карточке задачи
+  late int maxLines = 5;
+
+  /// Изменяем кол-во отображаемых строк, чтобы посмотреть больше в примечании в карточке задачи
+  viewFullCommentary() {
+    maxLines = 500;
+    update();
+  }
+
+  /// Изменяем кол-во отображаемых строк, чтобы скрыть в примечании в карточке задачи
+  hideCommentary() {
+    maxLines = 5;
+    update();
   }
 }

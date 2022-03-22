@@ -74,8 +74,8 @@ class CloseTaskDialogState extends State<CloseTaskDialog> {
                     child: AttribValueRow(
                         attribValue: MapEntry(
                             "Исполнитель",
-                            taskListController.authState.userInfo.value!
-                                .getWorkerNameWithTabNo()))),
+                            taskListController.taskListState.currentTask.value!
+                                .getAssigneeListToText(true)))),
                 if (_error != null)
                   Padding(
                       padding: EdgeInsets.symmetric(vertical: 8),
@@ -107,7 +107,7 @@ class CloseTaskDialogState extends State<CloseTaskDialog> {
                 onPressed: () async {
                   try {
                     _operationCompleted =
-                        (await taskListController.completeStage(
+                        (await taskListController.closeOrder(
                             taskListController
                                 .taskListState.currentTask.value!.id,
                             _closeCode!.id))!;
