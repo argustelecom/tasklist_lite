@@ -15,7 +15,7 @@ variables:
 
 
 before_script:
-  - chmod 777 ./*
+  - chmod 777 ./* ./.linuxbuild/*
   - dos2unix ./* ./.linuxbuild/*
   - sed -i "s/^version.*/version:$VERSION/g" pubspec.yaml
   - echo "Get projects dependencies"
