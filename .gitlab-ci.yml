@@ -7,7 +7,7 @@ stages:
 
 variables:
   VERSION: " 1.0.0+$CI_PIPELINE_ID"
-  VERSION_ARTIFACTS: "1.0.0+$CI_PIPELINE_ID"
+  VERSION_ARTIFACTS: "1.0.0.$CI_PIPELINE_ID"
   NWT_SERVERS: '{"Тест1": "http://10.160.16.142:8080/"}'
   SOUTH_SERVERS: '{"Long": "http://lz-argusfe.lz.south.rt.ru:8080/"}'
   VOLGA_SERVERS: '{"Тест (dargus)": "http://10.160.16.142:8080/"}'
