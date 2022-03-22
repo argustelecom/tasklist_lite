@@ -16,7 +16,7 @@ variables:
 
 before_script:
   - chmod 777 ./*
-  - dos2unix ./*
+  - dos2unix ./* ./.linuxbuild/*
   - sed -i "s/^version.*/version:$VERSION/g" pubspec.yaml
   - echo "Get projects dependencies"
   - flutter pub get
