@@ -1,7 +1,7 @@
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:tasklist_lite/graphql/graphql_service.dart';
-import 'package:tasklist_lite/tasklist/model/history_event.dart';
+import 'package:tasklist_lite/tasklist/model/comment.dart';
 import 'package:tasklist_lite/tasklist/model/idle_time.dart';
 
 import 'model/close_code.dart';
@@ -277,7 +277,7 @@ class TaskRemoteClient {
     return result;
   }
 
-  Future<List<HistoryEvent>> getCommentByTask(int taskId) async {
+  Future<List<Comment>> getCommentByTask(int taskId) async {
     String getCommentByTaskQuery = '''
  {  getCommentByTask (taskId:"$taskId") {
    $commentQuery
@@ -286,7 +286,7 @@ class TaskRemoteClient {
 ''';
     Future<QueryResult> queryResultFuture =
         _graphQLService.query(getCommentByTaskQuery);
-    List<HistoryEvent> result = List.of({});
+    List<Comment> result = List.of({});
     await queryResultFuture.then((value) {
       if (value.hasException) {
         // need catch 401 error
@@ -302,7 +302,7 @@ class TaskRemoteClient {
         return result;
       }
       List.from(value.data!["getCommentByTask"]).forEach((element) {
-        result.add(HistoryEvent.fromJson(element));
+        result.add(Comment.fromJson(element));
       });
     }, onError: (e) {
       throw Exception(" onError " + e.toString());
@@ -310,7 +310,7 @@ class TaskRemoteClient {
     return result;
   }
 
-  Future<HistoryEvent?> addComment(
+  Future<Comment?> addComment(
       int taskInstanceId, String text, bool important) async {
     String addCommentQuery = '''
  mutation {  
@@ -324,7 +324,7 @@ class TaskRemoteClient {
 
     Future<QueryResult> mutationResultFuture =
         _graphQLService.mutate(addCommentQuery);
-    HistoryEvent? result = null;
+    Comment? result = null;
     await mutationResultFuture.then((value) {
       if (value.hasException) {
         // need catch 401 error
@@ -340,7 +340,7 @@ class TaskRemoteClient {
         return null;
       }
       //пока мутации всегда возвращает null. но возможность получать пока оставим
-      result = HistoryEvent.fromJson(value.data!["addComment"]);
+      result = Comment.fromJson(value.data!["addComment"]);
     }, onError: (e) {
       throw Exception(" onError " + e.toString());
     });

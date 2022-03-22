@@ -11,7 +11,7 @@ import 'package:tasklist_lite/tasklist/task_repository.dart';
 import '../common/resubscribe.dart';
 import '../tasklist/close_code_repository.dart';
 import '../tasklist/fixture/task_fixtures.dart';
-import '../tasklist/history_events_repository.dart';
+import '../tasklist/comments_repository.dart';
 import '../tasklist/model/idle_time.dart';
 import '../tasklist/model/work.dart';
 import 'auth_state.dart';
@@ -117,7 +117,7 @@ class TaskListController extends GetxController {
   TaskRepository taskRepository = Get.find();
   IdleTimeReasonRepository idleTimeReasonRepository = Get.find();
   CloseCodeRepository closeCodeRepository = Get.find();
-  HistoryEventRepository historyEventRepository = Get.find();
+  CommentRepository historyEventRepository = Get.find();
 
   @override
   void onInit() {
@@ -274,7 +274,7 @@ class TaskListController extends GetxController {
   late int maxLines = 5;
 
   /// Изменяем кол-во отображаемых строк, чтобы посмотреть больше в примечании в карточке задачи
-  viewMore() {
+  viewFullCommentary() {
     maxLines = 500;
     update();
   }

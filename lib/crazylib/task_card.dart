@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:substring_highlight/substring_highlight.dart';
-import 'package:tasklist_lite/crazylib/task_due_date_label.dart';
+import 'package:tasklist_lite/crazylib/due_date_label.dart';
+import 'package:tasklist_lite/crazylib/due_date_label.dart';
 import 'package:tasklist_lite/state/tasklist_controller.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -46,6 +47,7 @@ class TaskCard extends StatelessWidget {
   final Task task;
 
   static const double taskCardElevation = 2;
+
   const TaskCard({Key? key, required this.task}) : super(key: key);
 
   @override
@@ -138,7 +140,12 @@ class TaskCard extends StatelessWidget {
                           padding: EdgeInsets.only(top: 8, bottom: 4, left: 16),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
-                            children: [TaskDueDateLabel(task: task)],
+                            children: [
+                              DueDateLabel(
+                                dueDate: task.getDueDateFullText(),
+                                isOverdue: task.isTaskOverdue(),
+                              )
+                            ],
                           ),
                         ),
                         Padding(

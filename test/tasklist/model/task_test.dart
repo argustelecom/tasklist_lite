@@ -13,7 +13,7 @@ void main() {
           dueDate: null,
           flexibleAttribs: LinkedHashMap());
 
-      expect(task.isOverdue(), false);
+      expect(task.isTaskOverdue(), false);
     });
 
     test(
@@ -27,7 +27,7 @@ void main() {
           dueDate: dueDateForTask2,
           flexibleAttribs: LinkedHashMap());
 
-      expect(task2.isOverdue(), false);
+      expect(task2.isTaskOverdue(), false);
     });
 
     test('Task.isOverdue() должен вернуть true, когда dueDate уже прошел', () {
@@ -39,7 +39,7 @@ void main() {
           dueDate: dueDateForTask,
           flexibleAttribs: LinkedHashMap());
 
-      expect(task3.isOverdue(), true);
+      expect(task3.isTaskOverdue(), true);
     });
   });
 }

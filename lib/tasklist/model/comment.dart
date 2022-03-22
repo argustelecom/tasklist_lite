@@ -1,5 +1,5 @@
 /// Событие в истории
-class HistoryEvent {
+class Comment {
   ///Персона, которая сгенерировала событие
   final String person;
 
@@ -15,7 +15,7 @@ class HistoryEvent {
   ///Дата события
   final DateTime date;
 
-  HistoryEvent(
+  Comment(
       {required this.person,
       required this.type,
       required this.content,
@@ -23,8 +23,8 @@ class HistoryEvent {
       required this.isAlarm
       });
 
-  factory HistoryEvent.fromJson(Map<String, dynamic> json) {
-    return HistoryEvent(
+  factory Comment.fromJson(Map<String, dynamic> json) {
+    return Comment(
       person: json['person'],
       type: json['type'],
       isAlarm: json['important'],

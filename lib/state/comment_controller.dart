@@ -5,20 +5,20 @@ import 'package:tasklist_lite/state/auth_controller.dart';
 import 'package:tasklist_lite/state/tasklist_controller.dart';
 
 import '../common/resubscribe.dart';
-import '../tasklist/history_events_repository.dart';
-import '../tasklist/model/history_event.dart';
+import '../tasklist/comments_repository.dart';
+import '../tasklist/model/comment.dart';
 import '../tasklist/model/task.dart';
 import 'auth_state.dart';
 
-class HistoryEventController extends GetxController {
+class CommentController extends GetxController {
   /// Ищем нужные нам штуки
-  HistoryEventRepository historyEventRepository = Get.find();
+  CommentRepository historyEventRepository = Get.find();
   TaskListController taskListController = Get.find();
   AuthController authController = Get.find();
   AuthState authState = Get.find();
 
   /// Лист с историческими событиями по наряду
-  List<HistoryEvent> historyEventList = List.of({});
+  List<Comment> commentList = List.of({});
 
   /// Подписка на комментарии
   StreamSubscription? commentSubscription;
@@ -28,14 +28,14 @@ class HistoryEventController extends GetxController {
   void onInit() {
     super.onInit();
 
-    commentSubscription = resubscribe<List<HistoryEvent>>(
+    commentSubscription = resubscribe<List<Comment>>(
         commentSubscription,
         historyEventRepository.streamComments(
             authState.authString.value!,
             authState.serverAddress.value!,
             taskListController.taskListState.currentTask.value), (event) {
-      List<HistoryEvent> comments = event;
-      this.historyEventList = comments;
+      List<Comment> comments = event;
+      this.commentList = comments;
     });
     update();
   }
@@ -81,7 +81,7 @@ class HistoryEventController extends GetxController {
     }
 
     if (comment.length > 0) {
-      HistoryEventRepository().addNewComment(
+      CommentRepository().addNewComment(
           authController.authState.authString.value!,
           authController.authState.serverAddress.value!,
           task,
@@ -89,7 +89,7 @@ class HistoryEventController extends GetxController {
           isAlarm);
       // TODO: Костыль для корректного постороеня UI т.к. пока не реализованы подписки.
       // При добавлении нового коммента он улетает на сервер и дополнительно добавляется в список в контроллере для отображения
-      historyEventList.add(HistoryEvent(
+      commentList.add(Comment(
           type: "Комментарий",
           person: "Вы",
           date: DateTime.now(),
@@ -106,14 +106,14 @@ class HistoryEventController extends GetxController {
         '#203*${taskListController.taskListState.currentTask.value!.ttmsId}#';
     bool isAlarm = false;
 
-    HistoryEventRepository().addNewComment(
+    CommentRepository().addNewComment(
         authController.authState.authString.value!,
         authController.authState.serverAddress.value!,
         task,
         comment,
         isAlarm);
     // TODO: тут такой же костыль - исправить когда будут subscriptions
-    historyEventList.add(HistoryEvent(
+    commentList.add(Comment(
         type: "Комментарий",
         person: "Вы",
         date: DateTime.now(),
@@ -123,44 +123,39 @@ class HistoryEventController extends GetxController {
   }
 
   /// Метод для получения списка событий
-  getHistoryEvents() {
-    historyEventList.sort((a, b) => a.date.compareTo(b.date));
-    return historyEventList;
+  getComments() {
+    commentList.sort((a, b) => a.date.compareTo(b.date));
+    return commentList;
   }
 
   /// Признак нужно ли уведомление, когда оставляем комментарий(колокольчик)
-  var isAlarmComment = false;
+   bool _isAlarmComment = false;
 
-  /// Получаем признак нужности уведомления
-  getIsAlarmComment() {
-    return isAlarmComment;
-  }
+  bool get isAlarmComment => _isAlarmComment;
 
-  /// Переключаем признак нужности уведомления
-  changeIsAlarmComment() {
-    isAlarmComment = !isAlarmComment;
+  set isAlarmComment(bool isAlarmComment) {
+    _isAlarmComment = isAlarmComment;
     update();
   }
 
   /// Храним статус фокуса, для отображения кнопки отправить
-  var onTextFieldFocused = false;
+   bool _onTextFieldFocused = false;
 
-  /// Назначаем статус при onChangeFocus
-  setOnTextFieldFocused(bool isFocused) {
-    onTextFieldFocused = isFocused;
+  bool get onTextFieldFocused => _onTextFieldFocused;
+
+  set onTextFieldFocused(bool isFocused) {
+    _onTextFieldFocused = isFocused;
     update();
   }
 
-  /// Получаем статус фокуса
-  getOnTextFieldFocused() {
-    return onTextFieldFocused;
-  }
-
   /// Храним коммент для перехода в него
-  var selectedComment;
+  late Comment _selectedComment;
 
-  /// Указываем какой коммент выбираем
-  setCurrentComment(HistoryEvent historyEvent) {
-    selectedComment = historyEvent;
+  Comment get selectedComment => _selectedComment;
+
+  set selectedComment(Comment historyEvent) {
+    _selectedComment = historyEvent;
+    update();
   }
+
 }

@@ -7,8 +7,8 @@ import 'package:intl/intl.dart';
 import 'package:tasklist_lite/crazylib/history_event_card.dart';
 import 'package:tasklist_lite/crazylib/idle_time_manager_dialog.dart';
 import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
-import 'package:tasklist_lite/crazylib/task_due_date_label.dart';
-import 'package:tasklist_lite/state/history_event_controller.dart';
+import 'package:tasklist_lite/crazylib/due_date_label.dart';
+import 'package:tasklist_lite/state/comment_controller.dart';
 import 'package:tasklist_lite/state/textFieldColoraizer.dart';
 import 'package:tasklist_lite/tasklist/fixture/task_fixtures.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
@@ -167,25 +167,19 @@ class _TaskPageState extends State<TaskPage> {
                                                         .fromLTRB(
                                                         16, 8, 16, 0),
                                                     child: Row(children: [
-                                                      Text(
-                                                          "КС : ${taskListController
+                                                  DueDateLabel(
+                                                      dueDate: taskListController
                                                               .taskListState
                                                               .currentTask
                                                               .value!.stage!
-                                                              .dueDate}",
-                                                          style: taskListController
+                                                              .getDueDateFullText(),
+                                                      isOverdue:
+                                                          taskListController
                                                               .taskListState
                                                               .currentTask
                                                               .value!
                                                               .stage!
-                                                              .dueDate!
-                                                              .isBefore(DateTime
-                                                              .now())
-                                                              ? TextStyle(
-                                                              color: Colors.red)
-                                                              : TextStyle(
-                                                              color: Colors
-                                                                  .green)),
+                                                              .isStageOverdue())
                                                     ]),
                                                   ),
                                                   Padding(
@@ -194,26 +188,23 @@ class _TaskPageState extends State<TaskPage> {
                                                         16, 8, 16, 0),
                                                     child: Row(children: [
                                                       Text(
-                                                          "${taskListController
-                                                              .taskListState
-                                                              .currentTask
-                                                              .value!
-                                                              .getTimeLeftStageText()}",
-                                                          style: taskListController
-                                                              .taskListState
-                                                              .currentTask
-                                                              .value!
-                                                              .getTimeLeftStageText()
-                                                              .contains('СКВ')
-                                                              ? TextStyle(
-                                                              color: Colors.red)
-                                                              : TextStyle(
-                                                              color: Colors
-                                                                  .green)),
-                                                    ]),
+                                                    "${taskListController.taskListState.currentTask.value!.stage!.getTimeLeftStageText()}",
+                                                    style: TextStyle(color:
+                                                          taskListController
+                                                                .taskListState
+                                                                .currentTask
+                                                                .value!
+                                                                .stage!
+                                                                .getTimeLeftStageText()
+                                                                .contains('СКВ')
+                                                            ? Colors.red
+                                                            : Colors.green,
+                                                        fontSize: 14),
                                                   ),
-                                                ],
-                                                crossAxisAlignment:
+                                                ]),
+                                              ),
+                                            ],
+                                            crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                               ),
                                             //Клизма
@@ -227,23 +218,23 @@ class _TaskPageState extends State<TaskPage> {
                                                 child: Column(
                                                   mainAxisAlignment:
                                                   MainAxisAlignment.center,
-                                                  children: [
-                                                    // #TODO: в макете у иконки еще elevation присутствует, с ходу не получилось сделать
-                                                    IconButton(
-                                                        onPressed: () async {
-                                                          // Есть map_launcher, но он в вебе не работает (ругается)
-                                                          // но можно открывать урл к yandex maps например
-                                                          // https://stackoverflow.com/questions/52052232/flutter-url-launcher-google-maps
-                                                          String baseUrl =
-                                                              "https://yandex.ru/maps/?l=map&z=11";
-                                                          // параметры открытия яндекса см. https://yandex.com/dev/yandex-apps-launch/maps/doc/concepts/yandexmaps-web.html
-                                                          // #TODO: если бы у нас были текущиие координаты (а они будут в следующих версиях), можно открывать прям маршрут,
-                                                          // см. Plot Route https://yandex.com/dev/yandex-apps-launch/maps/doc/concepts/yandexmaps-web.html#yandexmaps-web__buildroute
-                                                          if ((taskListController
-                                                              .taskListState
-                                                              .currentTask
-                                                              .value!
-                                                              .latitude !=
+                                              children: [
+                                                // #TODO: в макете у иконки еще elevation присутствует, с ходу не получилось сделать
+                                                IconButton(
+                                                    onPressed: () async {
+                                                      // Есть map_launcher, но он в вебе не работает (ругается)
+                                                      // но можно открывать урл к yandex maps например
+                                                      // https://stackoverflow.com/questions/52052232/flutter-url-launcher-google-maps
+                                                      String baseUrl =
+                                                          "https://yandex.ru/maps/?l=map&z=11";
+                                                      // параметры открытия яндекса см. https://yandex.com/dev/yandex-apps-launch/maps/doc/concepts/yandexmaps-web.html
+                                                      // #TODO: если бы у нас были текущиие координаты (а они будут в следующих версиях), можно открывать прям маршрут,
+                                                      // см. Plot Route https://yandex.com/dev/yandex-apps-launch/maps/doc/concepts/yandexmaps-web.html#yandexmaps-web__buildroute
+                                                      if ((taskListController
+                                                                  .taskListState
+                                                                  .currentTask
+                                                                  .value!
+                                                                  .latitude !=
                                                               null) &&
                                                               (taskListController
                                                                   .taskListState
@@ -480,8 +471,8 @@ class _TaskPageState extends State<TaskPage> {
                                 elevation: 3,
                               ),
                             ),
-                            GetBuilder<HistoryEventController>(
-                                init: HistoryEventController(),
+                        GetBuilder<CommentController>(
+                            init: CommentController(),
                                 builder: (historyEventController) {
                                   return Padding(
                                       padding: EdgeInsets.only(
@@ -491,7 +482,7 @@ class _TaskPageState extends State<TaskPage> {
                                           Expanded(
                                             child: ListView.builder(
                                                 itemCount: historyEventController
-                                                    .getHistoryEvents()
+                                                .getComments()
                                                     .length,
                                                 controller: historyScrollController,
                                                 itemBuilder: (
@@ -502,14 +493,14 @@ class _TaskPageState extends State<TaskPage> {
                                                           maxLines: 10,
                                                           comment:
                                                           historyEventController
-                                                              .getHistoryEvents()[
+                                                                  .getComments()[
                                                           index]),
                                                       onTap: () {
                                                         historyEventController
-                                                            .setCurrentComment(
-                                                            historyEventController
-                                                                .getHistoryEvents()[
-                                                            index]);
+                                                            .selectedComment =
+                                                        historyEventController
+                                                                .getComments()[
+                                                            index];
                                                         GetDelegate routerDelegate =
                                                         Get.find();
                                                         routerDelegate.toNamed(
@@ -527,8 +518,7 @@ class _TaskPageState extends State<TaskPage> {
                                                     const Duration(
                                                         milliseconds: 100), () {
                                                   historyEventController
-                                                      .setOnTextFieldFocused(
-                                                      value);
+                                                  .onTextFieldFocused = value;
                                                 });
                                               },
                                               child: TextField(
@@ -549,7 +539,7 @@ class _TaskPageState extends State<TaskPage> {
                                                       tooltip: 'С уведомлением',
                                                       icon: Icon(
                                                           historyEventController
-                                                              .getIsAlarmComment()
+                                                              .isAlarmComment
                                                               ? Icons
                                                               .notifications
                                                               : Icons
@@ -558,7 +548,9 @@ class _TaskPageState extends State<TaskPage> {
                                                           color: Colors.black),
                                                       onPressed: () {
                                                         historyEventController
-                                                            .changeIsAlarmComment();
+                                                            .isAlarmComment =
+                                                        !historyEventController
+                                                            .isAlarmComment;
                                                       },
                                                     ),
                                                     isCollapsed: false,
@@ -569,7 +561,7 @@ class _TaskPageState extends State<TaskPage> {
                                                         commentTextController
                                                             .text,
                                                         historyEventController
-                                                            .getIsAlarmComment(),
+                                                            .isAlarmComment,
                                                         taskListController
                                                             .taskListState
                                                             .currentTask
@@ -597,7 +589,7 @@ class _TaskPageState extends State<TaskPage> {
                                           ),
                                           Visibility(
                                               visible: historyEventController
-                                                  .getOnTextFieldFocused(),
+                                              .onTextFieldFocused,
                                               child: Padding(
                                                 padding: EdgeInsets.only(
                                                     top: 8, right: 16),
@@ -643,7 +635,7 @@ class _TaskPageState extends State<TaskPage> {
                                                               commentTextController
                                                                   .text,
                                                               historyEventController
-                                                                  .getIsAlarmComment(),
+                                                              .isAlarmComment,
                                                               taskListController
                                                                   .taskListState
                                                                   .currentTask
@@ -690,8 +682,8 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     TaskListController taskListController = Get.find();
-    return GetBuilder<HistoryEventController>(
-        init: HistoryEventController(),
+    return GetBuilder<CommentController>(
+        init: CommentController(),
         builder: (historyEventController) {
           return AppBar(
               leading: IconButton(
@@ -725,7 +717,9 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
                         Padding(
                             padding: EdgeInsets.symmetric(vertical: 2),
                             child: Row(children: [
-                              TaskDueDateLabel(task: task),
+                              DueDateLabel(
+                                  dueDate: task.getDueDateFullText(),
+                                  isOverdue: task.isTaskOverdue()),
                             ])),
                       ],
                     ),
@@ -878,7 +872,7 @@ class AttribValue extends StatelessWidget {
                     style: TextStyle(fontWeight: FontWeight.w100)),
                 onPressed: () {
                   taskListController.maxLines == 5
-                      ? taskListController.viewMore()
+                      ? taskListController.viewFullCommentary()
                       : taskListController.hideCommentary();
                 });
           }

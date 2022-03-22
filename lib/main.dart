@@ -20,11 +20,11 @@ import 'package:tasklist_lite/pages/trunk_page.dart';
 import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/state/auth_controller.dart';
 import 'package:tasklist_lite/tasklist/close_code_repository.dart';
-import 'package:tasklist_lite/tasklist/fixture/history_events_fixtures.dart';
+import 'package:tasklist_lite/tasklist/fixture/comments_fixtures.dart';
 import 'package:tasklist_lite/tasklist/fixture/mark_fixtures.dart';
 import 'package:tasklist_lite/tasklist/fixture/notification_fixtures.dart';
 import 'package:tasklist_lite/tasklist/fixture/task_fixtures.dart';
-import 'package:tasklist_lite/tasklist/history_events_repository.dart';
+import 'package:tasklist_lite/tasklist/comments_repository.dart';
 import 'package:tasklist_lite/tasklist/idle_time_reason_repository.dart';
 import 'package:tasklist_lite/tasklist/mark_repository.dart';
 import 'package:tasklist_lite/tasklist/notification_repository.dart';
@@ -171,8 +171,8 @@ class MyApp extends StatelessWidget {
                       Get.put(IdleTimeReasonRepository()),
                       Get.put(WorkRepository()),
                       Get.put(CloseCodeRepository()),
-                      Get.put(HistoryEventsFixtures()),
-                      Get.put(HistoryEventRepository()),
+                      Get.put(CommentsFixtures()),
+                      Get.put(CommentRepository()),
                       Get.put(CommonDropdownController()),
                       Get.put(MarkRepository()),
                       Get.put(MarkFixtures()),

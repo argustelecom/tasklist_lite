@@ -45,6 +45,8 @@ class Task {
   /// "Исполнители"
   List<Worker> assignee = <Worker>[];
 
+  /// TODO: телефон, контактное лицо нужны?
+
   /// TODO: должен ли быть системным?
   /// "Объект работ"
   ///String? objectName;
@@ -122,12 +124,8 @@ class Task {
     return workers.map((e) => e.getWorkerShortName()).join(', ');
   }
 
-  bool isOverdue() {
+  bool isTaskOverdue() {
     return (dueDate != null) && (dueDate!.isBefore((DateTime.now())));
-  }
-
-  bool isStageOverdue() {
-    return (dueDate != null) && (stage!.dueDate!.isBefore((DateTime.now())));
   }
 
   // возвращает абсолютную величину интервала от/до КC задачи
@@ -145,40 +143,10 @@ class Task {
       return null;
   }
 
-  // возвращает абсолютную величину интервала от/до КC этапа
-  Duration? getTimeLeftStage() {
-    if (dueDate != null) {
-      if (dueDate!.isAfter(DateTime.now())) {
-        return new Duration(
-            milliseconds: stage!.dueDate!.millisecondsSinceEpoch -
-                DateTime.now().millisecondsSinceEpoch);
-      } else
-        return new Duration(
-            milliseconds: DateTime.now().millisecondsSinceEpoch -
-                stage!.dueDate!.millisecondsSinceEpoch);
-    } else
-      return null;
-  }
-
-// Возвращаем КВ по этапу
-  String getTimeLeftStageText() {
-    Duration? timeLeft = getTimeLeftStage();
-    if (timeLeft != null)
-      return (isStageOverdue() ? "СКВ: " : "КВ: ") +
-          prettyDuration(timeLeft,
-              tersity: DurationTersity.minute,
-              abbreviated: true,
-              delimiter: " ",
-              spacer: "",
-              locale: RussianDurationLanguage());
-    else
-      return "";
-  }
-
   String getTimeLeftText() {
     Duration? timeLeft = getTimeLeftAbs();
     if (timeLeft != null)
-      return (isOverdue() ? "СКВ: " : "КВ: ") +
+      return (isTaskOverdue() ? "СКВ: " : "КВ: ") +
           prettyDuration(timeLeft,
               tersity: DurationTersity.minute,
               abbreviated: true,

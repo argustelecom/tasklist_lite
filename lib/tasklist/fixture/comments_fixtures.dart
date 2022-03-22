@@ -1,29 +1,29 @@
 import 'package:tasklist_lite/tasklist/fixture/task_fixtures.dart';
-import 'package:tasklist_lite/tasklist/model/history_event.dart';
+import 'package:tasklist_lite/tasklist/model/comment.dart';
 
 import '../model/task.dart';
 
-class HistoryEventsFixtures {
-  static List<HistoryEvent> firstHistoryEventFixture = List.of({
-    new HistoryEvent(
+class CommentsFixtures {
+  static List<Comment> firstCommentFixture = List.of({
+    new Comment(
         person: "Кошкин Т.",
         type: "Комментарий",
         content: "Взяли в работу. Выезжаем",
         date: DateTime.now(),
         isAlarm: true),
-    new HistoryEvent(
+    new Comment(
         person: "Собакевич П.",
         type: "Вложение",
         content: "фото_объекта.jpg",
         date: DateTime.now().subtract(Duration(days: 1)),
         isAlarm: false),
-    new HistoryEvent(
+    new Comment(
         person: "Собакевич П.",
         type: "Комментарий",
         content: "Юстировка БС 2321. взять с собой лопату ",
         date: DateTime.now().subtract(Duration(days: 1)),
         isAlarm: true),
-    new HistoryEvent(
+    new Comment(
         person: "RT_TTMS_USER",
         type: "Уведомление",
         content:
@@ -33,7 +33,7 @@ class HistoryEventsFixtures {
             "Время отсчета контрольного срока: 31.10.2021 18:42 (+05:00); Сдвиг: 2229 час. 12 мин.; Примечание: ?;  ",
         date: DateTime.now().subtract(Duration(days: 2)),
         isAlarm: false),
-    new HistoryEvent(
+    new Comment(
         person: "RT_TTMS_USER",
         type: "Уведомление",
         content:
@@ -48,26 +48,26 @@ class HistoryEventsFixtures {
         isAlarm: false),
   });
 
-  static List<HistoryEvent> secondHistoryEventFixture = List.of({
-    new HistoryEvent(
+  static List<Comment> secondCommentFixture = List.of({
+    new Comment(
         person: "Канарейкин И.",
         type: "Комментарий",
         content: "Принято",
         date: DateTime.now(),
         isAlarm: true),
-    new HistoryEvent(
+    new Comment(
         person: "Дроздов Д.",
         type: "Вложение",
         content: "схема_проезда.jpg",
         date: DateTime.now().subtract(Duration(days: 1)),
         isAlarm: false),
-    new HistoryEvent(
+    new Comment(
         person: "Дроздов Д.",
         type: "Комментарий",
         content: "Пятый поворот у третей сосны",
         date: DateTime.now().subtract(Duration(days: 1)),
         isAlarm: true),
-    new HistoryEvent(
+    new Comment(
         person: "RT_TTMS_USER",
         type: "Уведомление",
         content:
@@ -79,26 +79,26 @@ class HistoryEventsFixtures {
         isAlarm: false),
   });
 
-  static List<HistoryEvent> thirdHistoryEventFixture = List.of({
-    new HistoryEvent(
+  static List<Comment> thirdCommentFixture = List.of({
+    new Comment(
         person: "Мышкин В.",
         type: "Вложение",
         content: "фото_антенны.jpg",
         date: DateTime.now(),
         isAlarm: true),
-    new HistoryEvent(
+    new Comment(
         person: "Мышкин В.",
         type: "Вложение",
         content: "фото_БС_2764>.jpg",
         date: DateTime.now().subtract(Duration(days: 1)),
         isAlarm: false),
-    new HistoryEvent(
+    new Comment(
         person: "Хомяк Е.",
         type: "Комментарий",
         content: "Просьба предоставить фото с объекта",
         date: DateTime.now().subtract(Duration(days: 1)),
         isAlarm: true),
-    new HistoryEvent(
+    new Comment(
         person: "RT_TTMS_USER",
         type: "Уведомление",
         content: " Участок Неизвестные объекты О2О подписался на задачу "
@@ -110,19 +110,19 @@ class HistoryEventsFixtures {
   });
 
   /// Метод получения событий по наряду. На вход передаем задачу, по которой хотим получить события
-  List<HistoryEvent> getHistoryEvents(Task? task) {
+  List<Comment> getComments(Task? task) {
     if (task == TaskFixtures.firstTask) {
-      return firstHistoryEventFixture;
+      return firstCommentFixture;
     } else if (task == TaskFixtures.secondTask) {
-      return secondHistoryEventFixture;
+      return secondCommentFixture;
     } else {
-      return thirdHistoryEventFixture;
+      return thirdCommentFixture;
     }
   }
 
   ///Запускаем стрим, который дает список комментов
-  Stream<List<HistoryEvent>> streamComments(Task? task) async* {
-    List<HistoryEvent> notifies = getHistoryEvents(task);
+  Stream<List<Comment>> streamComments(Task? task) async* {
+    List<Comment> notifies = getComments(task);
 
     yield notifies;
 
