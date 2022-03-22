@@ -260,7 +260,7 @@ class Task {
       "Договор": flexibleAttribs["Наряд/Договор"],
       "Примечание": commentary,
       "Представитель заказчика": flexibleAttribs["Представитель заказчика"],
-      "Исполнители": assignee,
+      "Исполнители": getAssigneeListToText(assignee),
       "Приоритет": flexibleAttribs["Наряд/Приоритет"],
       "Кластер": flexibleAttribs["Кластер"],
     }));
