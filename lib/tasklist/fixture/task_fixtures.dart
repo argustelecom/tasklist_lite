@@ -21,7 +21,7 @@ class TaskFixtures {
       name: "АВР-24035",
       desc: "АВР-24035 (ВЛГ0127)",
       processTypeName: "Аварийно-восстановительные работы",
-      taskType: "Выполнение работ",
+      taskType: "Аварийно-восстановительные работы О2О",
       dueDate:
           DateUtils.dateOnly(DateTime.now()).add(const Duration(hours: 11)),
       assignee: [WorkerFixtures.worker_1, WorkerFixtures.worker_2],
@@ -116,18 +116,18 @@ class TaskFixtures {
       name: "РР-27089",
       desc: "РР-27089 (ВОЛС Лосево-Песочное)",
       processTypeName: "Разовые работы",
-      taskType: "Выезд на объект",
+      taskType: "Разовые работы О2О",
       dueDate:
           DateUtils.dateOnly(DateTime.now()).add(const Duration(hours: 15)),
-      assignee: [WorkerFixtures.worker_1],
+      assignee: [WorkerFixtures.worker_1, WorkerFixtures.worker_2],
       address: null,
       latitude: "56.888854",
       longitude: "60.612602",
       commentary: "Муфта М172",
       stage: Stage(
-          name: "В работе",
-          number: 3,
-          isLast: false,
+          name: "Выполнение работ",
+          number: 4,
+          isLast: true,
           dueDate:
               DateUtils.dateOnly(DateTime.now()).add(const Duration(hours: 6))),
       createDate: DateUtils.dateOnly(DateTime.now())
@@ -154,7 +154,7 @@ class TaskFixtures {
       name: "РР-28050",
       desc: "РР-28050 (ВЛГ4032)",
       processTypeName: "Разовые работы",
-      taskType: "Назначение наряда бригаде",
+      taskType: "Разовые работы О2О",
       dueDate:
           DateUtils.dateOnly(DateTime.now()).add(const Duration(hours: 22)),
       assignee: [WorkerFixtures.worker_1],
@@ -168,7 +168,7 @@ class TaskFixtures {
       isClosed: false,
       isOutdoor: true,
       stage: Stage(
-          name: "Ожидание закрытия в TTMS",
+          name: "Выполнение работ",
           number: 4,
           isLast: true,
           dueDate: DateUtils.dateOnly(DateTime.now())
@@ -188,7 +188,7 @@ class TaskFixtures {
       name: "ТО-19099",
       desc: "ТО-19099 (ВЛГ0734)",
       processTypeName: "Техническое обслуживание",
-      taskType: "Назначение наряда бригаде",
+      taskType: "Техническое обслуживание",
       dueDate: DateUtils.dateOnly(DateTime.now())
           .add(const Duration(hours: 24 * 1 + 16)),
       assignee: [WorkerFixtures.worker_1],
@@ -196,12 +196,7 @@ class TaskFixtures {
       latitude: null,
       longitude: null,
       commentary: "",
-      stage: Stage(
-          name: "Выезд на объект",
-          number: 2,
-          isLast: false,
-          dueDate: DateUtils.dateOnly(DateTime.now())
-              .add(const Duration(hours: 20))),
+      stage: null,
       createDate: DateUtils.dateOnly(DateTime.now())
           .add(const Duration(hours: 24 * 2 - 22)),
       isClosed: false,
@@ -221,7 +216,7 @@ class TaskFixtures {
       name: "РР-14569",
       desc: "РР-14569 (ВЛГ1077)",
       processTypeName: "Разовые работы",
-      taskType: "Назначение наряда бригаде",
+      taskType: "Разовые работы О2О",
       dueDate: DateUtils.dateOnly(DateTime.now())
           .add(const Duration(hours: 24 * 3 + 15)),
       assignee: [WorkerFixtures.worker_1],
@@ -262,12 +257,7 @@ class TaskFixtures {
       latitude: null,
       longitude: null,
       commentary: "",
-      stage: Stage(
-          name: "Выезд на объект",
-          number: 2,
-          isLast: false,
-          dueDate: DateUtils.dateOnly(DateTime.now())
-              .add(const Duration(hours: 20))),
+      stage: null,
       createDate: DateUtils.dateOnly(DateTime.now())
           .add(const Duration(hours: -24 * 4 + 12)),
       closeDate: DateUtils.dateOnly(DateTime.now())
@@ -297,12 +287,7 @@ class TaskFixtures {
       latitude: null,
       longitude: null,
       commentary: "",
-      stage: Stage(
-          name: "Выезд на объект",
-          number: 2,
-          isLast: false,
-          dueDate: DateUtils.dateOnly(DateTime.now())
-              .add(const Duration(hours: 20))),
+      stage: null,
       createDate: DateUtils.dateOnly(DateTime.now())
           .add(const Duration(hours: -24 * 4 + 12)),
       closeDate: DateUtils.dateOnly(DateTime.now())
@@ -332,12 +317,7 @@ class TaskFixtures {
       latitude: null,
       longitude: null,
       commentary: "",
-      stage: Stage(
-          name: "Выезд на объект",
-          number: 2,
-          isLast: false,
-          dueDate: DateUtils.dateOnly(DateTime.now())
-              .add(const Duration(hours: 20))),
+      stage: null,
       createDate: DateUtils.dateOnly(DateTime.now())
           .add(const Duration(hours: -24 * 4 + 12)),
       closeDate: DateUtils.dateOnly(DateTime.now())
@@ -367,12 +347,7 @@ class TaskFixtures {
       latitude: null,
       longitude: null,
       commentary: "",
-      stage: Stage(
-          name: "Выезд на объект",
-          number: 2,
-          isLast: false,
-          dueDate: DateUtils.dateOnly(DateTime.now())
-              .add(const Duration(hours: 20))),
+      stage: null,
       createDate: DateUtils.dateOnly(DateTime.now())
           .add(const Duration(hours: -24 * 4 + 12)),
       closeDate: DateUtils.dateOnly(DateTime.now())
@@ -408,7 +383,7 @@ class TaskFixtures {
         name: "ТО-17051",
         desc: "ТО-17051 (ВЛГ1024)",
         processTypeName: "Техническое обслужавание",
-        taskType: "Назначение наряда бригаде",
+        taskType: "Техническое обслужавание",
         dueDate: DateUtils.dateOnly(DateTime.now())
             .add(const Duration(hours: 24 * 7 + 14)),
         assignee: [WorkerFixtures.worker_1],
@@ -416,12 +391,7 @@ class TaskFixtures {
         latitude: null,
         longitude: null,
         commentary: "По вопросам доступа в диспетчерскую, вход с торца",
-        stage: Stage(
-            name: "Выезд на объект",
-            number: 2,
-            isLast: false,
-            dueDate: DateUtils.dateOnly(DateTime.now())
-                .add(const Duration(hours: 20))),
+        stage: null,
         createDate: DateUtils.dateOnly(DateTime.now())
             .add(const Duration(hours: 24 * 4 - 20)),
         isClosed: false,
@@ -440,7 +410,7 @@ class TaskFixtures {
         name: "АВР-18364",
         desc: "АВР-18364 (ВЛГ2937)",
         processTypeName: "Аварийно-восстановительные работы",
-        taskType: "Выезд на объект",
+        taskType: "Аварийно-восстановительные работы О2О",
         dueDate: DateUtils.dateOnly(DateTime.now())
             .add(const Duration(hours: -24 * 0 + 13)),
         assignee: [WorkerFixtures.worker_1],
