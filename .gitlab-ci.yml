@@ -3,14 +3,20 @@ image: 192.168.103.210:5000/gitlab-runner:flutter
 stages:
   - build-web
   - build-apk
-  - build-httpd
+  - prepare-artifact
 
 variables:
   VERSION: " 1.0.0+$CI_PIPELINE_ID"
+  VERSION_ARTIFACTS: "1.0.0.$CI_PIPELINE_ID"
+  NWT_SERVERS: '{"Тест1": "http://10.160.16.142:8080/"}'
+  SOUTH_SERVERS: '{"Long": "http://lz-argusfe.lz.south.rt.ru:8080/"}'
+  VOLGA_SERVERS: '{"Тест (dargus)": "http://10.160.16.142:8080/"}'
+  URAL_SERVERS: '{"Тест1": "http://10.184.86.35:8080/", "Тест5": "http://10.184.67.30:8080/"}'
+
 
 before_script:
-  - chmod 777 ./*
-  - dos2unix ./*
+  - chmod 777 ./* ./.linuxbuild/*
+  - dos2unix ./* ./.linuxbuild/*
   - sed -i "s/^version.*/version:$VERSION/g" pubspec.yaml
   - echo "Get projects dependencies"
   - flutter pub get
@@ -49,14 +55,14 @@ build apk:
     
 # сборка HTTPD приложения
 build httpd:
-  stage: build-httpd
+  stage: prepare-artifact
   script:
     - echo "Download httpd-2.4.53-win32-VS16.zip"
     - curl https://www.apachelounge.com/download/VS16/binaries/httpd-2.4.53-win32-VS16.zip --output httpd-2.4.zip
     - echo "Unpacking httpd-2.4.53-win32-VS16.zip to ./tmp" 
     - unzip httpd-2.4.zip -d ./tmp
     - echo "Coping web to ./tmp/Apache24/htdocs/"
-    - cp -r ./web/* ./tmp/Apache24/htdocs/
+    - cp -r ./build/web/* ./tmp/Apache24/htdocs/
     - cd ./tmp
     - tar cvfz httpd-2.4-win32-tasklist-lite_$CI_PIPELINE_ID.tar.gz ./*
     - pwd
@@ -69,4 +75,31 @@ build httpd:
     expire_in: 7 days
     paths:
       - tmp/httpd-2.4-win32-tasklist-lite_$CI_PIPELINE_ID.tar.gz
+    when: always
+
+# подготовка WEB приложения под МРФы
+build web for customers:
+  when: manual
+  stage: prepare-artifact
+  script:
+    - echo "Prepare web application for cutomers"
+    - echo "prepare ural"
+    - ./.linuxbuild/prepare_web_customer.sh "ural" $VERSION_ARTIFACTS $URAL_SERVERS
+    - echo "prepare south"
+    - ./.linuxbuild/prepare_web_customer.sh "south" $VERSION_ARTIFACTS $SOUTH_SERVERS
+    - echo "prepare nwt"
+    - ./.linuxbuild/prepare_web_customer.sh "nwt" $VERSION_ARTIFACTS $NWT_SERVERS
+    - echo "prepare volga"
+    - ./.linuxbuild/prepare_web_customer.sh "volga" $VERSION_ARTIFACTS $VOLGA_SERVERS
+  tags:
+    - light
+  needs: [build web]
+  artifacts:
+    name: $CI_COMMIT_REF_NAME-distrib-artifacts
+    expire_in: 7 days
+    paths:
+      - web-ural-$VERSION_ARTIFACTS.zip
+      - web-south-$VERSION_ARTIFACTS.zip
+      - web-nwt-$VERSION_ARTIFACTS.zip
+      - web-volga-$VERSION_ARTIFACTS.zip
     when: always
