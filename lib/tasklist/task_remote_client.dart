@@ -3,7 +3,6 @@ import 'package:intl/intl.dart';
 import 'package:tasklist_lite/graphql/graphql_service.dart';
 import 'package:tasklist_lite/tasklist/model/history_event.dart';
 import 'package:tasklist_lite/tasklist/model/idle_time.dart';
-import 'package:tasklist_lite/tasklist/model/stage.dart';
 
 import 'model/close_code.dart';
 import 'model/mark.dart';
@@ -37,6 +36,15 @@ class TaskRemoteClient {
     objectName
     ''';
 
+  /// Получение назначенных сотрудников
+  static const String assigneeQuery = '''    
+      id
+      family
+      name
+      surname
+      tabNumber
+      mainWorksite ''';
+
   // Comment
   static const String commentQuery = '''
     person
@@ -64,7 +72,6 @@ class TaskRemoteClient {
   processTypeName
   taskType
   dueDate
-  assignee
   address
   addressComment
   createDate
@@ -83,6 +90,9 @@ class TaskRemoteClient {
   }
   idleTimePeriod {
     $idleTimeQuery
+  }
+  assignee {
+    $assigneeQuery
   }
   stage {
       name
@@ -186,8 +196,8 @@ class TaskRemoteClient {
     return result;
   }
 
-  Future<IdleTime?> registerIdle(int taskInstanceId,
-      int reasonId, DateTime beginTime, DateTime? endTime) async {
+  Future<IdleTime?> registerIdle(int taskInstanceId, int reasonId,
+      DateTime beginTime, DateTime? endTime) async {
     String beginTimeStr = DateFormat('dd.MM.yyyy HH:mm:ss').format(beginTime);
     String endTimeStr = '';
     if (endTime != null) {
@@ -228,8 +238,8 @@ class TaskRemoteClient {
     return result;
   }
 
-  Future<IdleTime?> finishIdle(int taskInstanceId,
-      DateTime beginTime, DateTime endTime) async {
+  Future<IdleTime?> finishIdle(
+      int taskInstanceId, DateTime beginTime, DateTime endTime) async {
     String beginTimeStr = DateFormat('dd.MM.yyyy HH:mm:ss').format(beginTime);
     String endTimeStr = DateFormat('dd.MM.yyyy HH:mm:ss').format(endTime);
 
@@ -379,7 +389,7 @@ class TaskRemoteClient {
  }''';
 
     Future<QueryResult> mutationResultFuture =
-    _graphQLService.mutate(completeOrderQuery);
+        _graphQLService.mutate(completeOrderQuery);
     late String result;
     await mutationResultFuture.then((value) {
       if (value.hasException) {
@@ -413,7 +423,7 @@ class TaskRemoteClient {
  }
 ''';
     Future<QueryResult> queryResultFuture =
-    _graphQLService.query(getCloseCodes);
+        _graphQLService.query(getCloseCodes);
     List<CloseCode> result = List.of({});
     await queryResultFuture.then((value) {
       if (value.hasException) {
@@ -446,7 +456,7 @@ class TaskRemoteClient {
  }
 ''';
     Future<QueryResult> queryResultFuture =
-    _graphQLService.query(getMarksQuery);
+        _graphQLService.query(getMarksQuery);
     List<Mark> result = List.of({});
     await queryResultFuture.then((value) {
       if (value.hasException) {

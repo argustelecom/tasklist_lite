@@ -2,9 +2,11 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:tasklist_lite/tasklist/fixture/idle_time_reason_fixtures.dart';
+import 'package:tasklist_lite/tasklist/fixture/work_type_fixtures.dart';
+import 'package:tasklist_lite/tasklist/fixture/worker_fixtures.dart';
 import 'package:tasklist_lite/tasklist/model/idle_time.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
-
+import 'package:tasklist_lite/tasklist/model/work.dart';
 import '../model/stage.dart';
 
 /// Служба, возвращающая набор задач по переданному идентификатору фикстуры
@@ -22,7 +24,7 @@ class TaskFixtures {
       taskType: "Выполнение работ",
       dueDate:
           DateUtils.dateOnly(DateTime.now()).add(const Duration(hours: 11)),
-      assignee: "Богданова И.Л.",
+      assignee: [WorkerFixtures.worker_1, WorkerFixtures.worker_2],
       address: "г.Вологда, ул.Садовая, 101",
       addressComment: "г.Вологда, ул.Садовая, 101",
       latitude: "56.863148",
@@ -62,6 +64,51 @@ class TaskFixtures {
             reason: IdleTimeReasonFixtures.idleTimeReason_6,
             startDate: DateUtils.dateOnly(DateTime.now())
                 .add(const Duration(hours: -3)))
+      ],
+      works: [
+        new Work(workType: WorkTypeFixtures.workType_1),
+        new Work(workType: WorkTypeFixtures.workType_2),
+        new Work(workType: WorkTypeFixtures.workType_3, notRequired: true),
+        new Work(workType: WorkTypeFixtures.workType_4, workDetail: [
+          new WorkDetail(
+              id: 1,
+              amount: 2.5,
+              workerMarks: Map.of({
+                WorkerFixtures.worker_1: 6.25,
+                WorkerFixtures.worker_2: 6.25
+              }),
+              date: DateUtils.dateOnly(DateTime.now())
+                  .add(const Duration(hours: -3)))
+        ]),
+        new Work(workType: WorkTypeFixtures.workType_5, workDetail: [
+          new WorkDetail(
+              id: 2,
+              amount: 1,
+              workerMarks: Map.of({WorkerFixtures.worker_1: 4}),
+              date: DateUtils.dateOnly(DateTime.now())
+                  .add(const Duration(hours: -3))),
+          new WorkDetail(
+              id: 3,
+              amount: 2,
+              workerMarks: Map.of(
+                  {WorkerFixtures.worker_1: 4, WorkerFixtures.worker_2: 4}),
+              date: DateUtils.dateOnly(DateTime.now())
+                  .add(const Duration(hours: -3)))
+        ]),
+        new Work(workType: WorkTypeFixtures.workType_6, workDetail: [
+          new WorkDetail(
+              id: 2,
+              amount: 1,
+              workerMarks: Map.of({WorkerFixtures.worker_1: 5}),
+              date: DateUtils.dateOnly(DateTime.now())
+                  .add(const Duration(hours: -3))),
+          new WorkDetail(
+              id: 3,
+              amount: 2,
+              workerMarks: Map.of({WorkerFixtures.worker_1: 10}),
+              date: DateUtils.dateOnly(DateTime.now())
+                  .add(const Duration(hours: -3)))
+        ])
       ]);
 
   static final Task secondTask = new Task(
@@ -72,7 +119,7 @@ class TaskFixtures {
       taskType: "Выезд на объект",
       dueDate:
           DateUtils.dateOnly(DateTime.now()).add(const Duration(hours: 15)),
-      assignee: "Богданова И.Л., Смирнов С.А.",
+      assignee: [WorkerFixtures.worker_1],
       address: null,
       latitude: "56.888854",
       longitude: "60.612602",
@@ -95,7 +142,12 @@ class TaskFixtures {
         "Объект/Тип объекта": "ВОЛС",
         objectNameFlexAttrName: "ВОЛС Лосево-Песочное",
         distanceToObjectFlexAttrName: "73 км"
-      }));
+      }),
+      works: [
+        new Work(workType: WorkTypeFixtures.workType_1),
+        new Work(workType: WorkTypeFixtures.workType_2),
+        new Work(workType: WorkTypeFixtures.workType_3)
+      ]);
 
   static final Task thirdTask = new Task(
       id: 3,
@@ -105,7 +157,7 @@ class TaskFixtures {
       taskType: "Назначение наряда бригаде",
       dueDate:
           DateUtils.dateOnly(DateTime.now()).add(const Duration(hours: 22)),
-      assignee: "Богданова И.Л.",
+      assignee: [WorkerFixtures.worker_1],
       address: "г.Вологда, ул.Лесопарковая, 9Б",
       latitude: null,
       longitude: null,
@@ -139,7 +191,7 @@ class TaskFixtures {
       taskType: "Назначение наряда бригаде",
       dueDate: DateUtils.dateOnly(DateTime.now())
           .add(const Duration(hours: 24 * 1 + 16)),
-      assignee: "Богданова И.Л.",
+      assignee: [WorkerFixtures.worker_1],
       address: "г.Вологда, ул.Северная, 27",
       latitude: null,
       longitude: null,
@@ -172,7 +224,7 @@ class TaskFixtures {
       taskType: "Назначение наряда бригаде",
       dueDate: DateUtils.dateOnly(DateTime.now())
           .add(const Duration(hours: 24 * 3 + 15)),
-      assignee: "Богданова И.Л.",
+      assignee: [WorkerFixtures.worker_1],
       address: "г.Вологда, пр.Мира, 16",
       latitude: null,
       longitude: null,
@@ -205,7 +257,7 @@ class TaskFixtures {
       taskType: "Закрыт",
       dueDate: DateUtils.dateOnly(DateTime.now())
           .add(const Duration(hours: -24 * 1 + 10)),
-      assignee: "Богданова И.Л.",
+      assignee: [WorkerFixtures.worker_1],
       address: "г.Вологда, ул.Правды, 99",
       latitude: null,
       longitude: null,
@@ -240,7 +292,7 @@ class TaskFixtures {
       taskType: "Закрыт",
       dueDate: DateUtils.dateOnly(DateTime.now())
           .add(const Duration(hours: -24 * 1 + 13)),
-      assignee: "Богданова И.Л.",
+      assignee: [WorkerFixtures.worker_1],
       address: "г.Вологда, ул.Нагорная, 17",
       latitude: null,
       longitude: null,
@@ -275,7 +327,7 @@ class TaskFixtures {
       taskType: "Закрыт",
       dueDate: DateUtils.dateOnly(DateTime.now())
           .add(const Duration(hours: -24 * 1 + 17)),
-      assignee: "Богданова И.Л.",
+      assignee: [WorkerFixtures.worker_1],
       address: "г.Вологда, пер.Привокзальный, 3",
       latitude: null,
       longitude: null,
@@ -310,7 +362,7 @@ class TaskFixtures {
       taskType: "Закрыт",
       dueDate: DateUtils.dateOnly(DateTime.now())
           .add(const Duration(hours: -24 * 0 + 9)),
-      assignee: "Богданова И.Л., Синицын В.С.",
+      assignee: [WorkerFixtures.worker_1, WorkerFixtures.worker_4],
       address: "г.Вологда, пр.Лесной, 113",
       latitude: null,
       longitude: null,
@@ -359,7 +411,7 @@ class TaskFixtures {
         taskType: "Назначение наряда бригаде",
         dueDate: DateUtils.dateOnly(DateTime.now())
             .add(const Duration(hours: 24 * 7 + 14)),
-        assignee: "Богданова И.Л.",
+        assignee: [WorkerFixtures.worker_1],
         address: "г.Вологда, пр.Космонавтов, 23a",
         latitude: null,
         longitude: null,
@@ -391,7 +443,7 @@ class TaskFixtures {
         taskType: "Выезд на объект",
         dueDate: DateUtils.dateOnly(DateTime.now())
             .add(const Duration(hours: -24 * 0 + 13)),
-        assignee: "Богданова И.Л.",
+        assignee: [WorkerFixtures.worker_1],
         address: "г.Вологда, ул.Лермонтова, 11",
         latitude: null,
         longitude: null,

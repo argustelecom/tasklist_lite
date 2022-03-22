@@ -9,6 +9,7 @@ void main() {
       Task task = Task(
           id: 1,
           name: 'task-1',
+          assignee: [],
           dueDate: null,
           flexibleAttribs: LinkedHashMap());
 
@@ -22,6 +23,7 @@ void main() {
       Task task2 = Task(
           id: 2,
           name: 'task-2',
+          assignee: [],
           dueDate: dueDateForTask2,
           flexibleAttribs: LinkedHashMap());
 
@@ -33,6 +35,7 @@ void main() {
       Task task3 = Task(
           id: 1,
           name: 'task-3',
+          assignee: [],
           dueDate: dueDateForTask,
           flexibleAttribs: LinkedHashMap());
 

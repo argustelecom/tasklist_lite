@@ -29,6 +29,7 @@ import 'package:tasklist_lite/tasklist/idle_time_reason_repository.dart';
 import 'package:tasklist_lite/tasklist/mark_repository.dart';
 import 'package:tasklist_lite/tasklist/notification_repository.dart';
 import 'package:tasklist_lite/tasklist/task_repository.dart';
+import 'package:tasklist_lite/tasklist/work_repository.dart';
 import 'package:tasklist_lite/theme/tasklist_theme_data.dart';
 
 import 'state/common_dropdown_controller.dart';
@@ -168,6 +169,7 @@ class MyApp extends StatelessWidget {
                       Get.put(NotificationRepository()),
                       Get.put(NotificationFixtures()),
                       Get.put(IdleTimeReasonRepository()),
+                      Get.put(WorkRepository()),
                       Get.put(CloseCodeRepository()),
                       Get.put(HistoryEventsFixtures()),
                       Get.put(HistoryEventRepository()),

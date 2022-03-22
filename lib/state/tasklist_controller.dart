@@ -13,6 +13,7 @@ import '../tasklist/close_code_repository.dart';
 import '../tasklist/fixture/task_fixtures.dart';
 import '../tasklist/history_events_repository.dart';
 import '../tasklist/model/idle_time.dart';
+import '../tasklist/model/work.dart';
 import 'auth_state.dart';
 import 'tasklist_state.dart';
 
@@ -238,6 +239,23 @@ class TaskListController extends GetxController {
   Future<bool?> completeOrder(int taskInstanceId, int closeCodeId) async {
     return await taskRepository.completeOrder(authState.authString.value!,
         authState.serverAddress.value!, taskInstanceId, closeCodeId);
+  }
+
+  Future<Work> registerWorkDetail(int taskInstanceId, int workTypeId,
+      bool notRequired, double? amount, List<int>? workers) async {
+    return await taskRepository.registerWorkDetail(
+        authState.authString.value!,
+        authState.serverAddress.value!,
+        taskInstanceId,
+        workTypeId,
+        notRequired,
+        amount,
+        workers);
+  }
+
+  Future<Work?> deleteWorkDetail(int taskInstanceId, int workDetailId) async {
+    return await taskRepository.deleteWorkDetail(authState.authString.value!,
+        authState.serverAddress.value!, taskInstanceId, workDetailId);
   }
 
   @override
