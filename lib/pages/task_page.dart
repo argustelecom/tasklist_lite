@@ -53,7 +53,7 @@ class _TaskPageState extends State<TaskPage> {
     );
 
     // Это дефолтный скроллконтрроллер, используем на вкладке история, чтобы перематывать на последнее событие т.к. это удобно для пользователя
-    ScrollController historyScrollController = new ScrollController();
+    ScrollController CommentScrollController = new ScrollController();
 
     return DefaultTabController(
         length: 5,
@@ -449,7 +449,7 @@ class _TaskPageState extends State<TaskPage> {
                       ),
                       GetBuilder<CommentController>(
                           init: CommentController(),
-                          builder: (historyEventController) {
+                          builder: (commentController) {
                             return Padding(
                                 padding: EdgeInsets.only(
                                     left: 12, right: 12, bottom: 12),
@@ -457,23 +457,23 @@ class _TaskPageState extends State<TaskPage> {
                                   children: [
                                     Expanded(
                                       child: ListView.builder(
-                                          itemCount: historyEventController
+                                          itemCount: commentController
                                               .getComments()
                                               .length,
-                                          controller: historyScrollController,
+                                          controller: CommentScrollController,
                                           itemBuilder: (BuildContext context,
                                               int index) {
                                             return InkWell(
                                                 child: CommentCard(
                                                     maxLines: 3,
                                                     comment:
-                                                        historyEventController
+                                                        commentController
                                                                 .getComments()[
                                                             index]),
                                                 onTap: () {
-                                                  historyEventController
+                                                  commentController
                                                           .selectedComment =
-                                                      historyEventController
+                                                      commentController
                                                           .getComments()[index];
                                                   GetDelegate routerDelegate =
                                                       Get.find();
@@ -490,7 +490,7 @@ class _TaskPageState extends State<TaskPage> {
                                           Future.delayed(
                                               const Duration(milliseconds: 100),
                                               () {
-                                            historyEventController
+                                            commentController
                                                 .onTextFieldFocused = value;
                                           });
                                         },
@@ -510,7 +510,7 @@ class _TaskPageState extends State<TaskPage> {
                                               suffixIcon: IconButton(
                                                 tooltip: 'С уведомлением',
                                                 icon: Icon(
-                                                    historyEventController
+                                                    commentController
                                                             .isAlarmComment
                                                         ? Icons.notifications
                                                         : Icons
@@ -518,26 +518,26 @@ class _TaskPageState extends State<TaskPage> {
                                                     // size: 30,
                                                     color: Colors.black),
                                                 onPressed: () {
-                                                  historyEventController
+                                                  commentController
                                                           .isAlarmComment =
-                                                      !historyEventController
+                                                      !commentController
                                                           .isAlarmComment;
                                                 },
                                               ),
                                               isCollapsed: false,
                                             ),
                                             onSubmitted: (text) {
-                                              historyEventController.addComment(
+                                              commentController.addComment(
                                                   commentTextController.text,
-                                                  historyEventController
+                                                  commentController
                                                       .isAlarmComment,
                                                   taskListController
                                                       .taskListState
                                                       .currentTask
                                                       .value!);
                                               commentTextController.clear();
-                                              historyScrollController.animateTo(
-                                                historyScrollController
+                                              CommentScrollController.animateTo(
+                                                CommentScrollController
                                                     .position.maxScrollExtent,
                                                 curve: Curves.easeOut,
                                                 duration: const Duration(
@@ -552,7 +552,7 @@ class _TaskPageState extends State<TaskPage> {
                                       ),
                                     ),
                                     Visibility(
-                                        visible: historyEventController
+                                        visible: commentController
                                             .onTextFieldFocused,
                                         child: Padding(
                                           padding: EdgeInsets.only(
@@ -586,11 +586,11 @@ class _TaskPageState extends State<TaskPage> {
                                                           MaterialStateProperty.all<Color>(
                                                               Colors.yellow.shade700)),
                                                   onPressed: () {
-                                                    historyEventController
+                                                    commentController
                                                         .addComment(
                                                             commentTextController
                                                                 .text,
-                                                            historyEventController
+                                                            commentController
                                                                 .isAlarmComment,
                                                             taskListController
                                                                 .taskListState
@@ -598,9 +598,9 @@ class _TaskPageState extends State<TaskPage> {
                                                                 .value!);
                                                     commentTextController
                                                         .clear();
-                                                    historyScrollController
+                                                    CommentScrollController
                                                         .animateTo(
-                                                      historyScrollController
+                                                      CommentScrollController
                                                           .position
                                                           .maxScrollExtent,
                                                       curve: Curves.easeOut,
