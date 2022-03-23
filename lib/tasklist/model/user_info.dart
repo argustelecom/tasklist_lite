@@ -85,6 +85,18 @@ class UserInfo {
     return name.toString();
   }
 
+  /// Имя сотрудника в формате "Фамилия И.О."
+  String getWorkerNameWithInitials() {
+    final name = StringBuffer();
+    name.write(family);
+    if (workerName != null) {
+      name.write(" ");
+      name.write(workerName!.substring(0, 1));
+      name.write(".");
+    }
+    return name.toString();
+  }
+
   /// для возможности сохранения в shared preferences
   /// См. про именованные и фабричные конструкторы в дарте, https://www.freecodecamp.org/news/constructors-in-dart/
   factory UserInfo.fromJson(Map<String, dynamic> json) {

@@ -294,7 +294,11 @@ class Task {
                 : List.of({}),
         stage: json['stage'] != null ? Stage.fromJson(json['stage']) : null,
         assignee: List<Worker>.from(
-            (json['assignee']).map((e) => Worker.fromJson(e)).toList()));
+            (json['assignee']).map((e) => Worker.fromJson(e)).toList()),
+        works: json['works'] != null
+            ? List<Work>.from(
+                (json['works']).map((e) => Work.fromJson(e)).toList())
+            : null);
     return task;
   }
 
@@ -321,10 +325,14 @@ class Task {
     data['isOutdoor'] = this.isOutdoor;
     data['flexibleAttribute'] =
         this.flexibleAttribs.entries.map((e) => toMapJson(e)).toList();
-    data['idleTimeList'] =
-        this.idleTimeList != null ? jsonEncode(this.idleTimeList) : null;
+    data['idleTimeList'] = this.idleTimeList != null
+        ? this.idleTimeList!.map((e) => e.toJson()).toList()
+        : null;
     data['stage'] = this.stage != null ? this.stage!.toJson() : null;
-    data['assignee'] = jsonEncode(this.assignee);
+    data['assignee'] = this.assignee.map((e) => e.toJson()).toList();
+    data['works'] = this.works != null
+        ? this.works!.map((e) => e.toJson()).toList()
+        : null;
     return data;
   }
 
