@@ -241,7 +241,7 @@ class TaskRemoteClient {
 
     Future<QueryResult> mutationResultFuture =
         _graphQLService.mutate(registerIdleQuery);
-    late IdleTime result;
+    IdleTime? result;
     await mutationResultFuture.then((value) {
       if (value.hasException) {
         // need catch 401 error
@@ -254,7 +254,8 @@ class TaskRemoteClient {
         throw Exception("Неожиданная ошибка");
       }
       if (value.data == null || value.data!["registerIdleTime"] == null) {
-        return null;
+        result = null;
+        return result;
       }
       result = IdleTime.fromJson(value.data!["registerIdleTime"]);
     }, onError: (e) {
