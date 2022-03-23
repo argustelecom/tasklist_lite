@@ -2,8 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
+import 'package:logging/logging.dart';
 
 ///*******************************************************************************
 /// Базовый предок для реактивного state, которое хочет сохраняться в локальное
@@ -43,14 +45,16 @@ abstract class PersistentState extends GetxService {
   /// Внимание! инициализация вне этого метода может привести к ненужным и несвоевременным
   /// сохранениям не полностью проинициализированного state.
   Future<void> doPriorAsyncInit() async {
-    return Future<void>.value();
+    return Future<void>.value(null);
   }
 
   /// обеспечивает чтение из хранилища при инициализации
   @override
   @mustCallSuper
   void onInit() {
+    incrementBusyCount();
     super.onInit();
+
     doPriorAsyncInit().whenComplete(() {
       _readIfKeyExists(getKeyName(), (value) {
         copyFromJson(jsonDecode(value!));
@@ -59,6 +63,10 @@ abstract class PersistentState extends GetxService {
         // Иначе получим кучку лишних пересохранений недоинициализированного state,
         // которые, к тому же, могут помешать и чтению state из хранилища.
         initLocalPersistence();
+      }).whenComplete(() {
+        Logger log = Logger(this.runtimeType.toString());
+        log.info("restored");
+        decrementBusyCount();
       });
     });
   }
@@ -106,5 +114,24 @@ abstract class PersistentState extends GetxService {
         await _storage.write(key: getKeyName(), value: jsonEncode(this));
       },
     );
+  }
+
+  /// счетчик запросов на "занятость" приложения. Доступ к нему только через экземпляр
+  /// ApplicationState, а здесь нужен только чтобы единообразно помечать приложение занятым
+  /// на время начального чтения state из хранилища. См. также камент у
+  /// ApplicationState.applicationIsBusy
+  @protected
+  static Rx<int> busyClaimCount = 0.obs;
+
+  @protected
+  static void incrementBusyCount() {
+    // #TODO: а не надо ли тут atomic или его dart-аналога?
+    busyClaimCount.value++;
+  }
+
+  @protected
+  static void decrementBusyCount() {
+    busyClaimCount.value--;
+    assert(busyClaimCount.value >= 0);
   }
 }

@@ -37,6 +37,7 @@ dependencies:
 
   intl: ^0.17.0
   substring_highlight: ^1.0.33
+  flutter_html: ^2.2.1
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -68,6 +69,10 @@ dependencies:
   filesystem_picker: ^2.0.0
   # удобный плагин для работы с пермишенами на мобилке
   permission_handler: ^9.2.0
+
+  percent_indicator: ^4.0.0
+  logging: ^1.0.2
+
 
 dev_dependencies:
   # для unit тестов

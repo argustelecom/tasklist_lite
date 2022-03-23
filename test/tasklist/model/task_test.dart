@@ -9,10 +9,11 @@ void main() {
       Task task = Task(
           id: 1,
           name: 'task-1',
+          assignee: [],
           dueDate: null,
           flexibleAttribs: LinkedHashMap());
 
-      expect(task.isOverdue(), false);
+      expect(task.isTaskOverdue(), false);
     });
 
     test(
@@ -22,10 +23,11 @@ void main() {
       Task task2 = Task(
           id: 2,
           name: 'task-2',
+          assignee: [],
           dueDate: dueDateForTask2,
           flexibleAttribs: LinkedHashMap());
 
-      expect(task2.isOverdue(), false);
+      expect(task2.isTaskOverdue(), false);
     });
 
     test('Task.isOverdue() должен вернуть true, когда dueDate уже прошел', () {
@@ -33,10 +35,11 @@ void main() {
       Task task3 = Task(
           id: 1,
           name: 'task-3',
+          assignee: [],
           dueDate: dueDateForTask,
           flexibleAttribs: LinkedHashMap());
 
-      expect(task3.isOverdue(), true);
+      expect(task3.isTaskOverdue(), true);
     });
   });
 }

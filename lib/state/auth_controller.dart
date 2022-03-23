@@ -30,6 +30,7 @@ class AuthController extends GetxController {
   login(bool inDemonstrationMode, String login, String password,
       String serverAddress) async {
     errorText = null;
+    authState.serverAddress.value = serverAddress;
 
     if (inDemonstrationMode || (login.isNotEmpty && password.isNotEmpty)) {
       try {
@@ -38,8 +39,6 @@ class AuthController extends GetxController {
             "Basic " + base64Encode(utf8.encode('$login:$password'));
 
         authState.authString.value = basicAuth;
-        authState.serverAddress.value = serverAddress;
-
         await authService
             .login(basicAuth, serverAddress, inDemonstrationMode)
             .whenComplete(() => null)

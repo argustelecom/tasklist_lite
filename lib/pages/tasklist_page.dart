@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
 import 'package:tasklist_lite/crazylib/task_card.dart';
 import 'package:tasklist_lite/crazylib/top_user_bar.dart';
-import 'package:tasklist_lite/pages/task_page.dart';
 import 'package:tasklist_lite/state/tasklist_controller.dart';
 
 import '../crazylib/tasklist_filter_bar.dart';
@@ -19,7 +18,6 @@ class TaskList extends StatelessWidget {
           itemBuilder: (context, index) {
             return TaskCard(
               task: controller.getTasks()[index], //taskList[index],
-              taskPageRouteName: TaskPage.routeName,
             );
           });
     });
