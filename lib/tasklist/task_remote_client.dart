@@ -580,4 +580,34 @@ class TaskRemoteClient {
     });
     return result;
   }
+
+  Future<bool?> readNotify(
+      int notifyId) async {
+    String readNotifyQuery = '''
+ mutation {  
+   readNotify(
+    notifyId:"$notifyId")
+ }''';
+
+    Future<QueryResult> mutationResultFuture =
+    _graphQLService.mutate(readNotifyQuery);
+    await mutationResultFuture.then((value) {
+      if (value.hasException) {
+        // need catch 401 error
+        if (value.exception?.linkException is ServerException) {
+          throw Exception("Сервер недоступен");
+        }
+        if (value.exception?.linkException is HttpLinkParserException) {
+          throw Exception("Не авторизован");
+        }
+        throw Exception("Неожиданная ошибка");
+      }
+      if (value.data == null || value.data!["readNotify"] == null) {
+        return null;
+      }
+    }, onError: (e) {
+      throw Exception(" onError " + e.toString());
+    });
+    return true;
+  }
 }
