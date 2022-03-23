@@ -163,7 +163,9 @@ class TaskRepository extends GetxService {
     }
 
     /// TODO: если деморежим выключен, нужно отправлять graphQL запрос
-    throw Exception("API в разработке");
+    TaskRemoteClient taskRemoteClient =
+    TaskRemoteClient(basicAuth, serverAddress);
+    return await taskRemoteClient.registerWorkDetail(taskInstanceId, workTypeId, notRequired, amount, workers);
   }
 
   Future<Work?> deleteWorkDetail(String basicAuth, String serverAddress,
@@ -186,6 +188,8 @@ class TaskRepository extends GetxService {
     }
 
     /// TODO: если деморежим выключен, нужно отправлять graphQL запрос
-    throw Exception("API в разработке");
+    TaskRemoteClient taskRemoteClient =
+    TaskRemoteClient(basicAuth, serverAddress);
+    return await taskRemoteClient.deleteWorkDetail(taskInstanceId, workDetailId);
   }
 }
