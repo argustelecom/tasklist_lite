@@ -39,7 +39,7 @@ class Work {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['workType'] = this.workType.toJson();
     data['workDetail'] = this.workDetail != null
-        ? jsonEncode(this.workDetail!.map((e) => e.toJson()).toList())
+        ? this.workDetail!.map((e) => e.toJson()).toList()
         : null;
     data['notRequired'] = this.notRequired;
     data['status'] = this.status;
@@ -91,7 +91,7 @@ class WorkDetail {
   Map<String, Object?> toMapJson(MapEntry mapEntry) {
     Map<String, Object?> map = Map();
     map.putIfAbsent("__typename", () => "workerMarks");
-    map.putIfAbsent("key", () => (mapEntry.key as Worker).toJson());
+    map.putIfAbsent("worker", () => (mapEntry.key as Worker).toJson());
     map.putIfAbsent("mark", () => mapEntry.value);
     return map;
   }
