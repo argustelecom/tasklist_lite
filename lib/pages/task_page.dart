@@ -465,7 +465,7 @@ class _TaskPageState extends State<TaskPage> {
                                               int index) {
                                             return InkWell(
                                                 child: CommentCard(
-                                                    maxLines: 10,
+                                                    maxLines: 3,
                                                     comment:
                                                         historyEventController
                                                                 .getComments()[

@@ -32,11 +32,9 @@ class CommentCard extends StatelessWidget {
               Expanded(
                 child: Padding(
                   padding: EdgeInsets.only(left: 16, top: 8),
-                  child: Text(
-                      authState.userInfo.value!.getWorkerNameWithInitials() ==
-                              comment.person
-                          ? "Вы"
-                          : "${comment.person}",
+                  child: Text(authState.userInfo.value!.getWorkerNameWithInitials() == comment.person
+                      ? "Вы"
+                      : "${comment.person}",
                       style:
                           TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
                 ),
@@ -52,8 +50,7 @@ class CommentCard extends StatelessWidget {
               Padding(
                   padding: EdgeInsets.only(top: 8, right: 16),
                   child: Container(
-                    child: Text(
-                      "${comment.type}",
+                    child: Text("${comment.type}",
                       style: TextStyle(fontSize: 14, color: Colors.grey),
                       maxLines: 10,
                     ),
