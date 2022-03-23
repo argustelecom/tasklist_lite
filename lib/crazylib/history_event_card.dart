@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:intl/intl.dart';
 
 /// Это карточка исторического события, данные карточки используем на task_page
@@ -27,9 +28,8 @@ class HistoryEventCard extends StatelessWidget {
                 child: Padding(
                   padding: EdgeInsets.only(left: 16, top: 8),
                   child: Text("${comment.person}",
-                      style: TextStyle(
-                        fontSize: 14,
-                      )),
+                      style:
+                          TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
                 ),
               ),
               Padding(
@@ -53,16 +53,19 @@ class HistoryEventCard extends StatelessWidget {
           ),
           Container(
               child: Align(
-            alignment: Alignment.topLeft,
-            child: Padding(
-                padding: EdgeInsets.only(top: 8, left: 16, right: 16),
-                child: Text(
-                  "${comment.content}",
-                  style: const TextStyle(fontSize: 14),
-                  maxLines: maxLines,
-                  overflow: TextOverflow.ellipsis,
-                )),
-          )),
+                  alignment: Alignment.topLeft,
+                  child: Html(
+                    data: comment.content,
+                    style: {
+                      "body": Style(
+                          fontSize: FontSize(14.0),
+                          maxLines: maxLines,
+                          padding: EdgeInsets.only(left: 8, right: 8),
+                          textOverflow: TextOverflow.ellipsis),
+                    },
+                    // TODO: Заполни тег лист
+                    tagsList: [],
+                  ))),
           Padding(
             padding: EdgeInsets.only(right: 16, bottom: 8),
             child: Row(

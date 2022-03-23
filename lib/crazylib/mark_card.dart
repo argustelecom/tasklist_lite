@@ -5,17 +5,20 @@ import 'package:tasklist_lite/tasklist/model/mark.dart';
 /// Карточка оценки
 class MarkCard extends StatelessWidget {
   final Mark mark;
+
   ///Это максимальное кол-во строк для отображения.На страничке с историей ограничено до 10, на страничке с комментом до 1000 = неограничено по задумке
   final maxLines;
 
-  MarkCard({Key? key, required this.mark, this.maxLines})
-      : super(key: key);
+  MarkCard({Key? key, required this.mark, this.maxLines}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     ThemeData themeData = Theme.of(context);
 
     return Card(
+      shadowColor: Color(0x40000000),
+      elevation: 10,
+      margin: EdgeInsets.all(2),
       child: Column(
         children: [
           Row(
@@ -23,20 +26,21 @@ class MarkCard extends StatelessWidget {
             children: [
               Expanded(
                 child: Padding(
-                  padding: EdgeInsets.only(left: 16, top: 8),
+                  padding: EdgeInsets.only(left: 10, top: 6),
                   child: Text("${mark.type}",
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: 12,
                         fontWeight: FontWeight.bold,
+                        fontFamily: 'Roboto'
                       )),
                 ),
               ),
               Padding(
-                  padding: EdgeInsets.only(top: 8, right: 16),
+                  padding: EdgeInsets.only(top: 6, right: 3),
                   child: Container(
                     child: Text(
                       "${mark.value}" + " балл.",
-                      style: TextStyle(fontSize: 14, color: Colors.grey),
+                      style: TextStyle(fontSize: 12, color: Color(0xA6000000)),
                       maxLines: 10,
                     ),
                   ))
@@ -44,37 +48,37 @@ class MarkCard extends StatelessWidget {
           ),
           Container(
               child: Align(
-                alignment: Alignment.topLeft,
-                child: Padding(
-                    padding: EdgeInsets.only(top: 8, left: 16, right: 16),
-                    child: Text(
-                      "${mark.name}",
-                      style: const TextStyle(fontSize: 14),
-                      maxLines: maxLines,
-                      overflow: TextOverflow.ellipsis,
-                    )),
-              )),
-
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.only(left: 16, top: 8),
+            alignment: Alignment.topLeft,
+            child: Padding(
+                padding: EdgeInsets.only(top: 30, left: 10, right: 10, bottom: 30),
                 child: Text(
-                    "${mark.worker}",
-                    style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                  "${mark.reason}",
+                  style: const TextStyle(fontSize: 12),
+                  maxLines: maxLines,
+                  overflow: TextOverflow.ellipsis,
+                )),
+          )),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(left: 10, bottom: 5),
+                  child: Text("${mark.worker}",
+                      style: const TextStyle(
+                          fontSize: 10, color: Color(0x6000000A))),
+                ),
               ),
-            ),
-            Padding(
-                padding: EdgeInsets.only(top: 8, right: 16),
-                child: Container(
-                  child: Text(
-                      "${DateFormat('dd.MM.yyyy HH:mm', "ru_RU").format(mark.date)}",
-                      style: const TextStyle(fontSize: 12, color: Colors.grey)),
-                ))
-          ],
-        )
+              Padding(
+                  padding: EdgeInsets.only(bottom: 5, right: 3),
+                  child: Container(
+                    child: Text(
+                        "${DateFormat('dd.MM.yyyy HH:mm', "ru_RU").format(mark.createDate)}",
+                        style: const TextStyle(
+                            fontSize: 10, color: Color(0x80000000))),
+                  ))
+            ],
+          )
         ],
       ),
     );

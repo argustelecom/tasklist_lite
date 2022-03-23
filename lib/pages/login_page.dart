@@ -4,13 +4,13 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get/get.dart';
 import 'package:google_language_fonts/google_language_fonts.dart';
 import 'package:tasklist_lite/crazylib/crazy_button.dart';
+import 'package:tasklist_lite/crazylib/crazy_progress_dialog.dart';
 import 'package:tasklist_lite/crazylib/dropdown_button.dart';
 import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
 import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/state/auth_controller.dart';
 import 'package:tasklist_lite/state/common_dropdown_controller.dart';
 
-import '../local_storage/local_storage_service.dart';
 import '../state/auth_state.dart';
 
 // #TODO: если делать отдельным виджетом, стоит параметризовать размеры, кривую анимации, длительность
@@ -99,18 +99,13 @@ class LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
 
-    LocalStorageService.readList(_serverAddressSuggestionsStorageKey)
-        .then((value) => _serverAddressSuggestions = value,
-            onError: (Object error, StackTrace stackTrace) {
-      // #TODO: завести нормальный лог вместо print. И вообще, хорошо бы спрятать обработку
-      // ошибок в UserSecureStorageService
-      print(
-          "ошибка чтения serverAddressSuggestions из хранилища: $error, stack = $stackTrace");
+    _authState.serverAddressSuggestions.listen((onData) {
+      _serverAddressSuggestions = onData ?? List.of({});
     });
 
-    _authState.serverAddress.listen((value) {
+    _authState.serverAddress.listen((onData) {
       if (_selectedServer == null) {
-        _serverAddressEditingController.text = value ?? "";
+        _serverAddressEditingController.text = onData ?? "";
       }
     });
   }
@@ -215,6 +210,10 @@ class LoginPageState extends State<LoginPage> {
                         ),
                         Tooltip(
                           textStyle: TextStyle(fontSize: 16),
+                          waitDuration: Duration(seconds: 2),
+                          decoration: BoxDecoration(
+                              color: themeData.cardColor,
+                              border: Border.all(width: 1)),
                           message:
                               "Можно указать любое имя пользователя и пароль. "
                               "\nБудет осуществлен вход без подключения к серверу, "
@@ -247,6 +246,10 @@ class LoginPageState extends State<LoginPage> {
                           children: [
                             CrazyButton(
                               title: "Войти",
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: 18),
                               key: ValueKey('login_button'),
                               onPressed: () {
                                 /// пополняем коллекцию suggestions
@@ -266,32 +269,23 @@ class LoginPageState extends State<LoginPage> {
                                   });
                                 }
 
-                                // #TODO: сделать частью какого-то state
-                                LocalStorageService.writeList(
-                                    _serverAddressSuggestionsStorageKey,
-                                    _serverAddressSuggestions);
+                                _authState.serverAddressSuggestions.value =
+                                    _serverAddressSuggestions;
 
                                 /// логинимся
-                                Future<void> loginFuture = authController.login(
-                                    _applicationState.inDemonstrationMode.value,
-                                    _loginEditingController.text,
-                                    _passwordEditingController.text,
-                                    _serverAddressEditingController.text);
-
                                 /// Если пользователь разлогинился не с домашней странички(а, например, со страницы профиля),
-                                /// надо его возвращать туда, откуда он разлогинился
-                                loginFuture.then((value) {
-                                  if (authController
-                                      .authState.isAuthenticated.value) {
-                                    NavigatorState navigatorState =
-                                        Navigator.of(context);
-                                    if (navigatorState.canPop()) {
-                                      navigatorState.pop();
-                                    } else {
-                                      navigatorState.pushNamed("/");
-                                    }
-                                  }
-                                });
+                                /// надо его возвращать туда, откуда он разлогинился. Но это произойдет само, т.к.
+                                /// authState у нас теперь реактивный, а при логауте url мы не меняем
+                                asyncShowProgressIndicatorOverlay(
+                                  asyncFunction: () {
+                                    return authController.login(
+                                        _applicationState
+                                            .inDemonstrationMode.value,
+                                        _loginEditingController.text,
+                                        _passwordEditingController.text,
+                                        _serverAddressEditingController.text);
+                                  },
+                                );
                               },
                               padding: EdgeInsets.symmetric(vertical: 8),
                             ),

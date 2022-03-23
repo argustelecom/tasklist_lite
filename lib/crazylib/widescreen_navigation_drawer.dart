@@ -22,6 +22,7 @@ class WideScreenNavigationDrawer extends StatelessWidget {
         body: Column(
           children: [
             GetX<AuthController>(builder: (authController) {
+              GetDelegate routerDelegate = Get.find();
               return authController.authState.isAuthenticated.value
                   ? Expanded(
                       child: ListView(
@@ -34,12 +35,50 @@ class WideScreenNavigationDrawer extends StatelessWidget {
                                   child: Row(children: [
                                     IconButton(
                                       onPressed: e.callback,
-                                      icon: e.icon,
+                                      icon: e.icon != null
+                                          ? e.icon!
+                                          : Image.asset(
+                                              e.assetPath!,
+                                              color: (routerDelegate
+                                                          .history
+                                                          .last
+                                                          .currentPage
+                                                          ?.name ==
+                                                      e.routeName)
+                                                  ? Theme.of(context)
+                                                      .colorScheme
+                                                      .primary
+                                                  : Theme.of(context)
+                                                      .colorScheme
+                                                      .onPrimary,
+                                            ),
                                       iconSize:
                                           IconTheme.of(context).size ?? 24,
+                                      color: (routerDelegate.history.last
+                                                  .currentPage?.name ==
+                                              e.routeName)
+                                          ? Theme.of(context)
+                                              .colorScheme
+                                              .primary
+                                          : Theme.of(context)
+                                              .colorScheme
+                                              .onPrimary,
                                       tooltip: e.caption,
                                     ),
-                                    Text(e.caption)
+                                    Text(
+                                      e.caption,
+                                      style: TextStyle(
+                                        color: (routerDelegate.history.last
+                                                    .currentPage?.name ==
+                                                e.routeName)
+                                            ? Theme.of(context)
+                                                .colorScheme
+                                                .primary
+                                            : Theme.of(context)
+                                                .colorScheme
+                                                .onPrimary,
+                                      ),
+                                    )
                                   ])))
                               .toList()),
                     )

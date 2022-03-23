@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:tasklist_lite/pages/login_page.dart';
 import 'package:tasklist_lite/pages/notifications_page.dart';
 import 'package:tasklist_lite/pages/profile_page.dart';
 import 'package:tasklist_lite/state/auth_controller.dart';
@@ -18,7 +17,8 @@ class TopUserBar extends StatelessWidget implements PreferredSizeWidget {
                 icon: Icon(Icons.account_circle_outlined),
                 tooltip: "Профиль",
                 onPressed: () {
-                  Navigator.pushNamed(context, ProfilePage.routeName);
+                  GetDelegate routerDelegate = Get.find();
+                  routerDelegate.toNamed(ProfilePage.routeName);
                 }),
             titleSpacing: 0.0,
             toolbarHeight: 100,
@@ -54,8 +54,9 @@ class TopUserBar extends StatelessWidget implements PreferredSizeWidget {
                                       ? Icons.notifications
                                       : Icons.notifications_outlined),
                               onPressed: () {
-                                Navigator.pushNamed(
-                                    context, NotificationsPage.routeName);
+                                GetDelegate routerDelegate = Get.find();
+                                routerDelegate
+                                    .toNamed(NotificationsPage.routeName);
                               },
                             ),
                           ),
@@ -93,7 +94,6 @@ class TopUserBar extends StatelessWidget implements PreferredSizeWidget {
                 icon: const Icon(Icons.exit_to_app_outlined),
                 onPressed: () {
                   authController.logout();
-                  Navigator.pushNamed(context, LoginPage.routeName);
                 },
               ),
             ],

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:tasklist_lite/crazylib/date_row.dart';
-import 'package:tasklist_lite/pages/task_page.dart';
 import 'package:tasklist_lite/crazylib/notification_card.dart';
 import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
+import 'package:tasklist_lite/pages/task_page.dart';
 import 'package:tasklist_lite/state/notification_controller.dart';
 
 import '../state/tasklist_controller.dart';
@@ -35,7 +35,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
                 leading: IconButton(
                   icon: Icon(Icons.chevron_left_outlined),
                   onPressed: () {
-                    Navigator.pop(context);
+                    GetDelegate routerDelegate = Get.find();
+                    routerDelegate.popRoute();
                   },
                 ),
               ),
@@ -86,10 +87,12 @@ class _NotificationsPageState extends State<NotificationsPage> {
                                         controller
                                             .getNotifications()[index]
                                             .task;
-                                    Navigator.pushNamed(
-                                        context, TaskPage.routeName,
-                                        arguments: taskListController
-                                            .taskListState.currentTask.value);
+                                    GetDelegate routerDelegate = Get.find();
+                                    routerDelegate.toNamed(
+                                      TaskPage.routeName,
+                                      arguments: taskListController
+                                          .taskListState.currentTask.value,
+                                    );
                                   },
                                   notify: controller.getNotifications()[index],
                                   task: controller
@@ -120,7 +123,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
                 leading: IconButton(
                   icon: Icon(Icons.chevron_left_outlined),
                   onPressed: () {
-                    Navigator.pop(context);
+                    GetDelegate routerDelegate = Get.find();
+                    routerDelegate.popRoute();
                   },
                 ),
               ),

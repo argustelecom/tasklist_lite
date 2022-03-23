@@ -64,7 +64,7 @@ class TasklistFiltersBar extends StatelessWidget {
                                   textAlign: TextAlign.center,
                                   textAlignVertical: TextAlignVertical.center,
                                   decoration: InputDecoration(
-                                    hintText: "Номер наряда",
+                                    hintText: "Поиск",
                                     fillColor: themeData.bottomAppBarColor,
                                     border: InputBorder.none,
                                     filled: true,

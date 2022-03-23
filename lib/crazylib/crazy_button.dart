@@ -6,11 +6,13 @@ class CrazyButton extends StatelessWidget {
       this.padding =
           const EdgeInsets.only(bottom: 8, top: 8, left: 32, right: 8),
       required this.title,
-      required this.onPressed})
+      required this.onPressed,
+      this.style})
       : super(key: key);
   final EdgeInsetsGeometry padding;
   final String title;
   final VoidCallback onPressed;
+  final TextStyle? style;
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -30,7 +32,7 @@ class CrazyButton extends StatelessWidget {
             ),
             child: Text(
               this.title,
-              style: TextStyle(color: Colors.black, fontSize: 18),
+              style: style ?? TextStyle(color: Colors.black, fontSize: 18),
             ),
             onPressed: onPressed),
       ),

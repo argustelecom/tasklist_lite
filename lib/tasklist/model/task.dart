@@ -5,6 +5,8 @@ import 'package:duration/duration.dart';
 import 'package:duration/locale.dart';
 import 'package:intl/intl.dart';
 import 'package:tasklist_lite/tasklist/model/stage.dart';
+import 'package:tasklist_lite/tasklist/model/work.dart';
+import 'package:tasklist_lite/tasklist/model/worker.dart';
 
 import 'idle_time.dart';
 
@@ -17,7 +19,7 @@ class Task {
   /// "Номер"
   final String name;
 
-  /// Этап наряда
+  /// Этап задачи
   Stage? stage;
 
   //используем в кнопке проверка аварии
@@ -33,15 +35,14 @@ class Task {
   /// "Тип задачи"
   String? taskType;
 
-  /// TODO задачи или этапа? нужен ли еще один параметр?
-  /// "Контрольный срок"
+  /// "Контрольный срок задачи"
   DateTime? dueDate;
 
   /// TODO: должен ли быть системным?
   ///int? priority;
 
   /// "Исполнители"
-  String? assignee;
+  List<Worker> assignee = <Worker>[];
 
   /// TODO: телефон, контактное лицо нужны?
 
@@ -62,7 +63,7 @@ class Task {
   String? longitude;
 
   /// "Примечание"
-  String? comment;
+  String? commentary;
 
   /// "Дата создания задачи"
   DateTime? createDate;
@@ -88,6 +89,9 @@ class Task {
   /// Простой
   List<IdleTime>? idleTimeList = <IdleTime>[];
 
+  /// Работы
+  List<Work>? works = <Work>[];
+
   // null safety: здесь null`ами не может быть только id, name (т.к. они обязательны) и булевы свойства (т.к. для них задан дефолт в дефолтном конструкторе)
   // что интересно, фигурные скобочки внутри объявления конструктора делают параметры именованными, их теперь можно задавать не по порядку, а по имени. Удобно.
   Task(
@@ -99,12 +103,12 @@ class Task {
       this.processTypeName,
       this.taskType,
       this.dueDate,
-      this.assignee,
+      required this.assignee,
       this.address,
       this.addressComment,
       this.latitude,
       this.longitude,
-      this.comment,
+      this.commentary,
       this.createDate,
       this.closeDate,
       this.isClosed = false,
@@ -112,9 +116,16 @@ class Task {
       this.isPlanned = false,
       this.isOutdoor = false,
       required this.flexibleAttribs,
-      this.idleTimeList});
+      this.idleTimeList,
+      this.works});
 
-  bool isOverdue() {
+  String getAssigneeListToText(bool withTabNo) {
+    return withTabNo
+        ? assignee.map((e) => e.getWorkerShortNameWithTabNo()).join(', ')
+        : assignee.map((e) => e.getWorkerShortName()).join(', ');
+  }
+
+  bool isTaskOverdue() {
     return (dueDate != null) && (dueDate!.isBefore((DateTime.now())));
   }
 
@@ -136,7 +147,7 @@ class Task {
   String getTimeLeftText() {
     Duration? timeLeft = getTimeLeftAbs();
     if (timeLeft != null)
-      return (isOverdue() ? "СКВ: " : "КВ: ") +
+      return (isTaskOverdue() ? "СКВ: " : "КВ: ") +
           prettyDuration(timeLeft,
               tersity: DurationTersity.minute,
               abbreviated: true,
@@ -184,18 +195,19 @@ class Task {
     return attrGroups;
   }
 
+  // TODO: Используется в закрытии наряда. НИ надо будет поправить потом?
   // LinkedHashMap выбран намеренно, чтобы выводить параметры в том порядке, в котором получили
   LinkedHashMap<String, Object?> getAttrValuesByGroup(String group) {
     LinkedHashMap<String, Object?> attrValues =
         new LinkedHashMap<String, Object?>();
     if (group.compareTo(systemAttrGroup) == 0) {
       attrValues.addAll(new LinkedHashMap.of({
-        "Исполнители": assignee,
+        "Исполнители": getAssigneeListToText(false),
         "Адрес": address,
         "Адресное примечание": addressComment,
         "Широта": latitude,
         "Долгота": longitude,
-        "Примечание": comment
+        "Примечание": commentary
       }));
     } else
       flexibleAttribs.forEach((key, value) {
@@ -203,6 +215,40 @@ class Task {
           attrValues.addAll({key.substring(key.indexOf("/") + 1): value});
       });
     return attrValues;
+  }
+
+  /// Получаем атрибуты для вкладки сведения
+  LinkedHashMap<String, Object?> getAttrValuesByTask() {
+    LinkedHashMap<String, Object?> attrValues =
+        new LinkedHashMap<String, Object?>();
+    attrValues.addAll(new LinkedHashMap.of({
+      "Наименование": flexibleAttribs["Объект/Название"],
+      "ID заявки оператора": flexibleAttribs["Наряд/ID заявки оператора"],
+      "Адресное примечание": addressComment,
+      "Оператор": flexibleAttribs["Наряд/Оператор"],
+      "Договор": flexibleAttribs["Наряд/Договор"],
+      "Примечание": commentary,
+      "Представитель заказчика": flexibleAttribs["Представитель заказчика"],
+      "Исполнители": getAssigneeListToText(false),
+      "Приоритет": flexibleAttribs["Наряд/Приоритет"],
+      "Кластер": flexibleAttribs["Кластер"],
+    }));
+    return attrValues;
+  }
+
+  /// Получаем состояние для прогрессбариков
+  getStageProgressStatus(int num, Stage stage) {
+    if (isClosed) {
+      return 1;
+    }
+    var _stageNumber = stage.number.toInt();
+    if (num < _stageNumber) {
+      return 1;
+    } else if (num == stage.number) {
+      return 0.73;
+    } else {
+      return 0;
+    }
   }
 
   IdleTime? getCurrentIdleTime() {
@@ -221,12 +267,11 @@ class Task {
         taskType: json['taskType'],
         dueDate:
             json['dueDate'] != null ? DateTime.parse(json['dueDate']) : null,
-        assignee: json['assignee'],
         address: json['address'],
         addressComment: json['addressComment'],
         latitude: json['latitude'],
         longitude: json['longitude'],
-        comment: json['comment'],
+        commentary: json['commentary'],
         createDate: json['createDate'] != null
             ? DateTime.parse(json['createDate'])
             : null,
@@ -246,24 +291,26 @@ class Task {
         idleTimeList:
             json['idleTime'] != null && (json['idleTime'] as List).isNotEmpty
                 ? (json['idleTime']).map((e) => IdleTime.fromJson(e)).toList()
-                : List.of({}));
+                : List.of({}),
+        stage: json['stage'] != null ? Stage.fromJson(json['stage']) : null,
+        assignee: List<Worker>.from(
+            (json['assignee']).map((e) => Worker.fromJson(e)).toList()));
     return task;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
+    data['id'] = this.id.toString();
     data['name'] = this.name;
     data['desc'] = this.desc;
     data['processTypeName'] = this.processTypeName;
     data['taskType'] = this.taskType;
     data['dueDate'] = this.dueDate != null ? this.dueDate.toString() : null;
-    data['assignee'] = this.assignee;
     data['address'] = this.address;
     data['addressComment'] = this.addressComment;
     data['latitude'] = this.latitude;
     data['longitude'] = this.longitude;
-    data['comment'] = this.comment;
+    data['comment'] = this.commentary;
     data['createDate'] =
         this.createDate != null ? this.createDate.toString() : null;
     data['closeDate'] =
@@ -272,8 +319,20 @@ class Task {
     data['isVisit'] = this.isVisit;
     data['isPlanned'] = this.isPlanned;
     data['isOutdoor'] = this.isOutdoor;
-    data['flexibleAttribute'] = jsonEncode(this.flexibleAttribs);
-    data['idleTimeList'] = jsonEncode(this.idleTimeList);
+    data['flexibleAttribute'] =
+        this.flexibleAttribs.entries.map((e) => toMapJson(e)).toList();
+    data['idleTimeList'] =
+        this.idleTimeList != null ? jsonEncode(this.idleTimeList) : null;
+    data['stage'] = this.stage != null ? this.stage!.toJson() : null;
+    data['assignee'] = jsonEncode(this.assignee);
     return data;
+  }
+
+  Map<String, Object?> toMapJson(MapEntry mapEntry) {
+    Map<String, Object?> map = Map();
+    map.putIfAbsent("__typename", () => "FlexibleAttribute");
+    map.putIfAbsent("key", () => mapEntry.key.toString());
+    map.putIfAbsent("value", () => mapEntry.value);
+    return map;
   }
 }

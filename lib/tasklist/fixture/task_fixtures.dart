@@ -2,9 +2,12 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:tasklist_lite/tasklist/fixture/idle_time_reason_fixtures.dart';
+import 'package:tasklist_lite/tasklist/fixture/work_type_fixtures.dart';
+import 'package:tasklist_lite/tasklist/fixture/worker_fixtures.dart';
 import 'package:tasklist_lite/tasklist/model/idle_time.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
-
+import 'package:tasklist_lite/tasklist/model/work.dart';
+import '../model/stage.dart';
 
 /// Служба, возвращающая набор задач по переданному идентификатору фикстуры
 class TaskFixtures {
@@ -18,18 +21,27 @@ class TaskFixtures {
       name: "АВР-24035",
       desc: "АВР-24035 (ВЛГ0127)",
       processTypeName: "Аварийно-восстановительные работы",
-      taskType: "Выполнение работ",
+      taskType: "Аварийно-восстановительные работы О2О",
       dueDate:
           DateUtils.dateOnly(DateTime.now()).add(const Duration(hours: 11)),
-      assignee: "Богданова И.Л.",
+      assignee: [WorkerFixtures.worker_1, WorkerFixtures.worker_2],
       address: "г.Вологда, ул.Садовая, 101",
+      addressComment: "г.Вологда, ул.Садовая, 101",
       latitude: "56.863148",
       longitude: "60.642127",
-      comment: "По вопросам доступа Филиппов Е.А. +79207654321",
+      commentary:
+          "По вопросам доступа Филиппов Е.А. +79207654321 Разнообразный и богатый опыт консультация с широким активом обеспечивает широкому кругу. Таким образом реализация намеченных плановых заданий позволяет оценить значение новых предложений. Значимость этих проблем настолько очевидна, что дальнейшее развитие различных форм деятельности обеспечивает широкому кругу (специалистов) участие в формировании новых предложений. С другой стороны укрепление и развитие структуры обеспечивает участие в формировании систем массового участия. Товарищи! консультация с широким активом позволяет выполнять важные задания по разработке систем массового участия. Идейные соображения высшего порядка, а также рамки и место обучения кадров обеспечивает широкому кругу (специалистов) участие в формировании новых предложений. Повседневная практика показывает, что укрепление и развитие структуры обеспечивает широкому кругу (специалистов) участие в формировании дальнейших направлений развития. Равным образом консультация с широким активом требуют определения и уточнения модели развития. Товарищи! постоянное информационно-пропагандистское обеспечение нашей деятельности позволяет выполнять важные задания по разработке модели развития. С другой стороны постоянное информационно-пропагандистское обеспечение нашей деятельности обеспечивает широкому кругу (специалистов) участие в формировании позиций, занимаемых участниками в отношении поставленных задач. Равным образом консультация с широким активом требуют определения и уточнения модели развития. Повседневная практика показывает, что укрепление и развитие структуры обеспечивает широкому кругу (специалистов) участие в формировании дальнейших направлений развития. С другой стороны укрепление и развитие структуры обеспечивает участие в формировании систем массового участия. Товарищи! постоянное информационно-пропагандистское обеспечение нашей деятельности позволяет выполнять важные задания по разработке модели развития. Повседневная практика показывает, что укрепление и развитие структуры обеспечивает широкому кругу (специалистов) участие в формировании дальнейших направлений развития. С другой стороны постоянное информационно-пропагандистское обеспечение нашей деятельности обеспечивает широкому кругу (специалистов) участие в формировании позиций, занимаемых участниками в отношении поставленных задач. Не следует, однако забывать, что дальнейшее развитие различных форм деятельности способствует подготовки и реализации форм развития. Если у вас есть какие то интересные предложения, обращайтесь! Студия Web-Boss всегда готова решить любую задачу. Равным образом консультация с широким активом требуют определения и уточнения модели развития. Товарищи! консультация с широким активом позволяет выполнять важные задания по разработке систем массового участия. Идейные соображения высшего порядка, а также дальнейшее развитие различных форм деятельности позволяет оценить значение новых предложений. Идейные соображения высшего порядка, а также укрепление и развитие структуры играет важную роль в формировании существенных финансовых и административных условий.Повседневная практика показывает, что укрепление и развитие структуры обеспечивает широкому кругу (специалистов) участие в формировании дальнейших направлений развития. Повседневная практика показывает, что укрепление и развитие структуры обеспечивает широкому кругу (специалистов) участие в формировании дальнейших направлений развития. Равным образом консультация с широким активом требуют определения и уточнения модели развития. С другой стороны укрепление и развитие структуры обеспечивает участие в формировании систем массового участия. Товарищи! постоянное информационно-пропагандистское обеспечение нашей деятельности позволяет выполнять важные задания по разработке модели развития. Идейные соображения высшего порядка, а также рамки и место обучения кадров обеспечивает широкому кругу (специалистов) участие в формировании новых предложений. Не следует, однако забывать, что дальнейшее развитие различных форм деятельности способствует подготовки и реализации форм развития. С другой стороны постоянное информационно-пропагандистское обеспечение нашей деятельности обеспечивает широкому кругу (специалистов) участие в формировании позиций, занимаемых участниками в отношении поставленных задач. Не следует, однако забывать, что дальнейшее развитие различных форм деятельности способствует подготовки и реализации форм развития. Идейные соображения высшего порядка, а также рамки и место обучения кадров обеспечивает широкому кругу (специалистов) участие в формировании новых предложений. Таким образом новая модель организационной деятельности способствует подготовки и реализации систем массового участия. Повседневная практика показывает, что реализация намеченных плановых заданий в значительной степени обуславливает создание модели развития. С другой стороны укрепление и развитие структуры обеспечивает участие в формировании систем массового участия. С другой стороны постоянное информационно-пропагандистское обеспечение нашей деятельности обеспечивает широкому кругу (специалистов) участие в формировании позиций, занимаемых участниками в отношении поставленных задач. Идейные соображения высшего порядка, а также дальнейшее развитие различных форм деятельности позволяет оценить значение новых предложений. С другой стороны укрепление и развитие структуры обеспечивает участие в формировании систем массового участия. Разнообразный и богатый опыт консультация с широким активом обеспечивает широкому кругу. Идейные соображения высшего порядка, а также укрепление и развитие структуры играет важную роль в формировании существенных финансовых и административных условий. Если у вас есть какие то интересные предложения, обращайтесь! Студия Web-Boss всегда готова решить любую задачу. Не следует, однако забывать, что дальнейшее развитие различных форм деятельности способствует подготовки и реализации форм развития. Если у вас есть какие то интересные предложения, обращайтесь! Студия Web-Boss всегда готова решить любую задачу. С другой стороны укрепление и развитие структуры обеспечивает участие в формировании систем массового участия.Разнообразный и богатый опыт консультация с широким активом обеспечивает широкому кругу. Идейные соображения высшего порядка, а также укрепление и развитие структуры играет важную роль в формировании существенных финансовых и административных условий. Товарищи! постоянное информационно-пропагандистское обеспечение нашей деятельности позволяет выполнять важные задания по разработке модели развития. Товарищи! сложившаяся структура организации представляет собой интересный эксперимент проверки направлений прогрессивного развития. Равным образом консультация с широким активом требуют определения и уточнения модели развития. Значимость этих проблем настолько очевидна, что консультация с широким активом играет важную роль в формировании новых предложений. Идейные соображения высшего порядка, а также начало повседневной работы по формированию позиции позволяет оценить значение модели развития. Если у вас есть какие то интересные предложения, обращайтесь! Студия Web-Boss всегда готова решить любую задачу. Идейные соображения высшего порядка, а также рамки и место обучения кадров обеспечивает широкому кругу (специалистов) участие в формировании новых предложений. С другой стороны постоянное информационно-пропагандистское обеспечение нашей деятельности обеспечивает широкому кругу (специалистов) участие в формировании позиций, занимаемых участниками в отношении поставленных задач. Равным образом постоянный количественный рост и сфера нашей активности играет важную роль в формировании системы обучения кадров, соответствует насущным потребностям. Значимость этих проблем настолько очевидна, что дальнейшее развитие различных форм деятельности обеспечивает широкому кругу (специалистов) участие в формировании новых предложений. С другой стороны постоянное информационно-пропагандистское обеспечение нашей деятельности обеспечивает широкому кругу (специалистов) участие в формировании позиций, занимаемых участниками в отношении поставленных задач. С другой стороны укрепление и развитие структуры обеспечивает участие в формировании систем массового участия. Идейные соображения высшего порядка, а также укрепление и развитие структуры играет важную роль в формировании существенных финансовых и административных условий. С другой стороны рамки и место обучения кадров способствует подготовки и реализации модели развития. Равным образом рамки и место обучения кадров влечет за собой процесс внедрения и модернизации системы обучения кадров, соответствует насущным потребностям. Не следует, однако забывать, что дальнейшее развитие различных форм деятельности способствует подготовки и реализации форм развития. Товарищи! сложившаяся структура организации представляет собой интересный эксперимент проверки направлений прогрессивного развития. Разнообразный и богатый опыт консультация с широким активом обеспечивает широкому кругу. Таким образом реализация намеченных плановых заданий позволяет оценить значение новых предложений. Равным образом постоянный количественный рост и сфера нашей активности играет важную роль в формировании системы обучения кадров, соответствует насущным потребностям.",
       createDate:
           DateUtils.dateOnly(DateTime.now()).add(const Duration(hours: -6)),
       isClosed: false,
       isOutdoor: true,
+      ttmsId: "HM04598",
+      stage: Stage(
+          name: "Выезд на объект",
+          number: 2,
+          isLast: false,
+          dueDate: DateUtils.dateOnly(DateTime.now())
+              .add(const Duration(hours: 20))),
       flexibleAttribs: new LinkedHashMap.of({
         orderOperatorNameFlexAttrName: "Tele2",
         foreignOrderIdFlexAttrName: "INT33564",
@@ -52,6 +64,51 @@ class TaskFixtures {
             reason: IdleTimeReasonFixtures.idleTimeReason_6,
             startDate: DateUtils.dateOnly(DateTime.now())
                 .add(const Duration(hours: -3)))
+      ],
+      works: [
+        new Work(workType: WorkTypeFixtures.workType_1),
+        new Work(workType: WorkTypeFixtures.workType_2),
+        new Work(workType: WorkTypeFixtures.workType_3, notRequired: true),
+        new Work(workType: WorkTypeFixtures.workType_4, workDetail: [
+          new WorkDetail(
+              id: 1,
+              amount: 2.5,
+              workerMarks: Map.of({
+                WorkerFixtures.worker_1: 6.25,
+                WorkerFixtures.worker_2: 6.25
+              }),
+              date: DateUtils.dateOnly(DateTime.now())
+                  .add(const Duration(hours: -3)))
+        ]),
+        new Work(workType: WorkTypeFixtures.workType_5, workDetail: [
+          new WorkDetail(
+              id: 2,
+              amount: 1,
+              workerMarks: Map.of({WorkerFixtures.worker_1: 4}),
+              date: DateUtils.dateOnly(DateTime.now())
+                  .add(const Duration(hours: -3))),
+          new WorkDetail(
+              id: 3,
+              amount: 2,
+              workerMarks: Map.of(
+                  {WorkerFixtures.worker_1: 4, WorkerFixtures.worker_2: 4}),
+              date: DateUtils.dateOnly(DateTime.now())
+                  .add(const Duration(hours: -3)))
+        ]),
+        new Work(workType: WorkTypeFixtures.workType_6, workDetail: [
+          new WorkDetail(
+              id: 2,
+              amount: 1,
+              workerMarks: Map.of({WorkerFixtures.worker_1: 5}),
+              date: DateUtils.dateOnly(DateTime.now())
+                  .add(const Duration(hours: -3))),
+          new WorkDetail(
+              id: 3,
+              amount: 2,
+              workerMarks: Map.of({WorkerFixtures.worker_1: 10}),
+              date: DateUtils.dateOnly(DateTime.now())
+                  .add(const Duration(hours: -3)))
+        ])
       ]);
 
   static final Task secondTask = new Task(
@@ -59,14 +116,20 @@ class TaskFixtures {
       name: "РР-27089",
       desc: "РР-27089 (ВОЛС Лосево-Песочное)",
       processTypeName: "Разовые работы",
-      taskType: "Выезд на объект",
+      taskType: "Разовые работы О2О",
       dueDate:
           DateUtils.dateOnly(DateTime.now()).add(const Duration(hours: 15)),
-      assignee: "Богданова И.Л., Смирнов С.А.",
+      assignee: [WorkerFixtures.worker_1, WorkerFixtures.worker_2],
       address: null,
       latitude: "56.888854",
       longitude: "60.612602",
-      comment: "Муфта М172",
+      commentary: "Муфта М172",
+      stage: Stage(
+          name: "Выполнение работ",
+          number: 4,
+          isLast: true,
+          dueDate:
+              DateUtils.dateOnly(DateTime.now()).add(const Duration(hours: 6))),
       createDate: DateUtils.dateOnly(DateTime.now())
           .add(const Duration(hours: 24 * 2 - 22)),
       isClosed: false,
@@ -79,26 +142,37 @@ class TaskFixtures {
         "Объект/Тип объекта": "ВОЛС",
         objectNameFlexAttrName: "ВОЛС Лосево-Песочное",
         distanceToObjectFlexAttrName: "73 км"
-      }));
+      }),
+      works: [
+        new Work(workType: WorkTypeFixtures.workType_1),
+        new Work(workType: WorkTypeFixtures.workType_2),
+        new Work(workType: WorkTypeFixtures.workType_3)
+      ]);
 
   static final Task thirdTask = new Task(
       id: 3,
       name: "РР-28050",
       desc: "РР-28050 (ВЛГ4032)",
       processTypeName: "Разовые работы",
-      taskType: "Назначение наряда бригаде",
+      taskType: "Разовые работы О2О",
       dueDate:
           DateUtils.dateOnly(DateTime.now()).add(const Duration(hours: 22)),
-      assignee: "Богданова И.Л.",
+      assignee: [WorkerFixtures.worker_1],
       address: "г.Вологда, ул.Лесопарковая, 9Б",
       latitude: null,
       longitude: null,
-      comment:
+      commentary:
           "ТРЦ Радуга. Работы только в ночное время. Дежурный инженер Семенов И.С. +79501234567",
       createDate: DateUtils.dateOnly(DateTime.now())
           .add(const Duration(hours: 24 * 2 - 22)),
       isClosed: false,
       isOutdoor: true,
+      stage: Stage(
+          name: "Выполнение работ",
+          number: 4,
+          isLast: true,
+          dueDate: DateUtils.dateOnly(DateTime.now())
+              .add(const Duration(hours: -6))),
       flexibleAttribs: new LinkedHashMap.of({
         orderOperatorNameFlexAttrName: "Tele2",
         foreignOrderIdFlexAttrName: "INT36197",
@@ -114,14 +188,15 @@ class TaskFixtures {
       name: "ТО-19099",
       desc: "ТО-19099 (ВЛГ0734)",
       processTypeName: "Техническое обслуживание",
-      taskType: "Назначение наряда бригаде",
+      taskType: "Техническое обслуживание",
       dueDate: DateUtils.dateOnly(DateTime.now())
           .add(const Duration(hours: 24 * 1 + 16)),
-      assignee: "Богданова И.Л.",
+      assignee: [WorkerFixtures.worker_1],
       address: "г.Вологда, ул.Северная, 27",
       latitude: null,
       longitude: null,
-      comment: "",
+      commentary: "",
+      stage: null,
       createDate: DateUtils.dateOnly(DateTime.now())
           .add(const Duration(hours: 24 * 2 - 22)),
       isClosed: false,
@@ -141,14 +216,20 @@ class TaskFixtures {
       name: "РР-14569",
       desc: "РР-14569 (ВЛГ1077)",
       processTypeName: "Разовые работы",
-      taskType: "Назначение наряда бригаде",
+      taskType: "Разовые работы О2О",
       dueDate: DateUtils.dateOnly(DateTime.now())
           .add(const Duration(hours: 24 * 3 + 15)),
-      assignee: "Богданова И.Л.",
+      assignee: [WorkerFixtures.worker_1],
       address: "г.Вологда, пр.Мира, 16",
       latitude: null,
       longitude: null,
-      comment: "",
+      commentary: "",
+      stage: Stage(
+          name: "Выезд на объект",
+          number: 2,
+          isLast: false,
+          dueDate: DateUtils.dateOnly(DateTime.now())
+              .add(const Duration(hours: 20))),
       createDate:
           DateUtils.dateOnly(DateTime.now()).add(const Duration(hours: -12)),
       isClosed: false,
@@ -171,11 +252,12 @@ class TaskFixtures {
       taskType: "Закрыт",
       dueDate: DateUtils.dateOnly(DateTime.now())
           .add(const Duration(hours: -24 * 1 + 10)),
-      assignee: "Богданова И.Л.",
+      assignee: [WorkerFixtures.worker_1],
       address: "г.Вологда, ул.Правды, 99",
       latitude: null,
       longitude: null,
-      comment: "",
+      commentary: "",
+      stage: null,
       createDate: DateUtils.dateOnly(DateTime.now())
           .add(const Duration(hours: -24 * 4 + 12)),
       closeDate: DateUtils.dateOnly(DateTime.now())
@@ -200,11 +282,12 @@ class TaskFixtures {
       taskType: "Закрыт",
       dueDate: DateUtils.dateOnly(DateTime.now())
           .add(const Duration(hours: -24 * 1 + 13)),
-      assignee: "Богданова И.Л.",
+      assignee: [WorkerFixtures.worker_1],
       address: "г.Вологда, ул.Нагорная, 17",
       latitude: null,
       longitude: null,
-      comment: "",
+      commentary: "",
+      stage: null,
       createDate: DateUtils.dateOnly(DateTime.now())
           .add(const Duration(hours: -24 * 4 + 12)),
       closeDate: DateUtils.dateOnly(DateTime.now())
@@ -229,11 +312,12 @@ class TaskFixtures {
       taskType: "Закрыт",
       dueDate: DateUtils.dateOnly(DateTime.now())
           .add(const Duration(hours: -24 * 1 + 17)),
-      assignee: "Богданова И.Л.",
+      assignee: [WorkerFixtures.worker_1],
       address: "г.Вологда, пер.Привокзальный, 3",
       latitude: null,
       longitude: null,
-      comment: "",
+      commentary: "",
+      stage: null,
       createDate: DateUtils.dateOnly(DateTime.now())
           .add(const Duration(hours: -24 * 4 + 12)),
       closeDate: DateUtils.dateOnly(DateTime.now())
@@ -258,11 +342,12 @@ class TaskFixtures {
       taskType: "Закрыт",
       dueDate: DateUtils.dateOnly(DateTime.now())
           .add(const Duration(hours: -24 * 0 + 9)),
-      assignee: "Богданова И.Л., Синицын В.С.",
+      assignee: [WorkerFixtures.worker_1, WorkerFixtures.worker_4],
       address: "г.Вологда, пр.Лесной, 113",
       latitude: null,
       longitude: null,
-      comment: "",
+      commentary: "",
+      stage: null,
       createDate: DateUtils.dateOnly(DateTime.now())
           .add(const Duration(hours: -24 * 4 + 12)),
       closeDate: DateUtils.dateOnly(DateTime.now())
@@ -298,14 +383,15 @@ class TaskFixtures {
         name: "ТО-17051",
         desc: "ТО-17051 (ВЛГ1024)",
         processTypeName: "Техническое обслужавание",
-        taskType: "Назначение наряда бригаде",
+        taskType: "Техническое обслужавание",
         dueDate: DateUtils.dateOnly(DateTime.now())
             .add(const Duration(hours: 24 * 7 + 14)),
-        assignee: "Богданова И.Л.",
+        assignee: [WorkerFixtures.worker_1],
         address: "г.Вологда, пр.Космонавтов, 23a",
         latitude: null,
         longitude: null,
-        comment: "По вопросам доступа в диспетчерскую, вход с торца",
+        commentary: "По вопросам доступа в диспетчерскую, вход с торца",
+        stage: null,
         createDate: DateUtils.dateOnly(DateTime.now())
             .add(const Duration(hours: 24 * 4 - 20)),
         isClosed: false,
@@ -324,14 +410,20 @@ class TaskFixtures {
         name: "АВР-18364",
         desc: "АВР-18364 (ВЛГ2937)",
         processTypeName: "Аварийно-восстановительные работы",
-        taskType: "Выезд на объект",
+        taskType: "Аварийно-восстановительные работы О2О",
         dueDate: DateUtils.dateOnly(DateTime.now())
             .add(const Duration(hours: -24 * 0 + 13)),
-        assignee: "Богданова И.Л.",
+        assignee: [WorkerFixtures.worker_1],
         address: "г.Вологда, ул.Лермонтова, 11",
         latitude: null,
         longitude: null,
-        comment: "",
+        commentary: "",
+        stage: Stage(
+            name: "Выезд на объект",
+            number: 2,
+            isLast: false,
+            dueDate: DateUtils.dateOnly(DateTime.now())
+                .add(const Duration(hours: 20))),
         createDate: DateUtils.dateOnly(DateTime.now())
             .add(const Duration(hours: -24 * 0 + 11)),
         isClosed: false,
@@ -380,4 +472,9 @@ class TaskFixtures {
       await Future.delayed(Duration(seconds: 10));
     }
   }
+/*
+  Stage getStage() {
+    return new Stage(name: "Временный этап", number: 1, isLast: false, dueDate:  DateUtils.dateOnly(DateTime.now())
+        .add(const Duration(hours: 24 * 7 + 14)),);
+  }*/
 }
