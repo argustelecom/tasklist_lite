@@ -1,8 +1,10 @@
+import 'package:get/get.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:tasklist_lite/graphql/graphql_service.dart';
 import 'package:tasklist_lite/tasklist/model/comment.dart';
 import 'package:tasklist_lite/tasklist/model/idle_time.dart';
+import 'package:tasklist_lite/tasklist/model/work.dart';
 
 import 'model/close_code.dart';
 import 'model/mark.dart';
@@ -37,7 +39,7 @@ class TaskRemoteClient {
     ''';
 
   /// Получение назначенных сотрудников
-  static const String assigneeQuery = '''    
+  static const String workerQuery = '''    
       id
       family
       name
@@ -54,6 +56,26 @@ class TaskRemoteClient {
     type
     important
    ''';
+  //Work
+  static const String workQuery = '''
+  status
+  workType {
+        id
+        name
+        units
+        marks
+      }
+      workDetail {
+        id
+        amount
+        date
+        workerMarks {
+          worker {
+            $workerQuery
+          }
+          mark
+        }
+      } ''';
 
   // Mark
   static const String markQuery = '''
@@ -92,7 +114,10 @@ class TaskRemoteClient {
     $idleTimeQuery
   }
   assignee {
-    $assigneeQuery
+    $workerQuery
+  }
+  works{
+  $workQuery
   }
   stage {
       name
@@ -475,6 +500,80 @@ class TaskRemoteClient {
       List.from(value.data!["getMarks"]).forEach((element) {
         result.add(Mark.fromJson(element));
       });
+    }, onError: (e) {
+      throw Exception(" onError " + e.toString());
+    });
+    return result;
+  }
+
+  Future<Work> registerWorkDetail(int taskInstanceId, int workTypeId,
+      bool notRequired, double? amount, List<int>? workers) async {
+    String? workersString = workers != null ? workers.toString() : null;
+    String registerWorkDetailQuery = '''
+ mutation {  
+   registerWorkDetail(
+    taskInstanceId:"$taskInstanceId", 
+    workTypeId: $workTypeId,
+    notRequired: $notRequired,
+    amount: $amount,
+    workers:  $workersString) {
+    $workQuery
+    }
+ }''';
+
+    Future<QueryResult> mutationResultFuture =
+        _graphQLService.mutate(registerWorkDetailQuery);
+    late Work result;
+    await mutationResultFuture.then((value) {
+      if (value.hasException) {
+        // need catch 401 error
+        if (value.exception?.linkException is ServerException) {
+          throw Exception("Сервер недоступен");
+        }
+        if (value.exception?.linkException is HttpLinkParserException) {
+          throw Exception("Не авторизован");
+        }
+        throw Exception("Неожиданная ошибка");
+      }
+      if (value.data == null) {
+        throw Exception("Work is null");
+      }
+      result = Work.fromJson(value.data!["registerWorkDetail"]);
+    }, onError: (e) {
+      throw Exception(" onError " + e.toString());
+    });
+    return result;
+  }
+
+  Future<Work?> deleteWorkDetail(int taskInstanceId, int workDetailId) async {
+    String deleteWorkDetailQuery = '''
+ mutation {  
+   deleteWorkDetail(
+    taskInstanceId: "$taskInstanceId", 
+    workDetailId: $workDetailId)
+    {
+    $workQuery
+    }
+ }''';
+
+    Future<QueryResult> mutationResultFuture =
+        _graphQLService.mutate(deleteWorkDetailQuery);
+    late Work? result;
+    await mutationResultFuture.then((value) {
+      if (value.hasException) {
+        // need catch 401 error
+        if (value.exception?.linkException is ServerException) {
+          throw Exception("Сервер недоступен");
+        }
+        if (value.exception?.linkException is HttpLinkParserException) {
+          throw Exception("Не авторизован");
+        }
+        throw Exception("Неожиданная ошибка");
+      }
+      if (value.data == null) {
+        return null;
+      }
+      result = Work.fromJson(value.data!["deleteWorkDetail"]);
     }, onError: (e) {
       throw Exception(" onError " + e.toString());
     });
