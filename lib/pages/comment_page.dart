@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
-import 'package:tasklist_lite/crazylib/history_event_card.dart';
+import 'package:tasklist_lite/crazylib/comment_card.dart';
 import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
 import 'package:tasklist_lite/pages/task_page.dart';
 import 'package:tasklist_lite/state/comment_controller.dart';
@@ -35,9 +35,9 @@ class _CommentPageState extends State<CommentPage> {
               ),
               body: Padding(
                   padding: EdgeInsets.only(left: 12, right: 12, bottom: 12),
-                      child: ListView(
+                  child: ListView(
                     children: [
-                      HistoryEventCard(
+                      CommentCard(
                           maxLines: 500,
                           comment: historyEventController.selectedComment)
                     ],

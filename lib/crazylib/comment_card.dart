@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
+
+import '../state/auth_state.dart';
 
 /// Это карточка исторического события, данные карточки используем на task_page
 /// для представления исторических событий на соответсвующей вкладке
-class HistoryEventCard extends StatelessWidget {
+class CommentCard extends StatelessWidget {
   ///Это комментарий который передаем в карточку для отображения
   final comment;
 
   ///Это максимальное кол-во строк для отображения.На страничке с историей ограничено до 10, на страничке с комментом до 1000 = неограничено по задумке
   final maxLines;
+  AuthState authState = Get.find();
 
-  HistoryEventCard({Key? key, required this.comment, this.maxLines})
+  CommentCard({Key? key, required this.comment, this.maxLines})
       : super(key: key);
 
   @override
@@ -27,7 +32,11 @@ class HistoryEventCard extends StatelessWidget {
               Expanded(
                 child: Padding(
                   padding: EdgeInsets.only(left: 16, top: 8),
-                  child: Text("${comment.person}",
+                  child: Text(
+                      authState.userInfo.value!.getWorkerNameWithInitials() ==
+                              comment.person
+                          ? "Вы"
+                          : "${comment.person}",
                       style:
                           TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
                 ),
@@ -64,7 +73,7 @@ class HistoryEventCard extends StatelessWidget {
                           textOverflow: TextOverflow.ellipsis),
                     },
                     // TODO: Заполни тег лист
-                    tagsList: [],
+                    tagsList: Html.tags,
                   ))),
           Padding(
             padding: EdgeInsets.only(right: 16, bottom: 8),
