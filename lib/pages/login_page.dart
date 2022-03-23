@@ -130,184 +130,195 @@ class LoginPageState extends State<LoginPage> {
             ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 8),
-              child: Card(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16)),
-                child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    child: Column(
-                      children: [
-                        TextField(
-                            controller: _loginEditingController,
-                            cursorColor: themeData.colorScheme.primary,
-                            // #TODO: "Имя пользователя" как-то посолидней, чем "логин". Обсудить с Лизой
-                            decoration: fieldDecoration(context, "Логин")),
-                        TextField(
-                            controller: _passwordEditingController,
-                            cursorColor: themeData.colorScheme.primary,
-                            obscureText: true,
-                            decoration: fieldDecoration(context, "Пароль")),
-                        CustomDropDownButton<String>(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 0, vertical: 8),
-                          hint: "Сервер",
-                          value: _selectedServer,
-                          borderColor:
-                              commonDropdownController.someDropdownTapped
-                                  ? themeData.colorScheme.primary
-                                  // по дефолту там Black54
-                                  : null,
-                          dropdownColor: themeData.colorScheme.primary,
-                          onTap: () {
-                            commonDropdownController.someDropdownTapped = true;
-                          },
-                          onChanged: (String? value) {
-                            setState(() {
-                              Map<String?, String> possibleServers =
-                                  _applicationState.possibleServers;
-                              _selectedServer = value;
-
-                              _serverAddressEditingController.text =
-                                  possibleServers[_selectedServer] ??
-                                      _serverAddressEditingController.text;
-                            });
-                          },
-                          itemsList:
-                              List.of(_applicationState.possibleServers.keys),
-                          selectedItemBuilder: (BuildContext context) {
-                            return _applicationState.possibleServers.keys
-                                .map<Widget>((String item) {
-                              return Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    "Сервер $item",
-                                  ));
-                            }).toList();
-                          },
-                        ),
-                        TypeAheadField<String>(
-                          textFieldConfiguration: TextFieldConfiguration(
-                            controller: _serverAddressEditingController,
-                            decoration:
-                                fieldDecoration(context, "Адрес сервера"),
-                          ),
-                          suggestionsCallback: (String pattern) {
-                            return _serverAddressSuggestions.where(
-                                (element) => element.startsWith(pattern));
-                          },
-                          itemBuilder: (BuildContext context, suggestion) {
-                            return ListTile(
-                              title: Text(suggestion),
-                            );
-                          },
-                          onSuggestionSelected: (String suggestion) {
-                            _serverAddressEditingController.text = suggestion;
-                          },
-                          noItemsFoundBuilder: (context) {
-                            // иначе будет показан жирный No items found!
-                            return Text("");
-                          },
-                        ),
-                        Tooltip(
-                          textStyle: TextStyle(fontSize: 16),
-                          waitDuration: Duration(seconds: 2),
-                          decoration: BoxDecoration(
-                              color: themeData.cardColor,
-                              border: Border.all(width: 1)),
-                          message:
-                              "Можно указать любое имя пользователя и пароль. "
-                              "\nБудет осуществлен вход без подключения к серверу, "
-                              "\nбудут доступны демонстрационные данные. ",
-                          key: ValueKey('demo_mode'),
-                          child: Obx(() {
-                            // получается не как в макете, сам чекбокс все же имеет небольшой отступ, а в макете без отступа
-                            // если это не прокатит, то надо If the way CheckboxListTile pads and positions its elements isn't quite
-                            // what you're looking for, you can create custom labeled checkbox widgets by
-                            // combining [Checkbox] with other widgets, such as [Text], [Padding] and
-                            // [InkWell]. (см. каменты в checkbox_list_tile)
-                            return CheckboxListTile(
-                              contentPadding: EdgeInsets.zero,
-                              value:
-                                  _applicationState.inDemonstrationMode.value,
-                              onChanged: (value) {
-                                if (value != null) {
-                                  _applicationState.inDemonstrationMode.value =
-                                      value;
-                                }
-                              },
-                              title: Text(
-                                "Демо-режим",
-                              ),
-                              controlAffinity: ListTileControlAffinity.leading,
-                            );
-                          }),
-                        ),
-                        Row(
+              child: Obx(
+                () {
+                  return Card(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16)),
+                    child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        child: Column(
                           children: [
-                            CrazyButton(
-                              title: "Войти",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 18),
-                              key: ValueKey('login_button'),
-                              onPressed: () {
-                                /// пополняем коллекцию suggestions
+                            TextField(
+                                controller: _loginEditingController,
+                                cursorColor: themeData.colorScheme.primary,
+                                // #TODO: "Имя пользователя" как-то посолидней, чем "логин". Обсудить с Лизой
+                                decoration: fieldDecoration(context, "Логин")),
+                            TextField(
+                                controller: _passwordEditingController,
+                                cursorColor: themeData.colorScheme.primary,
+                                obscureText: true,
+                                decoration: fieldDecoration(context, "Пароль")),
+                            CustomDropDownButton<String>(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 0, vertical: 8),
+                              hint: "Сервер",
+                              value: _selectedServer,
+                              borderColor:
+                                  commonDropdownController.someDropdownTapped
+                                      ? themeData.colorScheme.primary
+                                      // по дефолту там Black54
+                                      : null,
+                              dropdownColor: themeData.colorScheme.primary,
+                              onTap: () {
+                                commonDropdownController.someDropdownTapped =
+                                    true;
+                              },
+                              onChanged: (String? value) {
+                                setState(() {
+                                  Map<String?, String> possibleServers =
+                                      _applicationState.possibleServers;
+                                  _selectedServer = value;
 
-                                if (!_serverAddressSuggestions.contains(
-                                        _serverAddressEditingController.text) &&
-                                    _serverAddressEditingController
-                                        .text.isNotEmpty) {
-                                  setState(() {
-                                    _serverAddressSuggestions.add(
-                                        _serverAddressEditingController.text);
-                                    // но пополняем не бесконечно, а только до пяти возможных
-                                    // вариантов, чтобы не пухла
-                                    if (_serverAddressSuggestions.length > 5) {
-                                      _serverAddressSuggestions.removeAt(0);
-                                    }
-                                  });
-                                }
-
-                                _authState.serverAddressSuggestions.value =
-                                    _serverAddressSuggestions;
-
-                                /// логинимся
-                                /// Если пользователь разлогинился не с домашней странички(а, например, со страницы профиля),
-                                /// надо его возвращать туда, откуда он разлогинился. Но это произойдет само, т.к.
-                                /// authState у нас теперь реактивный, а при логауте url мы не меняем
-                                asyncShowProgressIndicatorOverlay(
-                                  asyncFunction: () {
-                                    return authController.login(
-                                        _applicationState
-                                            .inDemonstrationMode.value,
-                                        _loginEditingController.text,
-                                        _passwordEditingController.text,
-                                        _serverAddressEditingController.text);
-                                  },
+                                  _serverAddressEditingController.text =
+                                      possibleServers[_selectedServer] ??
+                                          _serverAddressEditingController.text;
+                                });
+                              },
+                              itemsList: List.of(
+                                  _applicationState.possibleServers.keys),
+                              selectedItemBuilder: (BuildContext context) {
+                                return _applicationState.possibleServers.keys
+                                    .map<Widget>((String item) {
+                                  return Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        "Сервер $item",
+                                      ));
+                                }).toList();
+                              },
+                            ),
+                            TypeAheadField<String>(
+                              textFieldConfiguration: TextFieldConfiguration(
+                                controller: _serverAddressEditingController,
+                                decoration:
+                                    fieldDecoration(context, "Адрес сервера"),
+                              ),
+                              suggestionsCallback: (String pattern) {
+                                return _serverAddressSuggestions.where(
+                                    (element) => element.startsWith(pattern));
+                              },
+                              itemBuilder: (BuildContext context, suggestion) {
+                                return ListTile(
+                                  title: Text(suggestion),
                                 );
                               },
-                              padding: EdgeInsets.symmetric(vertical: 8),
+                              onSuggestionSelected: (String suggestion) {
+                                _serverAddressEditingController.text =
+                                    suggestion;
+                              },
+                              noItemsFoundBuilder: (context) {
+                                // иначе будет показан жирный No items found!
+                                return Text("");
+                              },
+                            ),
+                            Tooltip(
+                              textStyle: TextStyle(fontSize: 16),
+                              waitDuration: Duration(seconds: 2),
+                              decoration: BoxDecoration(
+                                  color: themeData.cardColor,
+                                  border: Border.all(width: 1)),
+                              message:
+                                  "Можно указать любое имя пользователя и пароль. "
+                                  "\nБудет осуществлен вход без подключения к серверу, "
+                                  "\nбудут доступны демонстрационные данные. ",
+                              key: ValueKey('demo_mode'),
+                              child: Obx(() {
+                                // получается не как в макете, сам чекбокс все же имеет небольшой отступ, а в макете без отступа
+                                // если это не прокатит, то надо If the way CheckboxListTile pads and positions its elements isn't quite
+                                // what you're looking for, you can create custom labeled checkbox widgets by
+                                // combining [Checkbox] with other widgets, such as [Text], [Padding] and
+                                // [InkWell]. (см. каменты в checkbox_list_tile)
+                                return CheckboxListTile(
+                                  contentPadding: EdgeInsets.zero,
+                                  value: _applicationState
+                                      .inDemonstrationMode.value,
+                                  onChanged: (value) {
+                                    if (value != null) {
+                                      _applicationState
+                                          .inDemonstrationMode.value = value;
+                                    }
+                                  },
+                                  title: Text(
+                                    "Демо-режим",
+                                  ),
+                                  controlAffinity:
+                                      ListTileControlAffinity.leading,
+                                );
+                              }),
+                            ),
+                            Row(
+                              children: [
+                                CrazyButton(
+                                  title: "Войти",
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 18),
+                                  key: ValueKey('login_button'),
+                                  onPressed: () {
+                                    /// пополняем коллекцию suggestions
+
+                                    if (!_serverAddressSuggestions.contains(
+                                            _serverAddressEditingController
+                                                .text) &&
+                                        _serverAddressEditingController
+                                            .text.isNotEmpty) {
+                                      setState(() {
+                                        _serverAddressSuggestions.add(
+                                            _serverAddressEditingController
+                                                .text);
+                                        // но пополняем не бесконечно, а только до пяти возможных
+                                        // вариантов, чтобы не пухла
+                                        if (_serverAddressSuggestions.length >
+                                            5) {
+                                          _serverAddressSuggestions.removeAt(0);
+                                        }
+                                      });
+                                    }
+
+                                    _authState.serverAddressSuggestions.value =
+                                        _serverAddressSuggestions;
+
+                                    /// логинимся
+                                    /// Если пользователь разлогинился не с домашней странички(а, например, со страницы профиля),
+                                    /// надо его возвращать туда, откуда он разлогинился. Но это произойдет само, т.к.
+                                    /// authState у нас теперь реактивный, а при логауте url мы не меняем
+                                    asyncShowProgressIndicatorOverlay(
+                                      asyncFunction: () {
+                                        return authController.login(
+                                            _applicationState
+                                                .inDemonstrationMode.value,
+                                            _loginEditingController.text,
+                                            _passwordEditingController.text,
+                                            _serverAddressEditingController
+                                                .text);
+                                      },
+                                    );
+                                  },
+                                  padding: EdgeInsets.symmetric(vertical: 8),
+                                ),
+                              ],
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 32, top: 16),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    authController.errorText ?? "",
+                                    style: TextStyle(
+                                      // #TODO: из error style надо брать цвет
+                                      color: Colors.red,
+                                    ),
+                                  )
+                                ],
+                              ),
                             ),
                           ],
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(bottom: 32, top: 16),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(
-                                authController.errorText ?? "",
-                                style: TextStyle(
-                                  // #TODO: из error style надо брать цвет
-                                  color: Colors.red,
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                      ],
-                    )),
+                        )),
+                  );
+                },
               ),
             ),
           ]),
