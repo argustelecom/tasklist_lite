@@ -9,7 +9,7 @@ import 'package:tasklist_lite/state/persistent_state.dart';
 /// Общие атрибуты приложения: выбранная тема, флажок демо-режима, возможные адреса серверов и т.д.
 class ApplicationState extends PersistentState {
   static const Map<String, String> _defaultPossibleServers = const {
-      "localhost": "http://localhost:8080",
+      "localhost": "http://localhost:8080", 
     "jboss5": "http://jboss5:8080"
   };
 

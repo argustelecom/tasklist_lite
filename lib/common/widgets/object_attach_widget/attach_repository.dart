@@ -16,16 +16,16 @@ class AttachRepository extends GetxService{
   //late String basicAuth = "Basic ZGV2ZWxvcGVyOmRldmVsb3Blcg==";
   late String serverAddress = authController.authState.serverAddress.value!;
 
-  void sendObjectAttaches(List<ObjectAttach> objAttachList) async {
+  Future<void> sendObjectAttaches(List<ObjectAttach> objAttachList) async {
     ObjectAttachRemote objectAttachRemote =
         ObjectAttachRemote(basicAuth, serverAddress);
-    objectAttachRemote.addObjectAttachList(objAttachList);
+    await objectAttachRemote.addObjectAttachList(objAttachList);
   }
 
-  void deleteObjectAttach(ObjectAttach objectAttach) async {
+  Future<void> deleteObjectAttach(ObjectAttach objectAttach) async {
     ObjectAttachRemote objectAttachRemote =
         ObjectAttachRemote(basicAuth, serverAddress);
-    objectAttachRemote.deleteObjectAttachById(objectAttach.id);
+    await objectAttachRemote.deleteObjectAttachById(objectAttach.id);
   }
 
   /// Получение конкретного аттача (известен ID), создает временный файл в системе содержит путь до него в рамках системе
