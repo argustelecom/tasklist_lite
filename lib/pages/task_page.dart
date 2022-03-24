@@ -424,7 +424,7 @@ class _TaskPageState extends State<TaskPage> {
                                 Padding(
                                     padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
                                     child: LimitedBox(
-                                        maxHeight: 450.0,
+                                        maxHeight: 20000,
                                         child: AttribValue(
                                           task: taskListController
                                               .taskListState.currentTask.value!,
@@ -811,7 +811,7 @@ class AttribValue extends StatelessWidget {
     ThemeData themeData = Theme.of(context);
     LinkedHashMap<String, Object?> attributes = task.getAttrValuesByTask();
 
-    return ListView.separated(
+    return ListView.separated(shrinkWrap: true, physics: NeverScrollableScrollPhysics(),
         separatorBuilder: (BuildContext context, int index) {
           if (attributes.keys.elementAt(index) == 'Примечание' &&
               attributes.values.elementAt(index).toString().length > 100) {
