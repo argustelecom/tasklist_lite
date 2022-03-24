@@ -32,7 +32,8 @@ class CommentCard extends StatelessWidget {
               Expanded(
                 child: Padding(
                   padding: EdgeInsets.only(left: 16, top: 8),
-                  child: Text(authState.userInfo.value!.getWorkerNameWithInitials() == comment.person
+                  child: Text(
+                      authState.userInfo.value!.getWorkerNameWithInitial() == comment.person
                       ? "Вы"
                       : "${comment.person}",
                       style:
@@ -69,7 +70,6 @@ class CommentCard extends StatelessWidget {
                           padding: EdgeInsets.only(left: 8, right: 8),
                           textOverflow: TextOverflow.ellipsis),
                     },
-                    // TODO: Заполни тег лист
                     tagsList: Html.tags,
                   ))),
           Padding(

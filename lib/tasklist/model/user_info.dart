@@ -85,7 +85,19 @@ class UserInfo {
     return name.toString();
   }
 
-  /// Имя сотрудника в формате "Фамилия И.О."
+  /// Имя сотрудника в формате "Фамилия И."
+  String getWorkerNameWithInitial() {
+    final name = StringBuffer();
+    name.write(family);
+    if (workerName != null) {
+      name.write(" ");
+      name.write(workerName!.substring(0, 1));
+      name.write(".");
+    }
+    return name.toString();
+  }
+
+  /// Имя сотрудника в формате "Фамилия И.O"
   String getWorkerNameWithInitials() {
     final name = StringBuffer();
     name.write(family);
@@ -93,6 +105,10 @@ class UserInfo {
       name.write(" ");
       name.write(workerName!.substring(0, 1));
       name.write(".");
+      if (surname != null) {
+        name.write(surname!.substring(0, 1));
+        name.write(".");
+      }
     }
     return name.toString();
   }

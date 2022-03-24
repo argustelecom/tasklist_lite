@@ -188,9 +188,9 @@ class TaskCard extends StatelessWidget {
                                 (task.longitude != null)) {
                               baseUrl = baseUrl +
                                   "&pt=" +
-                                  task.latitude.toString() +
+                                  task.longitude.toString() +
                                   "," +
-                                  task.longitude.toString();
+                                  task.latitude.toString();
                             } else if (task.address != null) {
                               // если координаты не заданы, поищем по адресу
                               baseUrl = baseUrl + "&text=" + task.address!;
