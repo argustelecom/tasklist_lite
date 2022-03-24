@@ -10,7 +10,7 @@ automerge-rel:
     TARGET_BRANCH: ""
   script:
     - pip3 install CMRESHandler
-    - python3 "/programmersmount/util/bin/automergegl.py" -b $SOURCE_BRANCH -p $CI_PROJECT_PATH -t "$TARGET_BRANCH" -c "automerge_flutter.conf"
+    - python3.8 "/programmersmount/util/bin/automergegl.py" -b $SOURCE_BRANCH -p $CI_PROJECT_PATH -t "$TARGET_BRANCH" -c "automerge_flutter.conf"
   tags:
     - light
   <<: *filter-rel
