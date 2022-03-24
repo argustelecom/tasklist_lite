@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
 import 'package:tasklist_lite/pages/about_page.dart';
@@ -376,7 +375,8 @@ class TextWithLabelColumn extends StatelessWidget {
     } else if (type == TextType.mail) {
       textWidget = Container(
           alignment: Alignment.centerLeft,
-          child: RichText(text: TextSpan(
+          child: RichText(
+              text: TextSpan(
                   text: value,
                   style: TextStyle(
                       fontSize: 16,
@@ -390,7 +390,8 @@ class TextWithLabelColumn extends StatelessWidget {
     } else if (type == TextType.link) {
       textWidget = Container(
           alignment: Alignment.centerLeft,
-          child: RichText(text: TextSpan(
+          child: RichText(
+              text: TextSpan(
                   text: value,
                   style: TextStyle(
                       fontSize: 16,
@@ -399,7 +400,7 @@ class TextWithLabelColumn extends StatelessWidget {
                   // Обеспечивает открытие ссылки по нажатию
                   recognizer: TapGestureRecognizer()
                     ..onTap = () {
-                      launch("https://$value");
+                      launch("$value");
                     })));
     } else {
       textWidget = Container(
