@@ -206,6 +206,10 @@ class TaskRepository extends GetxService {
     }
 
     /// TODO: если деморежим выключен, нужно отправлять graphQL запрос
+    TaskRemoteClient taskRemoteClient =
+    TaskRemoteClient(basicAuth, serverAddress);
+    await taskRemoteClient.markWorksNotRequired(
+        taskInstanceId, workTypes);
     return true;
   }
 }
