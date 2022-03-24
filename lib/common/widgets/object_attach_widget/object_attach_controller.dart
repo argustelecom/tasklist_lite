@@ -10,6 +10,7 @@ import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:tasklist_lite/common/widgets/object_attach_widget/utils/file_converter.dart';
 import 'package:tasklist_lite/common/widgets/object_attach_widget/utils/file_manager.dart';
 import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/state/auth_controller.dart';
@@ -66,12 +67,6 @@ class ObjectAttachController extends GetxController {
 
   List<File> get files => _files;
 
-  // список изображений(пока не отказался от идеи держать файлы и изображения
-  // в разных списках)
-  List<XFile>? _images = <XFile>[].obs;
-
-  List<XFile>? get images => _images;
-
   ObjectAttachController(this.objectId);
 
   @override
@@ -109,18 +104,12 @@ class ObjectAttachController extends GetxController {
     final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
 
     if (photo != null) {
-      // см. комент к полю _images
-      List<XFile>? _images = <XFile>[];
-      _images.add(photo);
-      //_attachRepository.sendObjectAttaches(basicAuth, serverAddress,_images.map((e) => fileXToObjectAttach(e)).toList());
-
-      // TODO: перечитаем репозиторий, для проверки просто сетим выбранные файлы напрямую
-      // refreshObjectAttachList();
-      //_objectAttachList.addAll(_images.map((e) => fileXToObjectAttach(e)).toList());
+      ObjectAttach attach = await FileConverter().fileXToObjectAttach(photo, this.objectId);
+      await _attachRepository.sendObjectAttaches(List.filled(1, attach));
     } else {
       // пользователь отменил прикрепление фото
     }
-    update();
+    refreshObjectAttachList();
   }
 
   /// Позволяет сформировать список фотографий и изображений. Файлы достаются стредствами ОС
@@ -129,19 +118,21 @@ class ObjectAttachController extends GetxController {
 
     List<XFile>? selectedImages = await _picker.pickMultiImage();
     if (selectedImages != null) {
-      // см. комент к полю _images
-      List<XFile>? _images = <XFile>[];
-      _images.addAll(selectedImages);
-      //_attachRepository.sendObjectAttaches(basicAuth, serverAddress,_images.map((e) => fileXToObjectAttach(e)).toList());
 
-      // TODO: перечитаем репозиторий, для проверки просто сетим выбранные файлы напрямую
-      // refreshObjectAttachList();
-      //_objectAttachList.addAll(_images.map((e) => fileXToObjectAttach(e)).toList());
+      List<ObjectAttach> objectAttaches = [];
+      ObjectAttach object;
 
-    } else {
+      for(var i = 0; i < selectedImages.length; i++){
+        object = await FileConverter().fileXToObjectAttach(selectedImages[i], this.objectId);
+        objectAttaches.add(object);
+      }
+
+      await _attachRepository.sendObjectAttaches(objectAttaches);
+    }
+    else {
       // пользователь отменил прикрепление изображений
     }
-    update();
+    refreshObjectAttachList();
   }
 
   /// Удаление конкретного вложения
