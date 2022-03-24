@@ -12,7 +12,7 @@ import 'auth_state.dart';
 
 class CommentController extends GetxController {
   /// Ищем нужные нам штуки
-  CommentRepository historyEventRepository = Get.find();
+  CommentRepository commentRepository = Get.find();
   TaskListController taskListController = Get.find();
   AuthController authController = Get.find();
   AuthState authState = Get.find();
@@ -30,7 +30,7 @@ class CommentController extends GetxController {
 
     commentSubscription = resubscribe<List<Comment>>(
         commentSubscription,
-        historyEventRepository.streamComments(
+        commentRepository.streamComments(
             authState.authString.value!,
             authState.serverAddress.value!,
             taskListController.taskListState.currentTask.value), (event) {
