@@ -93,7 +93,7 @@ class ObjectAttachController extends GetxController {
     List<ObjectAttach>? oaList =
         await FileManager.instance.pickFiles(this.objectId);
     if (oaList != null) {
-      _attachRepository.sendObjectAttaches(oaList);
+      await _attachRepository.sendObjectAttaches(oaList);
     }
     refreshObjectAttachList();
 
@@ -145,14 +145,13 @@ class ObjectAttachController extends GetxController {
   }
 
   /// Удаление конкретного вложения
-  void deleteAttach(ObjectAttach objectAttach) {
-    _attachRepository.deleteObjectAttach(objectAttach);
+  void deleteAttach(ObjectAttach objectAttach) async {
+    await _attachRepository.deleteObjectAttach(objectAttach);
     refreshObjectAttachList();
   }
 
   /// Скачивание файла на конечное устройство
-  Future<void> downloadFile(
-      ObjectAttach objectAttach, BuildContext context) async {
+  Future<void> downloadFile(ObjectAttach objectAttach, BuildContext context) async {
     ObjectAttach attach = await _attachRepository.getObjectAttach(objectAttach);
     FileManager.instance.downloadFile(attach, context);
   }

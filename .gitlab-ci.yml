@@ -1,9 +1,13 @@
 image: 192.168.103.210:5000/gitlab-runner:flutter
 # стадии сборки
 stages:
+  - branch-routines
   - build-web
   - build-apk
   - prepare-artifact
+
+include:
+  - "/gitlab-ci-templates/rel-pipeline.yml"
 
 variables:
   VERSION: " 1.0.0+$CI_PIPELINE_ID"
@@ -13,17 +17,15 @@ variables:
   VOLGA_SERVERS: '{"Тест (dargus)": "http://10.160.16.142:8080/"}'
   URAL_SERVERS: '{"Тест1": "http://10.184.86.35:8080/", "Тест5": "http://10.184.67.30:8080/"}'
 
-
-before_script:
-  - chmod 777 ./* ./.linuxbuild/*
-  - dos2unix ./* ./.linuxbuild/*
-  - sed -i "s/^version.*/version:$VERSION/g" pubspec.yaml
-  - echo "Get projects dependencies"
-  - flutter pub get
-
 # сборка WEB приложения
 build web:
   stage: build-web
+  before_script:
+    - chmod 777 ${CI_PROJECT_DIR}/* ${CI_PROJECT_DIR}/.linuxbuild/*
+    - dos2unix ${CI_PROJECT_DIR}/* ${CI_PROJECT_DIR}/.linuxbuild/*
+    - sed -i "s/^version.*/version:$VERSION/g" ${CI_PROJECT_DIR}/pubspec.yaml
+    - echo "Get projects dependencies"
+    - flutter pub get
   script:
     - echo "Build wed application"
     - flutter build web
@@ -39,6 +41,12 @@ build web:
 # сборка APK приложения
 build apk:
   stage: build-apk
+  before_script:
+    - chmod 777 ${CI_PROJECT_DIR}/* ${CI_PROJECT_DIR}/.linuxbuild/*
+    - dos2unix ${CI_PROJECT_DIR}/* ${CI_PROJECT_DIR}/.linuxbuild/*
+    - sed -i "s/^version.*/version:$VERSION/g" ${CI_PROJECT_DIR}/pubspec.yaml
+    - echo "Get projects dependencies"
+    - flutter pub get
   script:
     - echo "Build apk application"
     - flutter build apk --release
@@ -56,6 +64,12 @@ build apk:
 # сборка HTTPD приложения
 build httpd:
   stage: prepare-artifact
+  before_script:
+    - chmod 777 ${CI_PROJECT_DIR}/* ${CI_PROJECT_DIR}/.linuxbuild/*
+    - dos2unix ${CI_PROJECT_DIR}/* ${CI_PROJECT_DIR}/.linuxbuild/*
+    - sed -i "s/^version.*/version:$VERSION/g" ${CI_PROJECT_DIR}/pubspec.yaml
+    - echo "Get projects dependencies"
+    - flutter pub get
   script:
     - echo "Download httpd-2.4.53-win32-VS16.zip"
     - curl https://www.apachelounge.com/download/VS16/binaries/httpd-2.4.53-win32-VS16.zip --output httpd-2.4.zip
@@ -81,6 +95,12 @@ build httpd:
 build web for customers:
   when: manual
   stage: prepare-artifact
+  before_script:
+    - chmod 777 ${CI_PROJECT_DIR}/* ${CI_PROJECT_DIR}/.linuxbuild/*
+    - dos2unix ${CI_PROJECT_DIR}/* ${CI_PROJECT_DIR}/.linuxbuild/*
+    - sed -i "s/^version.*/version:$VERSION/g" ${CI_PROJECT_DIR}/pubspec.yaml
+    - echo "Get projects dependencies"
+    - flutter pub get
   script:
     - echo "Prepare web application for cutomers"
     - echo "prepare ural"
