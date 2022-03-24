@@ -20,9 +20,10 @@ class FileConverter {
   }
 
   /// Конвертация файла изображения(dart:io) в объект для отправки на бэкенд
-  ObjectAttach fileXToObjectAttach(XFile xFile, int objectId){
+  Future<ObjectAttach> fileXToObjectAttach(XFile xFile, int objectId) async {
+    Uint8List fileData = await xFile.readAsBytes();
     return ObjectAttach(id:-1 , objectId: objectId, fileName:xFile.name, filePath:xFile.path,
-        attachmentData:"", createDate: DateTime.now(), workerName: authController.authState.userInfo.value!.workerName??"Неизвестен");
+        attachmentData:base64.encode(fileData), createDate: DateTime.now(), workerName: authController.authState.userInfo.value!.workerName??"Неизвестен");
   }
 
   /// Конвертация Base64 -> Файл. Сохранение во временном каталоге, возвращает путь до файла
