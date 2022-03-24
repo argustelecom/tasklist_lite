@@ -21,7 +21,13 @@ class ProfilePage extends StatelessWidget {
     EdgeInsets paddingSettingBlock = EdgeInsets.only(bottom: 2);
     return GetX<AuthController>(builder: (authController) {
       // #TODO: вообще может(но не долго) быть null, если мы нажали f5, и state асинхронно поднимается из хранилища
-      UserInfo userInfo = authController.authState.userInfo.value!;
+      UserInfo userInfo = authController.authState.userInfo.value ??
+          new UserInfo(
+              family: "Информация отстуствует",
+              homeRegionName: "Информация отстуствует",
+              userName: "Информация отстуствует",
+              securityRoleNames: ["Информация о ролях отсутствует"],
+              securityRoles: ["Информация о ролях отсутствует"]);
       return ReflowingScaffold(
           appBar: AppBar(
             // нажатие на заголовок должно возвращать назад
@@ -40,7 +46,7 @@ class ProfilePage extends StatelessWidget {
                 routerDelegate.popRoute();
               },
             ),
-            toolbarHeight: 50,
+            toolbarHeight: 70,
             elevation: 5.0,
             titleSpacing: 0.0,
             actions: [
@@ -50,6 +56,9 @@ class ProfilePage extends StatelessWidget {
                 tooltip: 'Выход',
                 icon: const Icon(Icons.exit_to_app_outlined),
                 onPressed: () {
+                  //TASK-126749#п4. сбросим текущий путь в адресной строке и логаут
+                  GetDelegate routerDelegate = Get.find();
+                  routerDelegate.popRoute();
                   authController.logout();
                 },
               )
@@ -79,19 +88,26 @@ class ProfilePage extends StatelessWidget {
                               children: [
                                 TextWithLabelColumn(
                                     label: "ФИО:",
-                                    value: userInfo.getFullWorkerName()),
+                                    value:
+                                        userInfo.getFullWorkerName().isNotEmpty
+                                            ? userInfo.getFullWorkerName()
+                                            : "Не заполнено"),
                                 TextWithLabelColumn(
                                     label: "Табельный номер:",
-                                    value: userInfo.tabNumber.toString()),
+                                    value: userInfo.tabNumber?.toString() ??
+                                        "Не заполнено"),
                                 TextWithLabelColumn(
                                     label: "Почтовый адрес:",
-                                    value: userInfo.email.toString()),
+                                    value: userInfo.email?.toString() ??
+                                        "Не заполнено"),
                                 TextWithLabelColumn(
                                     label: "Должность:",
-                                    value: userInfo.workerAppoint.toString()),
+                                    value: userInfo.workerAppoint?.toString() ??
+                                        "Не заполнено"),
                                 TextWithLabelColumn(
                                     label: "Основной участок:",
-                                    value: userInfo.mainWorksite.toString())
+                                    value: userInfo.mainWorksite?.toString() ??
+                                        "Не заполнено")
                               ]))),
                   Container(
                       padding: EdgeInsets.only(top: 10),
@@ -184,88 +200,90 @@ class ProfilePage extends StatelessWidget {
                                                       // дизеблит переключатель в ui (тускнет и окрашивается в серый цвет)
                                                       onChanged: null)))
                                     ])))),
+                  InkResponse(
+                    highlightShape: BoxShape.rectangle,
+                    onTap: () {
+                      GetDelegate routerDelegate = Get.find();
+                      routerDelegate.toNamed(SupportPage.routeName);
+                    },
+                    child: Padding(
+                        padding: paddingSettingBlock,
+                        child: Card(
+                            elevation: 3,
+                            child: SizedBox(
+                                height: 50.0,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Padding(
+                                        padding: EdgeInsets.only(left: 15),
+                                        child: Text("Служба поддержки")),
+                                    Container(
+                                      alignment: Alignment.centerRight,
+                                      padding: EdgeInsets.only(right: 15),
+                                      child: const Icon(
+                                          Icons.chevron_right_outlined,
+                                          size: 30),
+                                    )
+                                  ],
+                                )))),
+                  ),
 
-                  Padding(
-                      padding: paddingSettingBlock,
-                      child: Card(
-                          elevation: 3,
-                          child: SizedBox(
-                              height: 50.0,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Padding(
-                                      padding: EdgeInsets.only(left: 15),
-                                      child: Text("Служба поддержки")),
-                                  IconButton(
-                                      alignment: Alignment.centerRight,
-                                      padding: EdgeInsets.only(right: 15),
-                                      iconSize: 30,
-                                      tooltip: 'Служба поддержки',
-                                      icon: const Icon(
-                                          Icons.chevron_right_outlined),
-                                      onPressed: () {
-                                        GetDelegate routerDelegate = Get.find();
-                                        routerDelegate
-                                            .toNamed(SupportPage.routeName);
-                                      })
-                                ],
-                              )))),
-                  Padding(
-                      padding: paddingSettingBlock,
-                      child: Card(
-                          elevation: 3,
-                          child: SizedBox(
-                              height: 50.0,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Padding(
-                                      padding: EdgeInsets.only(left: 15),
-                                      child: Text("Помощь")),
-                                  IconButton(
-                                      alignment: Alignment.centerRight,
-                                      padding: EdgeInsets.only(right: 15),
-                                      iconSize: 30,
-                                      tooltip: 'Помощь',
-                                      icon: const Icon(
-                                          Icons.chevron_right_outlined),
-                                      onPressed: () {
-                                        GetDelegate routerDelegate = Get.find();
-                                        routerDelegate
-                                            .toNamed(HelpPage.routeName);
-                                      })
-                                ],
-                              )))),
-                  Padding(
-                      padding: paddingSettingBlock,
-                      child: Card(
-                          elevation: 3,
-                          child: SizedBox(
-                              height: 50.0,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Padding(
-                                      padding: EdgeInsets.only(left: 15),
-                                      child: Text("О приложении")),
-                                  IconButton(
-                                      alignment: Alignment.centerRight,
-                                      padding: EdgeInsets.only(right: 15),
-                                      iconSize: 30,
-                                      tooltip: 'О приложении',
-                                      icon: const Icon(
-                                          Icons.chevron_right_outlined),
-                                      onPressed: () {
-                                        GetDelegate routerDelegate = Get.find();
-                                        routerDelegate
-                                            .toNamed(AboutPage.routeName);
-                                      })
-                                ],
-                              ))))
+                  InkResponse(
+                      highlightShape: BoxShape.rectangle,
+                      onTap: () {
+                        GetDelegate routerDelegate = Get.find();
+                        routerDelegate.toNamed(HelpPage.routeName);
+                      },
+                      child: Padding(
+                          padding: paddingSettingBlock,
+                          child: Card(
+                              elevation: 3,
+                              child: SizedBox(
+                                  height: 50.0,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Padding(
+                                          padding: EdgeInsets.only(left: 15),
+                                          child: Text("Помощь")),
+                                      Container(
+                                          alignment: Alignment.centerRight,
+                                          padding: EdgeInsets.only(right: 15),
+                                          child: const Icon(
+                                              Icons.chevron_right_outlined,
+                                              size: 30))
+                                    ],
+                                  ))))),
+                  InkResponse(
+                      highlightShape: BoxShape.rectangle,
+                      onTap: () {
+                        GetDelegate routerDelegate = Get.find();
+                        routerDelegate.toNamed(AboutPage.routeName);
+                      },
+                      child: Padding(
+                          padding: paddingSettingBlock,
+                          child: Card(
+                              elevation: 3,
+                              child: SizedBox(
+                                  height: 50.0,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Padding(
+                                          padding: EdgeInsets.only(left: 15),
+                                          child: Text("О приложении")),
+                                      Container(
+                                          alignment: Alignment.centerRight,
+                                          padding: EdgeInsets.only(right: 15),
+                                          child: const Icon(
+                                              Icons.chevron_right_outlined,
+                                              size: 30))
+                                    ],
+                                  )))))
                 ])
               ]));
     });
@@ -357,31 +375,33 @@ class TextWithLabelColumn extends StatelessWidget {
     } else if (type == TextType.mail) {
       textWidget = Container(
           alignment: Alignment.centerLeft,
-          child: RichText(text: TextSpan(
-              text: value,
-              style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.blue,
-                  decoration: TextDecoration.underline),
-              // Обеспечивает открытие ссылки по нажатию
-              recognizer: TapGestureRecognizer()
-                ..onTap = () {
-                  launch("mailto:$value");
-                })));
-    }else if (type == TextType.link) {
+          child: RichText(
+              text: TextSpan(
+                  text: value,
+                  style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.blue,
+                      decoration: TextDecoration.underline),
+                  // Обеспечивает открытие ссылки по нажатию
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () {
+                      launch("mailto:$value");
+                    })));
+    } else if (type == TextType.link) {
       textWidget = Container(
           alignment: Alignment.centerLeft,
-          child: RichText(text: TextSpan(
-              text: value,
-              style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.blue,
-                  decoration: TextDecoration.underline),
-              // Обеспечивает открытие ссылки по нажатию
-              recognizer: TapGestureRecognizer()
-                ..onTap = () {
-                  launch("https://$value");
-                })));
+          child: RichText(
+              text: TextSpan(
+                  text: value,
+                  style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.blue,
+                      decoration: TextDecoration.underline),
+                  // Обеспечивает открытие ссылки по нажатию
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () {
+                      launch("$value");
+                    })));
     } else {
       textWidget = Container(
           alignment: Alignment.centerLeft,

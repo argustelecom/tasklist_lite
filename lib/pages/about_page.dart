@@ -45,7 +45,7 @@ class AboutPage extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.only(bottom: 10),
                     child: Text(
-                        "Фигаро - приложение для быстрых выездных специалистов лучшего оператора РФ!",
+                        "Фигаро - приложение для быстрых выездных сотрудников крупнейшего в России провайдера цифровых услуг и решений.",
                         style: TextStyle(fontSize: 16),
                         textAlign: TextAlign.center),
                   ),
@@ -85,15 +85,15 @@ class AboutPage extends StatelessWidget {
                                   label: "Разработчик приложения:",
                                   value: "ООО “НТЦ АРГУС”"),
                               TextWithLabelColumn(
-                                  label: "Сайт:",
-                                  value: "argustelecom.ru",
-                                  type: TextType.link),
-                              TextWithLabelColumn(
-                                  label: "Телефон технической поддержки:",
+                                  label: "Контактный телефон:",
                                   value: "+7(812)333-36-61",
                                   type: TextType.phone),
                               TextWithLabelColumn(
-                                  label: "E-mail технической поддержки:",
+                                  label: "Сайт компании:",
+                                  value: "https://argustelecom.ru/",
+                                  type: TextType.link),
+                              TextWithLabelColumn(
+                                  label: "E-mail:",
                                   value: "support@argustelecom.ru",
                                   type: TextType.mail),
                             ])))

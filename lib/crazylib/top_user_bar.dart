@@ -22,19 +22,29 @@ class TopUserBar extends StatelessWidget implements PreferredSizeWidget {
                 }),
             titleSpacing: 0.0,
             toolbarHeight: 100,
-            title: Column(
-              children: [
-                Text(
-                    authController.authState.userInfo.value == null
-                        ? ""
-                        : authController.authState.userInfo.value!.userName +
-                            ",",
-                    key: ValueKey('$TopUserBar' + '_username')),
-                Text(authController.authState.userInfo.value == null
-                    ? ""
-                    : authController.authState.userInfo.value!.homeRegionName),
-              ],
-            ),
+            title: InkResponse(
+                highlightShape: BoxShape.rectangle,
+                child: Padding(
+                    padding: EdgeInsets.zero,
+                    child: Column(
+                      children: [
+                        Text(
+                            authController.authState.userInfo.value == null
+                                ? ""
+                                : authController
+                                        .authState.userInfo.value!.userName +
+                                    ",",
+                            key: ValueKey('$TopUserBar' + '_username')),
+                        Text(authController.authState.userInfo.value == null
+                            ? ""
+                            : authController
+                                .authState.userInfo.value!.homeRegionName),
+                      ],
+                    )),
+                onTap: () {
+                  GetDelegate routerDelegate = Get.find();
+                  routerDelegate.toNamed(ProfilePage.routeName);
+                }),
             actions: [
               // Вызваем NotificationController, чтобы взять у него инфу по наличию уведомлений
               GetBuilder<NotificationController>(
@@ -46,7 +56,8 @@ class TopUserBar extends StatelessWidget implements PreferredSizeWidget {
                         children: [
                           Positioned(
                             child: IconButton(
-                              iconSize: 36, //IconTheme.of(context).size ?? 24,
+                              iconSize: 36,
+                              //IconTheme.of(context).size ?? 24,
                               tooltip: 'Уведомления',
                               // Если есть, то колокольчик звонит, а если нет ...
                               icon: Icon(
