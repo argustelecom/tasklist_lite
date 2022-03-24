@@ -6,8 +6,12 @@ import 'package:tasklist_lite/tasklist/model/notify.dart';
 import 'package:tasklist_lite/tasklist/notification_repository.dart';
 
 import '../common/resubscribe.dart';
+import 'auth_controller.dart';
 
 class NotificationController extends GetxController {
+  AuthController authController = Get.find();
+  AuthState authState = Get.find();
+
   /// Список уведомлений, которые еще не прочитаны. Его будем выводить на UI
   List<Notify> aliveNotifications = List.of({});
 
@@ -28,6 +32,10 @@ class NotificationController extends GetxController {
   /// Метод для удаления уведомления из списка живых уведомлений
   removeAliveNotification(Notify notify) {
     aliveNotifications.remove(notify);
+    NotificationRepository().readNotify(
+        authController.authState.authString.value!,
+        authController.authState.serverAddress.value!,
+        notify);
     update();
   }
 
