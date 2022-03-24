@@ -1,7 +1,6 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:tasklist_lite/crazylib/comment_card.dart';
@@ -53,7 +52,7 @@ class _TaskPageState extends State<TaskPage> {
     );
 
     // Это дефолтный скроллконтрроллер, используем на вкладке история, чтобы перематывать на последнее событие т.к. это удобно для пользователя
-    ScrollController CommentScrollController = new ScrollController();
+    ScrollController commentScrollController = new ScrollController();
 
     return DefaultTabController(
         length: 5,
@@ -134,13 +133,15 @@ class _TaskPageState extends State<TaskPage> {
                             EdgeInsets.only(left: 12, right: 12, bottom: 12),
                         child: Card(
                             elevation: 3,
+                            child : SingleChildScrollView(
+                                physics: ScrollPhysics(),
                             child: Column(
                               children: [
                                 Row(
                                     children: [
                                       //Это тут для того, чтобы наряды ТО у нас не падали т.к. у них нет этапа
                                       if (taskListController.taskListState
-                                              .currentTask.value!.stage !=
+                                          .currentTask.value?.stage !=
                                           null)
                                         Column(
                                           children: [
@@ -148,8 +149,7 @@ class _TaskPageState extends State<TaskPage> {
                                                 padding: EdgeInsets.fromLTRB(
                                                     16, 8, 16, 12),
                                                 child: Row(children: [
-                                                  Text(
-                                                      "${taskListController.taskListState.currentTask.value!.stage!.name}",
+                                                  Text("${taskListController.taskListState.currentTask.value?.stage?.name}",
                                                       style: TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold)),
@@ -235,14 +235,14 @@ class _TaskPageState extends State<TaskPage> {
                                                             .taskListState
                                                             .currentTask
                                                             .value!
-                                                            .latitude
+                                                            .longitude
                                                             .toString() +
                                                         "," +
                                                         taskListController
                                                             .taskListState
                                                             .currentTask
                                                             .value!
-                                                            .longitude
+                                                            .latitude
                                                             .toString();
                                                   } else if (taskListController
                                                           .taskListState
@@ -409,7 +409,7 @@ class _TaskPageState extends State<TaskPage> {
                                                         4,
                                                         taskListController
                                                             .taskListState
-                                                            .currentTask
+                                                                .currentTask
                                                             .value!
                                                             .stage!),
                                                 color: Colors.yellow.shade700,
@@ -424,13 +424,13 @@ class _TaskPageState extends State<TaskPage> {
                                 Padding(
                                     padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
                                     child: LimitedBox(
-                                        maxHeight: 450.0,
+                                        maxHeight: 20000,
                                         child: AttribValue(
                                           task: taskListController
-                                              .taskListState.currentTask.value!,
+                                              .taskListState.currentTask.value,
                                         ))),
                               ],
-                            )),
+                            ))),
                       ),
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 12),
@@ -460,7 +460,7 @@ class _TaskPageState extends State<TaskPage> {
                                           itemCount: commentController
                                               .getComments()
                                               .length,
-                                          controller: CommentScrollController,
+                                          controller: commentScrollController,
                                           itemBuilder: (BuildContext context,
                                               int index) {
                                             return InkWell(
@@ -536,8 +536,8 @@ class _TaskPageState extends State<TaskPage> {
                                                       .currentTask
                                                       .value!);
                                               commentTextController.clear();
-                                              CommentScrollController.animateTo(
-                                                CommentScrollController
+                                              commentScrollController.animateTo(
+                                                commentScrollController
                                                     .position.maxScrollExtent,
                                                 curve: Curves.easeOut,
                                                 duration: const Duration(
@@ -598,9 +598,9 @@ class _TaskPageState extends State<TaskPage> {
                                                                 .value!);
                                                     commentTextController
                                                         .clear();
-                                                    CommentScrollController
+                                                    commentScrollController
                                                         .animateTo(
-                                                      CommentScrollController
+                                                      commentScrollController
                                                           .position
                                                           .maxScrollExtent,
                                                       curve: Curves.easeOut,
@@ -625,6 +625,7 @@ class _TaskPageState extends State<TaskPage> {
             }));
   }
 }
+
 
 class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Task task;
@@ -800,17 +801,17 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
 /// Тут мы не используем группы, они нам не нужны
 /// ListView.separated выбран для реализации кнопки показать все
 class AttribValue extends StatelessWidget {
-  final Task task;
-  TaskListController taskListController = Get.find();
+  final Task? task;
+  final TaskListController taskListController = Get.find();
 
   AttribValue({Key? key, required this.task}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     ThemeData themeData = Theme.of(context);
-    LinkedHashMap<String, Object?> attributes = task.getAttrValuesByTask();
-
-    return ListView.separated(
+    if(task != null){
+    LinkedHashMap<String, Object?> attributes = task!.getAttrValuesByTask();
+    return ListView.separated(shrinkWrap: true, physics: NeverScrollableScrollPhysics(),
         separatorBuilder: (BuildContext context, int index) {
           if (attributes.keys.elementAt(index) == 'Примечание' &&
               attributes.values.elementAt(index).toString().length > 100) {
@@ -868,7 +869,10 @@ class AttribValue extends StatelessWidget {
                               ]))))
             ]),
           ]);
-        });
+        });}
+      else{
+        return Container();
+      }
   }
 }
 
