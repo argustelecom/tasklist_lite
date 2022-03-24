@@ -21,36 +21,38 @@ class MarkCard extends StatelessWidget {
       margin: EdgeInsets.all(5),
       child: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.only(left: 10, top: 6),
-                  child: Text("${mark.type}",
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Roboto'
-                      )),
-                ),
-              ),
-              Padding(
-                  padding: EdgeInsets.only(top: 6, right: 3),
-                  child: Container(
-                    child: Text(
-                      "${mark.value}" + " балл.",
-                      style: TextStyle(fontSize: 14, color: Color(0xA6000000)),
-                      maxLines: 10,
+          Padding(
+              padding: EdgeInsets.only(bottom: 9),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 10, top: 6),
+                      child: Text("${mark.type}",
+                          style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'Roboto')),
                     ),
-                  ))
-            ],
-          ),
+                  ),
+                  Padding(
+                      padding: EdgeInsets.only(top: 6, right: 3),
+                      child: Container(
+                        child: Text(
+                          "${mark.value}" + " балл.",
+                          style:
+                              TextStyle(fontSize: 14, color: Color(0xA6000000)),
+                          maxLines: 10,
+                        ),
+                      ))
+                ],
+              )),
           Container(
               child: Align(
             alignment: Alignment.topLeft,
             child: Padding(
-                padding: EdgeInsets.only(left: 10, right: 10),
+                padding: EdgeInsets.only(left: 10, right: 10, bottom: 9),
                 child: Text(
                   "${mark.reason}",
                   style: const TextStyle(fontSize: 14),
@@ -63,7 +65,7 @@ class MarkCard extends StatelessWidget {
             children: [
               Expanded(
                 child: Padding(
-                  padding: EdgeInsets.only(left: 10, bottom: 5),
+                  padding: EdgeInsets.only(left: 10, bottom: 10),
                   child: Text("${mark.worker}",
                       style: const TextStyle(
                           fontSize: 12, color: Color(0x6000000A))),
