@@ -1,11 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:tasklist_lite/crazylib/work_card.dart';
 
 import '../state/tasklist_controller.dart';
+import 'crazy_progress_dialog.dart';
+import 'info_dialog.dart';
 
 /// #TODO[НИ]:
 /// -- вынести state и поведение, посвященное работам, из taskListController в новый workController
@@ -32,9 +35,9 @@ class WorksTab extends StatefulWidget {
 class WorksTabState extends State<WorksTab> {
   TaskListController taskListController = Get.find();
   ScrollController scrollController = new ScrollController();
-   bool _isScrolling = false;
+  bool _isScrolling = false;
 
- void onScroll() async {
+  void onScroll() async {
     scrollController.addListener(() {
       if (scrollController.position.userScrollDirection ==
           ScrollDirection.reverse) {
@@ -54,10 +57,6 @@ class WorksTabState extends State<WorksTab> {
   void initState() {
     super.initState();
     scrollController.addListener(onScroll);
-    task = taskListController.taskListState.currentTask.value;
-    if (task != null) {
-      works = workRepository.orderWorksByState(task!.works);
-    }
   }
 
   @override
@@ -65,7 +64,6 @@ class WorksTabState extends State<WorksTab> {
     scrollController.removeListener(() {});
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -115,17 +113,17 @@ class WorksTabState extends State<WorksTab> {
               child: Text("Работы не найдены.", textAlign: TextAlign.center))
         else
           Expanded(
-              child: Stack(children: [ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: taskListController.getWorks().length,
-                  itemBuilder: (context, index) {
-                    return WorkCard(
-                      work: taskListController
-                          .getWorks()[index], //taskList[index],
-                    );
-                  })
-
-  Positioned(
+              child: Stack(children: [
+            ListView.builder(
+                shrinkWrap: true,
+                itemCount: taskListController.getWorks().length,
+                itemBuilder: (context, index) {
+                  return WorkCard(
+                    work:
+                        taskListController.getWorks()[index], //taskList[index],
+                  );
+                }),
+            Positioned(
                 bottom: 15,
                 right: 5,
                 child: FloatingActionButton.extended(
@@ -144,8 +142,9 @@ class WorksTabState extends State<WorksTab> {
                       Icon(Icons.block, color: Color(0xFF323232))
                     ]),
                     onPressed: () async {
-                      if (task!.works != null && task!.works!.isNotEmpty) {
-                        List<int> workTypes = task!.works!
+                      if (taskListController.getWorks().isNotEmpty) {
+                        List<int> workTypes = taskListController
+                            .getWorks()
                             .where((e) =>
                                 (e.workDetail == null ||
                                     e.workDetail!.isEmpty) &&
@@ -156,7 +155,10 @@ class WorksTabState extends State<WorksTab> {
                           await asyncShowProgressIndicatorOverlay(
                               asyncFunction: () {
                             return taskListController.markWorksNotRequired(
-                                task!.id, workTypes);
+                                // #TODO[НИ]: не надо передавать id. Тут вообще параметр лишний.
+                                taskListController
+                                    .taskListState.currentTask.value!.id,
+                                workTypes);
                           });
                         } catch (e) {
                           showDialog(
@@ -172,10 +174,7 @@ class WorksTabState extends State<WorksTab> {
                         }
                       }
                     }))
-          ])
-
-
-                  )
+          ]))
       ]);
     });
   }
