@@ -258,6 +258,15 @@ class TaskListController extends GetxController {
         authState.serverAddress.value!, taskInstanceId, workDetailId);
   }
 
+  Future<bool> markWorksNotRequired(
+      int taskInstanceId, List<int> workTypes) async {
+    return await taskRepository.markWorksNotRequired(
+        authState.authString.value!,
+        authState.serverAddress.value!,
+        taskInstanceId,
+        workTypes);
+  }
+
   @override
   void onClose() {
     _openedTasksSubscription?.cancel();

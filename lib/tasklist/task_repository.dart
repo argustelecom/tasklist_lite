@@ -164,8 +164,9 @@ class TaskRepository extends GetxService {
 
     /// TODO: если деморежим выключен, нужно отправлять graphQL запрос
     TaskRemoteClient taskRemoteClient =
-    TaskRemoteClient(basicAuth, serverAddress);
-    return await taskRemoteClient.registerWorkDetail(taskInstanceId, workTypeId, notRequired, amount, workers);
+        TaskRemoteClient(basicAuth, serverAddress);
+    return await taskRemoteClient.registerWorkDetail(
+        taskInstanceId, workTypeId, notRequired, amount, workers);
   }
 
   Future<Work?> deleteWorkDetail(String basicAuth, String serverAddress,
@@ -189,7 +190,26 @@ class TaskRepository extends GetxService {
 
     /// TODO: если деморежим выключен, нужно отправлять graphQL запрос
     TaskRemoteClient taskRemoteClient =
+        TaskRemoteClient(basicAuth, serverAddress);
+    return await taskRemoteClient.deleteWorkDetail(
+        taskInstanceId, workDetailId);
+  }
+
+  Future<bool> markWorksNotRequired(String basicAuth, String serverAddress,
+      int taskInstanceId, List<int> workTypes) async {
+    ApplicationState applicationState = Get.find();
+
+    /// если включен деморежим, возвращаем успех
+    if (applicationState.inDemonstrationMode.value) {
+      await new Future.delayed(const Duration(seconds: 3));
+      return true;
+    }
+
+    /// TODO: если деморежим выключен, нужно отправлять graphQL запрос
+    TaskRemoteClient taskRemoteClient =
     TaskRemoteClient(basicAuth, serverAddress);
-    return await taskRemoteClient.deleteWorkDetail(taskInstanceId, workDetailId);
+    await taskRemoteClient.markWorksNotRequired(
+        taskInstanceId, workTypes);
+    return true;
   }
 }

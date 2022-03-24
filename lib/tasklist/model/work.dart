@@ -30,7 +30,7 @@ class Work {
                 .map((e) => WorkDetail.fromJson(e))
                 .toList())
             : null,
-        notRequired: json['notRequired'] != null ? json['notRequired'] : false,
+        notRequired: json['status'] != null ? json['status'] == 'CANCELED' : false,
         status: json['status']);
     return work;
   }
