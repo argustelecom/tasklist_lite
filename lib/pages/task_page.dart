@@ -235,14 +235,14 @@ class _TaskPageState extends State<TaskPage> {
                                                             .taskListState
                                                             .currentTask
                                                             .value!
-                                                            .latitude
+                                                            .longitude
                                                             .toString() +
                                                         "," +
                                                         taskListController
                                                             .taskListState
                                                             .currentTask
                                                             .value!
-                                                            .longitude
+                                                            .latitude
                                                             .toString();
                                                   } else if (taskListController
                                                           .taskListState
@@ -409,7 +409,7 @@ class _TaskPageState extends State<TaskPage> {
                                                         4,
                                                         taskListController
                                                             .taskListState
-                                                            .currentTask
+                                                                .currentTask
                                                             .value!
                                                             .stage!),
                                                 color: Colors.yellow.shade700,
@@ -427,7 +427,7 @@ class _TaskPageState extends State<TaskPage> {
                                         maxHeight: 20000,
                                         child: AttribValue(
                                           task: taskListController
-                                              .taskListState.currentTask.value!,
+                                              .taskListState.currentTask.value,
                                         ))),
                               ],
                             ))),
@@ -801,7 +801,7 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
 /// Тут мы не используем группы, они нам не нужны
 /// ListView.separated выбран для реализации кнопки показать все
 class AttribValue extends StatelessWidget {
-  final Task task;
+  final Task? task;
   final TaskListController taskListController = Get.find();
 
   AttribValue({Key? key, required this.task}) : super(key: key);
@@ -809,8 +809,8 @@ class AttribValue extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ThemeData themeData = Theme.of(context);
-    LinkedHashMap<String, Object?> attributes = task.getAttrValuesByTask();
-
+    if(task != null){
+    LinkedHashMap<String, Object?> attributes = task!.getAttrValuesByTask();
     return ListView.separated(shrinkWrap: true, physics: NeverScrollableScrollPhysics(),
         separatorBuilder: (BuildContext context, int index) {
           if (attributes.keys.elementAt(index) == 'Примечание' &&
@@ -869,7 +869,10 @@ class AttribValue extends StatelessWidget {
                               ]))))
             ]),
           ]);
-        });
+        });}
+      else{
+        return Container();
+      }
   }
 }
 

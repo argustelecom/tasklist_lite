@@ -99,6 +99,18 @@ class CommentController extends GetxController {
     update();
   }
 
+//TODO: часть костылика для коммента с аттачем. Убрать позже.
+  addAttachComment(String attachName) {
+    commentList.add(Comment(
+        type: "Комментарий",
+        person: "Вы",
+        date: DateTime.now(),
+        isAlarm: false,
+        content:
+            "${authState.userInfo.value!.getWorkerNameWithInitials()} добавил документ $attachName"));
+    update();
+  }
+
   /// Добавлеяем новый коммент с проверкой аварии(для кнопки проверка аварии)
   addNewCrashComment(Task task) {
     // TODO генерировать правильный комментарий
@@ -129,7 +141,7 @@ class CommentController extends GetxController {
   }
 
   /// Признак нужно ли уведомление, когда оставляем комментарий(колокольчик)
-   bool _isAlarmComment = false;
+  bool _isAlarmComment = false;
 
   bool get isAlarmComment => _isAlarmComment;
 
@@ -139,7 +151,7 @@ class CommentController extends GetxController {
   }
 
   /// Храним статус фокуса, для отображения кнопки отправить
-   bool _onTextFieldFocused = false;
+  bool _onTextFieldFocused = false;
 
   bool get onTextFieldFocused => _onTextFieldFocused;
 
@@ -157,5 +169,4 @@ class CommentController extends GetxController {
     _selectedComment = historyEvent;
     update();
   }
-
 }
