@@ -1,3 +1,7 @@
+.filter-rel: &filter-rel
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_REF_NAME =~ /^rel-.*$/
+
 automerge-rel:
   stage: branch-routines
   variables:
@@ -5,9 +9,8 @@ automerge-rel:
     SOURCE_BRANCH: "$CI_BUILD_REF_NAME"
     TARGET_BRANCH: ""
   script:
+    - pip3 install CMRESHandler
     - python3 "/programmersmount/util/bin/automergegl.py" -b $SOURCE_BRANCH -p $CI_PROJECT_PATH -t "$TARGET_BRANCH" -c "automerge_flutter.conf"
   tags:
     - light
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_REF_NAME =~ /^rel-.*$/
-      allow_failure: true
+  <<: *filter-rel
