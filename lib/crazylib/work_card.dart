@@ -1,9 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:tasklist_lite/crazylib/works_manager_dialog.dart';
+import 'package:tasklist_lite/state/tasklist_controller.dart';
 
 import '../tasklist/model/work.dart';
 import 'adaptive_dialog.dart';
+import 'crazy_highlight.dart';
 
 class WorkCard extends StatelessWidget {
   final Work work;
@@ -66,11 +69,17 @@ class WorkCard extends StatelessWidget {
                   children: [
                     Row(mainAxisAlignment: MainAxisAlignment.start, children: [
                       Expanded(
-                          child: Text(work.workType.name,
-                              textAlign: TextAlign.start,
-                              style: TextStyle(
-                                  color: themeData.colorScheme.onPrimary,
-                                  fontSize: 16)))
+                        child: GetBuilder<TaskListController>(
+                            builder: (taskListController) {
+                          return CrazyHighlight(
+                            text: work.workType.name,
+                            term: taskListController.searchWorksText,
+                            textStyle: TextStyle(
+                                color: themeData.colorScheme.onPrimary,
+                                fontSize: 16),
+                          );
+                        }),
+                      )
                     ]),
                     SizedBox(height: 8),
                     workStatus

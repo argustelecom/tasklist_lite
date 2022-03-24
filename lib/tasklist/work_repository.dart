@@ -5,6 +5,7 @@ import 'model/work.dart';
 class WorkRepository extends GetxService {
   List<Work> result = List.of({});
 
+  @Deprecated("вроде вообще не нужен")
   List<Work> filterWorksByName(List<Work>? works, String searchText) {
     List<Work> result = [];
     if (works != null && works.isNotEmpty) {
@@ -16,6 +17,7 @@ class WorkRepository extends GetxService {
 
   // возвращает список работ, отсортированный по статусу:
   // еще не выполненные работы -> выполненные работы -> работы, которые выполнять не требуется
+  @Deprecated("должен уйти в пользу WorksController.getWorks")
   List<Work> orderWorksByState(List<Work>? works) {
     List<Work> result = [];
     if (works != null && works.isNotEmpty) {

@@ -235,7 +235,17 @@ class WorksManagerDialogState extends State<WorksManagerDialog> {
                           newWork.workDetail != null &&
                           newWork.workDetail!.isNotEmpty) {
                         _operationCompleted = true;
+                        final Work oldWork = _work;
                         _work = newWork;
+                        // #TODO[НИ]: копипаст устранить при переходе на WorkController
+                        int oldWorkIndex = taskListController
+                            .taskListState.currentTask.value!.works!
+                            .indexOf(oldWork);
+                        taskListController
+                            .taskListState.currentTask.value!.works!
+                            .replaceRange(
+                                oldWorkIndex, oldWorkIndex + 1, [_work]);
+                        taskListController.update();
                       } else {
                         _registrationMode = true;
                       }
@@ -404,10 +414,27 @@ class WorksManagerDialogState extends State<WorksManagerDialog> {
                     this.setState(() {
                       _operationCompleted = true;
                       _error = null;
+                      final Work oldWork = _work;
                       _work = newWork!;
                       _notRequired = false;
                       _amount = null;
                       _workers = [];
+
+                      // kostd, 24.03.2022: в _work у нас лежит instance-результат операции,
+                      // выполненной на сервере, а в oldWork мы сохранили старый экземпляр.
+                      // Теперь вонзим результат в правильное место мозгов контроллера.
+                      // Если у контроллера предусмотрено такое место (по идее, это ведь
+                      // и есть registerWorkDetail, только получающий еще oldWork, чтобы знать,
+                      // на что заменяиить), то это даже вполне норм. решение и не костыль.
+                      // #TODO[НИ]: сформулировать, а потом зафиксировать нашу концепцию операций
+                      //  в ридми и провести доклад.
+                      int oldWorkIndex = taskListController
+                          .taskListState.currentTask.value!.works!
+                          .indexOf(oldWork);
+                      taskListController.taskListState.currentTask.value!.works!
+                          .replaceRange(
+                              oldWorkIndex, oldWorkIndex + 1, [_work]);
+                      taskListController.update();
                     });
                   }
                 }
@@ -443,10 +470,20 @@ class WorksManagerDialogState extends State<WorksManagerDialog> {
                     this.setState(() {
                       _operationCompleted = true;
                       _error = null;
+                      final Work oldWork = _work;
                       _work = newWork!;
                       _notRequired = false;
                       _amount = null;
                       _workers = [];
+
+                      // #TODO[НИ]: копипаст, убрать вместе с рефакторингом на WorkController
+                      int oldWorkIndex = taskListController
+                          .taskListState.currentTask.value!.works!
+                          .indexOf(oldWork);
+                      taskListController.taskListState.currentTask.value!.works!
+                          .replaceRange(
+                              oldWorkIndex, oldWorkIndex + 1, [_work]);
+                      taskListController.update();
                     });
                   }
                 }
@@ -458,6 +495,8 @@ class WorksManagerDialogState extends State<WorksManagerDialog> {
         buttonBar = Center();
       // кнопка для перехода к диалогу регистрации работы из режима просмотра
       else if (!_registrationMode && !_deletionMode && !_operationCompleted) {
+        // #TODO[НИ]: кнопки здесь должны быть основаны на CrazyButton. Если поведение
+        // CrazyButton чем-то не устраивает, надо ее учить.
         buttonBar = ElevatedButton(
             style: ButtonStyle(
                 backgroundColor:
