@@ -86,7 +86,7 @@ class AboutPage extends StatelessWidget {
                                   value: "ООО “НТЦ АРГУС”"),
                               TextWithLabelColumn(
                                   label: "Контактный телефон:",
-                                  value: "+7(812)333-36-61",
+                                  value: "+7(812)333-36-60",
                                   type: TextType.phone),
                               TextWithLabelColumn(
                                   label: "Сайт компании:",
