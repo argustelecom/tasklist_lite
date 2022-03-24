@@ -1,9 +1,13 @@
 image: 192.168.103.210:5000/gitlab-runner:flutter
 # стадии сборки
 stages:
+  - branch-routines
   - build-web
   - build-apk
   - prepare-artifact
+
+include:
+  - "/gitlab-ci-templates/rel-pipeline.yml"
 
 variables:
   VERSION: " 1.0.0+$CI_PIPELINE_ID"
