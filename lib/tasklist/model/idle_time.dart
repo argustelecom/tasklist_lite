@@ -49,8 +49,8 @@ class IdleTime {
     return IdleTime(
       id: int.parse(json['id']),
       reason: IdleTimeReason.fromJson(json['reason']),
-      startDate: DateTime.parse(json['startDate']),
-      endDate: json['endDate'] != null ? DateTime.parse(json['endDate']) : null,
+      startDate: DateTime.parse(json['beginTime']),
+      endDate: json['endTime'] != null ? DateTime.parse(json['endTime']) : null,
     );
   }
 
@@ -58,8 +58,8 @@ class IdleTime {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id.toString();
     data['reason'] = this.reason.toJson();
-    data['startDate'] = this.startDate.toString();
-    data['endDate'] = this.endDate != null ? this.endDate.toString() : null;
+    data['beginTime'] = this.startDate.toString();
+    data['endTime'] = this.endDate != null ? this.endDate.toString() : null;
     return data;
   }
 }

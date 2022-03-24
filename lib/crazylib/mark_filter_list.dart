@@ -33,7 +33,7 @@ class CastFilterState extends State<MarkTypeFilter> {
                         label: Text(_choices[index]),
                         labelStyle: TextStyle(
                             fontFamily: "ABeeZee",
-                            fontSize: 10,
+                            fontSize: 12,
                             color: Colors.black),
                         selected: _defaultChoiceIndex == index,
                         selectedColor: Colors.yellow.shade700,

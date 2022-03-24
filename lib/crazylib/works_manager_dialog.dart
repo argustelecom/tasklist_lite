@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:intl/intl.dart';
-
 import '../state/tasklist_controller.dart';
 import '../tasklist/model/task.dart';
 import '../tasklist/model/work.dart';
 import '../tasklist/model/worker.dart';
 import 'adaptive_dialog.dart';
+import 'crazy_progress_dialog.dart';
 
 class WorksManagerDialog extends StatefulWidget {
   WorksManagerDialog({Key? key, required this.work}) : super(key: key);
@@ -218,16 +218,22 @@ class WorksManagerDialogState extends State<WorksManagerDialog> {
                   Work? newWork;
                   WorkDetail workDetail = _work.workDetail![_i];
                   try {
-                    newWork = (await taskListController.deleteWorkDetail(
-                        taskListController.taskListState.currentTask.value!.id,
-                        workDetail.id));
+                    newWork = await asyncShowProgressIndicatorOverlay(
+                        asyncFunction: () {
+                      return taskListController.deleteWorkDetail(
+                          taskListController
+                              .taskListState.currentTask.value!.id,
+                          workDetail.id);
+                    });
                   } catch (e) {
                     this.setState(() {
                       _error = e.toString();
                     });
                   } finally {
                     this.setState(() {
-                      if (newWork != null) {
+                      if (newWork != null &&
+                          newWork.workDetail != null &&
+                          newWork.workDetail!.isNotEmpty) {
                         _operationCompleted = true;
                         _work = newWork;
                       } else {
@@ -380,12 +386,15 @@ class WorksManagerDialogState extends State<WorksManagerDialog> {
               Work? newWork;
               if (_notRequired) {
                 try {
-                  newWork = (await taskListController.registerWorkDetail(
-                      taskListController.taskListState.currentTask.value!.id,
-                      _work.workType.id,
-                      true,
-                      null,
-                      null));
+                  newWork = await asyncShowProgressIndicatorOverlay(
+                      asyncFunction: () {
+                    return taskListController.registerWorkDetail(
+                        taskListController.taskListState.currentTask.value!.id,
+                        _work.workType.id,
+                        true,
+                        null,
+                        null);
+                  });
                 } catch (e) {
                   this.setState(() {
                     _error = e.toString();
@@ -416,12 +425,15 @@ class WorksManagerDialogState extends State<WorksManagerDialog> {
                 }
               } else {
                 try {
-                  newWork = (await taskListController.registerWorkDetail(
-                      taskListController.taskListState.currentTask.value!.id,
-                      _work.workType.id,
-                      false,
-                      _amount,
-                      _workers.expand((e) => [e.id]).toList()));
+                  newWork = await asyncShowProgressIndicatorOverlay(
+                      asyncFunction: () {
+                    return taskListController.registerWorkDetail(
+                        taskListController.taskListState.currentTask.value!.id,
+                        _work.workType.id,
+                        false,
+                        _amount,
+                        _workers.expand((e) => [e.id]).toList());
+                  });
                 } catch (e) {
                   this.setState(() {
                     _error = e.toString();

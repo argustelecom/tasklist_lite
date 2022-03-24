@@ -572,7 +572,8 @@ class TaskRemoteClient {
         throw Exception("Неожиданная ошибка");
       }
       if (value.data == null) {
-        return null;
+        result = null;
+        return result;
       }
       result = Work.fromJson(value.data!["deleteWorkDetail"]);
     }, onError: (e) {
@@ -609,5 +610,42 @@ class TaskRemoteClient {
       throw Exception(" onError " + e.toString());
     });
     return true;
+  }
+
+  Future<Work?> markWorksNotRequired(int taskInstanceId, List<int> workTypes) async {
+    String? workTypesString = workTypes.toString();
+    String deleteWorkDetailQuery = '''
+ mutation {  
+   markWorksNotRequired(
+    taskInstanceId: "$taskInstanceId", 
+    workTypes: $workTypesString)
+    {
+    $workQuery
+    }
+ }''';
+
+    Future<QueryResult> mutationResultFuture =
+    _graphQLService.mutate(deleteWorkDetailQuery);
+    late Work? result;
+    await mutationResultFuture.then((value) {
+      if (value.hasException) {
+        // need catch 401 error
+        if (value.exception?.linkException is ServerException) {
+          throw Exception("Сервер недоступен");
+        }
+        if (value.exception?.linkException is HttpLinkParserException) {
+          throw Exception("Не авторизован");
+        }
+        throw Exception("Неожиданная ошибка");
+      }
+      if (value.data == null) {
+        result = null;
+        return result;
+      }
+      result = Work.fromJson(value.data!["markWorksNotRequired"]);
+    }, onError: (e) {
+      throw Exception(" onError " + e.toString());
+    });
+    return result;
   }
 }
