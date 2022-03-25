@@ -48,7 +48,7 @@ class CommentController extends GetxController {
   }
 
   /// Метод для добавления комментария по наряду
-  addComment(String comment, bool isAlarm, Task task) {
+  addComment(String comment, bool isAlarm) {
     /// Лист с регулярными выражениями для определения стилей вводимого текста
     List<RegExp> patterns = List.of({
       new RegExp(r'\*(.*?)\*'),
@@ -84,7 +84,7 @@ class CommentController extends GetxController {
       CommentRepository().addNewComment(
           authController.authState.authString.value!,
           authController.authState.serverAddress.value!,
-          task,
+          taskListController.taskListState.currentTask.value,
           comment,
           isAlarm);
       // TODO: Костыль для корректного постороеня UI т.к. пока не реализованы подписки.
@@ -102,12 +102,18 @@ class CommentController extends GetxController {
 //TODO: часть костылика для коммента с аттачем. Убрать позже.
   addAttachComment(String attachName) {
     commentList.add(Comment(
-        type: "Комментарий",
+        type: "Вложение",
         person: "Вы",
         date: DateTime.now(),
         isAlarm: false,
         content:
-            "${authState.userInfo.value!.getWorkerNameWithInitials()} добавил документ $attachName"));
+            "${authState.userInfo.value!.getWorkerNameWithInitials()} добавил вложение $attachName"));
+    CommentRepository().addNewComment(
+        authController.authState.authString.value!,
+        authController.authState.serverAddress.value!,
+        taskListController.taskListState.currentTask.value,
+        "${authState.userInfo.value!.getWorkerNameWithInitials()} добавил вложение $attachName",
+        false);
     update();
   }
 
