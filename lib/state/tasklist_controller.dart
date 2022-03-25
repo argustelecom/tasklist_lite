@@ -70,9 +70,12 @@ class TaskListController extends GetxController {
   /// задачи, которые должны отображаться в списке задач, с учетом фильтров
   List<Task> getTasks() {
     /// хотим отображать сначала открытые, упорядоченные по КС (без КС в конце)...
+    /// добавляем сортировку по id для нарядов без КС
     List<Task> resultList = List.of({});
     taskListState.openedTasks.sort((a, b) => a.dueDate == null
-        ? 1
+        ? b.dueDate == null
+            ? a.id.compareTo(b.id)
+            : 1
         : b.dueDate == null
             ? -1
             : a.dueDate!.compareTo(b.dueDate!));
