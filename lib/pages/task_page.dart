@@ -473,31 +473,45 @@ class _TaskPageState extends State<TaskPage> {
                                     left: 12, right: 12, bottom: 12),
                                 child: Column(
                                   children: [
-                                    Expanded(
-                                      child: ListView.builder(
-                                          itemCount: commentController
-                                              .getComments()
-                                              .length,
-                                          controller: commentScrollController,
-                                          itemBuilder: (BuildContext context,
-                                              int index) {
-                                            return InkWell(
-                                                child: CommentCard(
-                                                    maxLines: 3,
-                                                    comment: commentController
-                                                        .getComments()[index]),
-                                                onTap: () {
-                                                  commentController
-                                                          .selectedComment =
-                                                      commentController
-                                                          .getComments()[index];
-                                                  GetDelegate routerDelegate =
-                                                      Get.find();
-                                                  routerDelegate.toNamed(
-                                                      CommentPage.routeName);
-                                                });
-                                          }),
-                                    ),
+                                    commentController.getComments().length > 0
+                                        ? Expanded(
+                                            child: ListView.builder(
+                                                itemCount: commentController
+                                                    .getComments()
+                                                    .length,
+                                                controller:
+                                                    commentScrollController,
+                                                itemBuilder:
+                                                    (BuildContext context,
+                                                        int index) {
+                                                  return InkWell(
+                                                      child: CommentCard(
+                                                          maxLines: 3,
+                                                          comment: commentController
+                                                                  .getComments()[
+                                                              index]),
+                                                      onTap: () {
+                                                        commentController
+                                                                .selectedComment =
+                                                            commentController
+                                                                    .getComments()[
+                                                                index];
+                                                        GetDelegate
+                                                            routerDelegate =
+                                                            Get.find();
+                                                        routerDelegate.toNamed(
+                                                            CommentPage
+                                                                .routeName);
+                                                      });
+                                                }),
+                                          )
+                                        : Expanded(
+                                            child: Padding(
+                                                padding: EdgeInsets.only(
+                                                    top: 8, bottom: 450),
+                                                child: Text("История пуста",
+                                                    textAlign:
+                                                        TextAlign.center))),
                                     // Текстовое поле ввода комментария
                                     Padding(
                                       padding: EdgeInsets.only(top: 16),
