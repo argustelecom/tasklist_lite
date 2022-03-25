@@ -6,12 +6,11 @@ import 'package:intl/intl.dart';
 import 'package:tasklist_lite/crazylib/comment_card.dart';
 import 'package:tasklist_lite/crazylib/due_date_label.dart';
 import 'package:tasklist_lite/crazylib/idle_time_manager_dialog.dart';
+import 'package:tasklist_lite/crazylib/location_button.dart';
 import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
 import 'package:tasklist_lite/state/comment_controller.dart';
 import 'package:tasklist_lite/state/textFieldColoraizer.dart';
-import 'package:tasklist_lite/tasklist/fixture/task_fixtures.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../common/widgets/object_attach_widget/widgets/object_attach_widget.dart';
 import '../crazylib/adaptive_dialog.dart';
@@ -204,120 +203,17 @@ class _TaskPageState extends State<TaskPage> {
                                                   CrossAxisAlignment.start,
                                             ),
                                           //Клизма
-                                          Padding(
-                                            padding: EdgeInsets.only(
-                                                left: 12, right: 16),
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                // #TODO: в макете у иконки еще elevation присутствует, с ходу не получилось сделать
-                                                IconButton(
-                                                    onPressed: () async {
-                                                      // Есть map_launcher, но он в вебе не работает (ругается)
-                                                      // но можно открывать урл к yandex maps например
-                                                      // https://stackoverflow.com/questions/52052232/flutter-url-launcher-google-maps
-                                                      String baseUrl =
-                                                          "https://yandex.ru/maps/?l=map&z=11";
-                                                      // параметры открытия яндекса см. https://yandex.com/dev/yandex-apps-launch/maps/doc/concepts/yandexmaps-web.html
-                                                      // #TODO: если бы у нас были текущиие координаты (а они будут в следующих версиях), можно открывать прям маршрут,
-                                                      // см. Plot Route https://yandex.com/dev/yandex-apps-launch/maps/doc/concepts/yandexmaps-web.html#yandexmaps-web__buildroute
-                                                      if ((taskListController
-                                                                  .taskListState
-                                                                  .currentTask
-                                                                  .value!
-                                                                  .latitude !=
-                                                              null) &&
-                                                          (taskListController
-                                                                  .taskListState
-                                                                  .currentTask
-                                                                  .value!
-                                                                  .longitude !=
-                                                              null)) {
-                                                        baseUrl = baseUrl +
-                                                            "&pt=" +
-                                                            taskListController
-                                                                .taskListState
-                                                                .currentTask
-                                                                .value!
-                                                                .longitude
-                                                                .toString() +
-                                                            "," +
-                                                            taskListController
-                                                                .taskListState
-                                                                .currentTask
-                                                                .value!
-                                                                .latitude
-                                                                .toString();
-                                                      } else if (taskListController
-                                                              .taskListState
-                                                              .currentTask
-                                                              .value!
-                                                              .address !=
-                                                          null) {
-                                                        // если координаты не заданы, поищем по адресу
-                                                        baseUrl = baseUrl +
-                                                            "&text=" +
-                                                            taskListController
-                                                                .taskListState
-                                                                .currentTask
-                                                                .value!
-                                                                .address!;
-                                                      }
-                                                      final String encodedURl =
-                                                          Uri.encodeFull(
-                                                              baseUrl);
-                                                      // тут можно было бы проверить через canLaunch, но вроде не обязательно
-                                                      // в крайнем случае откроет просто карту в неподходящем месте
-                                                      launch(encodedURl);
-                                                    },
-                                                    icon: Column(
-                                                      children: [
-                                                        Expanded(
-                                                          child: Icon(
-                                                            Icons.place,
-                                                            color: themeData
-                                                                .colorScheme
-                                                                .primary,
-                                                          ),
-                                                        ),
-                                                        // #TODO: согласно макету, под иконкой должно быть не равномерное подчеркивание,
-                                                        // а тень, хитро полученная как тень рамки иконки в figma. Подобного эффекта пока
-                                                        // достичь не удалось.
-                                                        // Еще вариант -- такая вот иконка https://www.iconfinder.com/icons/2344289/gps_location_map_place_icon
-                                                        Expanded(
-                                                          child: Padding(
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                              left: 10,
-                                                              right: 10,
-                                                              top: 20,
-                                                            ),
-                                                            child: Divider(
-                                                              thickness: 3,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    )),
-                                                Text(taskListController
-                                                        .taskListState
-                                                        .currentTask
-                                                        .value!
-                                                        .flexibleAttribs[
-                                                            TaskFixtures
-                                                                .distanceToObjectFlexAttrName]
-                                                        ?.toString() ??
-                                                    "")
-                                              ],
-                                            ),
-                                          )
+                                          LocationButton(
+                                              task: taskListController
+                                                  .taskListState
+                                                  .currentTask
+                                                  .value)
                                         ],
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween),
                                     //Прогресс бар для этапов
                                     if (taskListController.taskListState
-                                            .currentTask.value!.stage !=
+                                            .currentTask.value?.stage !=
                                         null)
                                       Row(
                                           children: [
@@ -445,7 +341,7 @@ class _TaskPageState extends State<TaskPage> {
                                               task: taskListController
                                                   .taskListState
                                                   .currentTask
-                                                  .value!,
+                                                  .value,
                                             ))),
                                   ],
                                 ))),
@@ -457,11 +353,15 @@ class _TaskPageState extends State<TaskPage> {
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 32),
                         child: Card(
-                          child: Container(
-                              height: 100.0,
-                              width: 100.0,
-                              child: ObjectAttachWidget(taskListController
-                                  .taskListState.currentTask.value!.id)),
+                          child: taskListController
+                                      .taskListState.currentTask.value?.id !=
+                                  null
+                              ? Container(
+                                  height: 100.0,
+                                  width: 100.0,
+                                  child: ObjectAttachWidget(taskListController
+                                      .taskListState.currentTask.value!.id))
+                              : Container(),
                           elevation: 3,
                         ),
                       ),
@@ -672,160 +572,168 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
               titleSpacing: 0.0,
               toolbarHeight: 60,
-              title: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+              title: task != null
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Padding(
-                            padding: EdgeInsets.symmetric(vertical: 2),
-                            child: Row(children: [
-                              Text(
-                                task.name,
-                                style: TextStyle(
-                                    inherit: false,
-                                    fontSize: 20,
-                                    color: Colors.black),
-                                textAlign: TextAlign.left,
-                              )
-                            ])),
-                        Padding(
-                            padding: EdgeInsets.symmetric(vertical: 2),
-                            child: Row(children: [
-                              DueDateLabel(
-                                  dueDate: task.getDueDateFullText(),
-                                  isOverdue: task.isTaskOverdue()),
-                            ])),
-                      ],
-                    ),
-                    if (!task.isClosed)
-                      Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Container(
-                                width: 30,
-                                height: 30,
-                                margin: EdgeInsets.only(right: 18),
-                                decoration: BoxDecoration(
-                                    color: Colors.yellow.shade700,
-                                    borderRadius: BorderRadius.circular(4),
-                                    boxShadow: const [
-                                      BoxShadow(
-                                          color: Colors.black38,
-                                          blurRadius: 0.6,
-                                          spreadRadius: 0.6,
-                                          offset: Offset(0.0, 1.2)),
-                                    ]),
-                                child: PopupMenuButton(
-                                  icon: Icon(Icons.menu),
-                                  iconSize: 28,
-                                  padding: EdgeInsets.all(0.0),
-                                  elevation: 3,
-                                  offset: Offset(0, 50),
-                                  itemBuilder: (BuildContext context) =>
-                                      <PopupMenuEntry>[
-                                    PopupMenuItem(
-                                      child: ListTile(
-                                          leading:
-                                              Icon(Icons.check_circle_outline),
-                                          title: Text('Завершить этап'),
-                                          onTap: () async {
-                                            // если завершаем последний этап, отобразим дилог закрытия для выбора ШЗ
-                                            // у нарядов ТО этапов нет, поэтому всегда переходим к диалогу закрытию
-                                            if (task.stage == null ||
-                                                task.stage!.isLast) {
-                                              Navigator.pop(context, "");
-                                              showAdaptiveDialog(
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return CloseTaskDialog();
-                                                  });
-                                            } else {
-                                              Navigator.pop(context, "");
-                                              try {
-                                                await asyncShowProgressIndicatorOverlay(
-                                                    asyncFunction: () {
-                                                  return taskListController
-                                                      .completeStage(
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 2),
+                                  child: Row(children: [
+                                    Text(
+                                      task.name,
+                                      style: TextStyle(
+                                          inherit: false,
+                                          fontSize: 20,
+                                          color: Colors.black),
+                                      textAlign: TextAlign.left,
+                                    )
+                                  ])),
+                              Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 2),
+                                  child: Row(children: [
+                                    DueDateLabel(
+                                        dueDate: task.getDueDateFullText(),
+                                        isOverdue: task.isTaskOverdue()),
+                                  ])),
+                            ],
+                          ),
+                          if (!task.isClosed)
+                            Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Container(
+                                      width: 30,
+                                      height: 30,
+                                      margin: EdgeInsets.only(right: 18),
+                                      decoration: BoxDecoration(
+                                          color: Colors.yellow.shade700,
+                                          borderRadius:
+                                              BorderRadius.circular(4),
+                                          boxShadow: const [
+                                            BoxShadow(
+                                                color: Colors.black38,
+                                                blurRadius: 0.6,
+                                                spreadRadius: 0.6,
+                                                offset: Offset(0.0, 1.2)),
+                                          ]),
+                                      child: PopupMenuButton(
+                                        icon: Icon(Icons.menu),
+                                        iconSize: 28,
+                                        padding: EdgeInsets.all(0.0),
+                                        elevation: 3,
+                                        offset: Offset(0, 50),
+                                        itemBuilder: (BuildContext context) =>
+                                            <PopupMenuEntry>[
+                                          PopupMenuItem(
+                                            child: ListTile(
+                                                leading: Icon(
+                                                    Icons.check_circle_outline),
+                                                title: Text('Завершить этап'),
+                                                onTap: () async {
+                                                  // если завершаем последний этап, отобразим дилог закрытия для выбора ШЗ
+                                                  // у нарядов ТО этапов нет, поэтому всегда переходим к диалогу закрытию
+                                                  if (task.stage == null ||
+                                                      task.stage!.isLast) {
+                                                    Navigator.pop(context, "");
+                                                    showAdaptiveDialog(
+                                                        context: context,
+                                                        builder: (BuildContext
+                                                            context) {
+                                                          return CloseTaskDialog();
+                                                        });
+                                                  } else {
+                                                    Navigator.pop(context, "");
+                                                    try {
+                                                      await asyncShowProgressIndicatorOverlay(
+                                                          asyncFunction: () {
+                                                        return taskListController
+                                                            .completeStage(
+                                                                taskListController
+                                                                    .taskListState
+                                                                    .currentTask
+                                                                    .value!
+                                                                    .id);
+                                                      });
+                                                    } catch (e) {
+                                                      showDialog(
+                                                          context: context,
+                                                          builder: (BuildContext
+                                                              context) {
+                                                            return InfoDialog(
+                                                                body: Text(
+                                                                    "Произошла ошибка: \"$e\"",
+                                                                    maxLines: 7,
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .clip));
+                                                          });
+                                                    } finally {
+                                                      // TODO обновление сведений
+                                                    }
+                                                  }
+                                                }),
+                                            value: 1,
+                                          ),
+                                          PopupMenuItem(
+                                            child: ListTile(
+                                                leading:
+                                                    Icon(Icons.access_time),
+                                                title: Text((task
+                                                            .getCurrentIdleTime() ==
+                                                        null)
+                                                    ? "Зарегистрировать простой"
+                                                    : "Завершить простой"),
+                                                onTap: () {
+                                                  // предыдущее решение...
+                                                  // GetDelegate routerDelegate =
+                                                  // Get.find();
+                                                  // routerDelegate.popRoute();
+                                                  // ... не закрывает меню, поэтому используем Navigator
+                                                  Navigator.pop(context, "");
+                                                  showAdaptiveDialog(
+                                                      context: context,
+                                                      builder: (BuildContext
+                                                          context) {
+                                                        return IdleTimeManagerDialog(
+                                                            idleTime: this
+                                                                .task
+                                                                .getCurrentIdleTime());
+                                                      });
+                                                }),
+                                            value: 2,
+                                          ),
+                                          // Данная кнопка оставляет системный комментарий
+                                          PopupMenuItem(
+                                              value: 3,
+                                              child: ListTile(
+                                                leading:
+                                                    Icon(Icons.announcement),
+                                                title: Text('Проверка аварии'),
+                                                onTap: () {
+                                                  DefaultTabController.of(
+                                                          context)!
+                                                      .animateTo(3,
+                                                          curve: Curves.easeOut,
+                                                          duration:
+                                                              const Duration(
+                                                                  milliseconds:
+                                                                      300));
+                                                  historyEventController
+                                                      .addNewCrashComment(
                                                           taskListController
                                                               .taskListState
                                                               .currentTask
-                                                              .value!
-                                                              .id);
-                                                });
-                                              } catch (e) {
-                                                showDialog(
-                                                    context: context,
-                                                    builder:
-                                                        (BuildContext context) {
-                                                      return InfoDialog(
-                                                          body: Text(
-                                                              "Произошла ошибка: \"$e\"",
-                                                              maxLines: 7,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .clip));
-                                                    });
-                                              } finally {
-                                                // TODO обновление сведений
-                                              }
-                                            }
-                                          }),
-                                      value: 1,
-                                    ),
-                                    PopupMenuItem(
-                                      child: ListTile(
-                                          leading: Icon(Icons.access_time),
-                                          title: Text(
-                                              (task.getCurrentIdleTime() ==
-                                                      null)
-                                                  ? "Зарегистрировать простой"
-                                                  : "Завершить простой"),
-                                          onTap: () {
-                                            // предыдущее решение...
-                                            // GetDelegate routerDelegate =
-                                            // Get.find();
-                                            // routerDelegate.popRoute();
-                                            // ... не закрывает меню, поэтому используем Navigator
-                                            Navigator.pop(context, "");
-                                            showAdaptiveDialog(
-                                                context: context,
-                                                builder:
-                                                    (BuildContext context) {
-                                                  return IdleTimeManagerDialog(
-                                                      idleTime: this
-                                                          .task
-                                                          .getCurrentIdleTime());
-                                                });
-                                          }),
-                                      value: 2,
-                                    ),
-                                    // Данная кнопка оставляет системный комментарий
-                                    PopupMenuItem(
-                                        value: 3,
-                                        child: ListTile(
-                                          leading: Icon(Icons.announcement),
-                                          title: Text('Проверка аварии'),
-                                          onTap: () {
-                                            DefaultTabController.of(context)!
-                                                .animateTo(3,
-                                                    curve: Curves.easeOut,
-                                                    duration: const Duration(
-                                                        milliseconds: 300));
-                                            historyEventController
-                                                .addNewCrashComment(
-                                                    taskListController
-                                                        .taskListState
-                                                        .currentTask
-                                                        .value!);
-                                          },
-                                        ))
-                                  ],
-                                ))
-                          ])
-                  ]));
+                                                              .value!);
+                                                },
+                                              ))
+                                        ],
+                                      ))
+                                ])
+                        ])
+                  : Container());
         });
   }
 
