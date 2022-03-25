@@ -759,7 +759,7 @@ class AttribValue extends StatelessWidget {
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
           separatorBuilder: (BuildContext context, int index) {
-            if (attributes.keys.elementAt(index) == 'Примечание' &&
+            if (attributes.keys.elementAt(index) == 'Примечание' || attributes.keys.elementAt(index) == 'Адресное примечание' &&
                 attributes.values.elementAt(index).toString().length > 100) {
               return TextButton(
                   child: taskListController.maxLines == 5

@@ -123,6 +123,7 @@ class TaskCard extends StatelessWidget {
                             children: [
                               CrazyHighlight(
                                   text: task.getAddressDescription(),
+                                  maxLines: 2,
                                   term: taskListController.searchText),
                             ],
                           ),
