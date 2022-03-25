@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:tasklist_lite/crazylib/date_picker_button.dart';
 import 'package:tasklist_lite/crazylib/time_picker_button.dart';
 import 'package:tasklist_lite/state/tasklist_controller.dart';
+import 'package:tasklist_lite/tasklist/fixture/idle_time_reason_fixtures.dart';
 import 'package:tasklist_lite/tasklist/model/idle_time.dart';
 
 import '../state/common_dropdown_controller.dart';
@@ -351,63 +352,84 @@ class IdleTimeManagerDialogState extends State<IdleTimeManagerDialog> {
                   fontSize: 16),
             ),
             onPressed: () async {
-              IdleTime? newIdleTime;
-              if (_idleTime == null) {
-                try {
-                  newIdleTime = await asyncShowProgressIndicatorOverlay(
-                      asyncFunction: () {
-                    return taskListController.registerIdle(
-                        taskListController.taskListState.currentTask.value!.id,
-                        _reason!.id,
-                        new DateTime(
-                            _startDate!.year,
-                            _startDate!.month,
-                            _startDate!.day,
-                            _startTime!.hour,
-                            _startTime!.minute),
-                        (_endDate != null && _endTime != null)
-                            ? new DateTime(_endDate!.year, _endDate!.month,
-                                _endDate!.day, _endTime!.hour, _endTime!.minute)
-                            : null);
-                  });
-                } catch (e) {
-                  this.setState(() {
-                    _error = e.toString();
-                  });
-                } finally {
-                  if (newIdleTime != null)
-                    this.setState(() {
-                      _operationCompleted = true;
-                      _error = null;
-                      _idleTime = newIdleTime;
-                    });
-                }
+              if (_reason == null) {
+                this.setState(() {
+                  _error = "Укажите причину простоя";
+                });
+              } else if (_startDate == null || _startTime == null) {
+                this.setState(() {
+                  _error = "Укажите дату и время начала простоя";
+                });
+              } else if (_idleTime != null &&
+                  (_endDate == null || _endTime == null)) {
+                this.setState(() {
+                  _error = "Укажите дату и время окончания простоя";
+                });
               } else {
-                try {
-                  newIdleTime = await asyncShowProgressIndicatorOverlay(
-                      asyncFunction: () {
-                    return taskListController.finishIdle(
-                        taskListController.taskListState.currentTask.value!.id,
-                        new DateTime(
-                            _startDate!.year,
-                            _startDate!.month,
-                            _startDate!.day,
-                            _startTime!.hour,
-                            _startTime!.minute),
-                        new DateTime(_endDate!.year, _endDate!.month,
-                            _endDate!.day, _endTime!.hour, _endTime!.minute));
-                  });
-                } catch (e) {
-                  this.setState(() {
-                    _error = e.toString();
-                  });
-                } finally {
-                  if (newIdleTime != null)
-                    this.setState(() {
-                      _operationCompleted = true;
-                      _error = null;
-                      _idleTime = newIdleTime;
+                IdleTime? newIdleTime;
+                if (_idleTime == null) {
+                  try {
+                    newIdleTime = await asyncShowProgressIndicatorOverlay(
+                        asyncFunction: () {
+                      return taskListController.registerIdle(
+                          taskListController
+                              .taskListState.currentTask.value!.id,
+                          _reason!.id,
+                          new DateTime(
+                              _startDate!.year,
+                              _startDate!.month,
+                              _startDate!.day,
+                              _startTime!.hour,
+                              _startTime!.minute),
+                          (_endDate != null && _endTime != null)
+                              ? new DateTime(
+                                  _endDate!.year,
+                                  _endDate!.month,
+                                  _endDate!.day,
+                                  _endTime!.hour,
+                                  _endTime!.minute)
+                              : null);
                     });
+                    if (newIdleTime != null) {
+                      this.setState(() {
+                        _operationCompleted = true;
+                        _error = null;
+                        _idleTime = newIdleTime;
+                      });
+                    }
+                  } catch (e) {
+                    this.setState(() {
+                      _error = e.toString();
+                    });
+                  }
+                } else {
+                  try {
+                    newIdleTime = await asyncShowProgressIndicatorOverlay(
+                        asyncFunction: () {
+                      return taskListController.finishIdle(
+                          taskListController
+                              .taskListState.currentTask.value!.id,
+                          new DateTime(
+                              _startDate!.year,
+                              _startDate!.month,
+                              _startDate!.day,
+                              _startTime!.hour,
+                              _startTime!.minute),
+                          new DateTime(_endDate!.year, _endDate!.month,
+                              _endDate!.day, _endTime!.hour, _endTime!.minute));
+                    });
+                    if (newIdleTime != null) {
+                      this.setState(() {
+                        _operationCompleted = true;
+                        _error = null;
+                        _idleTime = newIdleTime;
+                      });
+                    }
+                  } catch (e) {
+                    this.setState(() {
+                      _error = e.toString();
+                    });
+                  }
                 }
               }
             },
