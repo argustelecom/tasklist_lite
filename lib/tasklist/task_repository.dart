@@ -54,7 +54,7 @@ class TaskRepository extends GetxService {
     return result.asStream();
   }
 
-  Future<IdleTime?> registerIdle(
+  Future<IdleTime> registerIdle(
       String basicAuth,
       String serverAddress,
       int taskInstanceId,
@@ -78,7 +78,7 @@ class TaskRepository extends GetxService {
         taskInstanceId, reasonId, beginTime, endTime);
   }
 
-  Future<IdleTime?> finishIdle(String basicAuth, String serverAddress,
+  Future<IdleTime> finishIdle(String basicAuth, String serverAddress,
       int taskInstanceId, DateTime beginTime, DateTime endTime) async {
     ApplicationState applicationState = Get.find();
 
@@ -169,14 +169,14 @@ class TaskRepository extends GetxService {
         taskInstanceId, workTypeId, notRequired, amount, workers);
   }
 
-  Future<Work?> deleteWorkDetail(String basicAuth, String serverAddress,
+  Future<Work> deleteWorkDetail(String basicAuth, String serverAddress,
       int taskInstanceId, int workDetailId) async {
     ApplicationState applicationState = Get.find();
 
     /// если включен деморежим, возвращаем успех
     if (applicationState.inDemonstrationMode.value) {
       await new Future.delayed(const Duration(seconds: 3));
-      return null;
+      return new Work(workType: WorkTypeFixtures.workType_1);
 
       // можно раскомментировать для отладки кейса, когда удалена не последняя отметка
       // return new Work(workType: WorkTypeFixtures.workType_1, workDetail: [
@@ -195,7 +195,7 @@ class TaskRepository extends GetxService {
         taskInstanceId, workDetailId);
   }
 
-  Future<bool> markWorksNotRequired(String basicAuth, String serverAddress,
+  Future<bool?> markWorksNotRequired(String basicAuth, String serverAddress,
       int taskInstanceId, List<int> workTypes) async {
     ApplicationState applicationState = Get.find();
 
@@ -205,11 +205,9 @@ class TaskRepository extends GetxService {
       return true;
     }
 
-    /// TODO: если деморежим выключен, нужно отправлять graphQL запрос
     TaskRemoteClient taskRemoteClient =
     TaskRemoteClient(basicAuth, serverAddress);
-    await taskRemoteClient.markWorksNotRequired(
+    return await taskRemoteClient.markWorksNotRequired(
         taskInstanceId, workTypes);
-    return true;
   }
 }

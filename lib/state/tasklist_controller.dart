@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tasklist_lite/crazylib/crazy_progress_dialog.dart';
 import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/tasklist/idle_time_reason_repository.dart';
 import 'package:tasklist_lite/tasklist/model/close_code.dart';
@@ -10,10 +11,11 @@ import 'package:tasklist_lite/tasklist/task_repository.dart';
 
 import '../common/resubscribe.dart';
 import '../tasklist/close_code_repository.dart';
-import '../tasklist/fixture/task_fixtures.dart';
 import '../tasklist/comments_repository.dart';
+import '../tasklist/fixture/task_fixtures.dart';
 import '../tasklist/model/idle_time.dart';
 import '../tasklist/model/work.dart';
+import '../tasklist/work_repository.dart';
 import 'auth_state.dart';
 import 'tasklist_state.dart';
 
@@ -213,7 +215,7 @@ class TaskListController extends GetxController {
     });
   }
 
-  Future<IdleTime?> registerIdle(int taskInstanceId, int reasonId,
+  Future<IdleTime> registerIdle(int taskInstanceId, int reasonId,
       DateTime beginTime, DateTime? endTime) async {
     return await taskRepository.registerIdle(
         authState.authString.value!,
@@ -224,7 +226,7 @@ class TaskListController extends GetxController {
         endTime);
   }
 
-  Future<IdleTime?> finishIdle(
+  Future<IdleTime> finishIdle(
       int taskInstanceId, DateTime beginTime, DateTime endTime) async {
     AuthState authState = Get.find();
     return await taskRepository.finishIdle(authState.authString.value!,
@@ -243,22 +245,48 @@ class TaskListController extends GetxController {
 
   Future<Work> registerWorkDetail(int taskInstanceId, int workTypeId,
       bool notRequired, double? amount, List<int>? workers) async {
-    return await taskRepository.registerWorkDetail(
-        authState.authString.value!,
-        authState.serverAddress.value!,
-        taskInstanceId,
-        workTypeId,
-        notRequired,
-        amount,
-        workers);
+    return await asyncShowProgressIndicatorOverlay(
+      asyncFunction: () async {
+        return await taskRepository.registerWorkDetail(
+            authState.authString.value!,
+            authState.serverAddress.value!,
+            taskInstanceId,
+            workTypeId,
+            notRequired,
+            amount,
+            workers);
+      },
+    );
   }
 
-  Future<Work?> deleteWorkDetail(int taskInstanceId, int workDetailId) async {
-    return await taskRepository.deleteWorkDetail(authState.authString.value!,
-        authState.serverAddress.value!, taskInstanceId, workDetailId);
+  Future<Work> deleteWorkDetail(int taskInstanceId, int workDetailId) async {
+    return await asyncShowProgressIndicatorOverlay(asyncFunction: () async {
+      return await taskRepository.deleteWorkDetail(authState.authString.value!,
+          authState.serverAddress.value!, taskInstanceId, workDetailId);
+    });
   }
 
-  Future<bool> markWorksNotRequired(
+  String _searchWorksText = "";
+
+  String get searchWorksText => _searchWorksText;
+
+  set searchWorksText(String value) {
+    _searchWorksText = value.toLowerCase();
+    update();
+  }
+
+  List<Work> getWorks() {
+    WorkRepository workRepository = Get.find();
+    List<Work> sortedWorks = workRepository
+        .orderWorksByState(taskListState.currentTask.value?.works);
+
+    return sortedWorks
+        .where((element) =>
+            element.workType.name.toLowerCase().contains(searchWorksText))
+        .toList();
+  }
+
+  Future<bool?> markWorksNotRequired(
       int taskInstanceId, List<int> workTypes) async {
     return await taskRepository.markWorksNotRequired(
         authState.authString.value!,

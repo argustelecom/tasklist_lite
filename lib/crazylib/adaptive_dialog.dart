@@ -26,7 +26,7 @@ class AdaptiveDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Size defaultSize = Size(600.0, 500.0);
+    Size defaultSize = Size(600.0, 550.0);
     ThemeData themeData = Theme.of(context);
     titleIconColor = (titleIconColor != null)
         ? titleIconColor
