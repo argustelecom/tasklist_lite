@@ -215,7 +215,7 @@ class TaskListController extends GetxController {
     });
   }
 
-  Future<IdleTime?> registerIdle(int taskInstanceId, int reasonId,
+  Future<IdleTime> registerIdle(int taskInstanceId, int reasonId,
       DateTime beginTime, DateTime? endTime) async {
     return await taskRepository.registerIdle(
         authState.authString.value!,
@@ -226,7 +226,7 @@ class TaskListController extends GetxController {
         endTime);
   }
 
-  Future<IdleTime?> finishIdle(
+  Future<IdleTime> finishIdle(
       int taskInstanceId, DateTime beginTime, DateTime endTime) async {
     AuthState authState = Get.find();
     return await taskRepository.finishIdle(authState.authString.value!,
@@ -259,7 +259,7 @@ class TaskListController extends GetxController {
     );
   }
 
-  Future<Work?> deleteWorkDetail(int taskInstanceId, int workDetailId) async {
+  Future<Work> deleteWorkDetail(int taskInstanceId, int workDetailId) async {
     return await asyncShowProgressIndicatorOverlay(asyncFunction: () async {
       return await taskRepository.deleteWorkDetail(authState.authString.value!,
           authState.serverAddress.value!, taskInstanceId, workDetailId);
@@ -286,7 +286,7 @@ class TaskListController extends GetxController {
         .toList();
   }
 
-  Future<bool> markWorksNotRequired(
+  Future<bool?> markWorksNotRequired(
       int taskInstanceId, List<int> workTypes) async {
     return await taskRepository.markWorksNotRequired(
         authState.authString.value!,

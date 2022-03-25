@@ -56,6 +56,7 @@ class TaskRemoteClient {
     type
     important
    ''';
+
   //Work
   static const String workQuery = '''
   status
@@ -221,7 +222,7 @@ class TaskRemoteClient {
     return result;
   }
 
-  Future<IdleTime?> registerIdle(int taskInstanceId, int reasonId,
+  Future<IdleTime> registerIdle(int taskInstanceId, int reasonId,
       DateTime beginTime, DateTime? endTime) async {
     String beginTimeStr = DateFormat('dd.MM.yyyy HH:mm:ss').format(beginTime);
     String endTimeStr = '';
@@ -241,7 +242,7 @@ class TaskRemoteClient {
 
     Future<QueryResult> mutationResultFuture =
         _graphQLService.mutate(registerIdleQuery);
-    IdleTime? result;
+    late IdleTime result;
     await mutationResultFuture.then((value) {
       if (value.hasException) {
         // need catch 401 error
@@ -254,8 +255,8 @@ class TaskRemoteClient {
         throw Exception("Неожиданная ошибка");
       }
       if (value.data == null || value.data!["registerIdleTime"] == null) {
-        result = null;
-        return result;
+        throw Exception(
+            "Получен некорректный ответ сервера, простой не найден");
       }
       result = IdleTime.fromJson(value.data!["registerIdleTime"]);
     }, onError: (e) {
@@ -264,7 +265,7 @@ class TaskRemoteClient {
     return result;
   }
 
-  Future<IdleTime?> finishIdle(
+  Future<IdleTime> finishIdle(
       int taskInstanceId, DateTime beginTime, DateTime endTime) async {
     String beginTimeStr = DateFormat('dd.MM.yyyy HH:mm:ss').format(beginTime);
     String endTimeStr = DateFormat('dd.MM.yyyy HH:mm:ss').format(endTime);
@@ -294,7 +295,8 @@ class TaskRemoteClient {
         throw Exception("Неожиданная ошибка");
       }
       if (value.data == null || value.data!["finishIdleTime"] == null) {
-        return null;
+        throw Exception(
+            "Получен некорректный ответ сервера, простой не найден");
       }
       result = IdleTime.fromJson(value.data!["finishIdleTime"]);
     }, onError: (e) {
@@ -537,7 +539,8 @@ class TaskRemoteClient {
         throw Exception("Неожиданная ошибка");
       }
       if (value.data == null) {
-        throw Exception("Work is null");
+        throw Exception(
+            "Получен некорректный ответ сервера, работа не найдена");
       }
       result = Work.fromJson(value.data!["registerWorkDetail"]);
     }, onError: (e) {
@@ -546,7 +549,7 @@ class TaskRemoteClient {
     return result;
   }
 
-  Future<Work?> deleteWorkDetail(int taskInstanceId, int workDetailId) async {
+  Future<Work> deleteWorkDetail(int taskInstanceId, int workDetailId) async {
     String deleteWorkDetailQuery = '''
  mutation {  
    deleteWorkDetail(
@@ -559,7 +562,7 @@ class TaskRemoteClient {
 
     Future<QueryResult> mutationResultFuture =
         _graphQLService.mutate(deleteWorkDetailQuery);
-    late Work? result;
+    late Work result;
     await mutationResultFuture.then((value) {
       if (value.hasException) {
         // need catch 401 error
@@ -572,8 +575,8 @@ class TaskRemoteClient {
         throw Exception("Неожиданная ошибка");
       }
       if (value.data == null) {
-        result = null;
-        return result;
+        throw Exception(
+            "Получен некорректный ответ сервера, работа не найдена");
       }
       result = Work.fromJson(value.data!["deleteWorkDetail"]);
     }, onError: (e) {
@@ -582,8 +585,7 @@ class TaskRemoteClient {
     return result;
   }
 
-  Future<bool?> readNotify(
-      int notifyId) async {
+  Future<bool?> readNotify(int notifyId) async {
     String readNotifyQuery = '''
  mutation {  
    readNotify(
@@ -591,7 +593,7 @@ class TaskRemoteClient {
  }''';
 
     Future<QueryResult> mutationResultFuture =
-    _graphQLService.mutate(readNotifyQuery);
+        _graphQLService.mutate(readNotifyQuery);
     await mutationResultFuture.then((value) {
       if (value.hasException) {
         // need catch 401 error
@@ -612,7 +614,8 @@ class TaskRemoteClient {
     return true;
   }
 
-  Future<Work?> markWorksNotRequired(int taskInstanceId, List<int> workTypes) async {
+  Future<bool?> markWorksNotRequired(
+      int taskInstanceId, List<int> workTypes) async {
     String? workTypesString = workTypes.toString();
     String deleteWorkDetailQuery = '''
  mutation {  
@@ -625,8 +628,7 @@ class TaskRemoteClient {
  }''';
 
     Future<QueryResult> mutationResultFuture =
-    _graphQLService.mutate(deleteWorkDetailQuery);
-    late Work? result;
+        _graphQLService.mutate(deleteWorkDetailQuery);
     await mutationResultFuture.then((value) {
       if (value.hasException) {
         // need catch 401 error
@@ -639,13 +641,11 @@ class TaskRemoteClient {
         throw Exception("Неожиданная ошибка");
       }
       if (value.data == null) {
-        result = null;
-        return result;
+        return null;
       }
-      result = Work.fromJson(value.data!["markWorksNotRequired"]);
     }, onError: (e) {
       throw Exception(" onError " + e.toString());
     });
-    return result;
+    return true;
   }
 }

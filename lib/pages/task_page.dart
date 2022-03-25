@@ -797,10 +797,12 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
                                                   ? "Зарегистрировать простой"
                                                   : "Завершить простой"),
                                           onTap: () {
-                                            GetDelegate routerDelegate =
-                                            Get.find();
-                                            routerDelegate.popRoute();
-
+                                            // предыдущее решение...
+                                            // GetDelegate routerDelegate =
+                                            // Get.find();
+                                            // routerDelegate.popRoute();
+                                            // ... не закрывает меню, поэтому используем Navigator
+                                            Navigator.pop(context, "");
                                             showAdaptiveDialog(
                                                 context: context,
                                                 builder:
