@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 import 'package:tasklist_lite/crazylib/date_picker_button.dart';
 import 'package:tasklist_lite/crazylib/time_picker_button.dart';
 import 'package:tasklist_lite/state/tasklist_controller.dart';
-import 'package:tasklist_lite/tasklist/fixture/idle_time_reason_fixtures.dart';
 import 'package:tasklist_lite/tasklist/model/idle_time.dart';
 
 import '../state/common_dropdown_controller.dart';

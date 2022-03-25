@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:duration/duration.dart';
 import 'package:duration/locale.dart';
 import 'package:intl/intl.dart';
+import 'package:logging/logging.dart';
 import 'package:tasklist_lite/tasklist/model/stage.dart';
 import 'package:tasklist_lite/tasklist/model/work.dart';
 import 'package:tasklist_lite/tasklist/model/worker.dart';
@@ -252,10 +253,16 @@ class Task {
   }
 
   IdleTime? getCurrentIdleTime() {
+    IdleTime? idleTime;
     if (idleTimeList != null && idleTimeList!.isNotEmpty) {
-      return idleTimeList!.firstWhere((e) => !e.isCompleted(), orElse: null);
-    } else
-      return null;
+      try {
+        idleTime = idleTimeList!.firstWhere((e) => !e.isCompleted());
+      } on StateError catch (e) {
+        Logger log = Logger(this.runtimeType.toString());
+        log.warning("В задаче отсутствуют открытые простои", e);
+      }
+    }
+    return idleTime;
   }
 
   factory Task.fromJson(Map<String, dynamic> json) {
@@ -288,10 +295,11 @@ class Task {
             json['flexibleAttribute'],
             key: (e) => e["key"],
             value: (e) => e["value"]),
-        idleTimeList:
-            json['idleTimePeriod'] != null
-                ? List<IdleTime>.from((json['idleTimePeriod']).map((e) => IdleTime.fromJson(e)).toList())
-                : null,
+        idleTimeList: json['idleTimePeriod'] != null
+            ? List<IdleTime>.from((json['idleTimePeriod'])
+                .map((e) => IdleTime.fromJson(e))
+                .toList())
+            : null,
         stage: json['stage'] != null ? Stage.fromJson(json['stage']) : null,
         assignee: List<Worker>.from(
             (json['assignee']).map((e) => Worker.fromJson(e)).toList()),
@@ -330,9 +338,8 @@ class Task {
         : null;
     data['stage'] = this.stage != null ? this.stage!.toJson() : null;
     data['assignee'] = this.assignee.map((e) => e.toJson()).toList();
-    data['works'] = this.works != null
-        ? this.works!.map((e) => e.toJson()).toList()
-        : null;
+    data['works'] =
+        this.works != null ? this.works!.map((e) => e.toJson()).toList() : null;
     return data;
   }
 
