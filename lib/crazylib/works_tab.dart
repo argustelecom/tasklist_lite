@@ -1,19 +1,26 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_html/shims/dart_ui_real.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
-import 'package:tasklist_lite/crazylib/info_dialog.dart';
 import 'package:tasklist_lite/crazylib/work_card.dart';
-import 'package:tasklist_lite/tasklist/work_repository.dart';
 
 import '../state/tasklist_controller.dart';
-import '../tasklist/model/task.dart';
-import '../tasklist/model/work.dart';
 import 'crazy_progress_dialog.dart';
+import 'info_dialog.dart';
 
+/// #TODO[НИ]:
+/// -- вынести state и поведение, посвященное работам, из taskListController в новый workController
+/// (хотя бы потому, что taskLIstController уже перегружен и трещит
+/// -- устранить все методы а-ля workRepository.orderWorksByState. Контроллер должен иметь state, а
+/// подобную сортировку, фильтрацию и т.п. надо делать или в геттере этого state, или в отдельном методе
+/// getWorks. Тогда в момент установки state не надо ничего вычислять и сортировать. Все это делается
+/// только если понадобится (то есть как следствие build`а зависимых от state виджетов)
+/// -- логику изменения state надо прятать в соотв. методы контроллера, а не делать в методе build
+/// виджета. Вот такого в дереве виджетов встречаться не должно:
+/// works = workRepository.filterWorksByName(task!.works, value);
+/// #TODO: а еще теперь может быть stateless
 class WorksTab extends StatefulWidget {
   WorksTab({
     Key? key,
@@ -26,13 +33,8 @@ class WorksTab extends StatefulWidget {
 }
 
 class WorksTabState extends State<WorksTab> {
-  TextEditingController textEditingController = new TextEditingController();
-  ScrollController scrollController = new ScrollController();
   TaskListController taskListController = Get.find();
-  WorkRepository workRepository = Get.find();
-
-  late Task? task;
-  List<Work>? works = [];
+  ScrollController scrollController = new ScrollController();
   bool _isScrolling = false;
 
   void onScroll() async {
@@ -55,10 +57,6 @@ class WorksTabState extends State<WorksTab> {
   void initState() {
     super.initState();
     scrollController.addListener(onScroll);
-    task = taskListController.taskListState.currentTask.value;
-    if (task != null) {
-      works = workRepository.orderWorksByState(task!.works);
-    }
   }
 
   @override
@@ -70,7 +68,7 @@ class WorksTabState extends State<WorksTab> {
   @override
   Widget build(BuildContext context) {
     ThemeData themeData = Theme.of(context);
-    if (task == null) {
+    if (taskListController.taskListState.currentTask.value == null) {
       return Padding(
           padding: EdgeInsets.symmetric(vertical: 8),
           child: Text(
@@ -83,14 +81,13 @@ class WorksTabState extends State<WorksTab> {
             padding: EdgeInsets.symmetric(vertical: 8),
             child: Card(
               child: TextField(
-                controller: textEditingController,
                 textAlign: TextAlign.center,
                 decoration: InputDecoration(
                   hintText: "Наименование работы",
                   fillColor: themeData.bottomAppBarColor,
                   border: InputBorder.none,
                   filled: true,
-                  suffixIcon: (textEditingController.text == "")
+                  suffixIcon: (taskListController.searchWorksText == "")
                       ? IconButton(
                           tooltip: 'Поиск',
                           icon: const Icon(Icons.search_outlined),
@@ -100,25 +97,17 @@ class WorksTabState extends State<WorksTab> {
                           tooltip: 'Очистить',
                           icon: const Icon(Icons.clear),
                           onPressed: () {
-                            textEditingController.text = "";
+                            taskListController.searchWorksText = "";
                           },
                         ),
                   isCollapsed: false,
                 ),
                 onChanged: (value) {
-                  textEditingController.value = TextEditingValue(
-                      text: value,
-                      selection: TextSelection.fromPosition(
-                        TextPosition(offset: value.length),
-                      ));
-                  setState(() {
-                    works =
-                        workRepository.filterWorksByName(task!.works, value);
-                  });
+                  taskListController.searchWorksText = value;
                 },
               ),
             )),
-        if (works == null || works!.isEmpty)
+        if (taskListController.getWorks().isEmpty)
           Padding(
               padding: EdgeInsets.symmetric(vertical: 8),
               child: Text("Работы не найдены.", textAlign: TextAlign.center))
@@ -126,12 +115,12 @@ class WorksTabState extends State<WorksTab> {
           Expanded(
               child: Stack(children: [
             ListView.builder(
-                controller: scrollController,
                 shrinkWrap: true,
-                itemCount: works!.length,
+                itemCount: taskListController.getWorks().length,
                 itemBuilder: (context, index) {
                   return WorkCard(
-                    work: works![index], //taskList[index],
+                    work:
+                        taskListController.getWorks()[index], //taskList[index],
                   );
                 }),
             Positioned(
@@ -153,8 +142,9 @@ class WorksTabState extends State<WorksTab> {
                       Icon(Icons.block, color: Color(0xFF323232))
                     ]),
                     onPressed: () async {
-                      if (task!.works != null && task!.works!.isNotEmpty) {
-                        List<int> workTypes = task!.works!
+                      if (taskListController.getWorks().isNotEmpty) {
+                        List<int> workTypes = taskListController
+                            .getWorks()
                             .where((e) =>
                                 (e.workDetail == null ||
                                     e.workDetail!.isEmpty) &&
@@ -165,7 +155,10 @@ class WorksTabState extends State<WorksTab> {
                           await asyncShowProgressIndicatorOverlay(
                               asyncFunction: () {
                             return taskListController.markWorksNotRequired(
-                                task!.id, workTypes);
+                                // #TODO[НИ]: не надо передавать id. Тут вообще параметр лишний.
+                                taskListController
+                                    .taskListState.currentTask.value!.id,
+                                workTypes);
                           });
                         } catch (e) {
                           showDialog(
