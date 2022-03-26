@@ -7,6 +7,7 @@ import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:tasklist_lite/crazylib/work_card.dart';
 
 import '../state/tasklist_controller.dart';
+import '../tasklist/model/work.dart';
 import 'crazy_progress_dialog.dart';
 import 'info_dialog.dart';
 
@@ -151,14 +152,16 @@ class WorksTabState extends State<WorksTab> {
                                 !e.notRequired)
                             .expand((e) => [e.workType.id])
                             .toList();
+                        Future<bool?> result = Future<bool>.value(false);
                         try {
                           await asyncShowProgressIndicatorOverlay(
                               asyncFunction: () {
-                            return taskListController.markWorksNotRequired(
+                            result = taskListController.markWorksNotRequired(
                                 // #TODO[НИ]: не надо передавать id. Тут вообще параметр лишний.
                                 taskListController
                                     .taskListState.currentTask.value!.id,
                                 workTypes);
+                            return result;
                           });
                         } catch (e) {
                           showDialog(
@@ -170,7 +173,17 @@ class WorksTabState extends State<WorksTab> {
                                 );
                               });
                         } finally {
-                          // TODO обновление сведений
+                          // #TODO: временный костыль, до того момента, когда markWorksNotRequired
+                          // не начнет возвращать коллекцию работ с уже измененным флажком "не требуется"
+                          // а так вообще это должно делаться внутри метода контроллера
+                          result.then((value) {
+                            if (value ?? false) {
+                              for (Work work in taskListController.getWorks()) {
+                                work.notRequired = true;
+                              }
+                              taskListController.update();
+                            }
+                          });
                         }
                       }
                     }))

@@ -298,6 +298,8 @@ class TaskListController extends GetxController {
         .toList();
   }
 
+  // #TODO[НИ]: в каком случае markWorksNotRequired может вернуть null?
+  // зачем обязывать вызывающего обрабатывать это?
   Future<bool?> markWorksNotRequired(
       int taskInstanceId, List<int> workTypes) async {
     return await taskRepository.markWorksNotRequired(
