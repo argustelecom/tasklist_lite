@@ -197,7 +197,14 @@ class TaskListController extends GetxController {
     // на момент переподписывания здесь, значения в authState уже могли быть
     // заданы, и нового event`а может не быть очень долго. Чтобы заполнить список,
     // спровоцируем event явно.
-    authState.serverAddress.refresh();
+    // 25.03.2022: в некоторых случаях прямой refresh приводит к ошибке setState()
+    // or markNeedsBuild() called during build. Это потому, что под капотом refresh
+    // reactive-переменной провоцируют вызов setState() у ObxWidget, зависящих от
+    // нее, что конечно низя в ходе onInit. Поэтому делаем не напрямую, а через
+    // postFrameCallback, как учат в интернетах.
+    WidgetsBinding.instance!.addPostFrameCallback((Duration duration) {
+      authState.serverAddress.refresh();
+    });
 
     _idleTimeReasonsSubscription = resubscribe<List<IdleTimeReason>>(
         _idleTimeReasonsSubscription,
@@ -291,6 +298,8 @@ class TaskListController extends GetxController {
         .toList();
   }
 
+  // #TODO[НИ]: в каком случае markWorksNotRequired может вернуть null?
+  // зачем обязывать вызывающего обрабатывать это?
   Future<bool?> markWorksNotRequired(
       int taskInstanceId, List<int> workTypes) async {
     return await taskRepository.markWorksNotRequired(
