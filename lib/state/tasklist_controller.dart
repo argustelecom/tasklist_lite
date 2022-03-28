@@ -87,7 +87,13 @@ class TaskListController extends GetxController {
     // в любом случае, надо проверять, что там на сервере. Затычки ниже
     // нерабочие, просто чтобы не падало.
     taskListState.closedTasks.sort(
-        (a, b) => a.closeDate?.compareTo(b.closeDate ?? DateTime.now()) ?? 0);
+        (a, b) => a.closeDate == null
+            ? b.closeDate == null
+            ? a.id.compareTo(b.id)
+            : 1
+            : b.closeDate == null
+            ? -1
+            : a.closeDate!.compareTo(b.closeDate!));
     resultList.addAll(taskListState.closedTasks);
     return List.of(resultList
         // фильтруем по наличию введенного (в поле поиска) текста в названии и других полях задачи
@@ -104,11 +110,7 @@ class TaskListController extends GetxController {
                 .toString()
                 .toLowerCase()
                 .contains(searchText) ||
-            element.getAddressDescription().toLowerCase().contains(searchText)))
-        // фильтруем по попаданию даты закрытия в текущий день
-        .where((element) => ((!element.isClosed ||
-            DateUtils.dateOnly(element.closeDate!).millisecondsSinceEpoch ==
-                taskListState.currentDate.value.millisecondsSinceEpoch))));
+            element.getAddressDescription().toLowerCase().contains(searchText))));
   }
 
   StreamSubscription? _openedTasksSubscription;
