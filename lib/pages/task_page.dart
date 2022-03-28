@@ -5,15 +5,18 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:tasklist_lite/crazylib/comment_card.dart';
 import 'package:tasklist_lite/crazylib/due_date_label.dart';
+import 'package:tasklist_lite/crazylib/history_tab.dart';
 import 'package:tasklist_lite/crazylib/idle_time_manager_dialog.dart';
 import 'package:tasklist_lite/crazylib/location_button.dart';
 import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
+import 'package:tasklist_lite/crazylib/summary_tab.dart';
 import 'package:tasklist_lite/state/comment_controller.dart';
 import 'package:tasklist_lite/state/textFieldColoraizer.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
 
 import '../common/widgets/object_attach_widget/widgets/object_attach_widget.dart';
 import '../crazylib/adaptive_dialog.dart';
+import '../crazylib/attribValue.dart';
 import '../crazylib/close_task_dialog.dart';
 import '../crazylib/crazy_progress_dialog.dart';
 import '../crazylib/info_dialog.dart';
@@ -36,24 +39,6 @@ class _TaskPageState extends State<TaskPage> {
   @override
   Widget build(BuildContext context) {
     ThemeData themeData = Theme.of(context);
-
-    // #Fixme: опрометчиво его создавать в методе build
-    //Создаем кастомный TextEditingController. Используем для управления стилями текста в TextField и не только
-    TextEditingController commentTextController = TextFieldColorizer(
-      {
-        r'_(.*?)\_': TextStyle(
-            fontStyle: FontStyle.italic, shadows: kElevationToShadow[2]),
-        '~(.*?)~': TextStyle(
-            decoration: TextDecoration.lineThrough,
-            shadows: kElevationToShadow[2]),
-        r'\*(.*?)\*': TextStyle(
-            fontWeight: FontWeight.bold, shadows: kElevationToShadow[2]),
-      },
-    );
-
-    // Это дефолтный скроллконтрроллер, используем на вкладке история, чтобы перематывать на последнее событие т.к. это удобно для пользователя
-    ScrollController commentScrollController = new ScrollController();
-
     return DefaultTabController(
         length: 5,
         initialIndex: 0,
@@ -128,224 +113,7 @@ class _TaskPageState extends State<TaskPage> {
                     ),
                     Expanded(
                         child: TabBarView(children: [
-                      Padding(
-                        padding:
-                            EdgeInsets.only(left: 12, right: 12, bottom: 12),
-                        child: Card(
-                            elevation: 3,
-                            child: SingleChildScrollView(
-                                physics: ScrollPhysics(),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                        children: [
-                                          //Это тут для того, чтобы наряды ТО у нас не падали т.к. у них нет этапа
-                                          if (taskListController.taskListState
-                                                  .currentTask.value?.stage !=
-                                              null)
-                                            Column(
-                                              children: [
-                                                Padding(
-                                                    padding:
-                                                        EdgeInsets.fromLTRB(
-                                                            16, 8, 16, 12),
-                                                    child: Row(children: [
-                                                      Text(
-                                                          "${taskListController.taskListState.currentTask.value!.stage!.name}",
-                                                          style: TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold)),
-                                                    ])),
-                                                Padding(
-                                                  padding: EdgeInsets.fromLTRB(
-                                                      16, 8, 16, 0),
-                                                  child: Row(children: [
-                                                    DueDateLabel(
-                                                        dueDate: taskListController
-                                                            .taskListState
-                                                            .currentTask
-                                                            .value!
-                                                            .stage!
-                                                            .getDueDateFullText(),
-                                                        isOverdue:
-                                                            taskListController
-                                                                .taskListState
-                                                                .currentTask
-                                                                .value!
-                                                                .stage!
-                                                                .isStageOverdue())
-                                                  ]),
-                                                ),
-                                                Padding(
-                                                  padding: EdgeInsets.fromLTRB(
-                                                      16, 8, 16, 0),
-                                                  child: Row(children: [
-                                                    Text(
-                                                      "${taskListController.taskListState.currentTask.value!.stage!.getTimeLeftStageText()}",
-                                                      style: TextStyle(
-                                                          color: taskListController
-                                                                  .taskListState
-                                                                  .currentTask
-                                                                  .value!
-                                                                  .stage!
-                                                                  .getTimeLeftStageText()
-                                                                  .contains(
-                                                                      'СКВ')
-                                                              ? Colors.red
-                                                              : Colors.green,
-                                                          fontSize: 14),
-                                                    ),
-                                                  ]),
-                                                ),
-                                              ],
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                            ),
-                                          //Клизма
-                                          LocationButton(
-                                              task: taskListController
-                                                  .taskListState
-                                                  .currentTask
-                                                  .value)
-                                        ],
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween),
-                                    //Прогресс бар для этапов
-                                    if (taskListController.taskListState
-                                            .currentTask.value?.stage !=
-                                        null)
-                                      Row(
-                                          children: [
-                                            // Первый этап
-                                            Expanded(
-                                              child: Padding(
-                                                  padding: EdgeInsets.only(
-                                                      left: 12,
-                                                      right: 4,
-                                                      bottom: 5,
-                                                      top: 12),
-                                                  child:
-                                                      LinearProgressIndicator(
-                                                    value: taskListController
-                                                        .taskListState
-                                                        .currentTask
-                                                        .value!
-                                                        .getStageProgressStatus(
-                                                            1,
-                                                            taskListController
-                                                                .taskListState
-                                                                .currentTask
-                                                                .value!
-                                                                .stage!),
-                                                    color:
-                                                        Colors.yellow.shade700,
-                                                    minHeight: 12,
-                                                    backgroundColor:
-                                                        Colors.yellow.shade200,
-                                                  )),
-                                            ),
-                                            // Второй этап
-                                            Expanded(
-                                              child: Padding(
-                                                  padding: EdgeInsets.only(
-                                                      left: 4,
-                                                      right: 4,
-                                                      bottom: 5,
-                                                      top: 12),
-                                                  child:
-                                                      LinearProgressIndicator(
-                                                    value: taskListController
-                                                        .taskListState
-                                                        .currentTask
-                                                        .value!
-                                                        .getStageProgressStatus(
-                                                            2,
-                                                            taskListController
-                                                                .taskListState
-                                                                .currentTask
-                                                                .value!
-                                                                .stage!),
-                                                    color:
-                                                        Colors.yellow.shade700,
-                                                    minHeight: 12,
-                                                    backgroundColor:
-                                                        Colors.yellow.shade200,
-                                                  )),
-                                            ),
-                                            // Третий этап
-                                            Expanded(
-                                              child: Padding(
-                                                  padding: EdgeInsets.only(
-                                                      left: 4,
-                                                      right: 4,
-                                                      bottom: 5,
-                                                      top: 12),
-                                                  child:
-                                                      LinearProgressIndicator(
-                                                    value: taskListController
-                                                        .taskListState
-                                                        .currentTask
-                                                        .value!
-                                                        .getStageProgressStatus(
-                                                            3,
-                                                            taskListController
-                                                                .taskListState
-                                                                .currentTask
-                                                                .value!
-                                                                .stage!),
-                                                    color:
-                                                        Colors.yellow.shade700,
-                                                    minHeight: 12,
-                                                    backgroundColor:
-                                                        Colors.yellow.shade200,
-                                                  )),
-                                            ),
-                                            // Четвертый этап
-                                            Expanded(
-                                              child: Padding(
-                                                  padding: EdgeInsets.only(
-                                                      left: 4,
-                                                      right: 12,
-                                                      bottom: 5,
-                                                      top: 12),
-                                                  child:
-                                                      LinearProgressIndicator(
-                                                    value: taskListController
-                                                        .taskListState
-                                                        .currentTask
-                                                        .value!
-                                                        .getStageProgressStatus(
-                                                            4,
-                                                            taskListController
-                                                                .taskListState
-                                                                .currentTask
-                                                                .value!
-                                                                .stage!),
-                                                    color:
-                                                        Colors.yellow.shade700,
-                                                    minHeight: 12,
-                                                    backgroundColor:
-                                                        Colors.yellow.shade200,
-                                                  )),
-                                            ),
-                                          ],
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween),
-                                    Padding(
-                                        padding:
-                                            EdgeInsets.fromLTRB(16, 8, 16, 0),
-                                        child: LimitedBox(
-                                            maxHeight: 20000,
-                                            child: AttribValue(
-                                              task: taskListController
-                                                  .taskListState
-                                                  .currentTask
-                                                  .value,
-                                            ))),
-                                  ],
-                                ))),
-                      ),
+                      SummaryTab(),
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 12),
                         child: WorksTab(),
@@ -365,184 +133,7 @@ class _TaskPageState extends State<TaskPage> {
                           elevation: 3,
                         ),
                       ),
-                      GetBuilder<CommentController>(
-                          init: CommentController(),
-                          builder: (commentController) {
-                            return Padding(
-                                padding: EdgeInsets.only(
-                                    left: 12, right: 12, bottom: 12),
-                                child: Column(
-                                  children: [
-                                    commentController.getComments().length > 0
-                                        ? Expanded(
-                                            child: ListView.builder(
-                                                itemCount: commentController
-                                                    .getComments()
-                                                    .length,
-                                                controller:
-                                                    commentScrollController,
-                                                itemBuilder:
-                                                    (BuildContext context,
-                                                        int index) {
-                                                  return InkWell(
-                                                      child: CommentCard(
-                                                          maxLines: 3,
-                                                          comment: commentController
-                                                                  .getComments()[
-                                                              index]),
-                                                      onTap: () {
-                                                        commentController
-                                                                .selectedComment =
-                                                            commentController
-                                                                    .getComments()[
-                                                                index];
-                                                        GetDelegate
-                                                            routerDelegate =
-                                                            Get.find();
-                                                        routerDelegate.toNamed(
-                                                            CommentPage
-                                                                .routeName);
-                                                      });
-                                                }),
-                                          )
-                                        : Expanded(
-                                            child: Padding(
-                                                padding: EdgeInsets.only(
-                                                    top: 8, bottom: 450),
-                                                child: Text("История пуста",
-                                                    textAlign:
-                                                        TextAlign.center))),
-                                    // Текстовое поле ввода комментария
-                                    Padding(
-                                      padding: EdgeInsets.only(top: 16),
-                                      child: Focus(
-                                        onFocusChange: (value) {
-                                          Future.delayed(
-                                              const Duration(milliseconds: 100),
-                                              () {
-                                            commentController
-                                                .onTextFieldFocused = value;
-                                          });
-                                        },
-                                        child: TextField(
-                                            textInputAction:
-                                                TextInputAction.send,
-                                            keyboardType: TextInputType.text,
-                                            textAlign: TextAlign.start,
-                                            decoration: InputDecoration(
-                                              hintText: "Ваш комментарий",
-                                              hintStyle:
-                                                  TextStyle(fontSize: 14),
-                                              fillColor:
-                                                  themeData.bottomAppBarColor,
-                                              border: InputBorder.none,
-                                              filled: true,
-                                              suffixIcon: IconButton(
-                                                tooltip: 'С уведомлением',
-                                                icon: Icon(
-                                                    commentController
-                                                            .isAlarmComment
-                                                        ? Icons.notifications
-                                                        : Icons
-                                                            .notifications_off,
-                                                    // size: 30,
-                                                    color: Colors.black),
-                                                onPressed: () {
-                                                  commentController
-                                                          .isAlarmComment =
-                                                      !commentController
-                                                          .isAlarmComment;
-                                                },
-                                              ),
-                                              isCollapsed: false,
-                                            ),
-                                            onSubmitted: (text) {
-                                              commentController.addComment(
-                                                commentTextController.text,
-                                                commentController
-                                                    .isAlarmComment,
-                                              );
-                                              commentTextController.clear();
-                                              commentScrollController.animateTo(
-                                                commentScrollController
-                                                    .position.maxScrollExtent,
-                                                curve: Curves.easeOut,
-                                                duration: const Duration(
-                                                    milliseconds: 300),
-                                              );
-                                              FocusManager.instance.primaryFocus
-                                                  ?.unfocus();
-                                            },
-                                            minLines: 1,
-                                            maxLines: 5,
-                                            controller: commentTextController),
-                                      ),
-                                    ),
-                                    Visibility(
-                                        visible: commentController
-                                            .onTextFieldFocused,
-                                        child: Padding(
-                                          padding: EdgeInsets.only(
-                                              top: 8, right: 16),
-                                          child: Row(
-                                              children: [
-                                                TextButton(
-                                                  child: Padding(
-                                                    padding: EdgeInsets.only(
-                                                        top: 4,
-                                                        right: 8,
-                                                        left: 8,
-                                                        bottom: 4),
-                                                    child: const Text(
-                                                        'Отправить',
-                                                        style: TextStyle(
-                                                            color: Colors.black,
-                                                            fontSize: 14)),
-                                                  ),
-                                                  style: ButtonStyle(
-                                                      shape: MaterialStateProperty.all<
-                                                              RoundedRectangleBorder>(
-                                                          RoundedRectangleBorder(
-                                                              borderRadius:
-                                                                  BorderRadius.circular(
-                                                                      32))),
-                                                      padding: MaterialStateProperty.all<
-                                                              EdgeInsets>(
-                                                          EdgeInsets.all(2)),
-                                                      backgroundColor:
-                                                          MaterialStateProperty.all<Color>(
-                                                              Colors.yellow.shade700)),
-                                                  onPressed: () {
-                                                    commentController
-                                                        .addComment(
-                                                      commentTextController
-                                                          .text,
-                                                      commentController
-                                                          .isAlarmComment,
-                                                    );
-                                                    commentTextController
-                                                        .clear();
-                                                    commentScrollController
-                                                        .animateTo(
-                                                      commentScrollController
-                                                          .position
-                                                          .maxScrollExtent,
-                                                      curve: Curves.easeOut,
-                                                      duration: const Duration(
-                                                          milliseconds: 300),
-                                                    );
-                                                    FocusManager
-                                                        .instance.primaryFocus
-                                                        ?.unfocus();
-                                                  },
-                                                ),
-                                              ],
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.end),
-                                        ))
-                                  ],
-                                ));
-                          }),
+                      HistoryTab(),
                       MarkTypeFilter()
                     ]))
                   ]));
@@ -741,122 +332,39 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
   Size get preferredSize => const Size.fromHeight(60.0);
 }
 
-/// Вывод строки Параметр: Значение для версии 1.0
-/// Тут мы не используем группы, они нам не нужны
-/// ListView.separated выбран для реализации кнопки показать все
-class AttribValue extends StatelessWidget {
-  final Task? task;
-  final TaskListController taskListController = Get.find();
-
-  AttribValue({Key? key, required this.task}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    ThemeData themeData = Theme.of(context);
-    if (task != null) {
-      LinkedHashMap<String, Object?> attributes = task!.getAttrValuesByTask();
-      return ListView.separated(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          separatorBuilder: (BuildContext context, int index) {
-            if (attributes.keys.elementAt(index) == 'Примечание' || attributes.keys.elementAt(index) == 'Адресное примечание' &&
-                attributes.values.elementAt(index).toString().length > 100) {
-              return TextButton(
-                  child: taskListController.maxLines == 5
-                      ? Text("прочитать полностью ↓",
-                          style: TextStyle(fontWeight: FontWeight.w100))
-                      : Text("скрыть ↑",
-                          style: TextStyle(fontWeight: FontWeight.w100)),
-                  onPressed: () {
-                    taskListController.maxLines == 5
-                        ? taskListController.viewFullCommentary()
-                        : taskListController.hideCommentary();
-                  });
-            }
-            return Divider(
-                height: 0, thickness: 0, color: themeData.highlightColor);
-          },
-          itemCount: attributes.length,
-          itemBuilder: (BuildContext context, int index) {
-            return Column(children: [
-              Row(children: [
-                Expanded(
-                    child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 6),
-                        child: RichText(
-                            maxLines: taskListController.maxLines,
-                            overflow: TextOverflow.ellipsis,
-                            text: TextSpan(
-                                style: const TextStyle(
-                                    fontSize: 16.0,
-                                    color: Color(0xFF646363),
-                                    fontWeight: FontWeight.normal),
-                                children: <TextSpan>[
-                                  TextSpan(
-                                      text:
-                                          "${attributes.keys.elementAt(index)}:   "),
-                                  TextSpan(
-                                      text: attributes.values
-                                                  .elementAt(index) ==
-                                              null
-                                          ? ""
-                                          : (attributes.values
-                                                      .elementAt(index)
-                                                      .runtimeType ==
-                                                  DateTime
-                                              ? DateFormat("dd.MM.yyyy HH:mm")
-                                                  .format(DateTime.parse(
-                                                      attributes.values
-                                                          .elementAt(index)
-                                                          .toString()))
-                                              : attributes.values
-                                                  .elementAt(index)
-                                                  .toString()),
-                                      style: TextStyle(color: Colors.black))
-                                ]))))
-              ]),
-            ]);
-          });
-    } else {
-      return Container();
-    }
-  }
-}
-
 /// Ниже старая реализация гибких атрибутов через группы, остается тут на случай если она нам еще понадобится
+// // Вывод группы параметров
+// class AttrGroup extends StatelessWidget {
+//   final Task task;
+//   final String attrGroup;
+//
+//   const AttrGroup({Key? key, required this.task, required this.attrGroup})
+//       : super(key: key);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     LinkedHashMap<String, Object?> attribValuesByGroup =
+//         task.getAttrValuesByGroup(attrGroup);
+//
+//     return Column(children: [
+//       // Container(
+//       //     padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
+//       //     child: Text(attrGroup,
+//       //         style: const TextStyle(fontSize: 18, color: Colors.grey))),
+//       SizedBox(
+//           child: ListView.builder(
+//         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+//         shrinkWrap: true,
+//         itemCount: attribValuesByGroup.length,
+//         itemBuilder: (BuildContext context, int index) {
+//           return AttribValueRow(
+//               attribValue: attribValuesByGroup.entries.elementAt(index));
+//         },
+//       ))
+//     ]);
+//   }
+// }
 // TODO: Используется в закрытии наряда НИ надо будет поправить потом?
-// Вывод группы параметров
-class AttrGroup extends StatelessWidget {
-  final Task task;
-  final String attrGroup;
-
-  const AttrGroup({Key? key, required this.task, required this.attrGroup})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    LinkedHashMap<String, Object?> attribValuesByGroup =
-        task.getAttrValuesByGroup(attrGroup);
-
-    return Column(children: [
-      // Container(
-      //     padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
-      //     child: Text(attrGroup,
-      //         style: const TextStyle(fontSize: 18, color: Colors.grey))),
-      SizedBox(
-          child: ListView.builder(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        shrinkWrap: true,
-        itemCount: attribValuesByGroup.length,
-        itemBuilder: (BuildContext context, int index) {
-          return AttribValueRow(
-              attribValue: attribValuesByGroup.entries.elementAt(index));
-        },
-      ))
-    ]);
-  }
-}
-
 // Вывод строки Параметр: Значение
 class AttribValueRow extends StatelessWidget {
   final MapEntry<String, Object?> attribValue;

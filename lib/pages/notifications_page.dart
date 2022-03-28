@@ -42,13 +42,14 @@ class _NotificationsPageState extends State<NotificationsPage> {
               ),
               body: Padding(
                   padding: EdgeInsets.symmetric(vertical: 0, horizontal: 32),
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    child: ListView(
-                      shrinkWrap: true,
+                  child: SingleChildScrollView(
+                    // width: MediaQuery.of(context).size.width,
+                    physics: ScrollPhysics(),
+                    child: Column(
                       children: [
                         DateRow(date: controller.getNotifications()[0].date),
                         ListView.separated(
+                          physics: NeverScrollableScrollPhysics(),
                           // Делаем разделитель
                           separatorBuilder: (BuildContext context, int index) {
                             // Достаем плашку, когда дата следующего оповещения отличается от текущей
