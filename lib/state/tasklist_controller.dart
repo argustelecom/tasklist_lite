@@ -324,7 +324,7 @@ class TaskListController extends GetxController {
   }
 
   /// Храним сколько максимально строк может быть для адресного примечания, а также можем изменить
-  int _maxLinesAddressCommentary = 5;
+  int _maxLinesAddressCommentary = 3;
 
   int get maxLinesAddressCommentary => _maxLinesAddressCommentary;
 
@@ -334,7 +334,7 @@ class TaskListController extends GetxController {
   }
 
   /// Храним сколько максимально строк может быть для примечания, а также можем изменить
-  int _maxLinesCommentary = 5;
+  int _maxLinesCommentary = 3;
 
   int get maxLinesCommentary => _maxLinesCommentary;
 
