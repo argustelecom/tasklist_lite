@@ -86,12 +86,11 @@ class TaskListController extends GetxController {
     // иначе сложно объснитьь, почему в закрытых тасках эта дата null
     // в любом случае, надо проверять, что там на сервере. Затычки ниже
     // нерабочие, просто чтобы не падало.
-    taskListState.closedTasks.sort(
-        (a, b) => a.closeDate == null
-            ? b.closeDate == null
+    taskListState.closedTasks.sort((a, b) => a.closeDate == null
+        ? b.closeDate == null
             ? a.id.compareTo(b.id)
             : 1
-            : b.closeDate == null
+        : b.closeDate == null
             ? -1
             : a.closeDate!.compareTo(b.closeDate!));
     resultList.addAll(taskListState.closedTasks);
@@ -110,7 +109,10 @@ class TaskListController extends GetxController {
                 .toString()
                 .toLowerCase()
                 .contains(searchText) ||
-            element.getAddressDescription().toLowerCase().contains(searchText))));
+            element
+                .getAddressDescription()
+                .toLowerCase()
+                .contains(searchText))));
   }
 
   StreamSubscription? _openedTasksSubscription;
@@ -321,18 +323,23 @@ class TaskListController extends GetxController {
     super.onClose();
   }
 
-  /// Храним сколько максимально линий может быть в примечании в карточке задачи
-  late int maxLines = 5;
+  /// Храним сколько максимально строк может быть для адресного примечания, а также можем изменить
+  int _maxLinesAddressCommentary = 5;
 
-  /// Изменяем кол-во отображаемых строк, чтобы посмотреть больше в примечании в карточке задачи
-  viewFullCommentary() {
-    maxLines = 500;
+  int get maxLinesAddressCommentary => _maxLinesAddressCommentary;
+
+  set maxLinesAddressCommentary(int value) {
+    _maxLinesAddressCommentary = value;
     update();
   }
 
-  /// Изменяем кол-во отображаемых строк, чтобы скрыть в примечании в карточке задачи
-  hideCommentary() {
-    maxLines = 5;
+  /// Храним сколько максимально строк может быть для примечания, а также можем изменить
+  int _maxLinesCommentary = 5;
+
+  int get maxLinesCommentary => _maxLinesCommentary;
+
+  set maxLinesCommentary(int value) {
+    _maxLinesCommentary = value;
     update();
   }
 }
