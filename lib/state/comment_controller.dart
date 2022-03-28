@@ -117,6 +117,24 @@ class CommentController extends GetxController {
     update();
   }
 
+  //TODO: часть костылика для коммента с аттачем. Убрать позже.
+  addDeleteAttachComment(String attachName) {
+    commentList.add(Comment(
+        type: "Вложение",
+        person: "Вы",
+        date: DateTime.now(),
+        isAlarm: false,
+        content:
+        "${authState.userInfo.value!.getWorkerNameWithInitials()} удалил вложение $attachName"));
+    CommentRepository().addNewComment(
+        authController.authState.authString.value!,
+        authController.authState.serverAddress.value!,
+        taskListController.taskListState.currentTask.value,
+        "${authState.userInfo.value!.getWorkerNameWithInitials()} удалил вложение $attachName",
+        false);
+    update();
+  }
+
   /// Добавлеяем новый коммент с проверкой аварии(для кнопки проверка аварии)
   addNewCrashComment(Task task) {
     // TODO генерировать правильный комментарий

@@ -92,7 +92,7 @@ class ObjectAttachController extends GetxController {
     }
     refreshObjectAttachList();
 
-    // TODO: Убрать костыльную отправку, коммента когда перейдем на subscriptions
+    // TODO: Убрать костыльную отправку коммента, когда перейдем на subscriptions
     objectAttachList.value.asStream().forEach((element) =>
         {commentController.addAttachComment(element.first.fileName)});
   }
@@ -139,6 +139,9 @@ class ObjectAttachController extends GetxController {
   void deleteAttach(ObjectAttach objectAttach) async {
     await _attachRepository.deleteObjectAttach(objectAttach);
     refreshObjectAttachList();
+    // TODO: Убрать костыльную отправку коммента, когда перейдем на subscriptions
+    objectAttachList.value.asStream().forEach((element) =>
+    {commentController.addDeleteAttachComment(element.first.fileName)});
   }
 
   /// Скачивание файла на конечное устройство

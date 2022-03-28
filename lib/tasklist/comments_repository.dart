@@ -12,9 +12,9 @@ class CommentRepository extends GetxService {
   addNewComment(String basicAuth, String serverAddress, Task? task,
       String comment, bool isAlarm) {
     ApplicationState applicationState = Get.find();
-    CommentsFixtures historyEventsFixtures = Get.find();
+    CommentsFixtures commentsFixtures = Get.find();
     if (applicationState.inDemonstrationMode.value) {
-      return Future.value(historyEventsFixtures.getComments(task));
+      return Future.value(commentsFixtures.getComments(task));
     }
     TaskRemoteClient taskRemoteClient =
         TaskRemoteClient(basicAuth, serverAddress);
@@ -26,13 +26,16 @@ class CommentRepository extends GetxService {
       String basicAuth, String serverAddress, Task? task) {
     ApplicationState applicationState = Get.find();
     if (applicationState.inDemonstrationMode.value) {
-      CommentsFixtures historyEventsFixtures = Get.find();
-      return historyEventsFixtures.streamComments(task);
+      CommentsFixtures commentsFixtures = Get.find();
+      return commentsFixtures.streamComments(task);
     }
     TaskRemoteClient taskRemoteClient =
         TaskRemoteClient(basicAuth, serverAddress);
-    Future<List<Comment>> result =
-        taskRemoteClient.getCommentByTask(task!.id);
-    return result.asStream();
+    if (task != null) {
+      Future<List<Comment>> result = taskRemoteClient.getCommentByTask(task.id);
+      return result.asStream();
+    } else {
+      return Stream.empty();
+    }
   }
 }

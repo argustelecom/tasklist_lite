@@ -8,13 +8,15 @@ class CrazyHighlight extends StatelessWidget {
   final double? width;
   final TextStyle? textStyle;
   final TextStyle? textStyleHighlight;
+  final int? maxLines;
 
   CrazyHighlight(
       {required this.text,
       required this.term,
       this.width,
       this.textStyle,
-      this.textStyleHighlight});
+      this.textStyleHighlight,
+      this.maxLines});
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +31,8 @@ class CrazyHighlight extends StatelessWidget {
             TextStyle(color: Theme.of(context).colorScheme.onPrimary),
         textStyleHighlight:
             textStyleHighlight ?? TextStyle(color: Colors.yellow.shade700),
+        maxLines: maxLines != null ? maxLines: 20,
+        overflow: TextOverflow.ellipsis,
       ),
     );
   }
