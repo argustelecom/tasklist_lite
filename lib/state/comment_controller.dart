@@ -27,7 +27,10 @@ class CommentController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-
+    ///Задержка стоит тут потому, что при обновлении страницы currentTask подгружается какое-то время,
+    ///и если мы будем вызывать метод commentRepository.streamComments() с currentTask = null,то получим пустой стрим
+    /// TODO: Понять надо ли это править?
+    Future.delayed(const Duration(milliseconds: 700), () {
     commentSubscription = resubscribe<List<Comment>>(
         commentSubscription,
         commentRepository.streamComments(
@@ -36,7 +39,7 @@ class CommentController extends GetxController {
             taskListController.taskListState.currentTask.value), (event) {
       List<Comment> comments = event;
       this.commentList = comments;
-    });
+    });});
     update();
   }
 
