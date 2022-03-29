@@ -3,13 +3,13 @@ import 'dart:async';
 import 'package:get/get.dart' hide Worker;
 import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/tasklist/fixture/task_fixtures.dart';
-import 'package:tasklist_lite/tasklist/fixture/worker_fixtures.dart';
 import 'package:tasklist_lite/tasklist/model/worker.dart';
 import 'package:tasklist_lite/tasklist/task_remote_client.dart';
 
-import 'fixture/idle_time_reason_fixtures.dart';
 import 'fixture/work_type_fixtures.dart';
+import 'model/close_code.dart';
 import 'model/idle_time.dart';
+import 'model/stage.dart';
 import 'model/task.dart';
 import 'model/work.dart';
 
@@ -54,102 +54,129 @@ class TaskRepository extends GetxService {
     return result.asStream();
   }
 
-  Future<IdleTime> registerIdle(
-      String basicAuth,
-      String serverAddress,
-      int taskInstanceId,
-      int reasonId,
-      DateTime beginTime,
-      DateTime? endTime) async {
+  Future<Task> registerIdle(String basicAuth, String serverAddress, Task task,
+      IdleTimeReason reason, DateTime beginTime, DateTime? endTime) async {
     ApplicationState applicationState = Get.find();
 
     /// если включен деморежим, возвращаем созданный простой
     if (applicationState.inDemonstrationMode.value) {
       await new Future.delayed(const Duration(seconds: 3));
-      return new IdleTime(
-          id: 1,
-          reason: IdleTimeReasonFixtures.idleTimeReason_1,
-          startDate: beginTime,
-          endDate: endTime);
+      IdleTime newIdleTime = new IdleTime(
+          id: 1, reason: reason, startDate: beginTime, endDate: endTime);
+      if (task.idleTimeList == null || task.idleTimeList!.isEmpty) {
+        task.idleTimeList = [newIdleTime];
+      } else {
+        task.idleTimeList!.add(newIdleTime);
+      }
+      return task;
     }
     TaskRemoteClient taskRemoteClient =
         TaskRemoteClient(basicAuth, serverAddress);
     return await taskRemoteClient.registerIdle(
-        taskInstanceId, reasonId, beginTime, endTime);
+        task.id, reason.id, beginTime, endTime);
   }
 
-  Future<IdleTime> finishIdle(String basicAuth, String serverAddress,
-      int taskInstanceId, DateTime beginTime, DateTime endTime) async {
+  Future<Task> finishIdle(String basicAuth, String serverAddress, Task task,
+      DateTime beginTime, DateTime endTime) async {
     ApplicationState applicationState = Get.find();
 
     /// если включен деморежим, возвращаем завершенный простой
     if (applicationState.inDemonstrationMode.value) {
       await new Future.delayed(const Duration(seconds: 3));
-      return new IdleTime(
-          id: 1,
-          reason: IdleTimeReasonFixtures.idleTimeReason_1,
-          startDate: beginTime,
-          endDate: endTime);
+      int i = task.idleTimeList!.indexWhere((e) => e.endDate == null);
+      IdleTime newIdleTime = task.idleTimeList![i];
+      newIdleTime.endDate = DateTime.now();
+      task.idleTimeList!.replaceRange(i, i + 1, [newIdleTime]);
+      return task;
     }
     TaskRemoteClient taskRemoteClient =
         TaskRemoteClient(basicAuth, serverAddress);
-    return await taskRemoteClient.finishIdle(
-        taskInstanceId, beginTime, endTime);
+    return await taskRemoteClient.finishIdle(task.id, beginTime, endTime);
   }
 
-  Future<bool?> completeStage(
-      String basicAuth, String serverAddress, int taskInstanceId) async {
+  Future<Task> completeStage(
+      String basicAuth, String serverAddress, Task task) async {
     ApplicationState applicationState = Get.find();
 
     /// если включен деморежим, возвращаем успех
     if (applicationState.inDemonstrationMode.value) {
       await new Future.delayed(const Duration(seconds: 3));
-      return true;
+      if (task.stage != null) {
+        Stage stage;
+        switch (task.stage!.number) {
+          case 1:
+            stage = Stage(
+                name: "Выезд на объект",
+                number: 2,
+                isLast: false,
+                dueDate: task.stage!.dueDate);
+            break;
+          case 2:
+            stage = Stage(
+                name: "Прибытие на объект",
+                number: 3,
+                isLast: false,
+                dueDate: task.stage!.dueDate);
+            break;
+          case 3:
+            stage = Stage(
+                name: "Выполнение работ",
+                number: 4,
+                isLast: true,
+                dueDate: task.stage!.dueDate);
+            break;
+          default:
+            stage = task.stage!;
+        }
+        task.stage = stage;
+      }
+      return task;
     }
+
     TaskRemoteClient taskRemoteClient =
         TaskRemoteClient(basicAuth, serverAddress);
-    return await taskRemoteClient.endStage(taskInstanceId);
+
+    return await taskRemoteClient.endStage(task.id);
   }
 
-  Future<bool?> closeOrder(String basicAuth, String serverAddress,
-      int taskInstanceId, int closeCodeId) async {
+  Future<Task> closeOrder(String basicAuth, String serverAddress, Task task,
+      CloseCode closeCode) async {
     ApplicationState applicationState = Get.find();
 
     /// если включен деморежим, возвращаем успех
     if (applicationState.inDemonstrationMode.value) {
       await new Future.delayed(const Duration(seconds: 3));
-      return true;
+      task.stage = null;
+      task.isClosed = true;
+      task.closeDate = DateTime.now();
+      return task;
     }
     TaskRemoteClient taskRemoteClient =
         TaskRemoteClient(basicAuth, serverAddress);
-    return await taskRemoteClient.closeOrder(taskInstanceId, closeCodeId);
+    return await taskRemoteClient.closeOrder(task.id, closeCode.id);
   }
 
   Future<Work> registerWorkDetail(
       String basicAuth,
       String serverAddress,
-      int taskInstanceId,
-      int workTypeId,
+      Task task,
+      WorkType workType,
       bool notRequired,
       double? amount,
-      List<int>? workers) async {
+      List<Worker>? workers) async {
     ApplicationState applicationState = Get.find();
 
     /// если включен деморежим, возвращаем успех
     if (applicationState.inDemonstrationMode.value) {
       await new Future.delayed(const Duration(seconds: 3));
 
-      WorkType workType =
-          WorkTypeFixtures.workTypes.firstWhere((e) => e.id == workTypeId);
       if (notRequired) {
         return new Work(workType: workType, workDetail: [], notRequired: true);
       }
 
       double marksPerWorker = workType.marks * amount! / workers!.length;
-      Iterable<Worker> workerList = workers.expand(
-          (e1) => [WorkerFixtures.workers.firstWhere((e2) => e2.id == e1)]);
       Map<Worker, double> workerMarks = Map<Worker, double>.fromIterable(
-          workerList,
+          workers,
           key: (item) => item,
           value: (item) => marksPerWorker);
 
@@ -165,12 +192,15 @@ class TaskRepository extends GetxService {
     /// TODO: если деморежим выключен, нужно отправлять graphQL запрос
     TaskRemoteClient taskRemoteClient =
         TaskRemoteClient(basicAuth, serverAddress);
+    List<int> workersIds = (workers != null && workers.isNotEmpty)
+        ? workers.expand((e) => [e.id]).toList()
+        : [];
     return await taskRemoteClient.registerWorkDetail(
-        taskInstanceId, workTypeId, notRequired, amount, workers);
+        task.id, workType.id, notRequired, amount, workersIds);
   }
 
   Future<Work> deleteWorkDetail(String basicAuth, String serverAddress,
-      int taskInstanceId, int workDetailId) async {
+      Task task, WorkDetail workDetail) async {
     ApplicationState applicationState = Get.find();
 
     /// если включен деморежим, возвращаем успех
@@ -191,12 +221,11 @@ class TaskRepository extends GetxService {
     /// TODO: если деморежим выключен, нужно отправлять graphQL запрос
     TaskRemoteClient taskRemoteClient =
         TaskRemoteClient(basicAuth, serverAddress);
-    return await taskRemoteClient.deleteWorkDetail(
-        taskInstanceId, workDetailId);
+    return await taskRemoteClient.deleteWorkDetail(task.id, workDetail.id);
   }
 
-  Future<bool?> markWorksNotRequired(String basicAuth, String serverAddress,
-      int taskInstanceId, List<int> workTypes) async {
+  Future<bool> markWorksNotRequired(String basicAuth, String serverAddress,
+      Task task, List<WorkType> workTypes) async {
     ApplicationState applicationState = Get.find();
 
     /// если включен деморежим, возвращаем успех
@@ -206,8 +235,8 @@ class TaskRepository extends GetxService {
     }
 
     TaskRemoteClient taskRemoteClient =
-    TaskRemoteClient(basicAuth, serverAddress);
+        TaskRemoteClient(basicAuth, serverAddress);
     return await taskRemoteClient.markWorksNotRequired(
-        taskInstanceId, workTypes);
+        task.id, workTypes.expand((e) => [e.id]).toList());
   }
 }

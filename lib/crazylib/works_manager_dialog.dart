@@ -215,24 +215,14 @@ class WorksManagerDialogState extends State<WorksManagerDialog> {
             // если нет, переходим в режим регистрации
             TextButton(
                 onPressed: () async {
-                  Work? newWork;
                   WorkDetail workDetail = _work.workDetail![_i];
                   try {
-                    newWork = await asyncShowProgressIndicatorOverlay(
+                    Work newWork = await asyncShowProgressIndicatorOverlay(
                         asyncFunction: () {
-                      return taskListController.deleteWorkDetail(
-                          taskListController
-                              .taskListState.currentTask.value!.id,
-                          workDetail.id);
+                      return taskListController.deleteWorkDetail(workDetail);
                     });
-                  } catch (e) {
                     this.setState(() {
-                      _error = e.toString();
-                    });
-                  } finally {
-                    this.setState(() {
-                      if (newWork != null &&
-                          newWork.workDetail != null &&
+                      if (newWork.workDetail != null &&
                           newWork.workDetail!.isNotEmpty) {
                         _operationCompleted = true;
                         final Work oldWork = _work;
@@ -251,6 +241,10 @@ class WorksManagerDialogState extends State<WorksManagerDialog> {
                       }
                       _deletionMode = false;
                       _error = null;
+                    });
+                  } catch (e) {
+                    this.setState(() {
+                      _error = e.toString();
                     });
                   }
                 },
@@ -399,11 +393,7 @@ class WorksManagerDialogState extends State<WorksManagerDialog> {
                   newWork = await asyncShowProgressIndicatorOverlay(
                       asyncFunction: () {
                     return taskListController.registerWorkDetail(
-                        taskListController.taskListState.currentTask.value!.id,
-                        _work.workType.id,
-                        true,
-                        null,
-                        null);
+                        _work.workType, true, null, null);
                   });
                 } catch (e) {
                   this.setState(() {
@@ -455,11 +445,7 @@ class WorksManagerDialogState extends State<WorksManagerDialog> {
                   newWork = await asyncShowProgressIndicatorOverlay(
                       asyncFunction: () {
                     return taskListController.registerWorkDetail(
-                        taskListController.taskListState.currentTask.value!.id,
-                        _work.workType.id,
-                        false,
-                        _amount,
-                        _workers.expand((e) => [e.id]).toList());
+                        _work.workType, false, _amount, _workers);
                   });
                 } catch (e) {
                   this.setState(() {
