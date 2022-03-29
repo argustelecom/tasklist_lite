@@ -45,14 +45,7 @@ class AuthRemoteClient {
       Future<QueryResult> queryResultFuture = _graphQLService.query(whoAmI);
       await queryResultFuture.whenComplete(() => null).then((value) {
         if (value.hasException) {
-          // need catch 401 error
-          if (value.exception?.linkException is ServerException) {
-            throw Exception("Сервер не доступен");
-          }
-          if (value.exception?.linkException is HttpLinkParserException) {
-          throw Exception("Неавторизован");
-          }
-          throw Exception("Неожиданная ошибка");
+          checkError(value.exception!);
         }
         if (value.data == null) {
           throw Exception("Ошибка получения данных о профиле пользователя");
@@ -64,5 +57,29 @@ class AuthRemoteClient {
       });
 
     return result;
+  }
+
+  // TODO необходимо вынести в отдельный класс
+  //  используется в TaskRemoteClient, ObjectAttachRemote, NotifyRemoteClient, AuthRemoteClient
+  void checkError(OperationException operationException) {
+    if (operationException.linkException is ServerException) {
+      throw Exception("Сервер недоступен");
+    }
+    if (operationException.linkException is HttpLinkParserException) {
+      throw Exception("Не авторизован");
+    }
+    if (operationException.graphqlErrors.isNotEmpty) {
+      List errors = operationException.graphqlErrors
+          .map((e) => e.message)
+          .map((e) => _parseExceptionMessage(e))
+          .toList();
+      throw Exception(errors.toString());
+    }
+    throw Exception("Неожиданная ошибка");
+  }
+
+  String _parseExceptionMessage(String message) {
+    // учитывая пробел
+    return message.substring(message.indexOf(':') + 2);
   }
 }

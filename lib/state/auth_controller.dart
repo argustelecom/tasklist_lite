@@ -53,11 +53,11 @@ class AuthController extends GetxController {
             String message = e.toString().substring("Exception: ".length);
 
             switch (message) {
-              case ("Сервер не доступен"):
+              case ("Сервер недоступен"):
                 errorText =
                     "Сервер не доступен. \nПроверьте правильность введенных данных. \nСообщите администратору.";
                 break;
-              case ("Неавторизован"):
+              case ("Не авторизован"):
                 errorText =
                     "Неверный логин или пароль. \nПроверьте правильность введенных данных.";
                 break;
