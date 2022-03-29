@@ -7,6 +7,7 @@ import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:tasklist_lite/crazylib/work_card.dart';
 
 import '../state/tasklist_controller.dart';
+import '../tasklist/model/task.dart';
 import '../tasklist/model/work.dart';
 import 'crazy_progress_dialog.dart';
 import 'info_dialog.dart';
@@ -144,47 +145,47 @@ class WorksTabState extends State<WorksTab> {
                     ]),
                     onPressed: () async {
                       if (taskListController.getWorks().isNotEmpty) {
-                        List<int> workTypes = taskListController
+                        List<WorkType> workTypes = taskListController
                             .getWorks()
                             .where((e) =>
                                 (e.workDetail == null ||
                                     e.workDetail!.isEmpty) &&
                                 !e.notRequired)
-                            .expand((e) => [e.workType.id])
+                            .expand((e) => [e.workType])
                             .toList();
-                        Future<bool?> result = Future<bool>.value(false);
-                        try {
-                          await asyncShowProgressIndicatorOverlay(
-                              asyncFunction: () {
-                            result = taskListController.markWorksNotRequired(
-                                // #TODO[НИ]: не надо передавать id. Тут вообще параметр лишний.
-                                taskListController
-                                    .taskListState.currentTask.value!.id,
-                                workTypes);
-                            return result;
-                          });
-                        } catch (e) {
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return InfoDialog(
-                                  body: Text("Произошла ошибка: \"$e\"",
-                                      maxLines: 7, overflow: TextOverflow.clip),
-                                );
-                              });
-                        } finally {
-                          // #TODO: временный костыль, до того момента, когда markWorksNotRequired
-                          // не начнет возвращать коллекцию работ с уже измененным флажком "не требуется"
-                          // а так вообще это должно делаться внутри метода контроллера
-                          result.then((value) {
-                            if (value ?? false) {
-                              for (Work work in taskListController.getWorks()) {
-                                work.notRequired = true;
-                              }
-                              taskListController.update();
-                            }
-                          });
-                        }
+                        if (workTypes.isNotEmpty)
+                          try {
+                            await asyncShowProgressIndicatorOverlay(
+                                asyncFunction: () {
+                              return taskListController
+                                  .markWorksNotRequired(workTypes);
+                            });
+                            Task task = taskListController
+                                .taskListState.currentTask.value!;
+                            task.works!.removeWhere(
+                                (e) => workTypes.contains(e.workType));
+                            task.works!.addAll(workTypes
+                                .expand((e) => [
+                                      new Work(
+                                          workType: e,
+                                          notRequired: true,
+                                          workDetail: [])
+                                    ])
+                                .toList());
+                            taskListController.taskListState.currentTask.value =
+                                task;
+                            taskListController.update();
+                          } catch (e) {
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return InfoDialog(
+                                    body: Text("Произошла ошибка: \"$e\"",
+                                        maxLines: 7,
+                                        overflow: TextOverflow.clip),
+                                  );
+                                });
+                          }
                       }
                     }))
           ]))
