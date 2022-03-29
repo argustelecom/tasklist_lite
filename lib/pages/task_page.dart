@@ -3,27 +3,21 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:tasklist_lite/crazylib/comment_card.dart';
 import 'package:tasklist_lite/crazylib/due_date_label.dart';
 import 'package:tasklist_lite/crazylib/history_tab.dart';
 import 'package:tasklist_lite/crazylib/idle_time_manager_dialog.dart';
-import 'package:tasklist_lite/crazylib/location_button.dart';
 import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
 import 'package:tasklist_lite/crazylib/summary_tab.dart';
 import 'package:tasklist_lite/state/comment_controller.dart';
-import 'package:tasklist_lite/state/textFieldColoraizer.dart';
 import 'package:tasklist_lite/tasklist/model/task.dart';
 
 import '../common/widgets/object_attach_widget/widgets/object_attach_widget.dart';
 import '../crazylib/adaptive_dialog.dart';
-import '../crazylib/attribValue.dart';
 import '../crazylib/close_task_dialog.dart';
-import '../crazylib/crazy_progress_dialog.dart';
 import '../crazylib/info_dialog.dart';
 import '../crazylib/mark_filter_list.dart';
 import '../crazylib/works_tab.dart';
 import '../state/tasklist_controller.dart';
-import 'comment_page.dart';
 
 class TaskPage extends StatefulWidget {
   static const String routeName = 'task';
@@ -225,7 +219,7 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
                                                 title: Text('Завершить этап'),
                                                 onTap: () async {
                                                   // если завершаем последний этап, отобразим дилог закрытия для выбора ШЗ
-                                                  // у нарядов ТО этапов нет, поэтому всегда переходим к диалогу закрытию
+                                                  // у нарядов ТО этапов нет, поэтому всегда переходим к диалогу закрытия
                                                   if (task.stage == null ||
                                                       task.stage!.isLast) {
                                                     Navigator.pop(context, "");
@@ -238,16 +232,15 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
                                                   } else {
                                                     Navigator.pop(context, "");
                                                     try {
-                                                      await asyncShowProgressIndicatorOverlay(
-                                                          asyncFunction: () {
-                                                        return taskListController
-                                                            .completeStage(
-                                                                taskListController
-                                                                    .taskListState
-                                                                    .currentTask
-                                                                    .value!
-                                                                    .id);
-                                                      });
+                                                      Task newTask =
+                                                          await taskListController
+                                                              .completeStage();
+                                                      taskListController
+                                                          .taskListState
+                                                          .currentTask
+                                                          .value = newTask;
+                                                      taskListController
+                                                          .update();
                                                     } catch (e) {
                                                       showDialog(
                                                           context: context,
@@ -261,8 +254,6 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
                                                                         TextOverflow
                                                                             .clip));
                                                           });
-                                                    } finally {
-                                                      // TODO обновление сведений
                                                     }
                                                   }
                                                 }),

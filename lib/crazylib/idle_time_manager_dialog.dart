@@ -365,15 +365,12 @@ class IdleTimeManagerDialogState extends State<IdleTimeManagerDialog> {
                   _error = "Укажите дату и время окончания простоя";
                 });
               } else {
-                IdleTime? newIdleTime;
                 if (_idleTime == null) {
                   try {
-                    newIdleTime = await asyncShowProgressIndicatorOverlay(
+                    Task newTask = await asyncShowProgressIndicatorOverlay(
                         asyncFunction: () {
                       return taskListController.registerIdle(
-                          taskListController
-                              .taskListState.currentTask.value!.id,
-                          _reason!.id,
+                          _reason!,
                           new DateTime(
                               _startDate!.year,
                               _startDate!.month,
@@ -389,13 +386,14 @@ class IdleTimeManagerDialogState extends State<IdleTimeManagerDialog> {
                                   _endTime!.minute)
                               : null);
                     });
-                    if (newIdleTime != null) {
-                      this.setState(() {
-                        _operationCompleted = true;
-                        _error = null;
-                        _idleTime = newIdleTime;
-                      });
-                    }
+                    this.setState(() {
+                      _operationCompleted = true;
+                      _error = null;
+                      _idleTime = newTask.idleTimeList?.last;
+                      taskListController.taskListState.currentTask.value =
+                          newTask;
+                      taskListController.update();
+                    });
                   } catch (e) {
                     this.setState(() {
                       _error = e.toString();
@@ -403,11 +401,9 @@ class IdleTimeManagerDialogState extends State<IdleTimeManagerDialog> {
                   }
                 } else {
                   try {
-                    newIdleTime = await asyncShowProgressIndicatorOverlay(
+                    Task newTask = await asyncShowProgressIndicatorOverlay(
                         asyncFunction: () {
                       return taskListController.finishIdle(
-                          taskListController
-                              .taskListState.currentTask.value!.id,
                           new DateTime(
                               _startDate!.year,
                               _startDate!.month,
@@ -417,13 +413,14 @@ class IdleTimeManagerDialogState extends State<IdleTimeManagerDialog> {
                           new DateTime(_endDate!.year, _endDate!.month,
                               _endDate!.day, _endTime!.hour, _endTime!.minute));
                     });
-                    if (newIdleTime != null) {
-                      this.setState(() {
-                        _operationCompleted = true;
-                        _error = null;
-                        _idleTime = newIdleTime;
-                      });
-                    }
+                    this.setState(() {
+                      _operationCompleted = true;
+                      _error = null;
+                      _idleTime = newTask.idleTimeList?.last;
+                      taskListController.taskListState.currentTask.value =
+                          newTask;
+                      taskListController.update();
+                    });
                   } catch (e) {
                     this.setState(() {
                       _error = e.toString();
@@ -455,6 +452,7 @@ class IdleTimeManagerDialogState extends State<IdleTimeManagerDialog> {
                   fontSize: 16),
             ),
             onPressed: () {
+              // taskListController.update();
               GetDelegate routerDelegate = Get.find();
               routerDelegate.popRoute();
             },

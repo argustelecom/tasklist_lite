@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:tasklist_lite/graphql/graphql_service.dart';
@@ -222,7 +221,7 @@ class TaskRemoteClient {
     return result;
   }
 
-  Future<IdleTime> registerIdle(int taskInstanceId, int reasonId,
+  Future<Task> registerIdle(int taskInstanceId, int reasonId,
       DateTime beginTime, DateTime? endTime) async {
     String beginTimeStr = DateFormat('dd.MM.yyyy HH:mm:ss').format(beginTime);
     String endTimeStr = '';
@@ -236,13 +235,13 @@ class TaskRemoteClient {
     reasonId:"$reasonId",
     beginTime:"$beginTimeStr",
     endTime:"$endTimeStr"){
-       $idleTimeQuery
+       $taskGraphqlQuery
     }
  }''';
 
     Future<QueryResult> mutationResultFuture =
         _graphQLService.mutate(registerIdleQuery);
-    late IdleTime result;
+    late Task result;
     await mutationResultFuture.then((value) {
       if (value.hasException) {
         // need catch 401 error
@@ -256,16 +255,16 @@ class TaskRemoteClient {
       }
       if (value.data == null || value.data!["registerIdleTime"] == null) {
         throw Exception(
-            "Получен некорректный ответ сервера, простой не найден");
+            "Получен некорректный ответ сервера, результат выполнения операции не найден");
       }
-      result = IdleTime.fromJson(value.data!["registerIdleTime"]);
+      result = Task.fromJson(value.data!["registerIdleTime"]);
     }, onError: (e) {
       throw Exception(" onError " + e.toString());
     });
     return result;
   }
 
-  Future<IdleTime> finishIdle(
+  Future<Task> finishIdle(
       int taskInstanceId, DateTime beginTime, DateTime endTime) async {
     String beginTimeStr = DateFormat('dd.MM.yyyy HH:mm:ss').format(beginTime);
     String endTimeStr = DateFormat('dd.MM.yyyy HH:mm:ss').format(endTime);
@@ -276,13 +275,13 @@ class TaskRemoteClient {
     taskInstanceId:"$taskInstanceId",
     beginTime:"$beginTimeStr",
     endTime:"$endTimeStr"){
-       $idleTimeQuery
+       $taskGraphqlQuery
     }
  }''';
 
     Future<QueryResult> mutationResultFuture =
         _graphQLService.mutate(finishIdleQuery);
-    late IdleTime result;
+    late Task result;
     await mutationResultFuture.then((value) {
       if (value.hasException) {
         // need catch 401 error
@@ -296,9 +295,9 @@ class TaskRemoteClient {
       }
       if (value.data == null || value.data!["finishIdleTime"] == null) {
         throw Exception(
-            "Получен некорректный ответ сервера, простой не найден");
+            "Получен некорректный ответ сервера, результат выполнения операции не найден");
       }
-      result = IdleTime.fromJson(value.data!["finishIdleTime"]);
+      result = Task.fromJson(value.data!["finishIdleTime"]);
     }, onError: (e) {
       throw Exception(" onError " + e.toString());
     });
@@ -375,16 +374,18 @@ class TaskRemoteClient {
     return result;
   }
 
-  Future<bool?> endStage(int taskInstanceId) async {
+  Future<Task> endStage(int taskInstanceId) async {
     String endStageQuery = '''
  mutation {  
    endStage(
-    taskInstanceId:"$taskInstanceId")
+    taskInstanceId:"$taskInstanceId"){
+       $taskGraphqlQuery
+    }
  }''';
 
     Future<QueryResult> mutationResultFuture =
         _graphQLService.mutate(endStageQuery);
-    late String result;
+    late Task result;
     await mutationResultFuture.then((value) {
       if (value.hasException) {
         // need catch 401 error
@@ -396,29 +397,30 @@ class TaskRemoteClient {
         }
         throw Exception("Неожиданная ошибка");
       }
-      if (value.data == null) {
-        return null;
+      if (value.data == null || value.data!["endStage"] == null) {
+        throw Exception(
+            "Получен некорректный ответ сервера, результат выполнения операции не найден");
       }
-      result = value.data!["endStage"];
+      result = Task.fromJson(value.data!["endStage"]);
     }, onError: (e) {
       throw Exception(" onError " + e.toString());
     });
-    if (result == "true") {
-      return true;
-    }
-    return false;
+    return result;
   }
 
-  Future<bool?> closeOrder(int taskInstanceId, int closeCodeId) async {
+  Future<Task> closeOrder(int taskInstanceId, int closeCodeId) async {
     String closeOrderQuery = '''
  mutation {  
    closeOrder(
-    taskInstanceId:"$taskInstanceId", closeCodeId:"$closeCodeId")
+    taskInstanceId:"$taskInstanceId",
+    closeCodeId:"$closeCodeId"){
+       $taskGraphqlQuery
+    }
  }''';
 
     Future<QueryResult> mutationResultFuture =
         _graphQLService.mutate(closeOrderQuery);
-    late String result;
+    late Task result;
     await mutationResultFuture.then((value) {
       if (value.hasException) {
         // need catch 401 error
@@ -430,17 +432,15 @@ class TaskRemoteClient {
         }
         throw Exception("Неожиданная ошибка");
       }
-      if (value.data == null) {
-        return null;
+      if (value.data == null || value.data!["closeOrder"] == null) {
+        throw Exception(
+            "Получен некорректный ответ сервера, результат выполнения операции не найден");
       }
-      result = value.data!["closeOrder"];
+      result = Task.fromJson(value.data!["closeOrder"]);
     }, onError: (e) {
       throw Exception(" onError " + e.toString());
     });
-    if (result == "true") {
-      return true;
-    }
-    return false;
+    return result;
   }
 
   Future<List<CloseCode>> getCloseCodes() async {
@@ -540,7 +540,7 @@ class TaskRemoteClient {
       }
       if (value.data == null) {
         throw Exception(
-            "Получен некорректный ответ сервера, работа не найдена");
+            "Получен некорректный ответ сервера, результат выполнения операции не найден");
       }
       result = Work.fromJson(value.data!["registerWorkDetail"]);
     }, onError: (e) {
@@ -576,7 +576,7 @@ class TaskRemoteClient {
       }
       if (value.data == null) {
         throw Exception(
-            "Получен некорректный ответ сервера, работа не найдена");
+            "Получен некорректный ответ сервера, результат выполнения операции не найден");
       }
       result = Work.fromJson(value.data!["deleteWorkDetail"]);
     }, onError: (e) {
@@ -614,7 +614,7 @@ class TaskRemoteClient {
     return true;
   }
 
-  Future<bool?> markWorksNotRequired(
+  Future<bool> markWorksNotRequired(
       int taskInstanceId, List<int> workTypes) async {
     String? workTypesString = workTypes.toString();
     String deleteWorkDetailQuery = '''
@@ -641,7 +641,8 @@ class TaskRemoteClient {
         throw Exception("Неожиданная ошибка");
       }
       if (value.data == null) {
-        return null;
+        throw Exception(
+            "Получен некорректный ответ сервера, результат выполнения операции не найден");
       }
     }, onError: (e) {
       throw Exception(" onError " + e.toString());
