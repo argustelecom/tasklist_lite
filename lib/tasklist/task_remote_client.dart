@@ -168,14 +168,7 @@ class TaskRemoteClient {
     List<Task> result = List.of({});
     await queryResultFuture.then((value) {
       if (value.hasException) {
-        // need catch 401 error
-        if (value.exception?.linkException is ServerException) {
-          throw Exception("Сервер недоступен");
-        }
-        if (value.exception?.linkException is HttpLinkParserException) {
-          throw Exception("Не авторизован");
-        }
-        throw Exception("Неожиданная ошибка");
+        checkError(value.exception!);
       }
       if (value.data == null) {
         return result;
@@ -201,14 +194,7 @@ class TaskRemoteClient {
     List<IdleTimeReason> result = List.of({});
     await queryResultFuture.then((value) {
       if (value.hasException) {
-        // need catch 401 error
-        if (value.exception?.linkException is ServerException) {
-          throw Exception("Сервер недоступен");
-        }
-        if (value.exception?.linkException is HttpLinkParserException) {
-          throw Exception("Не авторизован");
-        }
-        throw Exception("Неожиданная ошибка");
+        checkError(value.exception!);
       }
       if (value.data == null) {
         return result;
@@ -245,14 +231,7 @@ class TaskRemoteClient {
     late IdleTime result;
     await mutationResultFuture.then((value) {
       if (value.hasException) {
-        // need catch 401 error
-        if (value.exception?.linkException is ServerException) {
-          throw Exception("Сервер недоступен");
-        }
-        if (value.exception?.linkException is HttpLinkParserException) {
-          throw Exception("Не авторизован");
-        }
-        throw Exception("Неожиданная ошибка");
+        checkError(value.exception!);
       }
       if (value.data == null || value.data!["registerIdleTime"] == null) {
         throw Exception(
@@ -285,14 +264,7 @@ class TaskRemoteClient {
     late IdleTime result;
     await mutationResultFuture.then((value) {
       if (value.hasException) {
-        // need catch 401 error
-        if (value.exception?.linkException is ServerException) {
-          throw Exception("Сервер недоступен");
-        }
-        if (value.exception?.linkException is HttpLinkParserException) {
-          throw Exception("Не авторизован");
-        }
-        throw Exception("Неожиданная ошибка");
+        checkError(value.exception!);
       }
       if (value.data == null || value.data!["finishIdleTime"] == null) {
         throw Exception(
@@ -317,14 +289,7 @@ class TaskRemoteClient {
     List<Comment> result = List.of({});
     await queryResultFuture.then((value) {
       if (value.hasException) {
-        // need catch 401 error
-        if (value.exception?.linkException is ServerException) {
-          throw Exception("Сервер недоступен");
-        }
-        if (value.exception?.linkException is HttpLinkParserException) {
-          throw Exception("Не авторизован");
-        }
-        throw Exception("Неожиданная ошибка");
+        checkError(value.exception!);
       }
       if (value.data == null) {
         return result;
@@ -355,14 +320,7 @@ class TaskRemoteClient {
     Comment? result = null;
     await mutationResultFuture.then((value) {
       if (value.hasException) {
-        // need catch 401 error
-        if (value.exception?.linkException is ServerException) {
-          throw Exception("Сервер недоступен");
-        }
-        if (value.exception?.linkException is HttpLinkParserException) {
-          throw Exception("Не авторизован");
-        }
-        throw Exception("Неожиданная ошибка");
+        checkError(value.exception!);
       }
       if (value.data == null || value.data!["addComment"] == null) {
         return null;
@@ -387,14 +345,7 @@ class TaskRemoteClient {
     late String result;
     await mutationResultFuture.then((value) {
       if (value.hasException) {
-        // need catch 401 error
-        if (value.exception?.linkException is ServerException) {
-          throw Exception("Сервер недоступен");
-        }
-        if (value.exception?.linkException is HttpLinkParserException) {
-          throw Exception("Не авторизован");
-        }
-        throw Exception("Неожиданная ошибка");
+        checkError(value.exception!);
       }
       if (value.data == null) {
         return null;
@@ -421,14 +372,7 @@ class TaskRemoteClient {
     late String result;
     await mutationResultFuture.then((value) {
       if (value.hasException) {
-        // need catch 401 error
-        if (value.exception?.linkException is ServerException) {
-          throw Exception("Сервер недоступен");
-        }
-        if (value.exception?.linkException is HttpLinkParserException) {
-          throw Exception("Не авторизован");
-        }
-        throw Exception("Неожиданная ошибка");
+        checkError(value.exception!);
       }
       if (value.data == null) {
         return null;
@@ -455,14 +399,7 @@ class TaskRemoteClient {
     List<CloseCode> result = List.of({});
     await queryResultFuture.then((value) {
       if (value.hasException) {
-        // need catch 401 error
-        if (value.exception?.linkException is ServerException) {
-          throw Exception("Сервер недоступен");
-        }
-        if (value.exception?.linkException is HttpLinkParserException) {
-          throw Exception("Не авторизован");
-        }
-        throw Exception("Неожиданная ошибка");
+        checkError(value.exception!);
       }
       if (value.data == null) {
         return result;
@@ -488,14 +425,7 @@ class TaskRemoteClient {
     List<Mark> result = List.of({});
     await queryResultFuture.then((value) {
       if (value.hasException) {
-        // need catch 401 error
-        if (value.exception?.linkException is ServerException) {
-          throw Exception("Сервер недоступен");
-        }
-        if (value.exception?.linkException is HttpLinkParserException) {
-          throw Exception("Не авторизован");
-        }
-        throw Exception("Неожиданная ошибка");
+        checkError(value.exception!);
       }
       if (value.data == null) {
         return result;
@@ -529,14 +459,7 @@ class TaskRemoteClient {
     late Work result;
     await mutationResultFuture.then((value) {
       if (value.hasException) {
-        // need catch 401 error
-        if (value.exception?.linkException is ServerException) {
-          throw Exception("Сервер недоступен");
-        }
-        if (value.exception?.linkException is HttpLinkParserException) {
-          throw Exception("Не авторизован");
-        }
-        throw Exception("Неожиданная ошибка");
+        checkError(value.exception!);
       }
       if (value.data == null) {
         throw Exception(
@@ -565,14 +488,7 @@ class TaskRemoteClient {
     late Work result;
     await mutationResultFuture.then((value) {
       if (value.hasException) {
-        // need catch 401 error
-        if (value.exception?.linkException is ServerException) {
-          throw Exception("Сервер недоступен");
-        }
-        if (value.exception?.linkException is HttpLinkParserException) {
-          throw Exception("Не авторизован");
-        }
-        throw Exception("Неожиданная ошибка");
+        checkError(value.exception!);
       }
       if (value.data == null) {
         throw Exception(
@@ -595,16 +511,9 @@ class TaskRemoteClient {
     Future<QueryResult> mutationResultFuture =
         _graphQLService.mutate(readNotifyQuery);
     await mutationResultFuture.then((value) {
-      if (value.hasException) {
-        // need catch 401 error
-        if (value.exception?.linkException is ServerException) {
-          throw Exception("Сервер недоступен");
+        if (value.hasException) {
+          checkError(value.exception!);
         }
-        if (value.exception?.linkException is HttpLinkParserException) {
-          throw Exception("Не авторизован");
-        }
-        throw Exception("Неожиданная ошибка");
-      }
       if (value.data == null || value.data!["readNotify"] == null) {
         return null;
       }
@@ -631,14 +540,7 @@ class TaskRemoteClient {
         _graphQLService.mutate(deleteWorkDetailQuery);
     await mutationResultFuture.then((value) {
       if (value.hasException) {
-        // need catch 401 error
-        if (value.exception?.linkException is ServerException) {
-          throw Exception("Сервер недоступен");
-        }
-        if (value.exception?.linkException is HttpLinkParserException) {
-          throw Exception("Не авторизован");
-        }
-        throw Exception("Неожиданная ошибка");
+        checkError(value.exception!);
       }
       if (value.data == null) {
         return null;
@@ -647,5 +549,29 @@ class TaskRemoteClient {
       throw Exception(" onError " + e.toString());
     });
     return true;
+  }
+
+  // TODO необходимо вынести в отдельный класс
+  //  используется в TaskRemoteClient, ObjectAttachRemote, NotifyRemoteClient, AuthRemoteClient
+  void checkError(OperationException operationException) {
+    if (operationException.linkException is ServerException) {
+      throw Exception("Сервер недоступен");
+    }
+    if (operationException.linkException is HttpLinkParserException) {
+      throw Exception("Не авторизован");
+    }
+    if (operationException.graphqlErrors.isNotEmpty) {
+      List errors = operationException.graphqlErrors
+          .map((e) => e.message)
+          .map((e) => _parseExceptionMessage(e))
+          .toList();
+      throw Exception(errors.toString());
+    }
+    throw Exception("Неожиданная ошибка");
+  }
+
+  String _parseExceptionMessage(String message) {
+    // учитывая пробел
+    return message.substring(message.indexOf(':') + 2);
   }
 }

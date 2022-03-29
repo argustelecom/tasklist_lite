@@ -50,10 +50,7 @@ class ObjectAttachRemote {
     late ObjectAttach result;
     await queryResultFuture.then((value) {
       if (value.hasException) {
-        throw Exception(value.exception);
-      }
-      if (value.data == null) {
-        throw Exception("value.data == null");
+        checkError(value.exception!);
       }
       if (!value.isLoading) {
         result = ObjectAttach.fromJson(value.data!["objectAttachmentById"]);
@@ -93,10 +90,7 @@ class ObjectAttachRemote {
     List<ObjectAttach> result = List.of({});
     await queryResultFuture.then((value) {
       if (value.hasException) {
-        throw Exception(value.exception);
-      }
-      if (value.data == null) {
-        throw Exception("value.data == null");
+        checkError(value.exception!);
       }
       if (!value.isLoading) {
         List.from(value.data!["attachmentsByObjectId"]).forEach((element) {
@@ -137,7 +131,7 @@ class ObjectAttachRemote {
     late ObjectAttach result;
     await queryResultFuture.then((value) {
       if (value.hasException) {
-        throw Exception(value.exception);
+        checkError(value.exception!);
       }
       if (value.data == null) {
         throw Exception("value.data == null");
@@ -181,7 +175,7 @@ class ObjectAttachRemote {
     List<ObjectAttach> result = List.of({});
     await queryResultFuture.then((value) {
       if (value.hasException) {
-        throw Exception(value.exception);
+        checkError(value.exception!);
       }
       if (value.data == null) {
         throw Exception("value.data == null");
@@ -226,7 +220,7 @@ class ObjectAttachRemote {
     late ObjectAttach? result;
     await queryResultFuture.then((value) {
       if (value.hasException) {
-        throw Exception(value.exception);
+        checkError(value.exception!);
       }
       if (value.data == null) {
         throw Exception("value.data == null");
@@ -246,4 +240,27 @@ class ObjectAttachRemote {
     return result;
   }
 
+  // TODO необходимо вынести в отдельный класс
+  //  используется в TaskRemoteClient, ObjectAttachRemote, NotifyRemoteClient, AuthRemoteClient
+  void checkError(OperationException operationException) {
+    if (operationException.linkException is ServerException) {
+      throw Exception("Сервер недоступен");
+    }
+    if (operationException.linkException is HttpLinkParserException) {
+      throw Exception("Не авторизован");
+    }
+    if (operationException.graphqlErrors.isNotEmpty) {
+      List errors = operationException.graphqlErrors
+          .map((e) => e.message)
+          .map((e) => _parseExceptionMessage(e))
+          .toList();
+      throw Exception(errors.toString());
+    }
+    throw Exception("Неожиданная ошибка");
+  }
+
+  String _parseExceptionMessage(String message) {
+    // учитывая пробел
+    return message.substring(message.indexOf(':') + 2);
+  }
 }
