@@ -221,26 +221,25 @@ class WorksManagerDialogState extends State<WorksManagerDialog> {
                         asyncFunction: () {
                       return taskListController.deleteWorkDetail(workDetail);
                     });
+                    final Work oldWork = _work;
                     this.setState(() {
                       if (newWork.workDetail != null &&
                           newWork.workDetail!.isNotEmpty) {
                         _operationCompleted = true;
-                        final Work oldWork = _work;
-                        _work = newWork;
-                        // #TODO[НИ]: копипаст устранить при переходе на WorkController
-                        int oldWorkIndex = taskListController
-                            .taskListState.currentTask.value!.works!
-                            .indexOf(oldWork);
-                        taskListController
-                            .taskListState.currentTask.value!.works!
-                            .replaceRange(
-                                oldWorkIndex, oldWorkIndex + 1, [_work]);
-                        taskListController.update();
                       } else {
                         _registrationMode = true;
                       }
                       _deletionMode = false;
                       _error = null;
+                      _work = newWork;
+                      // #TODO[НИ]: копипаст устранить при переходе на WorkController
+                      int oldWorkIndex = taskListController
+                          .taskListState.currentTask.value!.works!
+                          .indexOf(oldWork);
+                      taskListController.taskListState.currentTask.value!.works!
+                          .replaceRange(
+                              oldWorkIndex, oldWorkIndex + 1, [_work]);
+                      taskListController.update();
                     });
                   } catch (e) {
                     this.setState(() {
