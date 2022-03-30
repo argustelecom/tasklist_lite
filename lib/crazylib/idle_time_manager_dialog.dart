@@ -63,8 +63,6 @@ class IdleTimeManagerDialogState extends State<IdleTimeManagerDialog> {
         builder: (commonDropdownController) {
       return GetBuilder<TaskListController>(builder: (taskListController) {
         ThemeData themeData = Theme.of(context);
-        List<IdleTimeReason> idleTimeReasons =
-            taskListController.taskListState.idleTimeReasons;
         Task? task = taskListController.taskListState.currentTask.value;
         if (task == null) {
           return Padding(
@@ -91,14 +89,16 @@ class IdleTimeManagerDialogState extends State<IdleTimeManagerDialog> {
                   hint: "Выберите причину",
                   value: _reason == null
                       ? null
-                      : idleTimeReasons.firstWhere((e) => e.id == _reason!.id),
+                      : taskListController.taskListState.idleTimeReasons
+                          .firstWhere((e) => e.id == _reason!.id),
                   borderColor: commonDropdownController.someDropdownTapped
                       ? themeData.colorScheme.primary
                       : null,
                   dropdownColor: themeData.colorScheme.primary,
-                  itemsList: idleTimeReasons,
+                  itemsList: taskListController.taskListState.idleTimeReasons,
                   selectedItemBuilder: (BuildContext context) {
-                    return idleTimeReasons.map<Widget>((IdleTimeReason item) {
+                    return taskListController.taskListState.idleTimeReasons
+                        .map<Widget>((IdleTimeReason item) {
                       return Align(
                           alignment: Alignment.centerLeft,
                           child: (Text(item.name)));
@@ -351,6 +351,7 @@ class IdleTimeManagerDialogState extends State<IdleTimeManagerDialog> {
                   fontSize: 16),
             ),
             onPressed: () async {
+              // валидация
               if (_reason == null) {
                 this.setState(() {
                   _error = "Укажите причину простоя";
@@ -365,62 +366,82 @@ class IdleTimeManagerDialogState extends State<IdleTimeManagerDialog> {
                   _error = "Укажите дату и время окончания простоя";
                 });
               } else {
+                DateTime _startDateTime = new DateTime(
+                    _startDate!.year,
+                    _startDate!.month,
+                    _startDate!.day,
+                    _startTime!.hour,
+                    _startTime!.minute);
+                DateTime? _endDateTime = (_endDate != null && _endTime != null)
+                    ? new DateTime(_endDate!.year, _endDate!.month,
+                        _endDate!.day, _endTime!.hour, _endTime!.minute)
+                    : null;
+                // регистрация нового простоя
                 if (_idleTime == null) {
                   try {
                     Task newTask = await asyncShowProgressIndicatorOverlay(
                         asyncFunction: () {
                       return taskListController.registerIdle(
-                          _reason!,
-                          new DateTime(
-                              _startDate!.year,
-                              _startDate!.month,
-                              _startDate!.day,
-                              _startTime!.hour,
-                              _startTime!.minute),
-                          (_endDate != null && _endTime != null)
-                              ? new DateTime(
-                                  _endDate!.year,
-                                  _endDate!.month,
-                                  _endDate!.day,
-                                  _endTime!.hour,
-                                  _endTime!.minute)
-                              : null);
+                          _reason!, _startDateTime, _endDateTime);
                     });
-                    this.setState(() {
-                      _operationCompleted = true;
-                      _error = null;
-                      _idleTime = newTask.idleTimeList?.last;
-                      taskListController.taskListState.currentTask.value =
-                          newTask;
-                      taskListController.update();
-                    });
+                    IdleTime? newIdleTime;
+                    if (newTask.idleTimeList != null &&
+                        newTask.idleTimeList!.isNotEmpty) {
+                      newIdleTime = newTask.idleTimeList?.lastWhere((e) =>
+                          e.reason.id == _reason!.id &&
+                          e.startDate == _startDateTime);
+                    }
+                    if (newIdleTime != null) {
+                      this.setState(() {
+                        _operationCompleted = true;
+                        _error = null;
+                        _idleTime = newIdleTime;
+                        taskListController.taskListState.currentTask.value =
+                            newTask;
+                        taskListController.update();
+                      });
+                    } else {
+                      this.setState(() {
+                        _error =
+                            "Неожиданная ошибка: простой не зарегистрирован";
+                      });
+                    }
                   } catch (e) {
                     this.setState(() {
                       _error = e.toString();
                     });
                   }
-                } else {
+                }
+                // завершение простоя, зарегистрированного ранее
+                else {
                   try {
                     Task newTask = await asyncShowProgressIndicatorOverlay(
                         asyncFunction: () {
                       return taskListController.finishIdle(
-                          new DateTime(
-                              _startDate!.year,
-                              _startDate!.month,
-                              _startDate!.day,
-                              _startTime!.hour,
-                              _startTime!.minute),
-                          new DateTime(_endDate!.year, _endDate!.month,
-                              _endDate!.day, _endTime!.hour, _endTime!.minute));
+                          _startDateTime, _endDateTime!);
                     });
-                    this.setState(() {
-                      _operationCompleted = true;
-                      _error = null;
-                      _idleTime = newTask.idleTimeList?.last;
-                      taskListController.taskListState.currentTask.value =
-                          newTask;
-                      taskListController.update();
-                    });
+                    IdleTime? newIdleTime;
+                    if (newTask.idleTimeList != null &&
+                        newTask.idleTimeList!.isNotEmpty) {
+                      newIdleTime = newTask.idleTimeList?.lastWhere((e) =>
+                          e.reason.id == _reason!.id &&
+                          e.startDate == _startDateTime);
+                    }
+                    if (newIdleTime != null) {
+                      this.setState(() {
+                        _operationCompleted = true;
+                        _error = null;
+                        _idleTime = newIdleTime;
+                        taskListController.taskListState.currentTask.value =
+                            newTask;
+                        taskListController.update();
+                      });
+                    } else {
+                      this.setState(() {
+                        _error =
+                            "Неожиданная ошибка: простой не зарегистрирован";
+                      });
+                    }
                   } catch (e) {
                     this.setState(() {
                       _error = e.toString();
