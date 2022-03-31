@@ -1,6 +1,7 @@
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:tasklist_lite/graphql/graphql_service.dart';
+import 'package:tasklist_lite/tasklist/exceptions.dart';
 import 'package:tasklist_lite/tasklist/model/comment.dart';
 import 'package:tasklist_lite/tasklist/model/idle_time.dart';
 import 'package:tasklist_lite/tasklist/model/work.dart';
@@ -176,7 +177,7 @@ class TaskRemoteClient {
         result.add(Task.fromJson(element));
       });
     }, onError: (e) {
-      throw Exception(" onError " + e.toString());
+      throw ExternalException("Ошибка обработки ответа: " + e.toString());
     });
     return result;
   }
@@ -202,7 +203,7 @@ class TaskRemoteClient {
         result.add(IdleTimeReason.fromJson(element));
       });
     }, onError: (e) {
-      throw Exception(" onError " + e.toString());
+      throw ExternalException("Ошибка обработки ответа: " + e.toString());
     });
     return result;
   }
@@ -233,12 +234,12 @@ class TaskRemoteClient {
         checkError(value.exception!);
       }
       if (value.data == null || value.data!["registerIdleTime"] == null) {
-        throw Exception(
+        throw ExternalException(
             "Получен некорректный ответ сервера, результат выполнения операции не найден");
       }
       result = Task.fromJson(value.data!["registerIdleTime"]);
     }, onError: (e) {
-      throw Exception(" onError " + e.toString());
+      throw ExternalException("Ошибка обработки ответа: " + e.toString());
     });
     return result;
   }
@@ -266,12 +267,12 @@ class TaskRemoteClient {
         checkError(value.exception!);
       }
       if (value.data == null || value.data!["finishIdleTime"] == null) {
-        throw Exception(
+        throw ExternalException(
             "Получен некорректный ответ сервера, результат выполнения операции не найден");
       }
       result = Task.fromJson(value.data!["finishIdleTime"]);
     }, onError: (e) {
-      throw Exception(" onError " + e.toString());
+      throw ExternalException("Ошибка обработки ответа: " + e.toString());
     });
     return result;
   }
@@ -297,7 +298,7 @@ class TaskRemoteClient {
         result.add(Comment.fromJson(element));
       });
     }, onError: (e) {
-      throw Exception(" onError " + e.toString());
+      throw ExternalException("Ошибка обработки ответа: " + e.toString());
     });
     return result;
   }
@@ -327,7 +328,7 @@ class TaskRemoteClient {
       //пока мутации всегда возвращает null. но возможность получать пока оставим
       result = Comment.fromJson(value.data!["addComment"]);
     }, onError: (e) {
-      throw Exception(" onError " + e.toString());
+      throw ExternalException("Ошибка обработки ответа: " + e.toString());
     });
     return result;
   }
@@ -349,12 +350,12 @@ class TaskRemoteClient {
         checkError(value.exception!);
       }
       if (value.data == null || value.data!["endStage"] == null) {
-        throw Exception(
+        throw ExternalException(
             "Получен некорректный ответ сервера, результат выполнения операции не найден");
       }
       result = Task.fromJson(value.data!["endStage"]);
     }, onError: (e) {
-      throw Exception(" onError " + e.toString());
+      throw ExternalException("Ошибка обработки ответа: " + e.toString());
     });
     return result;
   }
@@ -377,12 +378,12 @@ class TaskRemoteClient {
         checkError(value.exception!);
       }
       if (value.data == null || value.data!["closeOrder"] == null) {
-        throw Exception(
+        throw ExternalException(
             "Получен некорректный ответ сервера, результат выполнения операции не найден");
       }
       result = Task.fromJson(value.data!["closeOrder"]);
     }, onError: (e) {
-      throw Exception(" onError " + e.toString());
+      throw ExternalException("Ошибка обработки ответа: " + e.toString());
     });
     return result;
   }
@@ -408,7 +409,7 @@ class TaskRemoteClient {
         result.add(CloseCode.fromJson(element));
       });
     }, onError: (e) {
-      throw Exception(" onError " + e.toString());
+      throw ExternalException("Ошибка обработки ответа: " + e.toString());
     });
     return result;
   }
@@ -434,7 +435,7 @@ class TaskRemoteClient {
         result.add(Mark.fromJson(element));
       });
     }, onError: (e) {
-      throw Exception(" onError " + e.toString());
+      throw ExternalException("Ошибка обработки ответа: " + e.toString());
     });
     return result;
   }
@@ -462,12 +463,12 @@ class TaskRemoteClient {
         checkError(value.exception!);
       }
       if (value.data == null) {
-        throw Exception(
+        throw ExternalException(
             "Получен некорректный ответ сервера, результат выполнения операции не найден");
       }
       result = Work.fromJson(value.data!["registerWorkDetail"]);
     }, onError: (e) {
-      throw Exception(" onError " + e.toString());
+      throw ExternalException("Ошибка обработки ответа: " + e.toString());
     });
     return result;
   }
@@ -491,12 +492,12 @@ class TaskRemoteClient {
         checkError(value.exception!);
       }
       if (value.data == null) {
-        throw Exception(
+        throw ExternalException(
             "Получен некорректный ответ сервера, результат выполнения операции не найден");
       }
       result = Work.fromJson(value.data!["deleteWorkDetail"]);
     }, onError: (e) {
-      throw Exception(" onError " + e.toString());
+      throw ExternalException("Ошибка обработки ответа: " + e.toString());
     });
     return result;
   }
@@ -511,14 +512,14 @@ class TaskRemoteClient {
     Future<QueryResult> mutationResultFuture =
         _graphQLService.mutate(readNotifyQuery);
     await mutationResultFuture.then((value) {
-        if (value.hasException) {
-          checkError(value.exception!);
-        }
+      if (value.hasException) {
+        checkError(value.exception!);
+      }
       if (value.data == null || value.data!["readNotify"] == null) {
         return null;
       }
     }, onError: (e) {
-      throw Exception(" onError " + e.toString());
+      throw ExternalException("Ошибка обработки ответа: " + e.toString());
     });
     return true;
   }
@@ -543,11 +544,11 @@ class TaskRemoteClient {
         checkError(value.exception!);
       }
       if (value.data == null) {
-        throw Exception(
+        throw ExternalException(
             "Получен некорректный ответ сервера, результат выполнения операции не найден");
       }
     }, onError: (e) {
-      throw Exception(" onError " + e.toString());
+      throw ExternalException("Ошибка обработки ответа: " + e.toString());
     });
     return true;
   }
@@ -556,19 +557,19 @@ class TaskRemoteClient {
   //  используется в TaskRemoteClient, ObjectAttachRemote, NotifyRemoteClient, AuthRemoteClient
   void checkError(OperationException operationException) {
     if (operationException.linkException is ServerException) {
-      throw Exception("Сервер недоступен");
+      throw ExternalException("Сервер недоступен");
     }
     if (operationException.linkException is HttpLinkParserException) {
-      throw Exception("Не авторизован");
+      throw ExternalException("Не авторизован");
     }
     if (operationException.graphqlErrors.isNotEmpty) {
       List errors = operationException.graphqlErrors
           .map((e) => e.message)
           .map((e) => _parseExceptionMessage(e))
           .toList();
-      throw Exception(errors.toString());
+      throw ExternalException(errors.join("\n"));
     }
-    throw Exception("Неожиданная ошибка");
+    throw ExternalException("Неожиданная ошибка");
   }
 
   String _parseExceptionMessage(String message) {
