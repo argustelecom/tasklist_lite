@@ -1,4 +1,3 @@
-
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:tasklist_lite/graphql/graphql_service.dart';
 import 'package:tasklist_lite/tasklist/model/user_info.dart';
@@ -35,6 +34,7 @@ class AuthRemoteClient {
     chiefContact {
       name
       phoneNum
+      email
     }
   }
  }
@@ -42,19 +42,19 @@ class AuthRemoteClient {
     // Используем late так как инициализация происходит await whenComplete
     // TODO Единообразный вызов вместе с Task_remote_client
     late UserInfo result;
-      Future<QueryResult> queryResultFuture = _graphQLService.query(whoAmI);
-      await queryResultFuture.whenComplete(() => null).then((value) {
-        if (value.hasException) {
-          checkError(value.exception!);
-        }
-        if (value.data == null) {
-          throw Exception("Ошибка получения данных о профиле пользователя");
-        }
-        if (!value.isLoading) {
-          result = UserInfo.fromJson(value.data!["whoami"]);
-          return result;
-        }
-      });
+    Future<QueryResult> queryResultFuture = _graphQLService.query(whoAmI);
+    await queryResultFuture.whenComplete(() => null).then((value) {
+      if (value.hasException) {
+        checkError(value.exception!);
+      }
+      if (value.data == null) {
+        throw Exception("Ошибка получения данных о профиле пользователя");
+      }
+      if (!value.isLoading) {
+        result = UserInfo.fromJson(value.data!["whoami"]);
+        return result;
+      }
+    });
 
     return result;
   }
