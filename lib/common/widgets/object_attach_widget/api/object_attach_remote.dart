@@ -31,7 +31,7 @@ class ObjectAttachRemote {
           tabNumber
          
         }''';
-  
+
   late GraphQLService _graphQLService;
 
   ObjectAttachRemote(String basicAuth, String serverAddress) {
