@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:tasklist_lite/tasklist/model/worker.dart';
+
 /// Файл-вложение. Должен быть строго ассоциирован/связан с объектом, к которому
 /// это вложение выполняется.
 /// Для одного объекта может быть множество вложений.
@@ -46,7 +48,12 @@ class ObjectAttach{
         filePath: json['sourceFileName'],
         attachmentData: json['attachmentData'] == null? "": json['attachmentData'],
         createDate: DateTime.parse(json['createDate']),
-        workerName: json['workerName'] == null ? "Неизвестно" : json['workerName']);
+        // json['workerName'] != null только в том случае, если мы восстанавливаем из toJson
+        workerName: json['workerName'] != null
+            ? json['workerName']
+            : json['worker'] != null
+                ? Worker.fromJson(json['worker']).getWorkerShortNameWithTabNo()
+                : 'Неизвестно');
   }
 
   Map<String, dynamic> toJson() {

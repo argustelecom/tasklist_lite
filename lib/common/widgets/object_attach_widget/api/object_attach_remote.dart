@@ -11,6 +11,27 @@ class ObjectAttachRemote {
 
   static const String envApiAddress = "/argus/graphql/env";
 
+  static const String objectAttachQuery = '''objectAttachmentId
+        attachedToId
+        createDate
+        fileName
+        sourceFileName
+        readOnly
+        md5
+        attachType
+        attachmentData
+        tag
+        remoteStoragePath
+        deleteDate
+        worker {
+          id
+          family
+          name
+          surname
+          tabNumber
+         
+        }''';
+
   late GraphQLService _graphQLService;
 
   ObjectAttachRemote(String basicAuth, String serverAddress) {
@@ -28,18 +49,7 @@ class ObjectAttachRemote {
     String objectAttachByIdQuery = '''
      {
       objectAttachmentById(objectAttachmentId: $objectAttachId) {
-        objectAttachmentId
-        attachedToId
-        createDate
-        fileName
-        sourceFileName
-        readOnly
-        md5
-        attachType
-        attachmentData
-        tag
-        remoteStoragePath
-        deleteDate
+        $objectAttachQuery
       }
     }
     ''';
@@ -68,18 +78,7 @@ class ObjectAttachRemote {
     String attachmentsByObjectId = '''
      {
       attachmentsByObjectId(attachedToId: $attachedToId) {
-        objectAttachmentId
-        attachedToId
-        createDate
-        fileName
-        sourceFileName
-        readOnly
-        md5
-        attachType
-        attachmentData
-        tag
-        remoteStoragePath
-        deleteDate
+        $objectAttachQuery
       }
     }
     ''';
@@ -111,18 +110,7 @@ class ObjectAttachRemote {
     String addObjectAttach = '''
      mutation{
       addAttachment(objectAttachment: $objectAttachJson) {
-        objectAttachmentId
-        attachedToId
-        createDate
-        fileName
-        sourceFileName
-        readOnly
-        md5
-        attachType
-        attachmentData
-        tag
-        remoteStoragePath
-        deleteDate
+        $objectAttachQuery
       }
     }
     ''';
@@ -155,18 +143,7 @@ class ObjectAttachRemote {
     String addObjectAttach = '''
      mutation{
       addAttachmentList(objectAttachmentList: $objectAttachJson) {
-        objectAttachmentId
-        attachedToId
-        createDate
-        fileName
-        sourceFileName
-        readOnly
-        md5
-        attachType
-        attachmentData
-        tag
-        remoteStoragePath
-        deleteDate
+       $objectAttachQuery
       }
     }
     ''';
@@ -200,18 +177,7 @@ class ObjectAttachRemote {
     String deleteObjectAttachById = '''
      mutation{
       deleteObjectAttachById(objectAttachmentId: $objectAttachId) {
-        objectAttachmentId
-        attachedToId
-        createDate
-        fileName
-        sourceFileName
-        readOnly
-        md5
-        attachType
-        attachmentData
-        tag
-        remoteStoragePath
-        deleteDate
+       $objectAttachQuery
       }
     }
     ''';
