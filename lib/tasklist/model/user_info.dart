@@ -166,17 +166,20 @@ class UserInfo {
 class Contact {
   String name;
   String? phoneNum;
+  String? email;
 
-  Contact({required this.name, this.phoneNum});
+  Contact({required this.name, this.phoneNum, this.email});
 
   factory Contact.fromJson(Map<String, dynamic> json) {
-    return Contact(name: json['name'], phoneNum: json['phoneNum']);
+    return Contact(
+        name: json['name'], phoneNum: json['phoneNum'], email: json['email']);
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['name'] = this.name;
     data['phoneNum'] = this.phoneNum;
+    data['email'] = this.email;
     return data;
   }
 }

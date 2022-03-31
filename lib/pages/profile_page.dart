@@ -328,6 +328,18 @@ class _ContactsChiefListView extends StatelessWidget {
                           null
                       ? TextType.phone
                       : TextType.text),
+              TextWithLabelColumn(
+                  label: "Email:",
+                  value: authState.userInfo.value?.contactChiefList
+                          ?.elementAt(index)
+                          .email ??
+                      "Не заполнено",
+                  type: authState.userInfo.value?.contactChiefList
+                              ?.elementAt(index)
+                              .email !=
+                          null
+                      ? TextType.mail
+                      : TextType.text)
             ]);
           });
     } else {

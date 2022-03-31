@@ -28,7 +28,7 @@ class AboutPage extends StatelessWidget {
                 icon: Icon(Icons.chevron_left_outlined),
                 onPressed: () {
                   GetDelegate routerDelegate = Get.find();
-                  routerDelegate.popRoute();
+                  routerDelegate.toNamed(ProfilePage.routeName);
                 })),
         body: ListView(
             padding: EdgeInsets.symmetric(vertical: 7, horizontal: 15),
