@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
 import 'package:tasklist_lite/pages/about_page.dart';
@@ -321,7 +322,12 @@ class _ContactsChiefListView extends StatelessWidget {
                           ?.elementAt(index)
                           .phoneNum ??
                       "Не заполнено",
-                  type: TextType.phone),
+                  type: authState.userInfo.value?.contactChiefList
+                              ?.elementAt(index)
+                              .phoneNum !=
+                          null
+                      ? TextType.phone
+                      : TextType.text),
             ]);
           });
     } else {
@@ -378,43 +384,66 @@ class TextWithLabelColumn extends StatelessWidget {
                 launch("tel:$number");
               }));
       }
-      textWidget = Container(
-          alignment: Alignment.centerLeft,
-          child: RichText(text: TextSpan(children: textSpanList)));
+      textWidget = GestureDetector(
+          //копируем всё значение
+          onLongPress: () {
+            Clipboard.setData(ClipboardData(text: "$value"));
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text("Скопировано: $value")));
+          },
+          child: Container(
+              alignment: Alignment.centerLeft,
+              child: RichText(text: TextSpan(children: textSpanList))));
     } else if (type == TextType.mail) {
-      textWidget = Container(
-          alignment: Alignment.centerLeft,
-          child: RichText(
-              text: TextSpan(
-                  text: value,
-                  style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.blue,
-                      decoration: TextDecoration.underline),
-                  // Обеспечивает открытие ссылки по нажатию
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = () {
-                      launch("mailto:$value");
-                    })));
+      textWidget = GestureDetector(
+          onTap: () {
+            launch("mailto:$value");
+          },
+          onLongPress: () {
+            Clipboard.setData(ClipboardData(text: "$value"));
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text("Скопировано: $value")));
+          },
+          child: Container(
+              alignment: Alignment.centerLeft,
+              child: RichText(
+                  text: TextSpan(
+                text: value,
+                style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.blue,
+                    decoration: TextDecoration.underline),
+                // Обеспечивает открытие ссылки по нажатию
+              ))));
     } else if (type == TextType.link) {
-      textWidget = Container(
-          alignment: Alignment.centerLeft,
-          child: RichText(
-              text: TextSpan(
-                  text: value,
-                  style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.blue,
-                      decoration: TextDecoration.underline),
-                  // Обеспечивает открытие ссылки по нажатию
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = () {
-                      launch("$value");
-                    })));
+      textWidget = GestureDetector(
+          onTap: () {
+            launch("$value");
+          },
+          onLongPress: () {
+            Clipboard.setData(ClipboardData(text: "$value"));
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text("Скопировано: $value")));
+          },
+          child: Container(
+              alignment: Alignment.centerLeft,
+              child: RichText(
+                  text: TextSpan(
+                      text: value,
+                      style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.blue,
+                          decoration: TextDecoration.underline)))));
     } else {
-      textWidget = Container(
-          alignment: Alignment.centerLeft,
-          child: Text(value, style: TextStyle(fontSize: 16)));
+      textWidget = GestureDetector(
+          onLongPress: () {
+            Clipboard.setData(ClipboardData(text: "$value"));
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text("Скопировано: $value")));
+          },
+          child: Container(
+              alignment: Alignment.centerLeft,
+              child: Text(value, style: TextStyle(fontSize: 16))));
     }
     return Container(
         alignment: Alignment.centerLeft,
