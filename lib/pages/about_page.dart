@@ -21,7 +21,7 @@ class AboutPage extends StatelessWidget {
         appBar: AppBar(
             title: new Text("О приложении"),
             titleTextStyle: TextStyle(fontFamily: "ABeeZee", fontSize: 20),
-            toolbarHeight: 50,
+            toolbarHeight: 70,
             elevation: 5.0,
             titleSpacing: 0.0,
             leading: IconButton(
