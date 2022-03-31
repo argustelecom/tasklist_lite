@@ -274,7 +274,9 @@ class WorksManagerDialogState extends State<WorksManagerDialog> {
                                       .workDetail![index1].workerMarks.length,
                                   itemBuilder: (context, index2) {
                                     return Column(children: [
-                                      Table(children: [
+                                      Table(columnWidths: {
+                                        1: FixedColumnWidth(20)
+                                      }, children: [
                                         TableRow(children: [
                                           Text(
                                               _work.workDetail![index1]
@@ -283,7 +285,9 @@ class WorksManagerDialogState extends State<WorksManagerDialog> {
                                                   .key
                                                   .getWorkerShortNameWithTabNo(),
                                               style: TextStyle(
-                                                  color: Color(0xFF646363))),
+                                                  color: Color(0xFF646363),
+                                                  fontSize: 14)),
+                                          Text(""),
                                           Text(
                                               _work.workDetail![index1].amount
                                                       .toString() +
@@ -292,7 +296,8 @@ class WorksManagerDialogState extends State<WorksManagerDialog> {
                                                       "шт.") +
                                                   "\n",
                                               style: TextStyle(
-                                                  color: Color(0xFF646363)))
+                                                  color: Color(0xFF646363),
+                                                  fontSize: 14))
                                         ]),
                                         TableRow(children: [
                                           Text(
@@ -301,7 +306,9 @@ class WorksManagerDialogState extends State<WorksManagerDialog> {
                                                       .workDetail![index1]
                                                       .date),
                                               style: TextStyle(
-                                                  color: Color(0xFF646363))),
+                                                  color: Color(0xFF646363),
+                                                  fontSize: 14)),
+                                          Text(""),
                                           Text(
                                               _work.workDetail![index1]
                                                       .workerMarks.entries
@@ -310,7 +317,8 @@ class WorksManagerDialogState extends State<WorksManagerDialog> {
                                                       .toString() +
                                                   ' балла(-ов)',
                                               style: TextStyle(
-                                                  color: Color(0xFF646363)))
+                                                  color: Color(0xFF646363),
+                                                  fontSize: 14))
                                         ])
                                       ]),
                                       if (index2 !=
