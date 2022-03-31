@@ -1,5 +1,3 @@
-import 'dart:collection';
-
 class UserInfo {
   /// Имя учетной записи. Отображается в top_user_bar сверху
   String userName;
@@ -159,7 +157,7 @@ class UserInfo {
     data['mainWorksite'] = this.mainWorksite;
     data['tabNumber'] = this.tabNumber;
     data['workerAppoint'] = this.workerAppoint;
-    data['contactChefList'] = this.contactChiefList;
+    data['chiefContact'] = this.contactChiefList;
     return data;
   }
 }
