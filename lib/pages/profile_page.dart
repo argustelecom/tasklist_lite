@@ -8,6 +8,7 @@ import 'package:tasklist_lite/pages/help_page.dart';
 import 'package:tasklist_lite/pages/support_page.dart';
 import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/state/auth_controller.dart';
+import 'package:tasklist_lite/state/auth_state.dart';
 import 'package:tasklist_lite/tasklist/model/user_info.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -120,7 +121,8 @@ class ProfilePage extends StatelessWidget {
                           elevation: 3,
                           color: context.theme.cardColor,
                           child: _ContactsChiefListView(
-                              contactChiefList: userInfo.contactChiefList))),
+                              contactChiefList: authController.authState
+                                  .userInfo.value?.contactChiefList))),
                   Container(
                       padding: EdgeInsets.only(bottom: 10, top: 10),
                       alignment: Alignment.centerLeft,
@@ -293,25 +295,32 @@ class ProfilePage extends StatelessWidget {
 /// Для отображения контактов руководителя на странице profile
 class _ContactsChiefListView extends StatelessWidget {
   final List<Contact>? contactChiefList;
+  final AuthState authState = Get.find();
 
-  _ContactsChiefListView({Key? key, required this.contactChiefList})
-      : super(key: key);
+  _ContactsChiefListView({Key? key, this.contactChiefList}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    if (contactChiefList != null) {
+    if (authState.userInfo.value?.contactChiefList != null ||
+        (authState.userInfo.value?.contactChiefList as List).isNotEmpty) {
       return ListView.builder(
           padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
           shrinkWrap: true,
-          itemCount: contactChiefList?.length,
+          itemCount: authState.userInfo.value?.contactChiefList?.length,
           itemBuilder: (BuildContext context, int index) {
             return Column(children: [
               TextWithLabelColumn(
                   label: "ФИО:",
-                  value: contactChiefList?.elementAt(index).name ?? ""),
+                  value: authState.userInfo.value?.contactChiefList
+                          ?.elementAt(index)
+                          .name ??
+                      "Не заполнено"),
               TextWithLabelColumn(
                   label: "Контактный телефон:",
-                  value: contactChiefList?.elementAt(index).phoneNum ?? "",
+                  value: authState.userInfo.value?.contactChiefList
+                          ?.elementAt(index)
+                          .phoneNum ??
+                      "Не заполнено",
                   type: TextType.phone),
             ]);
           });
