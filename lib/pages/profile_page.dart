@@ -85,6 +85,7 @@ class ProfilePage extends StatelessWidget {
                           color: context.theme.cardColor,
                           child: ListView(
                               shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
                               padding: EdgeInsets.symmetric(
                                   horizontal: 15, vertical: 10),
                               children: [
@@ -307,6 +308,7 @@ class _ContactsChiefListView extends StatelessWidget {
       return ListView.builder(
           padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
           shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
           itemCount: authState.userInfo.value?.contactChiefList?.length,
           itemBuilder: (BuildContext context, int index) {
             return Column(children: [
@@ -329,7 +331,7 @@ class _ContactsChiefListView extends StatelessWidget {
                       ? TextType.phone
                       : TextType.text),
               TextWithLabelColumn(
-                  label: "Email:",
+                  label: "Почтовый адрес:",
                   value: authState.userInfo.value?.contactChiefList
                           ?.elementAt(index)
                           .email ??

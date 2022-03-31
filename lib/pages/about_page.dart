@@ -57,6 +57,7 @@ class AboutPage extends StatelessWidget {
                         color: themeData.cardColor,
                         child: ListView(
                             shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
                             padding: EdgeInsets.symmetric(
                                 horizontal: 15, vertical: 10),
                             children: [
