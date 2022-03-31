@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
+import 'package:tasklist_lite/pages/profile_page.dart';
 
 import '../crazylib/quote_card.dart';
 import '../games/beaumarchais_quotes.dart';
@@ -16,14 +17,14 @@ class HelpPage extends StatelessWidget {
         appBar: AppBar(
             title: new Text("Помощь"),
             titleTextStyle: TextStyle(fontFamily: "ABeeZee", fontSize: 20),
-            toolbarHeight: 50,
+            toolbarHeight: 70,
             elevation: 5.0,
             titleSpacing: 0.0,
             leading: IconButton(
                 icon: Icon(Icons.chevron_left_outlined),
                 onPressed: () {
                   GetDelegate routerDelegate = Get.find();
-                  routerDelegate.popRoute();
+                  routerDelegate.toNamed(ProfilePage.routeName);
                 })),
         body: ListView(
           children: [

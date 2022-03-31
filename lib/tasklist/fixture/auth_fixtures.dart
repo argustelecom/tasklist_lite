@@ -1,5 +1,3 @@
-import 'dart:collection';
-
 import 'package:tasklist_lite/tasklist/model/user_info.dart';
 
 class AuthFixture {
@@ -8,7 +6,7 @@ class AuthFixture {
       homeRegionName: "Вологодская обл.",
       // #TODO: подглядеть на сервере реальные значения
       securityRoles: List.of({'winterdrift', 'burnout'}),
-      securityRoleNames: List.of({'ходить бочком', 'жечь резину'}),
+      securityRoleNames: List.of({'ходить бочком', 'помогать всем'}),
       family: "Богданова",
       workerName: "Каролина",
       surname: "Георгиевна",
@@ -18,9 +16,13 @@ class AuthFixture {
       workerAppoint: "Инженер электросвязи",
       contactChiefList: new List.of(({contact1, contact2})));
 
-  static final Contact contact1 =
-      Contact(name: 'Бедрин Алексей Сергеевич', phoneNum: '+79211112475, +79003002010 200001232 +7-123-23123123');
+  static final Contact contact1 = Contact(
+      name: 'Бедрин Алексей Сергеевич',
+      phoneNum: '+79211112475, +79003002010 200001232 +7-123-23123123',
+      email: 'a.bedrin@mail.net');
 
-  static final Contact contact2 =
-      Contact(name: 'Сом Георгий Сергеевич', phoneNum: '+7921223322');
+  static final Contact contact2 = Contact(
+      name: 'Сом Георгий Сергеевич',
+      phoneNum: '+7921223322',
+      email: 'georg.som@mail.net');
 }
