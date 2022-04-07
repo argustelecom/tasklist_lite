@@ -40,19 +40,17 @@ class WorksTabState extends State<WorksTab> {
   bool _isScrolling = false;
 
   void onScroll() async {
-    scrollController.addListener(() {
-      if (scrollController.position.userScrollDirection ==
-          ScrollDirection.reverse) {
-        setState(() {
-          _isScrolling = true;
-        });
-      } else if (scrollController.position.userScrollDirection ==
-          ScrollDirection.forward) {
-        setState(() {
-          _isScrolling = false;
-        });
-      }
-    });
+    if (scrollController.position.userScrollDirection ==
+        ScrollDirection.reverse) {
+      setState(() {
+        _isScrolling = true;
+      });
+    } else if (scrollController.position.userScrollDirection ==
+        ScrollDirection.forward) {
+      setState(() {
+        _isScrolling = false;
+      });
+    }
   }
 
   @override
@@ -117,6 +115,7 @@ class WorksTabState extends State<WorksTab> {
           Expanded(
               child: Stack(children: [
             ListView.builder(
+                controller: scrollController,
                 shrinkWrap: true,
                 itemCount: taskListController.getWorks().length,
                 itemBuilder: (context, index) {
@@ -126,7 +125,7 @@ class WorksTabState extends State<WorksTab> {
                   );
                 }),
             Positioned(
-                bottom: 15,
+                bottom: 20,
                 right: 5,
                 child: FloatingActionButton.extended(
                     backgroundColor: Colors.yellow.shade700,
