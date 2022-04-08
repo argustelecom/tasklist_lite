@@ -2,17 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
 import 'package:tasklist_lite/crazylib/task_card.dart';
-import 'package:tasklist_lite/crazylib/top_user_bar.dart';
+import 'package:tasklist_lite/layout/adaptive.dart';
 import 'package:tasklist_lite/state/tasklist_controller.dart';
 
+import '../crazylib/figaro_logo.dart';
 import '../crazylib/tasklist_filter_bar.dart';
+import '../crazylib/top_user_bar.dart';
 
 class TaskList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<TaskListController>(builder: (controller) {
       return ListView.builder(
-          padding: EdgeInsets.symmetric(vertical: 0, horizontal: 32),
+          padding: EdgeInsets.symmetric(
+              vertical: 0, horizontal: isDisplayDesktop(context) ? 8 : 32),
           shrinkWrap: true,
           itemCount: controller.getTasks().length,
           itemBuilder: (context, index) {
@@ -44,11 +47,27 @@ class _TaskListPageState extends State<TaskListPage> {
       init: TaskListController(),
       builder: (taskListController) {
         return ReflowingScaffold(
-          appBar: TopUserBar(),
+          appBarLeft: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ProfileIconButton(),
+              UserInfoBar(),
+            ],
+          ),
+          appBar: isDisplayDesktop(context)
+              ? TasklistFiltersBar() as PreferredSizeWidget
+              : TopUserBar(),
+          appBarRight: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              NotificationsIconButton(),
+              LogoutIconButton(),
+            ],
+          ),
           body: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              TasklistFiltersBar(),
+              if (!(isDisplayDesktop(context))) TasklistFiltersBar(),
               Expanded(
                 child: Stack(
                   children: [
@@ -71,6 +90,8 @@ class _TaskListPageState extends State<TaskListPage> {
               ),
             ],
           ),
+          bodyRight:
+              FigaroLogoHorizontal(columnAlignment: MainAxisAlignment.start),
         );
       },
     );

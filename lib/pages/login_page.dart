@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get/get.dart';
 import 'package:google_language_fonts/google_language_fonts.dart';
@@ -11,53 +10,8 @@ import 'package:tasklist_lite/state/application_state.dart';
 import 'package:tasklist_lite/state/auth_controller.dart';
 import 'package:tasklist_lite/state/common_dropdown_controller.dart';
 
+import '../crazylib/figaro_logo.dart';
 import '../state/auth_state.dart';
-
-// #TODO: если делать отдельным виджетом, стоит параметризовать размеры, кривую анимации, длительность
-class AnimatedLogo extends StatefulWidget {
-  final String assetName;
-
-  AnimatedLogo({required this.assetName});
-  @override
-  State<StatefulWidget> createState() {
-    return AnimatedLogoState(assetName: this.assetName);
-  }
-}
-
-class AnimatedLogoState extends State<AnimatedLogo> {
-  final String assetName;
-
-  bool tapped = false;
-
-  AnimatedLogoState({required this.assetName});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          tapped = true;
-        });
-      },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 600),
-        curve: Curves.bounceOut,
-        onEnd: () {
-          setState(() {
-            tapped = false;
-          });
-        },
-        height: tapped ? 220 : 180,
-        width: tapped ? 220 : 180,
-        child: Image.asset(
-          // внимательней, хотсвап не подцепляет изменения в asset, надо делать полную пересборку
-          assetName,
-          bundle: rootBundle,
-        ),
-      ),
-    );
-  }
-}
 
 class LoginPage extends StatefulWidget {
   static const String routeName = "/login";

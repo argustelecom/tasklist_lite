@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:tasklist_lite/crazylib/task_card.dart';
+import 'package:tasklist_lite/layout/adaptive.dart';
 
 import '../state/tasklist_controller.dart';
 
@@ -19,7 +20,8 @@ import '../state/tasklist_controller.dart';
 /// К сожалению, пришлось state вынести в контроллер, т.к. к нему нужен доступ и
 /// для компонента InlineCalendar. А так не хотелось использовать контроллеры для presentation
 /// state. (Под presentation здесь имеется ввиду "такаятохреньVisible или другаяфигняExpanded)
-class TasklistFiltersBar extends StatelessWidget {
+class TasklistFiltersBar extends StatelessWidget
+    implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     ThemeData themeData = Theme.of(context);
@@ -46,7 +48,7 @@ class TasklistFiltersBar extends StatelessWidget {
                           },
                           child: Padding(
                             padding: EdgeInsets.only(
-                                left: 36,
+                                left: isDisplayDesktop(context) ? 8 : 36,
                                 right: taskListController.searchBarExpanded
                                     ? 36
                                     : 8),
@@ -95,9 +97,11 @@ class TasklistFiltersBar extends StatelessWidget {
                           child: Padding(
                             padding: EdgeInsets.only(
                               left: taskListController.datePickerBarExpanded
-                                  ? 36
+                                  ? isDisplayDesktop(context)
+                                      ? 8
+                                      : 36
                                   : 8,
-                              right: 36,
+                              right: isDisplayDesktop(context) ? 16 : 36,
                             ),
                             child: Card(
                               shape: RoundedRectangleBorder(
@@ -219,6 +223,9 @@ class TasklistFiltersBar extends StatelessWidget {
       ]);
     });
   }
+
+  @override
+  Size get preferredSize => Size.fromHeight(150);
 }
 
 class InlineCalendar extends StatelessWidget {

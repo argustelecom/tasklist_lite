@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:tasklist_lite/crazylib/due_date_label.dart';
+import 'package:tasklist_lite/crazylib/figaro_logo.dart';
 import 'package:tasklist_lite/crazylib/history_tab.dart';
 import 'package:tasklist_lite/crazylib/idle_time_manager_dialog.dart';
 import 'package:tasklist_lite/crazylib/reflowing_scaffold.dart';
@@ -40,98 +41,114 @@ class _TaskPageState extends State<TaskPage> {
             init: TaskListController(),
             builder: (taskListController) {
               return ReflowingScaffold(
-                  appBar: TaskAppBar(
-                      task:
-                          taskListController.taskListState.currentTask.value ??
-                              Task(
-                                  id: 1,
-                                  name: "",
-                                  assignee: [],
-                                  flexibleAttribs: LinkedHashMap())),
-                  body: Column(children: [
-                    // нужен чтобы ограничить высоту tabBar`а ниже
-                    SizedBox(
-                      height: 40,
-                      // чтобы сделать indicator для unselected tabs в tabBar`е ниже, подложим под него Decoration с подчеркиванием,
-                      // как предлагается https://stackoverflow.com/questions/52028730/how-to-create-unselected-indicator-for-tab-bar-in-flutter
-                      child: Stack(
-                        fit: StackFit.passthrough,
-                        alignment: Alignment.bottomCenter,
-                        children: <Widget>[
-                          Container(
-                            decoration: BoxDecoration(
-                              border: Border(
-                                bottom: BorderSide(
-                                    color: themeData.dividerColor, width: 2.0),
-                              ),
+                appBar: TaskAppBar(
+                    task: taskListController.taskListState.currentTask.value ??
+                        Task(
+                            id: 1,
+                            name: "",
+                            assignee: [],
+                            flexibleAttribs: LinkedHashMap())),
+                appBarRight: FigaroLogoHorizontal(
+                    columnAlignment: MainAxisAlignment.center),
+                body: Column(children: [
+                  // нужен чтобы ограничить высоту tabBar`а ниже
+                  SizedBox(
+                    height: 40,
+                    // чтобы сделать indicator для unselected tabs в tabBar`е ниже, подложим под него Decoration с подчеркиванием,
+                    // как предлагается https://stackoverflow.com/questions/52028730/how-to-create-unselected-indicator-for-tab-bar-in-flutter
+                    child: Stack(
+                      fit: StackFit.passthrough,
+                      alignment: Alignment.bottomCenter,
+                      children: <Widget>[
+                        Container(
+                          decoration: BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(
+                                  color: themeData.dividerColor, width: 2.0),
                             ),
                           ),
-                          TabBar(
-                            isScrollable: true,
-                            labelColor: Colors.blue,
-                            unselectedLabelColor: Colors.black,
-                            labelStyle: TextStyle(fontSize: 18),
-                            unselectedLabelStyle:
-                                TextStyle(color: Colors.grey, fontSize: 18),
-                            tabs: [
-                              Tab(
-                                child: Text(
-                                  "Сведения",
-                                ),
+                        ),
+                        TabBar(
+                          isScrollable: true,
+                          labelColor: Colors.blue,
+                          unselectedLabelColor: Colors.black,
+                          labelStyle: TextStyle(fontSize: 18),
+                          unselectedLabelStyle:
+                              TextStyle(color: Colors.grey, fontSize: 18),
+                          tabs: [
+                            Tab(
+                              child: Text(
+                                "Сведения",
                               ),
-                              Tab(
-                                child: Text(
-                                  'Работы',
-                                ),
+                            ),
+                            Tab(
+                              child: Text(
+                                'Работы',
                               ),
-                              Tab(
-                                child: Text(
-                                  "Вложения",
-                                ),
+                            ),
+                            Tab(
+                              child: Text(
+                                "Вложения",
                               ),
-                              Tab(
-                                child: Text(
-                                  "История",
-                                ),
+                            ),
+                            Tab(
+                              child: Text(
+                                "История",
                               ),
-                              Tab(
-                                child: Text(
-                                  "Баллы",
-                                ),
+                            ),
+                            Tab(
+                              child: Text(
+                                "Баллы",
                               ),
-                            ],
-                            controller: DefaultTabController.of(context),
-                          ),
-                        ],
+                            ),
+                          ],
+                          controller: DefaultTabController.of(context),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                      child: TabBarView(children: [
+                    SummaryTab(),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      child: WorksTab(),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 32),
+                      child: Card(
+                        child: taskListController
+                                    .taskListState.currentTask.value?.id !=
+                                null
+                            ? Container(
+                                height: 100.0,
+                                width: 100.0,
+                                child: ObjectAttachWidget(taskListController
+                                    .taskListState.currentTask.value!.id))
+                            : Container(),
+                        elevation: 3,
                       ),
                     ),
-                    Expanded(
-                        child: TabBarView(children: [
-                      SummaryTab(),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 12),
-                        child: WorksTab(),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 32),
-                        child: Card(
-                          child: taskListController
-                                      .taskListState.currentTask.value?.id !=
-                                  null
-                              ? Container(
-                                  height: 100.0,
-                                  width: 100.0,
-                                  child: ObjectAttachWidget(taskListController
-                                      .taskListState.currentTask.value!.id))
-                              : Container(),
-                          elevation: 3,
-                        ),
-                      ),
-                      HistoryTab(),
-                      MarkTypeFilter()
-                    ]))
-                  ]));
+                    HistoryTab(),
+                    MarkTypeFilter()
+                  ]))
+                ]),
+              );
             }));
+  }
+}
+
+class TaskAppBarLeading extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      iconSize: 40,
+      icon: Icon(Icons.chevron_left_outlined),
+      onPressed: () {
+        GetDelegate routerDelegate = Get.find();
+        routerDelegate.popRoute();
+      },
+    );
   }
 }
 
@@ -147,14 +164,7 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
         init: CommentController(),
         builder: (historyEventController) {
           return AppBar(
-              leading: IconButton(
-                iconSize: 40,
-                icon: Icon(Icons.chevron_left_outlined),
-                onPressed: () {
-                  GetDelegate routerDelegate = Get.find();
-                  routerDelegate.popRoute();
-                },
-              ),
+              leading: TaskAppBarLeading(),
               titleSpacing: 0.0,
               toolbarHeight: 60,
               title: task != null
