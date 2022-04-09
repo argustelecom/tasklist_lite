@@ -8,7 +8,6 @@ import 'package:intl/intl.dart';
 import 'package:tasklist_lite/common/widgets/object_attach_widget/model/object_attach.dart';
 import 'package:tasklist_lite/common/widgets/object_attach_widget/object_attach_controller.dart';
 
-
 class FileCardWidget extends StatelessWidget {
   final ObjectAttach objectAttach;
 
@@ -28,9 +27,6 @@ class FileCardWidget extends StatelessWidget {
           },
           child: Card(
             borderOnForeground: true,
-            margin: EdgeInsets.all(10),
-            shadowColor: Colors.blueGrey,
-            elevation: 10,
             child: Column(
               children: [
                 Row(
@@ -43,11 +39,10 @@ class FileCardWidget extends StatelessWidget {
                           height: 140,
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Image.memory((objectAttach.attachmentDataAsBytes()))
-                           ,
+                            child: Image.memory(
+                                (objectAttach.attachmentDataAsBytes())),
                           ),
-                        )
-                    ),
+                        )),
                     Expanded(
                         flex: 6,
                         child: Padding(
@@ -63,7 +58,8 @@ class FileCardWidget extends StatelessWidget {
                                   text: TextSpan(
                                       style: TextStyle(
                                           color: Colors.grey, fontSize: 15),
-                                      text: DateFormat("dd.MM.yyyy HH:mm", "ru_RU")
+                                      text: DateFormat(
+                                              "dd.MM.yyyy HH:mm", "ru_RU")
                                           .format(objectAttach.createDate)
                                           .toString())),
                               RichText(
@@ -78,12 +74,11 @@ class FileCardWidget extends StatelessWidget {
                       flex: 2,
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: FloatingActionButton(
-                          mini: true,
+                        child: IconButton(
+                          icon: Icon(Icons.delete),
                           onPressed: () {
                             objectAttachController.deleteAttach(objectAttach);
                           },
-                          child: Icon(Icons.delete),
                         ),
                       ),
                     )

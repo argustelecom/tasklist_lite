@@ -12,7 +12,6 @@ class QuoteCard extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 32),
       child: Card(
-        elevation: 5,
         child: Column(
           children: [
             Padding(

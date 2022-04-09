@@ -108,25 +108,8 @@ class _TaskPageState extends State<TaskPage> {
                     Expanded(
                         child: TabBarView(children: [
                       SummaryTab(),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 12),
-                        child: WorksTab(),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 32),
-                        child: Card(
-                          child: taskListController
-                                      .taskListState.currentTask.value?.id !=
-                                  null
-                              ? Container(
-                                  height: 100.0,
-                                  width: 100.0,
-                                  child: ObjectAttachWidget(taskListController
-                                      .taskListState.currentTask.value!.id))
-                              : Container(),
-                          elevation: 3,
-                        ),
-                      ),
+                      WorksTab(),
+                      ObjectAttachWidget(),
                       HistoryTab(),
                       MarkTypeFilter()
                     ]))

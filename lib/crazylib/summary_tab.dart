@@ -16,7 +16,6 @@ class SummaryTab extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(left: 12, right: 12, bottom: 12),
       child: Card(
-          elevation: 3,
           child: SingleChildScrollView(
               physics: ScrollPhysics(),
               child: Column(

@@ -81,7 +81,6 @@ class ProfilePage extends StatelessWidget {
                   Padding(
                       padding: EdgeInsets.only(top: 10, bottom: 10),
                       child: Card(
-                          elevation: 3,
                           color: context.theme.cardColor,
                           child: ListView(
                               shrinkWrap: true,
@@ -120,7 +119,6 @@ class ProfilePage extends StatelessWidget {
                   Padding(
                       padding: EdgeInsets.only(top: 10, bottom: 10),
                       child: Card(
-                          elevation: 3,
                           color: context.theme.cardColor,
                           child: _ContactsChiefListView(
                               contactChiefList: authController.authState
@@ -133,7 +131,6 @@ class ProfilePage extends StatelessWidget {
                   Padding(
                       padding: paddingSettingBlock,
                       child: Card(
-                          elevation: 3,
                           child: SizedBox(
                               height: 50.0,
                               child: Row(
@@ -174,7 +171,6 @@ class ProfilePage extends StatelessWidget {
                     Padding(
                         padding: paddingSettingBlock,
                         child: Card(
-                            elevation: 3,
                             child: SizedBox(
                                 height: 50.0,
                                 child: Row(
@@ -213,7 +209,6 @@ class ProfilePage extends StatelessWidget {
                     child: Padding(
                         padding: paddingSettingBlock,
                         child: Card(
-                            elevation: 3,
                             child: SizedBox(
                                 height: 50.0,
                                 child: Row(
@@ -243,7 +238,6 @@ class ProfilePage extends StatelessWidget {
                       child: Padding(
                           padding: paddingSettingBlock,
                           child: Card(
-                              elevation: 3,
                               child: SizedBox(
                                   height: 50.0,
                                   child: Row(
@@ -270,7 +264,6 @@ class ProfilePage extends StatelessWidget {
                       child: Padding(
                           padding: paddingSettingBlock,
                           child: Card(
-                              elevation: 3,
                               child: SizedBox(
                                   height: 50.0,
                                   child: Row(

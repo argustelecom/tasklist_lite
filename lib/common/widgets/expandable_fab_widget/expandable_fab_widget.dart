@@ -11,15 +11,17 @@ class ExpandableFab extends StatefulWidget {
     required this.distance,
     required this.children,
     this.absorbParent,
-
   }) : super(key: key);
 
   /// состояние инициализации открыт/закрыта
   final bool? initialOpen;
+
   /// дальность радиуса по которому раскрываются дочерние кнопки
   final double distance;
+
   /// список виджетов типа action_button
   final List<Widget> children;
+
   /// заготовка на функционал блокировки родительского виджета-контейнера
   final bool? absorbParent;
 
@@ -32,7 +34,6 @@ class _ExpandableFabState extends State<ExpandableFab>
   late final AnimationController _controller;
   late final Animation<double> _expandAnimation;
   bool _open = false;
-
 
   bool get open => _open;
 
@@ -86,27 +87,17 @@ class _ExpandableFabState extends State<ExpandableFab>
   }
 
   Widget _buildTapToCloseFab() {
-    return SizedBox(
-      width: 56.0,
-      height: 56.0,
-      child: Center(
-        child: Material(
-          shape: const CircleBorder(),
-          clipBehavior: Clip.antiAlias,
-          elevation: 4.0,
-          child: InkWell(
-            onTap: _toggle,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Icon(
-                Icons.close,
-                color: Theme.of(context).primaryColor,
-              ),
-            ),
+    return FloatingActionButton(
+        elevation: 7,
+        clipBehavior: Clip.antiAlias,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Icon(
+            Icons.close,
+            color: Theme.of(context).primaryColor,
           ),
         ),
-      ),
-    );
+        onPressed: _toggle);
   }
 
   List<Widget> _buildExpandingActionButtons() {
@@ -114,8 +105,8 @@ class _ExpandableFabState extends State<ExpandableFab>
     final count = widget.children.length;
     final step = 90.0 / (count - 1);
     for (var i = 0, angleInDegrees = 0.0;
-    i < count;
-    i++, angleInDegrees += step) {
+        i < count;
+        i++, angleInDegrees += step) {
       children.add(
         _ExpandingActionButton(
           directionInDegrees: angleInDegrees,
@@ -130,31 +121,27 @@ class _ExpandableFabState extends State<ExpandableFab>
 
   Widget _buildTapToOpenFab() {
     return IgnorePointer(
-      ignoring: _open,
-      child: AnimatedContainer(
-        transformAlignment: Alignment.center,
-        transform: Matrix4.diagonal3Values(
-          _open ? 0.7 : 1.0,
-          _open ? 0.7 : 1.0,
-          1.0,
-        ),
-        duration: const Duration(milliseconds: 250),
-        curve: const Interval(0.0, 0.5, curve: Curves.easeOut),
-        child: AnimatedOpacity(
-          opacity: _open ? 0.0 : 1.0,
-          curve: const Interval(0.25, 1.0, curve: Curves.easeInOut),
-          duration: const Duration(milliseconds: 250),
-          child: FloatingActionButton(
-            onPressed: _toggle,
-            child: const Icon(Icons.add_sharp),
-            backgroundColor: Colors.yellow.shade700,
-          ),
-        ),
-      ),
-    );
+        ignoring: _open,
+        child: AnimatedContainer(
+            transformAlignment: Alignment.center,
+            transform: Matrix4.diagonal3Values(
+              _open ? 0.7 : 1.0,
+              _open ? 0.7 : 1.0,
+              1.0,
+            ),
+            duration: const Duration(milliseconds: 250),
+            curve: const Interval(0.0, 0.5, curve: Curves.easeOut),
+            child: AnimatedOpacity(
+                opacity: _open ? 0.0 : 1.0,
+                curve: const Interval(0.25, 1.0, curve: Curves.easeInOut),
+                duration: const Duration(milliseconds: 250),
+                child: FloatingActionButton(
+                  onPressed: _toggle,
+                  child: const Icon(Icons.add_sharp),
+                  backgroundColor: Colors.yellow.shade700,
+                ))));
   }
 }
-
 
 @immutable
 class _ExpandingActionButton extends StatelessWidget {

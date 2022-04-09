@@ -70,125 +70,125 @@ class WorksTabState extends State<WorksTab> {
     ThemeData themeData = Theme.of(context);
     if (taskListController.taskListState.currentTask.value == null) {
       return Padding(
-          padding: EdgeInsets.symmetric(vertical: 8),
+          padding: EdgeInsets.all(12),
           child: Text(
               "Что-то пошло не так. Вернитесь на главную страницу и попробуйте снова."));
     }
 
     return GetBuilder<TaskListController>(builder: (taskListController) {
-      return Column(children: [
-        Padding(
-            padding: EdgeInsets.symmetric(vertical: 8),
-            child: Card(
-              child: TextField(
-                textAlign: TextAlign.center,
-                decoration: InputDecoration(
-                  hintText: "Наименование работы",
-                  fillColor: themeData.bottomAppBarColor,
-                  border: InputBorder.none,
-                  filled: true,
-                  suffixIcon: (taskListController.searchWorksText == "")
-                      ? IconButton(
-                          tooltip: 'Поиск',
-                          icon: const Icon(Icons.search_outlined),
-                          onPressed: () {},
-                        )
-                      : IconButton(
-                          tooltip: 'Очистить',
-                          icon: const Icon(Icons.clear),
-                          onPressed: () {
-                            taskListController.searchWorksText = "";
-                          },
-                        ),
-                  isCollapsed: false,
-                ),
-                onChanged: (value) {
-                  taskListController.searchWorksText = value;
-                },
-              ),
-            )),
-        if (taskListController.getWorks().isEmpty)
-          Padding(
-              padding: EdgeInsets.symmetric(vertical: 8),
-              child: Text("Работы не найдены.", textAlign: TextAlign.center))
-        else
-          Expanded(
-              child: Stack(children: [
-            ListView.builder(
-                controller: scrollController,
-                shrinkWrap: true,
-                itemCount: taskListController.getWorks().length,
-                itemBuilder: (context, index) {
-                  return WorkCard(
-                    work:
-                        taskListController.getWorks()[index], //taskList[index],
-                  );
-                }),
-            Positioned(
-                bottom: 20,
-                right: 5,
-                child: FloatingActionButton.extended(
-                    backgroundColor: Colors.yellow.shade700,
-                    elevation: 7,
-                    extendedPadding: EdgeInsets.all(8),
-                    isExtended: _isScrolling ? false : true,
-                    label: Text(
-                      "Не требуются   ",
-                      style:
-                          TextStyle(letterSpacing: -0.1, color: Colors.black),
+      return Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12),
+          child: Column(children: [
+            Padding(
+                padding: EdgeInsets.symmetric(vertical: 8),
+                child: Card(
+                  child: TextField(
+                    textAlign: TextAlign.center,
+                    decoration: InputDecoration(
+                      hintText: "Наименование работы",
+                      fillColor: themeData.bottomAppBarColor,
+                      border: InputBorder.none,
+                      filled: true,
+                      suffixIcon: (taskListController.searchWorksText == "")
+                          ? IconButton(
+                              tooltip: 'Поиск',
+                              icon: const Icon(Icons.search_outlined),
+                              onPressed: () {},
+                            )
+                          : IconButton(
+                              tooltip: 'Очистить',
+                              icon: const Icon(Icons.clear),
+                              onPressed: () {
+                                taskListController.searchWorksText = "";
+                              },
+                            ),
+                      isCollapsed: false,
                     ),
-                    icon: Stack(children: [
-                      Icon(Icons.build_circle_outlined,
-                          color: Color(0xFF323232)),
-                      Icon(Icons.block, color: Color(0xFF323232))
-                    ]),
-                    onPressed: () async {
-                      if (taskListController.getWorks().isNotEmpty) {
-                        List<WorkType> workTypes = taskListController
-                            .getWorks()
-                            .where((e) =>
-                                (e.workDetail == null ||
-                                    e.workDetail!.isEmpty) &&
-                                !e.notRequired)
-                            .expand((e) => [e.workType])
-                            .toList();
-                        if (workTypes.isNotEmpty)
-                          try {
-                            await asyncShowProgressIndicatorOverlay(
-                                asyncFunction: () {
-                              return taskListController
-                                  .markWorksNotRequired(workTypes);
-                            });
-                            Task task = taskListController
-                                .taskListState.currentTask.value!;
-                            task.works!.removeWhere(
-                                (e) => workTypes.contains(e.workType));
-                            task.works!.addAll(workTypes
-                                .expand((e) => [
-                                      new Work(
-                                          workType: e,
-                                          notRequired: true,
-                                          workDetail: [])
-                                    ])
-                                .toList());
-                            taskListController.taskListState.currentTask.value =
-                                task;
-                            taskListController.update();
-                          } catch (e) {
-                            showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return InfoDialog(
-                                    body: Text("Произошла ошибка: \"$e\"",
-                                        maxLines: 7,
-                                        overflow: TextOverflow.clip),
-                                  );
+                    onChanged: (value) {
+                      taskListController.searchWorksText = value;
+                    },
+                  ),
+                )),
+            if (taskListController.getWorks().isEmpty)
+              Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8),
+                  child:
+                      Text("Работы не найдены.", textAlign: TextAlign.center))
+            else
+              Expanded(
+                  child: Stack(children: [
+                ListView.builder(
+                    controller: scrollController,
+                    shrinkWrap: true,
+                    itemCount: taskListController.getWorks().length,
+                    itemBuilder: (context, index) {
+                      return WorkCard(
+                          work: taskListController.getWorks()[index]);
+                    }),
+                Positioned(
+                    bottom: 20,
+                    right: 5,
+                    child: FloatingActionButton.extended(
+                        backgroundColor: Colors.yellow.shade700,
+                        elevation: 7,
+                        extendedPadding: EdgeInsets.all(8),
+                        isExtended: _isScrolling ? false : true,
+                        label: Text(
+                          "Не требуются   ",
+                          style: TextStyle(
+                              letterSpacing: -0.1, color: Colors.black),
+                        ),
+                        icon: Stack(children: [
+                          Icon(Icons.build_circle_outlined,
+                              color: Color(0xFF323232)),
+                          Icon(Icons.block, color: Color(0xFF323232))
+                        ]),
+                        onPressed: () async {
+                          if (taskListController.getWorks().isNotEmpty) {
+                            List<WorkType> workTypes = taskListController
+                                .getWorks()
+                                .where((e) =>
+                                    (e.workDetail == null ||
+                                        e.workDetail!.isEmpty) &&
+                                    !e.notRequired)
+                                .expand((e) => [e.workType])
+                                .toList();
+                            if (workTypes.isNotEmpty)
+                              try {
+                                await asyncShowProgressIndicatorOverlay(
+                                    asyncFunction: () {
+                                  return taskListController
+                                      .markWorksNotRequired(workTypes);
                                 });
+                                Task task = taskListController
+                                    .taskListState.currentTask.value!;
+                                task.works!.removeWhere(
+                                    (e) => workTypes.contains(e.workType));
+                                task.works!.addAll(workTypes
+                                    .expand((e) => [
+                                          new Work(
+                                              workType: e,
+                                              notRequired: true,
+                                              workDetail: [])
+                                        ])
+                                    .toList());
+                                taskListController
+                                    .taskListState.currentTask.value = task;
+                                taskListController.update();
+                              } catch (e) {
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return InfoDialog(
+                                          body: Text("Произошла ошибка: \"$e\"",
+                                              maxLines: 7,
+                                              overflow: TextOverflow.clip));
+                                    });
+                              }
                           }
-                      }
-                    }))
-          ]))
-      ]);
+                        }))
+              ]))
+          ]));
     });
   }
 }
