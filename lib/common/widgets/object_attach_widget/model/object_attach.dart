@@ -1,13 +1,12 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:tasklist_lite/tasklist/model/worker.dart';
+import 'package:tasklist_lite/domain/entities/worker.dart';
 
 /// Файл-вложение. Должен быть строго ассоциирован/связан с объектом, к которому
 /// это вложение выполняется.
 /// Для одного объекта может быть множество вложений.
-class ObjectAttach{
-
+class ObjectAttach {
   /// Идентификатор самого аттача (для удаления)
   int id;
 
@@ -31,8 +30,14 @@ class ObjectAttach{
   /// Сотрудник, добавивший файл
   String workerName;
 
-  ObjectAttach({required this.id, required this.objectId, required this.fileName, required this.filePath,
-      required this.attachmentData, required this.createDate, required this.workerName});
+  ObjectAttach(
+      {required this.id,
+      required this.objectId,
+      required this.fileName,
+      required this.filePath,
+      required this.attachmentData,
+      required this.createDate,
+      required this.workerName});
 
   /// Возвращает содержимое файла в виде последовательности байт
   Uint8List attachmentDataAsBytes() {
@@ -46,7 +51,8 @@ class ObjectAttach{
         objectId: json['attachedToId'],
         fileName: json['fileName'],
         filePath: json['sourceFileName'],
-        attachmentData: json['attachmentData'] == null? "": json['attachmentData'],
+        attachmentData:
+            json['attachmentData'] == null ? "" : json['attachmentData'],
         createDate: DateTime.parse(json['createDate']),
         // json['workerName'] != null только в том случае, если мы восстанавливаем из toJson
         workerName: json['workerName'] != null

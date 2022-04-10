@@ -2,9 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:tasklist_lite/crazylib/top_user_bar.dart';
-
 import 'package:tasklist_lite/main.dart' as app;
+import 'package:tasklist_lite/presentation/widgets/bars/top_user_bar.dart';
 
 void main() {
   //Инициализируем singleton service для выполенния тестов на физическом

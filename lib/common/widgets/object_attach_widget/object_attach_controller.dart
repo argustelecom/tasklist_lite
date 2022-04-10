@@ -1,21 +1,15 @@
-import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:tasklist_lite/common/widgets/object_attach_widget/utils/file_converter.dart';
 import 'package:tasklist_lite/common/widgets/object_attach_widget/utils/file_manager.dart';
-import 'package:tasklist_lite/state/application_state.dart';
-import 'package:tasklist_lite/state/auth_controller.dart';
-import 'package:tasklist_lite/state/comment_controller.dart';
-import 'package:tasklist_lite/state/tasklist_controller.dart';
+import 'package:tasklist_lite/presentation/controllers/comment_controller.dart';
+import 'package:tasklist_lite/presentation/controllers/tasklist_controller.dart';
 
 import 'attach_repository.dart';
 import 'model/object_attach.dart';

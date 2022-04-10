@@ -1,14 +1,14 @@
 import 'package:get/get.dart';
-import 'package:tasklist_lite/state/application_state.dart';
-import 'package:tasklist_lite/state/auth_controller.dart';
+import 'package:tasklist_lite/presentation/controllers/auth_controller.dart';
+import 'package:tasklist_lite/presentation/state/application_state.dart';
+
 import 'api/object_attach_remote.dart';
 import 'model/object_attach.dart';
-
 
 /// интерфейс репозитория
 /// тут д.б. подключение датасурсов и соответственно запрос по сети всех имеющихся
 /// вложений для объекта
-class AttachRepository extends GetxService{
+class AttachRepository extends GetxService {
   AuthController authController = Get.find();
   ApplicationState state = Get.find();
 
@@ -29,20 +29,20 @@ class AttachRepository extends GetxService{
   }
 
   /// Получение конкретного аттача (известен ID), создает временный файл в системе содержит путь до него в рамках системе
-  Future<ObjectAttach> getObjectAttach(ObjectAttach objectAttach) async{
+  Future<ObjectAttach> getObjectAttach(ObjectAttach objectAttach) async {
     ObjectAttachRemote objectAttachRemote =
-    ObjectAttachRemote(basicAuth, serverAddress);
-    Future<ObjectAttach> result = objectAttachRemote.getObjectAttachById(objectAttach.id);
+        ObjectAttachRemote(basicAuth, serverAddress);
+    Future<ObjectAttach> result =
+        objectAttachRemote.getObjectAttachById(objectAttach.id);
     return result;
   }
 
   /// Получение списка аттачей для известному id объекта
-  Future<List<ObjectAttach>> getAttachmentsByObjectId(int objectId) async{
+  Future<List<ObjectAttach>> getAttachmentsByObjectId(int objectId) async {
     ObjectAttachRemote objectAttachRemote =
-    ObjectAttachRemote(basicAuth, serverAddress);
-    Future<List<ObjectAttach>> result = objectAttachRemote.getAttachmentsByObjectId(objectId);
+        ObjectAttachRemote(basicAuth, serverAddress);
+    Future<List<ObjectAttach>> result =
+        objectAttachRemote.getAttachmentsByObjectId(objectId);
     return result;
   }
-
 }
-

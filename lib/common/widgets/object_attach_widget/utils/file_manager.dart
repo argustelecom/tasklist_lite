@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:tasklist_lite/state/auth_controller.dart';
+import 'package:tasklist_lite/presentation/controllers/auth_controller.dart';
 
 import '../model/object_attach.dart';
 import 'file_manager_stub.dart'

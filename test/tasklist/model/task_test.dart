@@ -1,6 +1,6 @@
 import 'dart:collection';
 
-import 'package:tasklist_lite/tasklist/model/task.dart';
+import 'package:tasklist_lite/domain/entities/task.dart';
 import 'package:test/test.dart';
 
 void main() {

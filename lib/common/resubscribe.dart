@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:get/get.dart';
 
-import '../state/application_state.dart';
+import '../presentation/state/application_state.dart';
 
 ///***********************************************************************
 /// отменяет существующую подписку и создает новую на переданный stream.
