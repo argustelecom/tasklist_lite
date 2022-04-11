@@ -49,7 +49,7 @@ class ObjectAttachWidget extends StatelessWidget {
                             child: Container(
                                 width: 100,
                                 height: 100,
-                                child: kIsWeb
+                                child: !kIsWeb
                                     // Для мобильного формата заводим три кнопки для разного способа
                                     // доступа к файлам
                                     ? ExpandableFab(distance: 112.0, children: [
