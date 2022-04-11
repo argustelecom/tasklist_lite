@@ -34,7 +34,7 @@ class _TaskPageState extends State<TaskPage> {
   Widget build(BuildContext context) {
     ThemeData themeData = Theme.of(context);
     return DefaultTabController(
-        length: 5,
+        length: 4,
         initialIndex: 0,
         child: GetBuilder<TaskListController>(
             init: TaskListController(),
@@ -93,12 +93,7 @@ class _TaskPageState extends State<TaskPage> {
                                 child: Text(
                                   "История",
                                 ),
-                              ),
-                              Tab(
-                                child: Text(
-                                  "Баллы",
-                                ),
-                              ),
+                              )
                             ],
                             controller: DefaultTabController.of(context),
                           ),
@@ -128,7 +123,6 @@ class _TaskPageState extends State<TaskPage> {
                         ),
                       ),
                       HistoryTab(),
-                      MarkTypeFilter()
                     ]))
                   ]));
             }));
@@ -165,7 +159,7 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 2),
+                                  padding: EdgeInsets.symmetric(vertical: 4),
                                   child: Row(children: [
                                     Text(
                                       task.name,
@@ -178,14 +172,12 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
                                   ])),
                               Padding(
                                   padding: EdgeInsets.symmetric(vertical: 2),
-                                  child: Row(children: [
-                                    DueDateLabel(
-                                        dueDate: task.getDueDateFullText(),
-                                        isOverdue: task.isTaskOverdue()),
-                                  ])),
+                                  child:LimitedBox(child: DueDateLabel(task: task),maxWidth: 350,)
+                                        ),
                             ],
                           ),
                           if (!task.isClosed)
+                            Expanded(child:
                             Column(
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
@@ -313,7 +305,7 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
                                               ))
                                         ],
                                       ))
-                                ])
+                                ]))
                         ])
                   : Container());
         });

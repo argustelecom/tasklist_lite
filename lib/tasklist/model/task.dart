@@ -84,6 +84,9 @@ class Task {
   /// "Является выездной задачей"
   bool isOutdoor;
 
+  /// "Плановое время окончание работы.(Только для ТО/плановых работ)"
+  DateTime? scheduledDate;
+
   /// Гибкие атрибуты
   Map<String, Object?> flexibleAttribs = LinkedHashMap();
 
@@ -116,6 +119,7 @@ class Task {
       this.isVisit = false,
       this.isPlanned = false,
       this.isOutdoor = false,
+      this.scheduledDate,
       required this.flexibleAttribs,
       this.idleTimeList,
       this.works});
@@ -173,6 +177,20 @@ class Task {
       return "";
     else
       return DateFormat("dd.MM.yyyy HH:mm").format(dueDate!);
+  }
+
+  String getScheduledDateFulltext(){
+    if (scheduledDate == null)
+      return "";
+    else
+      return DateFormat("dd.MM.yyyy HH:mm").format(scheduledDate!);
+  }
+
+  String getCreateDateFulltext(){
+    if (createDate == null)
+      return "";
+    else
+      return DateFormat("dd.MM.yyyy HH:mm").format(createDate!);
   }
 
   String getAddressDescription() {
@@ -289,6 +307,8 @@ class Task {
         isVisit: json['isVisit'],
         isPlanned: json['isPlanned'],
         isOutdoor: json['isOutdoor'],
+        scheduledDate: json['scheduledDate']!= null ? DateTime.parse(json['scheduledDate']) : null,
+        ttmsId: json['ttmsId'],
 
         // TODO
         flexibleAttribs: LinkedHashMap<String, Object?>.fromIterable(
@@ -331,6 +351,8 @@ class Task {
     data['isVisit'] = this.isVisit;
     data['isPlanned'] = this.isPlanned;
     data['isOutdoor'] = this.isOutdoor;
+    data['ttmsId'] = this.ttmsId;
+    data['scheduledDate'] = this.scheduledDate != null ? this.scheduledDate.toString() : null;
     data['flexibleAttribute'] =
         this.flexibleAttribs.entries.map((e) => toMapJson(e)).toList();
     data['idleTimePeriod'] = this.idleTimeList != null
