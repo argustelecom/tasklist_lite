@@ -87,7 +87,6 @@ class WideScreenNavigationDrawer extends StatelessWidget {
                       child: SizedBox(
                         height: 100,
                         child: Card(
-                          elevation: 5,
                           child: Padding(
                             padding:
                                 EdgeInsets.only(left: 16, right: 16, top: 16),

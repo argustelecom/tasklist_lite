@@ -17,33 +17,34 @@ class TaskListThemeData {
   static ThemeData themeData(
       ColorScheme colorScheme, Color focusColor, Color hintColor) {
     return ThemeData(
-      colorScheme: colorScheme,
-      textTheme: _textTheme,
-      // Matches manifest.json colors and background color.
-      primaryColor: const Color(0xFF030303),
-      hintColor: hintColor,
-      appBarTheme: AppBarTheme(
-        backgroundColor: colorScheme.background,
-        elevation: 0,
-        iconTheme: IconThemeData(color: colorScheme.onPrimary, size: 36),
-      ),
-      iconTheme: IconThemeData(color: colorScheme.onPrimary, size: 30),
-      canvasColor: colorScheme.background,
-      scaffoldBackgroundColor: colorScheme.background,
-      highlightColor: Colors.transparent,
-      focusColor: focusColor,
-      snackBarTheme: SnackBarThemeData(
-        behavior: SnackBarBehavior.floating,
-        backgroundColor: Color.alphaBlend(
-          Colors.black.withOpacity(0.80),
-          Colors.white,
+        colorScheme: colorScheme,
+        textTheme: _textTheme,
+        // Matches manifest.json colors and background color.
+        primaryColor: const Color(0xFF030303),
+        hintColor: hintColor,
+        appBarTheme: AppBarTheme(
+          backgroundColor: colorScheme.background,
+          elevation: 0,
+          iconTheme: IconThemeData(color: colorScheme.onPrimary, size: 36),
         ),
-        // #TODO: разобраться с null safety. Почему в gallery в этом месте не нужен восклицательный знак?
-        // https://dart.dev/null-safety/understanding-null-safety
-        // https://dart.dev/null-safety
-        contentTextStyle: _textTheme.subtitle1!.apply(color: Colors.white),
-      ),
-    );
+        iconTheme: IconThemeData(color: colorScheme.onPrimary, size: 30),
+        canvasColor: colorScheme.background,
+        scaffoldBackgroundColor: colorScheme.background,
+        highlightColor: Colors.transparent,
+        focusColor: focusColor,
+        snackBarTheme: SnackBarThemeData(
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Color.alphaBlend(
+            Colors.black.withOpacity(0.80),
+            Colors.white,
+          ),
+          // #TODO: разобраться с null safety. Почему в gallery в этом месте не нужен восклицательный знак?
+          // https://dart.dev/null-safety/understanding-null-safety
+          // https://dart.dev/null-safety
+          contentTextStyle: _textTheme.subtitle1!.apply(color: Colors.white),
+        ),
+        floatingActionButtonTheme: _floatingActionButtonTheme,
+        cardTheme: _cardTheme);
   }
 
   static const ColorScheme lightColorScheme = ColorScheme(
@@ -71,7 +72,8 @@ class TaskListThemeData {
     secondaryVariant: Color(0xFF451B6F),
     background: Color(0xFF241E30),
     surface: Color(0xFF1F1929),
-    onBackground: Color(0x0DFFFFFF), // White with 0.05 opacity
+    // White with 0.05 opacity
+    onBackground: Color(0x0DFFFFFF),
     error: Colors.white,
     onError: Colors.white,
     onPrimary: Colors.white,
@@ -97,4 +99,24 @@ class TaskListThemeData {
     headline6: GoogleFonts.montserrat(fontWeight: _bold, fontSize: 16.0),
     button: GoogleFonts.montserrat(fontWeight: _semiBold, fontSize: 14.0),
   );
+
+  static final FloatingActionButtonThemeData _floatingActionButtonTheme =
+      FloatingActionButtonThemeData(
+          sizeConstraints: BoxConstraints.tightFor(
+            width: 48.0,
+            height: 48.0,
+          ),
+          smallSizeConstraints: BoxConstraints.tightFor(
+            width: 48.0,
+            height: 48.0,
+          ),
+          largeSizeConstraints: BoxConstraints.tightFor(
+            width: 48.0,
+            height: 48.0,
+          ),
+          extendedSizeConstraints: BoxConstraints.tightFor(
+            height: 48.0,
+          ));
+
+  static final CardTheme _cardTheme = CardTheme(elevation: 2);
 }

@@ -53,7 +53,6 @@ class AboutPage extends StatelessWidget {
                 Padding(
                     padding: EdgeInsets.only(top: 10, bottom: 10),
                     child: Card(
-                        elevation: 3,
                         color: themeData.cardColor,
                         child: ListView(
                             shrinkWrap: true,

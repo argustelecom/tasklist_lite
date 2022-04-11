@@ -24,7 +24,7 @@ class ActionButton extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       //color: theme.accentColor,
       color: Colors.yellow.shade700,
-      elevation: 4.0,
+      elevation: 10.0,
       child: IconTheme.merge(
         data: theme.accentIconTheme,
         child: IconButton(

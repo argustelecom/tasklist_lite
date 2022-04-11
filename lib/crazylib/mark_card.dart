@@ -16,8 +16,6 @@ class MarkCard extends StatelessWidget {
     ThemeData themeData = Theme.of(context);
 
     return Card(
-      shadowColor: Color(0x40000000),
-      elevation: 10,
       margin: EdgeInsets.all(5),
       child: Column(
         children: [
