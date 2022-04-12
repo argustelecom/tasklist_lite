@@ -180,9 +180,7 @@ class WorksTabState extends State<WorksTab> {
                                     context: context,
                                     builder: (BuildContext context) {
                                       return InfoDialog(
-                                          body: Text("Произошла ошибка: \"$e\"",
-                                              maxLines: 7,
-                                              overflow: TextOverflow.clip));
+                                          text: "Произошла ошибка: \"$e\"");
                                     });
                               }
                           }

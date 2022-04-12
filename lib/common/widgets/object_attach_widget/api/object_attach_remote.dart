@@ -4,11 +4,11 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:tasklist_lite/common/widgets/object_attach_widget/model/object_attach.dart';
 import 'package:tasklist_lite/graphql/graphql_service.dart';
 
+import '../../../../tasklist/exceptions.dart';
 
 /// Получает информацию по вложениям объекта.
 /// Использует graphQL для получения информации
 class ObjectAttachRemote {
-
   static const String envApiAddress = "/argus/graphql/env";
 
   static const String objectAttachQuery = '''objectAttachmentId
@@ -38,9 +38,7 @@ class ObjectAttachRemote {
     String urlForEnv = serverAddress + envApiAddress;
     String webSocketUrlForEnv = serverAddress + envApiAddress;
     this._graphQLService = GraphQLService(
-        basicAuth: basicAuth,
-        url: urlForEnv,
-        webSocketUrl: webSocketUrlForEnv);
+        basicAuth: basicAuth, url: urlForEnv, webSocketUrl: webSocketUrlForEnv);
   }
 
   /// Получение вложения по уже известному идентификатору
@@ -56,7 +54,7 @@ class ObjectAttachRemote {
     // #TODO: если это делать в момент запуска приложения, получается долго (сервер отвечает более 1с)
     // это должен быть push или graphql subscription или что-то вроде
     Future<QueryResult> queryResultFuture =
-    _graphQLService.query(objectAttachByIdQuery);
+        _graphQLService.query(objectAttachByIdQuery);
     late ObjectAttach result;
     await queryResultFuture.then((value) {
       if (value.hasException) {
@@ -67,7 +65,7 @@ class ObjectAttachRemote {
         return result;
       }
     }, onError: (e) {
-      throw Exception(" onError " + e.toString());
+      throw ExternalException("Ошибка обработки ответа: " + e.toString());
     });
     return result;
   }
@@ -85,7 +83,7 @@ class ObjectAttachRemote {
     // #TODO: если это делать в момент запуска приложения, получается долго (сервер отвечает более 1с)
     // это должен быть push или graphql subscription или что-то вроде
     Future<QueryResult> queryResultFuture =
-    _graphQLService.query(attachmentsByObjectId);
+        _graphQLService.query(attachmentsByObjectId);
     List<ObjectAttach> result = List.of({});
     await queryResultFuture.then((value) {
       if (value.hasException) {
@@ -97,7 +95,7 @@ class ObjectAttachRemote {
         });
       }
     }, onError: (e) {
-      throw Exception(" onError " + e.toString());
+      throw ExternalException("Ошибка обработки ответа: " + e.toString());
     });
     return result;
   }
@@ -115,7 +113,7 @@ class ObjectAttachRemote {
     }
     ''';
     Future<QueryResult> queryResultFuture =
-    _graphQLService.mutate(addObjectAttach);
+        _graphQLService.mutate(addObjectAttach);
     late ObjectAttach result;
     await queryResultFuture.then((value) {
       if (value.hasException) {
@@ -132,14 +130,16 @@ class ObjectAttachRemote {
         return result;
       }
     }, onError: (e) {
-      throw Exception(" onError " + e.toString());
+      throw ExternalException("Ошибка обработки ответа: " + e.toString());
     });
     return result;
   }
+
   /// Добавление списка объектов
   /// Всегда возвращает пустой List
   Future addObjectAttachList(List<ObjectAttach> objectAttachList) async {
-    String objectAttachJson = IterableBase.iterableToShortString(objectAttachList.map((e) => e.toAddMutation()), '[', ']') ;
+    String objectAttachJson = IterableBase.iterableToFullString(
+        objectAttachList.map((e) => e.toAddMutation()), '[', ']');
     String addObjectAttach = '''
      mutation{
       addAttachmentList(objectAttachmentList: $objectAttachJson) {
@@ -148,7 +148,7 @@ class ObjectAttachRemote {
     }
     ''';
     Future<QueryResult> queryResultFuture =
-    _graphQLService.mutate(addObjectAttach);
+        _graphQLService.mutate(addObjectAttach);
     List<ObjectAttach> result = List.of({});
     await queryResultFuture.then((value) {
       if (value.hasException) {
@@ -160,20 +160,19 @@ class ObjectAttachRemote {
       if (!value.isLoading) {
         if (value.data!["addAttachmentList"] == null) {
           return result;
-        } 
+        }
         List.from(value.data!["addAttachmentList"]).forEach((element) {
           result.add(ObjectAttach.fromJson(element));
         });
       }
     }, onError: (e) {
-      throw Exception(" onError " + e.toString());
+      throw ExternalException("Ошибка обработки ответа: " + e.toString());
     });
     return result;
   }
 
   /// Всегда возвращает null
   Future deleteObjectAttachById(int objectAttachId) async {
-
     String deleteObjectAttachById = '''
      mutation{
       deleteObjectAttachById(objectAttachmentId: $objectAttachId) {
@@ -182,7 +181,7 @@ class ObjectAttachRemote {
     }
     ''';
     Future<QueryResult> queryResultFuture =
-    _graphQLService.mutate(deleteObjectAttachById);
+        _graphQLService.mutate(deleteObjectAttachById);
     late ObjectAttach? result;
     await queryResultFuture.then((value) {
       if (value.hasException) {
@@ -201,7 +200,7 @@ class ObjectAttachRemote {
         }
       }
     }, onError: (e) {
-      throw Exception(" onError " + e.toString());
+      throw ExternalException("Ошибка обработки ответа: " + e.toString());
     });
     return result;
   }
@@ -210,19 +209,19 @@ class ObjectAttachRemote {
   //  используется в TaskRemoteClient, ObjectAttachRemote, NotifyRemoteClient, AuthRemoteClient
   void checkError(OperationException operationException) {
     if (operationException.linkException is ServerException) {
-      throw Exception("Сервер недоступен");
+      throw ExternalException("Сервер недоступен");
     }
     if (operationException.linkException is HttpLinkParserException) {
-      throw Exception("Не авторизован");
+      throw ExternalException("Не авторизован");
     }
     if (operationException.graphqlErrors.isNotEmpty) {
       List errors = operationException.graphqlErrors
           .map((e) => e.message)
           .map((e) => _parseExceptionMessage(e))
           .toList();
-      throw Exception(errors.toString());
+      throw ExternalException(errors.join("\n"));
     }
-    throw Exception("Неожиданная ошибка");
+    throw ExternalException("Неожиданная ошибка");
   }
 
   String _parseExceptionMessage(String message) {

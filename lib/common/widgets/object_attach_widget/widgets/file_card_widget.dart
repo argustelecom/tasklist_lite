@@ -8,6 +8,8 @@ import 'package:intl/intl.dart';
 import 'package:tasklist_lite/common/widgets/object_attach_widget/model/object_attach.dart';
 import 'package:tasklist_lite/common/widgets/object_attach_widget/object_attach_controller.dart';
 
+import '../../../../crazylib/info_dialog.dart';
+
 class FileCardWidget extends StatelessWidget {
   final ObjectAttach objectAttach;
 
@@ -75,11 +77,20 @@ class FileCardWidget extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: IconButton(
-                          icon: Icon(Icons.delete),
-                          onPressed: () {
-                            objectAttachController.deleteAttach(objectAttach);
-                          },
-                        ),
+                            icon: Icon(Icons.delete),
+                            onPressed: () async {
+                              try {
+                                await objectAttachController
+                                    .deleteAttach(objectAttach);
+                              } catch (e) {
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return InfoDialog(
+                                          text: "Произошла ошибка: \"$e\"");
+                                    });
+                              }
+                            }),
                       ),
                     )
                   ],

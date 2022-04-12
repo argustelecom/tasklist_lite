@@ -5,9 +5,10 @@ import 'package:get/get.dart';
 import '../layout/adaptive.dart';
 
 class InfoDialog extends StatelessWidget {
-  Widget body;
+  String text;
+  int? maxLines = 7;
 
-  InfoDialog({required this.body, Key? key}) : super(key: key);
+  InfoDialog({required this.text, this.maxLines, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +22,8 @@ class InfoDialog extends StatelessWidget {
                 child: ConstrainedBox(
                     constraints: BoxConstraints(maxWidth: 300),
                     child: Column(mainAxisSize: MainAxisSize.min, children: [
-                      body,
+                      Text(text,
+                          maxLines: maxLines, overflow: TextOverflow.clip),
                       SizedBox(height: 20),
                       Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                         TextButton(

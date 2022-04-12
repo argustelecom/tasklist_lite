@@ -84,7 +84,7 @@ class ObjectAttachController extends GetxController {
   }
 
   /// позволяет сформировать список файлов с ограничениями по расширению файлов
-  void pickFiles() async {
+  Future<void> pickFiles() async {
     List<ObjectAttach>? oaList =
         await FileManager.instance.pickFiles(this.objectId);
     if (oaList != null) {
@@ -98,13 +98,14 @@ class ObjectAttachController extends GetxController {
   }
 
   /// Позволяет запустить камеру, снимок прикладывается во вложения
-  void pickCamera() async {
+  Future<void> pickCamera() async {
     final ImagePicker _picker = ImagePicker();
 
     final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
 
     if (photo != null) {
-      ObjectAttach attach = await FileConverter().fileXToObjectAttach(photo, this.objectId);
+      ObjectAttach attach =
+          await FileConverter().fileXToObjectAttach(photo, this.objectId);
       await _attachRepository.sendObjectAttaches(List.filled(1, attach));
     } else {
       // пользователь отменил прикрепление фото
@@ -113,39 +114,39 @@ class ObjectAttachController extends GetxController {
   }
 
   /// Позволяет сформировать список фотографий и изображений. Файлы достаются стредствами ОС
-  void pickImage() async {
+  Future<void> pickImage() async {
     final ImagePicker _picker = ImagePicker();
 
     List<XFile>? selectedImages = await _picker.pickMultiImage();
     if (selectedImages != null) {
-
       List<ObjectAttach> objectAttaches = [];
       ObjectAttach object;
 
-      for(var i = 0; i < selectedImages.length; i++){
-        object = await FileConverter().fileXToObjectAttach(selectedImages[i], this.objectId);
+      for (var i = 0; i < selectedImages.length; i++) {
+        object = await FileConverter()
+            .fileXToObjectAttach(selectedImages[i], this.objectId);
         objectAttaches.add(object);
       }
 
       await _attachRepository.sendObjectAttaches(objectAttaches);
-    }
-    else {
+    } else {
       // пользователь отменил прикрепление изображений
     }
     refreshObjectAttachList();
   }
 
   /// Удаление конкретного вложения
-  void deleteAttach(ObjectAttach objectAttach) async {
+  Future<void> deleteAttach(ObjectAttach objectAttach) async {
     await _attachRepository.deleteObjectAttach(objectAttach);
     refreshObjectAttachList();
     // TODO: Убрать костыльную отправку коммента, когда перейдем на subscriptions
     objectAttachList.value.asStream().forEach((element) =>
-    {commentController.addDeleteAttachComment(element.first.fileName)});
+        {commentController.addDeleteAttachComment(element.first.fileName)});
   }
 
   /// Скачивание файла на конечное устройство
-  Future<void> downloadFile(ObjectAttach objectAttach, BuildContext context) async {
+  Future<void> downloadFile(
+      ObjectAttach objectAttach, BuildContext context) async {
     ObjectAttach attach = await _attachRepository.getObjectAttach(objectAttach);
     FileManager.instance.downloadFile(attach, context);
   }
