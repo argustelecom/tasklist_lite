@@ -97,7 +97,7 @@ class WorksManagerDialogState extends State<WorksManagerDialog> {
           if (!_notRequired) ...[
             Padding(
                 padding: EdgeInsets.symmetric(vertical: 8),
-                child: Text("Объем работ (шт):",
+                child: Text("Объем работ (${_work.workType.units ?? "шт."}):",
                     style: TextStyle(color: Colors.black54))),
             Container(
                 margin: EdgeInsets.symmetric(vertical: 8),

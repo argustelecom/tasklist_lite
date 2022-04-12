@@ -22,10 +22,10 @@ class WorkRepository extends GetxService {
     List<Work> result = [];
     if (works != null && works.isNotEmpty) {
       result.addAll(works.where((e) =>
-          !e.notRequired && (e.workDetail == null || e.workDetail!.isEmpty)));
-      result.addAll(works.where((e) =>
           !e.notRequired &&
           (e.workDetail != null && e.workDetail!.isNotEmpty)));
+      result.addAll(works.where((e) =>
+          !e.notRequired && (e.workDetail == null || e.workDetail!.isEmpty)));
       result.addAll(works.where((e) => e.notRequired));
     }
     return result;
