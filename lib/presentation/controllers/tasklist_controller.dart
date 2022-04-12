@@ -10,7 +10,7 @@ import 'package:tasklist_lite/domain/entities/task.dart';
 import 'package:tasklist_lite/presentation/state/application_state.dart';
 import 'package:tasklist_lite/presentation/widgets/crazy_progress_dialog.dart';
 
-import '../../common/resubscribe.dart';
+import '../../core/resubscribe.dart';
 import '../../data/repositories/close_code_repository.dart';
 import '../../data/repositories/comments_repository.dart';
 import '../../data/repositories/work_repository.dart';

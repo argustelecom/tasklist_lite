@@ -5,7 +5,7 @@ import 'package:tasklist_lite/data/repositories/notification_repository.dart';
 import 'package:tasklist_lite/domain/entities/notify.dart';
 import 'package:tasklist_lite/presentation/state/auth_state.dart';
 
-import '../../common/resubscribe.dart';
+import '../../core/resubscribe.dart';
 import 'auth_controller.dart';
 
 class NotificationController extends GetxController {

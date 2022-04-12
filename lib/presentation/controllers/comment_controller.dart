@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:tasklist_lite/presentation/controllers/auth_controller.dart';
 import 'package:tasklist_lite/presentation/controllers/tasklist_controller.dart';
 
-import '../../common/resubscribe.dart';
+import '../../core/resubscribe.dart';
 import '../../data/repositories/comments_repository.dart';
 import '../../domain/entities/comment.dart';
 import '../../domain/entities/task.dart';
