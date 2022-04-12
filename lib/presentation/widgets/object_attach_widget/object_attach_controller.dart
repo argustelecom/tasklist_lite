@@ -6,10 +6,10 @@ import 'package:get/get.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:tasklist_lite/common/widgets/object_attach_widget/utils/file_converter.dart';
-import 'package:tasklist_lite/common/widgets/object_attach_widget/utils/file_manager.dart';
 import 'package:tasklist_lite/presentation/controllers/comment_controller.dart';
 import 'package:tasklist_lite/presentation/controllers/tasklist_controller.dart';
+import 'package:tasklist_lite/presentation/widgets/object_attach_widget/utils/file_converter.dart';
+import 'package:tasklist_lite/presentation/widgets/object_attach_widget/utils/file_manager.dart';
 
 import 'attach_repository.dart';
 import 'model/object_attach.dart';

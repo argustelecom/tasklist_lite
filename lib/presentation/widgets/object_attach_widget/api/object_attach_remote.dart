@@ -1,10 +1,8 @@
 import 'dart:collection';
 
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:tasklist_lite/common/widgets/object_attach_widget/model/object_attach.dart';
-import 'package:tasklist_lite/graphql/graphql_service.dart';
-
-import '../../../../tasklist/exceptions.dart';
+import 'package:tasklist_lite/core/graphql/graphql_service.dart';
+import 'package:tasklist_lite/presentation/widgets/object_attach_widget/model/object_attach.dart';
 
 /// Получает информацию по вложениям объекта.
 /// Использует graphQL для получения информации
@@ -65,7 +63,7 @@ class ObjectAttachRemote {
         return result;
       }
     }, onError: (e) {
-      throw ExternalException("Ошибка обработки ответа: " + e.toString());
+      throw Exception(" onError " + e.toString());
     });
     return result;
   }
@@ -95,7 +93,7 @@ class ObjectAttachRemote {
         });
       }
     }, onError: (e) {
-      throw ExternalException("Ошибка обработки ответа: " + e.toString());
+      throw Exception(" onError " + e.toString());
     });
     return result;
   }
@@ -130,7 +128,7 @@ class ObjectAttachRemote {
         return result;
       }
     }, onError: (e) {
-      throw ExternalException("Ошибка обработки ответа: " + e.toString());
+      throw Exception(" onError " + e.toString());
     });
     return result;
   }
@@ -138,7 +136,7 @@ class ObjectAttachRemote {
   /// Добавление списка объектов
   /// Всегда возвращает пустой List
   Future addObjectAttachList(List<ObjectAttach> objectAttachList) async {
-    String objectAttachJson = IterableBase.iterableToFullString(
+    String objectAttachJson = IterableBase.iterableToShortString(
         objectAttachList.map((e) => e.toAddMutation()), '[', ']');
     String addObjectAttach = '''
      mutation{
@@ -166,7 +164,7 @@ class ObjectAttachRemote {
         });
       }
     }, onError: (e) {
-      throw ExternalException("Ошибка обработки ответа: " + e.toString());
+      throw Exception(" onError " + e.toString());
     });
     return result;
   }
@@ -200,7 +198,7 @@ class ObjectAttachRemote {
         }
       }
     }, onError: (e) {
-      throw ExternalException("Ошибка обработки ответа: " + e.toString());
+      throw Exception(" onError " + e.toString());
     });
     return result;
   }
@@ -209,19 +207,19 @@ class ObjectAttachRemote {
   //  используется в TaskRemoteClient, ObjectAttachRemote, NotifyRemoteClient, AuthRemoteClient
   void checkError(OperationException operationException) {
     if (operationException.linkException is ServerException) {
-      throw ExternalException("Сервер недоступен");
+      throw Exception("Сервер недоступен");
     }
     if (operationException.linkException is HttpLinkParserException) {
-      throw ExternalException("Не авторизован");
+      throw Exception("Не авторизован");
     }
     if (operationException.graphqlErrors.isNotEmpty) {
       List errors = operationException.graphqlErrors
           .map((e) => e.message)
           .map((e) => _parseExceptionMessage(e))
           .toList();
-      throw ExternalException(errors.join("\n"));
+      throw Exception(errors.toString());
     }
-    throw ExternalException("Неожиданная ошибка");
+    throw Exception("Неожиданная ошибка");
   }
 
   String _parseExceptionMessage(String message) {

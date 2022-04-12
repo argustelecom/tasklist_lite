@@ -1,12 +1,9 @@
-import 'dart:io';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:tasklist_lite/common/widgets/object_attach_widget/model/object_attach.dart';
-import 'package:tasklist_lite/common/widgets/object_attach_widget/object_attach_controller.dart';
+import 'package:tasklist_lite/presentation/widgets/object_attach_widget/model/object_attach.dart';
+import 'package:tasklist_lite/presentation/widgets/object_attach_widget/object_attach_controller.dart';
 
 import '../../../../crazylib/info_dialog.dart';
 

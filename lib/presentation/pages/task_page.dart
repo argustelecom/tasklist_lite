@@ -8,11 +8,11 @@ import 'package:tasklist_lite/presentation/controllers/comment_controller.dart';
 import 'package:tasklist_lite/presentation/dialogs/idle_time_manager_dialog.dart';
 import 'package:tasklist_lite/presentation/widgets/due_date_label.dart';
 import 'package:tasklist_lite/presentation/widgets/figaro_logo.dart';
+import 'package:tasklist_lite/presentation/widgets/object_attach_widget/widgets/object_attach_widget.dart';
 import 'package:tasklist_lite/presentation/widgets/reflowing_scaffold.dart';
 import 'package:tasklist_lite/presentation/widgets/tabs/history_tab.dart';
 import 'package:tasklist_lite/presentation/widgets/tabs/summary_tab.dart';
 
-import '../../common/widgets/object_attach_widget/widgets/object_attach_widget.dart';
 import '../controllers/tasklist_controller.dart';
 import '../dialogs/adaptive_dialog.dart';
 import '../dialogs/close_task_dialog.dart';
