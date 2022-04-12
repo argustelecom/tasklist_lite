@@ -7,7 +7,6 @@ import 'package:tasklist_lite/presentation/widgets/reflowing_scaffold.dart';
 
 import '../widgets/bars/tasklist_filter_bar.dart';
 import '../widgets/bars/top_user_bar.dart';
-import '../widgets/figaro_logo.dart';
 
 class TaskList extends StatelessWidget {
   @override
@@ -90,8 +89,6 @@ class _TaskListPageState extends State<TaskListPage> {
               ),
             ],
           ),
-          bodyRight:
-              FigaroLogoHorizontal(columnAlignment: MainAxisAlignment.start),
         );
       },
     );
