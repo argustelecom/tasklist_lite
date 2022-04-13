@@ -6,9 +6,9 @@ import 'package:tasklist_lite/presentation/widgets/expandable_fab_widget/action_
 import 'package:tasklist_lite/presentation/widgets/expandable_fab_widget/expandable_fab_widget.dart';
 import 'package:tasklist_lite/presentation/widgets/object_attach_widget/object_attach_controller.dart';
 import 'package:tasklist_lite/presentation/widgets/object_attach_widget/widgets/file_card_widget.dart';
+import 'package:tasklist_lite/presentation/dialogs/info_dialog.dart';
 
 /// Основное тело виджета ObjectAttachWidget
-/// один входной параметр objectId - объект, для которого будут получаться и отображаться вложения
 /// предоставляет средства(пользовательский интерфейс) для прикладывания/удаления/скачивания вложений
 class ObjectAttachWidget extends StatelessWidget {
   TaskListController taskListController = Get.find();
@@ -48,30 +48,67 @@ class ObjectAttachWidget extends StatelessWidget {
                             child: Container(
                                 width: 100,
                                 height: 100,
-                                child: kIsWeb
+                                child: !kIsWeb
                                     // Для мобильного формата заводим три кнопки для разного способа
                                     // доступа к файлам
                                     ? ExpandableFab(distance: 112.0, children: [
                                         ActionButton(
-                                          onPressed: () => {_.pickImage()},
-                                          icon: const Icon(
-                                            Icons.panorama,
-                                            color: Colors.black,
-                                          ),
-                                        ),
+                                            icon: const Icon(
+                                              Icons.panorama,
+                                              color: Colors.black,
+                                            ),
+                                            onPressed: () async {
+                                              try {
+                                                await _.pickImage();
+                                              } catch (e) {
+                                                showDialog(
+                                                    context: context,
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      return InfoDialog(
+                                                          text:
+                                                              "Произошла ошибка: \"$e\"");
+                                                    });
+                                              }
+                                            }),
                                         ActionButton(
-                                          onPressed: () => {_.pickCamera()},
-                                          icon: const Icon(
-                                            Icons.camera,
-                                            color: Colors.black,
-                                          ),
-                                        ),
+                                            icon: const Icon(
+                                              Icons.camera,
+                                              color: Colors.black,
+                                            ),
+                                            onPressed: () async {
+                                              try {
+                                                await _.pickCamera();
+                                              } catch (e) {
+                                                showDialog(
+                                                    context: context,
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      return InfoDialog(
+                                                          text:
+                                                              "Произошла ошибка: \"$e\"");
+                                                    });
+                                              }
+                                            }),
                                         ActionButton(
-                                            onPressed: () => {_.pickFiles()},
                                             icon: const Icon(
                                               Icons.article_outlined,
                                               color: Colors.black,
-                                            ))
+                                            ),
+                                            onPressed: () async {
+                                              try {
+                                                await _.pickFiles();
+                                              } catch (e) {
+                                                showDialog(
+                                                    context: context,
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      return InfoDialog(
+                                                          text:
+                                                              "Произошла ошибка: \"$e\"");
+                                                    });
+                                              }
+                                            })
                                       ])
                                     // Для WEB достаточно одной кнопки так как навигация в рамках ОС достаточно удобна и
                                     // есть встроенные средства фильтрации
@@ -79,12 +116,24 @@ class ObjectAttachWidget extends StatelessWidget {
                                         child: Align(
                                             alignment: Alignment.bottomRight,
                                             child: FloatingActionButton(
-                                              onPressed: () => {_.pickFiles()},
-                                              child:
-                                                  const Icon(Icons.add_sharp),
-                                              backgroundColor:
-                                                  Colors.yellow.shade700,
-                                            )))))
+                                                child:
+                                                    const Icon(Icons.add_sharp),
+                                                backgroundColor:
+                                                    Colors.yellow.shade700,
+                                                onPressed: () async {
+                                                  try {
+                                                    await _.pickFiles();
+                                                  } catch (e) {
+                                                    showDialog(
+                                                        context: context,
+                                                        builder: (BuildContext
+                                                            context) {
+                                                          return InfoDialog(
+                                                              text:
+                                                                  "Произошла ошибка: \"$e\"");
+                                                        });
+                                                  }
+                                                })))))
                       ]);
                     } else {
                       return Center(child: CircularProgressIndicator());
