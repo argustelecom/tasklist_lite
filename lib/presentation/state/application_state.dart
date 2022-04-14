@@ -4,10 +4,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
+import 'package:tasklist_lite/core/state/current_app_info.dart';
 import 'package:tasklist_lite/core/state/persistent_state.dart';
 
 /// Общие атрибуты приложения: выбранная тема, флажок демо-режима, возможные адреса серверов и т.д.
-class ApplicationState extends PersistentState {
+class ApplicationState extends PersistentState implements CurrentAppInfo {
   static const Map<String, String> _defaultPossibleServers = const {
     "localhost": "http://localhost:8080",
     "jboss5": "http://jboss5:8080"
@@ -86,5 +87,10 @@ class ApplicationState extends PersistentState {
   /// снять пометку "занятости" приложения
   void unClaimApplicationIsBusy() {
     PersistentState.decrementBusyCount();
+  }
+
+  @override
+  bool isAppInDemonstrationMode() {
+    return inDemonstrationMode.value;
   }
 }

@@ -1,5 +1,7 @@
+import 'package:get/get.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:tasklist_lite/core/graphql/graphql_service.dart';
+import 'package:tasklist_lite/core/state/current_auth_info.dart';
 import 'package:tasklist_lite/data/repositories/task_remote_client.dart';
 import 'package:tasklist_lite/domain/entities/notify.dart';
 
@@ -12,11 +14,14 @@ class NotifyRemoteClient {
 
   late GraphQLService _graphQLService;
 
-  NotifyRemoteClient(String basicAuth, String serverAddress) {
-    String urlForThirdParty = serverAddress + thirdPartyApiAddress;
-    String webSocketUrlForThirdParty = serverAddress + thirdPartyApiAddress;
+  NotifyRemoteClient() {
+    CurrentAuthInfo currentAuthInfo = Get.find();
+    String urlForThirdParty =
+        currentAuthInfo.getCurrentServerAddress() + thirdPartyApiAddress;
+    String webSocketUrlForThirdParty =
+        currentAuthInfo.getCurrentServerAddress() + thirdPartyApiAddress;
     this._graphQLService = GraphQLService(
-        basicAuth: basicAuth,
+        basicAuth: currentAuthInfo.getCurrentAuthString(),
         url: urlForThirdParty,
         webSocketUrl: webSocketUrlForThirdParty);
   }

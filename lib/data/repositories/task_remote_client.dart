@@ -1,7 +1,9 @@
+import 'package:get/get.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:tasklist_lite/core/exceptions.dart';
 import 'package:tasklist_lite/core/graphql/graphql_service.dart';
+import 'package:tasklist_lite/core/state/current_auth_info.dart';
 import 'package:tasklist_lite/domain/entities/comment.dart';
 import 'package:tasklist_lite/domain/entities/idle_time.dart';
 import 'package:tasklist_lite/domain/entities/work.dart';
@@ -130,11 +132,14 @@ class TaskRemoteClient {
 
   late GraphQLService _graphQLService;
 
-  TaskRemoteClient(String basicAuth, String serverAddress) {
-    String urlForThirdParty = serverAddress + thirdPartyApiAddress;
-    String webSocketUrlForThirdParty = serverAddress + thirdPartyApiAddress;
+  TaskRemoteClient() {
+    CurrentAuthInfo currentAuthInfo = Get.find();
+    String urlForThirdParty =
+        currentAuthInfo.getCurrentServerAddress() + thirdPartyApiAddress;
+    String webSocketUrlForThirdParty =
+        currentAuthInfo.getCurrentServerAddress() + thirdPartyApiAddress;
     this._graphQLService = GraphQLService(
-        basicAuth: basicAuth,
+        basicAuth: currentAuthInfo.getCurrentAuthString(),
         url: urlForThirdParty,
         webSocketUrl: webSocketUrlForThirdParty);
   }

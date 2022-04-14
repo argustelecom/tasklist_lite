@@ -1,5 +1,7 @@
+import 'package:get/get.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:tasklist_lite/core/graphql/graphql_service.dart';
+import 'package:tasklist_lite/core/state/current_auth_info.dart';
 import 'package:tasklist_lite/domain/entities/user_info.dart';
 
 /// Получает информацию о сотруднике по переданному basicAuth.
@@ -10,11 +12,16 @@ class AuthRemoteClient {
 
   late GraphQLService _graphQLService;
 
-  AuthRemoteClient(String basicAuth, String serverAddress) {
-    String urlForEnv = serverAddress + envApiAddress;
-    String webSocketUrlForEnv = serverAddress + envApiAddress;
+  AuthRemoteClient() {
+    CurrentAuthInfo currentAuthInfo = Get.find();
+    String urlForEnv =
+        currentAuthInfo.getCurrentServerAddress() + envApiAddress;
+    String webSocketUrlForEnv =
+        currentAuthInfo.getCurrentServerAddress() + envApiAddress;
     this._graphQLService = GraphQLService(
-        basicAuth: basicAuth, url: urlForEnv, webSocketUrl: webSocketUrlForEnv);
+        basicAuth: currentAuthInfo.getCurrentAuthString(),
+        url: urlForEnv,
+        webSocketUrl: webSocketUrlForEnv);
   }
 
   Future<UserInfo> getUserInfo() async {

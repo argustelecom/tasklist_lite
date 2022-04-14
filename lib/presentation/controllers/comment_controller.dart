@@ -35,8 +35,6 @@ class CommentController extends GetxController {
       commentSubscription = resubscribe<List<Comment>>(
           commentSubscription,
           commentRepository.streamComments(
-              authState.authString.value!,
-              authState.serverAddress.value!,
               taskListController.taskListState.currentTask.value), (event) {
         List<Comment> comments = event;
         this.commentList = comments;
@@ -87,11 +85,7 @@ class CommentController extends GetxController {
 
     if (comment.length > 0) {
       CommentRepository().addNewComment(
-          authController.authState.authString.value!,
-          authController.authState.serverAddress.value!,
-          taskListController.taskListState.currentTask.value,
-          comment,
-          isAlarm);
+          taskListController.taskListState.currentTask.value, comment, isAlarm);
       // TODO: Костыль для корректного постороеня UI т.к. пока не реализованы подписки.
       // При добавлении нового коммента он улетает на сервер и дополнительно добавляется в список в контроллере для отображения
       commentList.add(Comment(
@@ -114,8 +108,6 @@ class CommentController extends GetxController {
         content:
             "${authState.userInfo.value!.getWorkerNameWithInitials()} добавил вложение $attachName"));
     CommentRepository().addNewComment(
-        authController.authState.authString.value!,
-        authController.authState.serverAddress.value!,
         taskListController.taskListState.currentTask.value,
         "${authState.userInfo.value!.getWorkerNameWithInitials()} добавил вложение $attachName",
         false);
@@ -132,8 +124,6 @@ class CommentController extends GetxController {
         content:
             "${authState.userInfo.value!.getWorkerNameWithInitials()} удалил вложение $attachName"));
     CommentRepository().addNewComment(
-        authController.authState.authString.value!,
-        authController.authState.serverAddress.value!,
         taskListController.taskListState.currentTask.value,
         "${authState.userInfo.value!.getWorkerNameWithInitials()} удалил вложение $attachName",
         false);
@@ -147,12 +137,7 @@ class CommentController extends GetxController {
         '#203*${taskListController.taskListState.currentTask.value!.ttmsId}#';
     bool isAlarm = false;
 
-    CommentRepository().addNewComment(
-        authController.authState.authString.value!,
-        authController.authState.serverAddress.value!,
-        task,
-        comment,
-        isAlarm);
+    CommentRepository().addNewComment(task, comment, isAlarm);
     // TODO: тут такой же костыль - исправить когда будут subscriptions
     commentList.add(Comment(
         type: "Комментарий",

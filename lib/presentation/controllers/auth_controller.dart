@@ -9,7 +9,7 @@ import '../state/auth_state.dart';
 ///****          хранит state аутентификации и инфу о текущем пользователе    ****
 ///*******************************************************************************
 class AuthController extends GetxController {
-  AuthState authState = Get.put(AuthState());
+  AuthState authState = Get.find();
 
   /// в случае, если при попытке входа была ошибка, она будет сохранена суда, и будет отображена
   /// в нижней части LoginPage
@@ -39,10 +39,7 @@ class AuthController extends GetxController {
             "Basic " + base64Encode(utf8.encode('$login:$password'));
 
         authState.authString.value = basicAuth;
-        await authService
-            .login(basicAuth, serverAddress, inDemonstrationMode)
-            .whenComplete(() => null)
-            .then(
+        await authService.login().whenComplete(() => null).then(
           (value) {
             authState.userInfo.value = value;
             authState.isAuthenticated.value = true;

@@ -33,8 +33,6 @@ class MarkController extends GetxController {
     markSubscription = resubscribe(
         markSubscription,
         markRepository.streamMarks(
-            authState.authString.value!,
-            authState.serverAddress.value!,
             taskListController.taskListState.currentTask.value), (event) {
       List<Mark> marks = event;
       this.markList = marks;

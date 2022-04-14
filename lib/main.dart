@@ -4,14 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'package:logging/logging.dart';
 import 'package:tasklist_lite/core/custom_navigator_observer.dart';
-import 'package:tasklist_lite/data/auth/auth_service.dart';
-import 'package:tasklist_lite/data/repositories/close_code_repository.dart';
-import 'package:tasklist_lite/data/repositories/comments_repository.dart';
-import 'package:tasklist_lite/data/repositories/idle_time_reason_repository.dart';
-import 'package:tasklist_lite/data/repositories/mark_repository.dart';
-import 'package:tasklist_lite/data/repositories/notification_repository.dart';
-import 'package:tasklist_lite/data/repositories/task_repository.dart';
-import 'package:tasklist_lite/data/repositories/work_repository.dart';
+import 'package:tasklist_lite/injector.dart';
 import 'package:tasklist_lite/presentation/controllers/auth_controller.dart';
 import 'package:tasklist_lite/presentation/dialogs/error_dialog.dart';
 import 'package:tasklist_lite/presentation/pages/about_page.dart';
@@ -28,15 +21,10 @@ import 'package:tasklist_lite/presentation/pages/trunk_page.dart';
 import 'package:tasklist_lite/presentation/state/application_state.dart';
 
 import 'config/theme/tasklist_theme_data.dart';
-import 'data/fixture/comments_fixtures.dart';
-import 'data/fixture/mark_fixtures.dart';
-import 'data/fixture/notification_fixtures.dart';
-import 'data/fixture/task_fixtures.dart';
 import 'presentation/controllers/common_dropdown_controller.dart';
 
 void main() {
-  // некоторые "бины" должны быть созданы еще до того, как отработает initialBinding у MaterialApp
-  Get.put(ApplicationState());
+  initializeDependencies();
   Get.put(Get.createDelegate(navigatorObservers: [
     CustomNavigatorObserver(
       onPop: (route, previousRoute) {
@@ -52,8 +40,7 @@ void main() {
   ]));
   Logger.root.level = Level.ALL;
   Logger.root.onRecord.listen((event) {
-    // print
-    // подключить dart:developer https://api.flutter.dev/flutter/dart-developer/dart-developer-library.html
+    // Простейшая подготовка отчета об ошибке:
     // писать последние 100 event`ов
     // при нажатии кнопки отчета об ошибке отркывать отправку почты на figaro-support@argustelecom.ru
     // скидывать туда 100 последних записей в логе и стек исключения.
@@ -158,25 +145,6 @@ class MyApp extends StatelessWidget {
                   GlobalCupertinoLocalizations.delegate
                 ],
                 supportedLocales: [const Locale('ru')],
-                // чтобы таким образом добавить зависимости в контекст, пришлось делать не MaterialApp, а именно GetMaterialApp
-                //https://medium.com/flutter-community/the-flutter-getx-ecosystem-dependency-injection-8e763d0ec6b9
-                // #TODO: чтобы делать lazuPut, надо делать и отдельный класс-потомок Bindings (т.к. #lazyPut void, а BindingBuilder`у нужны экземпляры зависимостей)
-                // а еще в dart низя делать анонимный класс (но можно анонимную функцию), что огорчает
-                initialBinding: BindingsBuilder(() => {
-                      Get.put(TaskRepository()),
-                      Get.put(TaskFixtures()),
-                      Get.put(AuthService()),
-                      Get.put(NotificationRepository()),
-                      Get.put(NotificationFixtures()),
-                      Get.put(IdleTimeReasonRepository()),
-                      Get.put(WorkRepository()),
-                      Get.put(CloseCodeRepository()),
-                      Get.put(CommentsFixtures()),
-                      Get.put(CommentRepository()),
-                      Get.put(CommonDropdownController()),
-                      Get.put(MarkRepository()),
-                      Get.put(MarkFixtures()),
-                    }),
                 darkTheme: TaskListThemeData.darkThemeData.copyWith(
                   platform: defaultTargetPlatform,
                 ),

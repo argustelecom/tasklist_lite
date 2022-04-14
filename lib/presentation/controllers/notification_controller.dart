@@ -32,10 +32,7 @@ class NotificationController extends GetxController {
   /// Метод для удаления уведомления из списка живых уведомлений
   removeAliveNotification(Notify notify) {
     aliveNotifications.remove(notify);
-    NotificationRepository().readNotify(
-        authController.authState.authString.value!,
-        authController.authState.serverAddress.value!,
-        notify);
+    NotificationRepository().readNotify(notify);
     update();
   }
 
@@ -67,9 +64,7 @@ class NotificationController extends GetxController {
 
     openedNotificationSubscription = resubscribe<List<Notify>>(
         openedNotificationSubscription,
-        notificationRepository.streamOpenedNotifications(
-            authState.authString.value!, authState.serverAddress.value!),
-        (event) {
+        notificationRepository.streamOpenedNotifications(), (event) {
       //Только те, что отсутсвуют в deadNotifications
       List<Notify> newOpenNotify = event
           .where((element) =>

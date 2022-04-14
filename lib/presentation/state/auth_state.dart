@@ -1,13 +1,14 @@
 import 'dart:convert';
 
 import 'package:get/get.dart';
+import 'package:tasklist_lite/core/state/current_auth_info.dart';
 import 'package:tasklist_lite/core/state/persistent_state.dart';
 
 import '../../domain/entities/user_info.dart';
 
 /// содержит реактивные атрибуты, связанные с аутентификацией и авторизацией:
 /// признак аутентифицированности, инфу о пользователе, адрес сервера и т.д.
-class AuthState extends PersistentState {
+class AuthState extends PersistentState implements CurrentAuthInfo {
   /// Состоялся ли успешный логин в рамках этого сеанса работы.
   final Rx<bool> isAuthenticated = false.obs;
 
@@ -70,5 +71,16 @@ class AuthState extends PersistentState {
     serverAddress.value = json['serverAddress'];
     serverAddressSuggestions.value =
         List<String>.from(jsonDecode(json['serverAddressSuggestions']));
+  }
+
+  @override
+  String getCurrentAuthString() {
+    // вызывающий должен позаботиться о проверке на null
+    return authString.value!;
+  }
+
+  @override
+  String getCurrentServerAddress() {
+    return serverAddress.value!;
   }
 }

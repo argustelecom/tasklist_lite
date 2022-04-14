@@ -145,19 +145,16 @@ class TaskListController extends GetxController {
         _authStringSubscription, authState.authString.stream,
         (authStringValue) {
       _openedTasksSubscription = resubscribe<List<Task>>(
-          _openedTasksSubscription,
-          taskRepository.streamOpenedTasks(
-              authStringValue, authState.serverAddress.value), (event) {
+          _openedTasksSubscription, taskRepository.streamOpenedTasks(),
+          (event) {
         taskListState.openedTasks.value = event;
         update();
       }, showProgress: true);
 
       _closedTasksSubscription = resubscribe<List<Task>>(
           _closedTasksSubscription,
-          taskRepository.streamClosedTasks(
-              authStringValue,
-              authState.serverAddress.value,
-              taskListState.currentDate.value), (event) {
+          taskRepository.streamClosedTasks(taskListState.currentDate.value),
+          (event) {
         taskListState.closedTasks.value = event;
         update();
       }, showProgress: true);
@@ -167,17 +164,16 @@ class TaskListController extends GetxController {
         _serverAddressSubscription, authState.serverAddress.stream,
         (serverAddressValue) {
       _openedTasksSubscription = resubscribe<List<Task>>(
-          _openedTasksSubscription,
-          taskRepository.streamOpenedTasks(
-              authState.authString.value, serverAddressValue), (event) {
+          _openedTasksSubscription, taskRepository.streamOpenedTasks(),
+          (event) {
         taskListState.openedTasks.value = event;
         update();
       }, showProgress: true);
 
       _closedTasksSubscription = resubscribe<List<Task>>(
           _closedTasksSubscription,
-          taskRepository.streamClosedTasks(authState.authString.value,
-              serverAddressValue, taskListState.currentDate.value), (event) {
+          taskRepository.streamClosedTasks(taskListState.currentDate.value),
+          (event) {
         taskListState.closedTasks.value = event;
         update();
       }, showProgress: true);
@@ -188,10 +184,8 @@ class TaskListController extends GetxController {
         (dateTimeValue) {
       _closedTasksSubscription = resubscribe<List<Task>>(
           _closedTasksSubscription,
-          taskRepository.streamClosedTasks(
-              authState.authString.value,
-              authState.serverAddress.value,
-              taskListState.currentDate.value), (event) {
+          taskRepository.streamClosedTasks(taskListState.currentDate.value),
+          (event) {
         taskListState.closedTasks.value = event;
         update();
       }, showProgress: true);
@@ -211,20 +205,14 @@ class TaskListController extends GetxController {
 
     _idleTimeReasonsSubscription = resubscribe<List<IdleTimeReason>>(
         _idleTimeReasonsSubscription,
-        idleTimeReasonRepository
-            .getIdleTimeReasons(
-                authState.authString.value!, authState.serverAddress.value!)
-            .asStream(), (event) {
+        idleTimeReasonRepository.getIdleTimeReasons().asStream(), (event) {
       taskListState.idleTimeReasons.value = event;
       update();
     });
 
     _closeCodesSubscription = resubscribe<List<CloseCode>>(
-        _closeCodesSubscription,
-        closeCodeRepository
-            .getCloseCodes(
-                authState.authString.value!, authState.serverAddress.value!)
-            .asStream(), (event) {
+        _closeCodesSubscription, closeCodeRepository.getCloseCodes().asStream(),
+        (event) {
       taskListState.closeCodes.value = event;
       update();
     });
@@ -234,40 +222,28 @@ class TaskListController extends GetxController {
       IdleTimeReason reason, DateTime beginTime, DateTime? endTime) async {
     return await asyncShowProgressIndicatorOverlay(asyncFunction: () async {
       return await taskRepository.registerIdle(
-          authState.authString.value!,
-          authState.serverAddress.value!,
-          taskListState.currentTask.value!,
-          reason,
-          beginTime,
-          endTime);
+          taskListState.currentTask.value!, reason, beginTime, endTime);
     });
   }
 
   Future<Task> finishIdle(DateTime beginTime, DateTime endTime) async {
     return await asyncShowProgressIndicatorOverlay(asyncFunction: () async {
       return await taskRepository.finishIdle(
-          authState.authString.value!,
-          authState.serverAddress.value!,
-          taskListState.currentTask.value!,
-          beginTime,
-          endTime);
+          taskListState.currentTask.value!, beginTime, endTime);
     });
   }
 
   Future<Task> completeStage() async {
     return await asyncShowProgressIndicatorOverlay(asyncFunction: () async {
-      return await taskRepository.completeStage(authState.authString.value!,
-          authState.serverAddress.value!, taskListState.currentTask.value!);
+      return await taskRepository
+          .completeStage(taskListState.currentTask.value!);
     });
   }
 
   Future<Task> closeOrder(CloseCode closeCode) async {
     return await asyncShowProgressIndicatorOverlay(asyncFunction: () async {
       return await taskRepository.closeOrder(
-          authState.authString.value!,
-          authState.serverAddress.value!,
-          taskListState.currentTask.value!,
-          closeCode);
+          taskListState.currentTask.value!, closeCode);
     });
   }
 
@@ -275,8 +251,6 @@ class TaskListController extends GetxController {
       double? amount, List<Worker>? workers) async {
     return await asyncShowProgressIndicatorOverlay(asyncFunction: () async {
       return await taskRepository.registerWorkDetail(
-          authState.authString.value!,
-          authState.serverAddress.value!,
           taskListState.currentTask.value!,
           workType,
           notRequired,
@@ -288,20 +262,14 @@ class TaskListController extends GetxController {
   Future<Work> deleteWorkDetail(WorkDetail workDetail) async {
     return await asyncShowProgressIndicatorOverlay(asyncFunction: () async {
       return await taskRepository.deleteWorkDetail(
-          authState.authString.value!,
-          authState.serverAddress.value!,
-          taskListState.currentTask.value!,
-          workDetail);
+          taskListState.currentTask.value!, workDetail);
     });
   }
 
   Future<bool> markWorksNotRequired(List<WorkType> workTypes) async {
     return await asyncShowProgressIndicatorOverlay(asyncFunction: () async {
       return await taskRepository.markWorksNotRequired(
-          authState.authString.value!,
-          authState.serverAddress.value!,
-          taskListState.currentTask.value!,
-          workTypes);
+          taskListState.currentTask.value!, workTypes);
     });
   }
 
