@@ -17,7 +17,6 @@ import '../controllers/tasklist_controller.dart';
 import '../dialogs/adaptive_dialog.dart';
 import '../dialogs/close_task_dialog.dart';
 import '../dialogs/info_dialog.dart';
-import '../widgets/mark_filter_list.dart';
 import '../widgets/tabs/works_tab.dart';
 
 class TaskPage extends StatefulWidget {
@@ -95,7 +94,7 @@ class _TaskPageState extends State<TaskPage> {
                               child: Text(
                                 "История",
                               ),
-                              )
+                            )
                           ],
                           controller: DefaultTabController.of(context),
                         ),
@@ -165,15 +164,17 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
                                   ])),
                               Padding(
                                   padding: EdgeInsets.symmetric(vertical: 2),
-                                  child:LimitedBox(child: DueDateLabel(task: task),maxWidth: 350,)
-                                        ),
+                                  child: LimitedBox(
+                                    child: DueDateLabel(task: task),
+                                    maxWidth: 350,
+                                  )),
                             ],
                           ),
                           if (!task.isClosed)
-                            Expanded(child:
-                            Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
+                            Expanded(
+                                child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
                                   Container(
                                       width: 30,
                                       height: 30,

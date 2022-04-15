@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tasklist_lite/domain/entities/task.dart';
 
 /// вызывается в нескольких местах (как минимум, в карточке задачи в списке и на форме задачи)
 /// нужен, чтобы не дублировать логику особого отображения КС(например, цвет)
@@ -11,7 +12,9 @@ class DueDateLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     if (task.isPlanned == true) {
       return Text(
-        "Планируемое время работ: " +"\n" + "c "+
+        "Планируемое время работ: " +
+            "\n" +
+            "c " +
             task.getCreateDateFulltext() +
             " по " +
             task.getScheduledDateFulltext(),
