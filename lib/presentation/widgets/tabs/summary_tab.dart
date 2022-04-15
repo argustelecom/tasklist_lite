@@ -48,12 +48,7 @@ class SummaryTab extends StatelessWidget {
                             padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
                             child: Row(children: [
                               DueDateLabel(
-                                  dueDate: taskListController
-                                      .taskListState.currentTask.value!.stage!
-                                      .getDueDateFullText(),
-                                  isOverdue: taskListController
-                                      .taskListState.currentTask.value!.stage!
-                                      .isStageOverdue())
+                                  task: taskListController.taskListState.currentTask.value!,)
                             ]),
                           ),
                           Padding(
@@ -75,6 +70,14 @@ class SummaryTab extends StatelessWidget {
                         ],
                         crossAxisAlignment: CrossAxisAlignment.start,
                       ),
+//Выводим статус для плановых работ
+                    if (taskListController
+                            .taskListState.currentTask.value?.isClosed != true && taskListController
+                        .taskListState.currentTask.value?.isPlanned != false)
+                      Padding(
+                          padding: EdgeInsets.fromLTRB(16, 8, 16, 12),
+                          child: Text("Техническое обслуживание",
+                              style: TextStyle(fontWeight: FontWeight.bold))),
 //Клизма
                     LocationButton(
                         task:

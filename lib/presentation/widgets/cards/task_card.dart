@@ -108,9 +108,11 @@ class TaskCard extends StatelessWidget {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              DueDateLabel(
-                                dueDate: task.getDueDateFullText(),
-                                isOverdue: task.isTaskOverdue(),
+                              Expanded(
+                                child: DueDateLabel(
+                                  task: task,
+                                ),
+                                // maxWidth: 300,
                               )
                             ],
                           ),
@@ -119,11 +121,11 @@ class TaskCard extends StatelessWidget {
                           padding: EdgeInsets.only(left: 16, bottom: 12),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              CrazyHighlight(
-                                  text: task.getAddressDescription(),
-                                  maxLines: 2,
-                                  term: taskListController.searchText),
+                            children: [Expanded(child:CrazyHighlight(
+                                text: task.getAddressDescription(),
+                                maxLines: 2,
+                                term: taskListController.searchText) )
+                              ,
                             ],
                           ),
                         ),

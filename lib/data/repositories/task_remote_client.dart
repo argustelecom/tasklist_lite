@@ -109,6 +109,7 @@ class TaskRemoteClient {
   longitude
   commentary
   ttmsId
+  scheduledDate
   flexibleAttribute {
      key
      value
