@@ -48,10 +48,14 @@ abstract class PersistentState extends GetxService {
     return Future<void>.value(null);
   }
 
+  late final Future<bool> initCompletedFuture;
+
   /// обеспечивает чтение из хранилища при инициализации
   @override
   @mustCallSuper
   void onInit() {
+    final Completer<bool> completer = Completer();
+    initCompletedFuture = completer.future;
     incrementBusyCount();
     super.onInit();
 
@@ -59,6 +63,7 @@ abstract class PersistentState extends GetxService {
       _readIfKeyExists(getKeyName(), (value) {
         copyFromJson(jsonDecode(value!));
       }).whenComplete(() {
+        completer.complete(true);
         // запускаем слушателей записи только после того, как проинициализировались.
         // Иначе получим кучку лишних пересохранений недоинициализированного state,
         // которые, к тому же, могут помешать и чтению state из хранилища.
@@ -88,9 +93,9 @@ abstract class PersistentState extends GetxService {
   Future<bool> _readIfKeyExists(
       String key, FutureOr<void> onValue(String? value),
       {Function? onError}) async {
-    return await _storage.containsKey(key: key).then((value) {
+    return await _storage.containsKey(key: key).then((value) async {
       if (value) {
-        _storage.read(key: key).then((value) {
+        await _storage.read(key: key).then((value) {
           onValue(value);
         });
       }

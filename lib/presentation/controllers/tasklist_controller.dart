@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide Worker;
 import 'package:tasklist_lite/data/fixture/task_fixtures.dart';
 import 'package:tasklist_lite/data/repositories/idle_time_reason_repository.dart';
@@ -118,8 +117,6 @@ class TaskListController extends GetxController {
 
   StreamSubscription? _openedTasksSubscription;
   StreamSubscription? _closedTasksSubscription;
-  StreamSubscription? _authStringSubscription;
-  StreamSubscription? _serverAddressSubscription;
   StreamSubscription? _currentDateSubscription;
   StreamSubscription? _idleTimeReasonsSubscription;
   StreamSubscription? _closeCodesSubscription;
@@ -132,89 +129,51 @@ class TaskListController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // берем stream`ы, на которых висят данные по открытым и закрытым задачам, и заводим их
-    // на изменение соотв. полей контроллера списка. То есть, если изменилась например строка аутентификации,
-    // мы должны сделать resubscribe списков открытых и закрытых задач. То же самое при изменении адреса
-    // сервера или текущей даты.
 
-    // #TODO: тут вложенный resubscribe, из-за того, что адрес сервера и authString
-    // при f5 асинхронно дочитываются, а без вложенного resubscribe будет использоваться
-    // null вместо адреса и authString. Проблема бы решилась, если адрес и authString
-    // не пробрасывать параметром, а брать напрямую
-    _authStringSubscription = resubscribe<String?>(
-        _authStringSubscription, authState.authString.stream,
-        (authStringValue) {
-      _openedTasksSubscription = resubscribe<List<Task>>(
-          _openedTasksSubscription, taskRepository.streamOpenedTasks(),
-          (event) {
-        taskListState.openedTasks.value = event;
-        update();
-      }, showProgress: true);
+    /// kostd, 19.04.2022: ждем, когда state, влияющий на CurrentAuthInfo, CurrentAppInfo, будет проинициализирован.
+    /// После этого подписываемся на все наши подписки, считая, что настройки подключения уже известны слою данных.
+    /// Недостаток этого решения -- в случае, если настройки подключения изменятся в ходе жизни нашегго контроллера,
+    /// мы не заметим этого, и ui продолжит смотреть на старые данные (до переподключения). Но настройки меняются
+    /// только на странице входа, в это время наш TaskListController вообще уничтожается, т.к. на странице входа нет
+    /// ui, смотряшего на контроллер. Поэтому в нашем случае это работает.
 
-      _closedTasksSubscription = resubscribe<List<Task>>(
-          _closedTasksSubscription,
-          taskRepository.streamClosedTasks(taskListState.currentDate.value),
-          (event) {
-        taskListState.closedTasks.value = event;
-        update();
-      }, showProgress: true);
-    });
+    authState.initCompletedFuture.whenComplete(() {
+      return _applicationState.initCompletedFuture.whenComplete(() {
+        _openedTasksSubscription = resubscribe<List<Task>>(
+            _openedTasksSubscription, taskRepository.streamOpenedTasks(),
+            (event) {
+          taskListState.openedTasks.value = event;
+          update();
+        }, showProgress: true);
 
-    _serverAddressSubscription = resubscribe<String?>(
-        _serverAddressSubscription, authState.serverAddress.stream,
-        (serverAddressValue) {
-      _openedTasksSubscription = resubscribe<List<Task>>(
-          _openedTasksSubscription, taskRepository.streamOpenedTasks(),
-          (event) {
-        taskListState.openedTasks.value = event;
-        update();
-      }, showProgress: true);
+        _currentDateSubscription = resubscribe<DateTime>(
+            _currentDateSubscription, taskListState.currentDate.stream,
+            (dateTimeValue) {
+          _closedTasksSubscription = resubscribe<List<Task>>(
+              _closedTasksSubscription,
+              taskRepository.streamClosedTasks(taskListState.currentDate.value),
+              (event) {
+            taskListState.closedTasks.value = event;
+            update();
+          }, showProgress: true);
+        });
 
-      _closedTasksSubscription = resubscribe<List<Task>>(
-          _closedTasksSubscription,
-          taskRepository.streamClosedTasks(taskListState.currentDate.value),
-          (event) {
-        taskListState.closedTasks.value = event;
-        update();
-      }, showProgress: true);
-    });
+        _idleTimeReasonsSubscription = resubscribe<List<IdleTimeReason>>(
+            _idleTimeReasonsSubscription,
+            idleTimeReasonRepository.getIdleTimeReasons().asStream(), (event) {
+          taskListState.idleTimeReasons.value = event;
+          update();
+        });
 
-    _currentDateSubscription = resubscribe<DateTime>(
-        _currentDateSubscription, taskListState.currentDate.stream,
-        (dateTimeValue) {
-      _closedTasksSubscription = resubscribe<List<Task>>(
-          _closedTasksSubscription,
-          taskRepository.streamClosedTasks(taskListState.currentDate.value),
-          (event) {
-        taskListState.closedTasks.value = event;
-        update();
-      }, showProgress: true);
-    });
+        _closeCodesSubscription = resubscribe<List<CloseCode>>(
+            _closeCodesSubscription,
+            closeCodeRepository.getCloseCodes().asStream(), (event) {
+          taskListState.closeCodes.value = event;
+          update();
+        });
 
-    // на момент переподписывания здесь, значения в authState уже могли быть
-    // заданы, и нового event`а может не быть очень долго. Чтобы заполнить список,
-    // спровоцируем event явно.
-    // 25.03.2022: в некоторых случаях прямой refresh приводит к ошибке setState()
-    // or markNeedsBuild() called during build. Это потому, что под капотом refresh
-    // reactive-переменной провоцируют вызов setState() у ObxWidget, зависящих от
-    // нее, что конечно низя в ходе onInit. Поэтому делаем не напрямую, а через
-    // postFrameCallback, как учат в интернетах.
-    WidgetsBinding.instance!.addPostFrameCallback((Duration duration) {
-      authState.serverAddress.refresh();
-    });
-
-    _idleTimeReasonsSubscription = resubscribe<List<IdleTimeReason>>(
-        _idleTimeReasonsSubscription,
-        idleTimeReasonRepository.getIdleTimeReasons().asStream(), (event) {
-      taskListState.idleTimeReasons.value = event;
-      update();
-    });
-
-    _closeCodesSubscription = resubscribe<List<CloseCode>>(
-        _closeCodesSubscription, closeCodeRepository.getCloseCodes().asStream(),
-        (event) {
-      taskListState.closeCodes.value = event;
-      update();
+        return true;
+      });
     });
   }
 
@@ -297,8 +256,6 @@ class TaskListController extends GetxController {
   void onClose() {
     _openedTasksSubscription?.cancel();
     _closedTasksSubscription?.cancel();
-    _serverAddressSubscription?.cancel();
-    _authStringSubscription?.cancel();
     _currentDateSubscription?.cancel();
     _idleTimeReasonsSubscription?.cancel();
     _closeCodesSubscription?.cancel();

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:get/get.dart';
 import 'package:tasklist_lite/data/repositories/notification_repository.dart';
 import 'package:tasklist_lite/domain/entities/notify.dart';
+import 'package:tasklist_lite/presentation/state/application_state.dart';
 import 'package:tasklist_lite/presentation/state/auth_state.dart';
 
 import '../../core/resubscribe.dart';
@@ -60,18 +61,22 @@ class NotificationController extends GetxController {
     super.onInit();
     // к authState можно так обращаться, т.к. он создается очень рано, вместе с AuthController`ом
     // еще до создания самого приложения в main.
-    AuthState authState = Get.find();
-
-    openedNotificationSubscription = resubscribe<List<Notify>>(
-        openedNotificationSubscription,
-        notificationRepository.streamOpenedNotifications(), (event) {
-      //Только те, что отсутсвуют в deadNotifications
-      List<Notify> newOpenNotify = event
-          .where((element) =>
-              !deadNotifications.map((e) => e.id).contains(element.id))
-          .toList();
-      this.aliveNotifications = newOpenNotify;
-      update();
+    ApplicationState applicationState = Get.find();
+    applicationState.initCompletedFuture.whenComplete(() {
+      return authState.initCompletedFuture.whenComplete(() {
+        openedNotificationSubscription = resubscribe<List<Notify>>(
+            openedNotificationSubscription,
+            notificationRepository.streamOpenedNotifications(), (event) {
+          //Только те, что отсутсвуют в deadNotifications
+          List<Notify> newOpenNotify = event
+              .where((element) =>
+                  !deadNotifications.map((e) => e.id).contains(element.id))
+              .toList();
+          this.aliveNotifications = newOpenNotify;
+          update();
+        });
+        return true;
+      });
     });
   }
 
