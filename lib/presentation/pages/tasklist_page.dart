@@ -14,7 +14,7 @@ class TaskList extends StatelessWidget {
     return GetBuilder<TaskListController>(builder: (controller) {
       return ListView.builder(
           padding: EdgeInsets.symmetric(
-              vertical: 0, horizontal: isDisplayDesktop(context) ? 8 : 32),
+              vertical: 0, horizontal: isDisplayDesktop(context) ? 8 : 12),
           shrinkWrap: true,
           itemCount: controller.getTasks().length,
           itemBuilder: (context, index) {
@@ -60,7 +60,6 @@ class _TaskListPageState extends State<TaskListPage> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               NotificationsIconButton(),
-              LogoutIconButton(),
             ],
           ),
           body: Column(
@@ -80,7 +79,8 @@ class _TaskListPageState extends State<TaskListPage> {
                       // даже под Scaffold (добавить еще один стек)
                       GestureDetector(
                           onTap: () {
-                            taskListController.calendarOpened = false;
+                            taskListController.calendarOpened =
+                                !taskListController.calendarOpened;
                           },
                           child: null),
                     if (taskListController.calendarOpened) InlineCalendar()

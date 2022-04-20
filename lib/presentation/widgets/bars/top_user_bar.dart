@@ -56,9 +56,7 @@ class NotificationsIconButton extends StatelessWidget {
                     iconSize: 36, //IconTheme.of(context).size ?? 24,
                     tooltip: 'Уведомления',
                     // Если есть, то колокольчик звонит, а если нет ...
-                    icon: Icon(notificationController.haveNotifications()
-                        ? Icons.notifications
-                        : Icons.notifications_outlined),
+                    icon: Icon(Icons.notifications_outlined),
                     onPressed: () {
                       GetDelegate routerDelegate = Get.find();
                       routerDelegate.toNamed(NotificationsPage.routeName);
@@ -72,7 +70,7 @@ class NotificationsIconButton extends StatelessWidget {
                         child: Container(
                           padding: EdgeInsets.all(2),
                           decoration: BoxDecoration(
-                              color: Colors.red, shape: BoxShape.circle),
+                              color: Colors.blue, shape: BoxShape.circle),
                           constraints: BoxConstraints(
                             minWidth: 16,
                             minHeight: 16,
@@ -81,7 +79,7 @@ class NotificationsIconButton extends StatelessWidget {
                             '${notificationController.aliveNotifications.length}',
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 12,
+                              fontSize: 11,
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -124,7 +122,6 @@ class TopUserBar extends StatelessWidget implements PreferredSizeWidget {
             title: UserInfoBar(),
             actions: [
               NotificationsIconButton(),
-              LogoutIconButton(),
             ],
           ));
     });

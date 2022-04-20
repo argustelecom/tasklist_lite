@@ -35,7 +35,7 @@ class HistoryTab extends StatelessWidget {
         init: CommentController(),
         builder: (commentController) {
           return Padding(
-              padding: EdgeInsets.only(left: 12, right: 12, bottom: 12),
+              padding: EdgeInsets.only(left: 12, right: 12, bottom: 12,top: 8),
               child: Column(
                 children: [
                   commentController.getComments().length > 0

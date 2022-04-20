@@ -28,7 +28,7 @@ class TasklistFiltersBar extends StatelessWidget
     return GetBuilder<TaskListController>(builder: (taskListController) {
       return Column(children: [
         Padding(
-          padding: EdgeInsets.only(bottom: 3),
+          padding: EdgeInsets.only(bottom: 4),
           child: SizedBox(
               // здесь вынуждены задать высоту, чтобы именно по ней выровнялись элементы строки.
               // Так как один из элементов строки -- это TextField в режиме expands, то есть требует
@@ -40,52 +40,57 @@ class TasklistFiltersBar extends StatelessWidget
                 children: [
                   if (!taskListController.datePickerBarExpanded)
                     Expanded(
-                      // когда никто не кликнут, строка поиска занимает две трети ширины, а поле с датой -- оставшуюся треть
-                      flex: 2,
-                      child: Focus(
-                          onFocusChange: (value) {
-                            taskListController.searchBarExpanded = value;
-                          },
-                          child: Padding(
-                            padding: EdgeInsets.only(
-                                left: isDisplayDesktop(context) ? 8 : 36,
-                                right: taskListController.searchBarExpanded
-                                    ? 36
-                                    : 8),
-                            child:
-                                // ради elevation.
-                                Material(
-                              elevation: TaskCard.taskCardElevation,
-                              child: TextSelectionTheme(
-                                data: TextSelectionTheme.of(context).copyWith(
-                                  cursorColor: themeData.hintColor,
-                                ),
-                                child: TextField(
-                                  expands: true,
-                                  maxLines: null,
-                                  textAlign: TextAlign.center,
-                                  textAlignVertical: TextAlignVertical.center,
-                                  decoration: InputDecoration(
-                                    hintText: "Поиск",
-                                    fillColor: themeData.bottomAppBarColor,
-                                    border: InputBorder.none,
-                                    filled: true,
-                                    suffixIcon: IconButton(
-                                      tooltip: 'Поиск',
-                                      icon: const Icon(Icons.search_outlined),
-                                      color: themeData.hintColor,
-                                      onPressed: () {},
-                                    ),
-                                    isCollapsed: false,
+                        // когда никто не кликнут, строка поиска занимает две трети ширины, а поле с датой -- оставшуюся треть
+                        flex: 2,
+                        child: Card(
+                          margin: EdgeInsets.only(
+                              left: isDisplayDesktop(context) ? 8 : 12,
+                              right: 12),
+                          child: Focus(
+                            onFocusChange: (value) {
+                              taskListController.searchBarExpanded = value;
+                            },
+                            child: Padding(
+                                padding: EdgeInsets.only(
+                                    left: isDisplayDesktop(context) ? 8 : 12,
+                                    right: 12),
+                                child: TextSelectionTheme(
+                                  data: TextSelectionTheme.of(context).copyWith(
+                                    cursorColor: themeData.hintColor,
                                   ),
-                                  onChanged: (value) {
-                                    taskListController.searchText = value;
-                                  },
-                                ),
-                              ),
-                            ),
-                          )),
-                    ),
+                                  child: TextField(
+                                    expands: true,
+                                    textInputAction: TextInputAction.search,
+                                    maxLines: null,
+                                    textAlign: TextAlign.center,
+                                    textAlignVertical: TextAlignVertical.center,
+                                    decoration: InputDecoration(
+                                      hintText: "Поиск",
+                                      fillColor: themeData.bottomAppBarColor,
+                                      border: InputBorder.none,
+                                      filled: true,
+                                      suffixIcon: IconButton(
+                                        tooltip: 'Поиск',
+                                        icon: const Icon(Icons.search_outlined),
+                                        color: themeData.hintColor,
+                                        onPressed: () {},
+                                      ),
+                                      isCollapsed: false,
+                                    ),
+                                    onSubmitted: (value) {
+                                      FocusScope.of(context).unfocus();
+                                    },
+                                    onChanged: (value) {
+                                      taskListController.searchText = value;
+                                    },
+                                  ),
+                                )),
+                          ),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              side: BorderSide(color: Colors.white38)),
+                          elevation: TaskCard.taskCardElevation,
+                        )),
                   if (!taskListController.searchBarExpanded)
                     Expanded(
                       flex: 1,
@@ -93,19 +98,20 @@ class TasklistFiltersBar extends StatelessWidget
                           onTap: () {
                             taskListController.datePickerBarExpanded =
                                 !taskListController.datePickerBarExpanded;
+                            taskListController.calendarOpened = false;
                           },
                           child: Padding(
                             padding: EdgeInsets.only(
                               left: taskListController.datePickerBarExpanded
                                   ? isDisplayDesktop(context)
                                       ? 8
-                                      : 36
+                                      : 12
                                   : 8,
-                              right: isDisplayDesktop(context) ? 16 : 36,
+                              right: isDisplayDesktop(context) ? 16 : 12,
                             ),
                             child: Card(
                               shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(32),
+                                  borderRadius: BorderRadius.circular(18),
                                   side: BorderSide(
                                       color: Colors.yellow.shade700)),
                               // по дефолту карточка имеет margins в несколько пикселей,
@@ -120,6 +126,8 @@ class TasklistFiltersBar extends StatelessWidget
                                                 .datePickerBarExpanded =
                                             !taskListController
                                                 .datePickerBarExpanded;
+                                        taskListController.calendarOpened =
+                                            !taskListController.calendarOpened;
                                       },
                                       child:
                                           // распахнет кнопку на всю высоту parent`а
@@ -132,6 +140,8 @@ class TasklistFiltersBar extends StatelessWidget
                                                       .taskListState
                                                       .currentDate
                                                       .value),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
                                               style:
                                                   DefaultTextStyle.of(context)
                                                       .style),

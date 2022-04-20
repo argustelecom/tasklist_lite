@@ -273,8 +273,8 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
                                           PopupMenuItem(
                                               value: 3,
                                               child: ListTile(
-                                                leading:
-                                                    Icon(Icons.announcement),
+                                                leading: Icon(Icons
+                                                    .announcement_outlined),
                                                 title: Text('Проверка аварии'),
                                                 onTap: () {
                                                   DefaultTabController.of(

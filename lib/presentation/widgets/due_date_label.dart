@@ -12,8 +12,6 @@ class DueDateLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     if (task.isPlanned == true) {
       return Text(
-        "Планируемое время работ: " +
-            "\n" +
             "c " +
             task.getCreateDateFulltext() +
             " по " +

@@ -27,7 +27,7 @@ class ObjectAttachWidget extends StatelessWidget {
             taskListController.taskListState.currentTask.value!.id),
         builder: (_) {
           return Padding(
-              padding: EdgeInsets.symmetric(horizontal: 12),
+              padding: EdgeInsets.only(left: 12,right: 12,top: 8),
               child: FutureBuilder(
                   future: _.objectAttachList.value,
                   builder: (context, ps) {
