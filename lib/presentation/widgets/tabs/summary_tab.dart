@@ -14,7 +14,7 @@ class SummaryTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(left: 12, right: 12, bottom: 12,top: 8),
+      padding: EdgeInsets.only(left: 12, right: 12, bottom: 12, top: 8),
       child: Card(
           child: SingleChildScrollView(
               physics: ScrollPhysics(),
@@ -48,7 +48,9 @@ class SummaryTab extends StatelessWidget {
                             padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
                             child: Row(children: [
                               DueDateLabel(
-                                  task: taskListController.taskListState.currentTask.value!,)
+                                task: taskListController
+                                    .taskListState.currentTask.value!,
+                              )
                             ]),
                           ),
                           Padding(
@@ -72,12 +74,43 @@ class SummaryTab extends StatelessWidget {
                       ),
 //Выводим статус для плановых работ
                     if (taskListController
-                            .taskListState.currentTask.value?.isClosed != true && taskListController
-                        .taskListState.currentTask.value?.isPlanned != false)
+                                .taskListState.currentTask.value?.isClosed !=
+                            true &&
+                        taskListController
+                                .taskListState.currentTask.value?.isPlanned !=
+                            false)
                       Padding(
                           padding: EdgeInsets.fromLTRB(16, 8, 16, 12),
-                          child: Text("Техническое обслуживание",
-                              style: TextStyle(fontWeight: FontWeight.bold))),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Техническое обслуживание",
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
+                              Padding(
+                                padding: EdgeInsets.only(top: 4),
+                                child: Text("c " +
+                                    (taskListController.taskListState
+                                                .currentTask.value !=
+                                            null
+                                        ? taskListController
+                                            .taskListState.currentTask.value!
+                                            .getCreateDateFulltext()
+                                        : "")),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(top: 4),
+                                child: Text("по " +
+                                    (taskListController.taskListState
+                                                .currentTask.value !=
+                                            null
+                                        ? taskListController
+                                            .taskListState.currentTask.value!
+                                            .getScheduledDateFulltext()
+                                        : '')),
+                              )
+                            ],
+                          )),
 //Клизма
                     LocationButton(
                         task:

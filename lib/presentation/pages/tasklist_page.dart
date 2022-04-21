@@ -12,11 +12,17 @@ class TaskList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<TaskListController>(builder: (controller) {
-      return ListView.builder(
+      return ListView.separated(
           padding: EdgeInsets.symmetric(
               vertical: 0, horizontal: isDisplayDesktop(context) ? 8 : 12),
           shrinkWrap: true,
           itemCount: controller.getTasks().length,
+          separatorBuilder: (BuildContext context, int index){
+            if (controller.getTasks()[index + 1].isClosed){
+              return Text("Завершенные задачи",textAlign: TextAlign.center,style: TextStyle(color: Colors.black45),);
+            }
+            return Divider(height: 0);
+          },
           itemBuilder: (context, index) {
             return TaskCard(
               task: controller.getTasks()[index], //taskList[index],
