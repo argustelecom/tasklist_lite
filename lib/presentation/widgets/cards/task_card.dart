@@ -8,6 +8,7 @@ import 'package:tasklist_lite/presentation/widgets/due_date_label.dart';
 
 import '../../pages/task_page.dart';
 import '../crazy_highlight.dart';
+import '../timeIntervalLabel.dart';
 
 /// визуальное представление задачи в списке задач
 class TaskCard extends StatelessWidget {
@@ -109,9 +110,11 @@ class TaskCard extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Expanded(
-                                child: DueDateLabel(
+                                child: task.isPlanned ? TimeIntervalLabel(task: task)
+                                    : DueDateLabel(
                                   task: task,
-                                ),
+                                  forStage: false,
+                                )
                                 // maxWidth: 300,
                               )
                             ],

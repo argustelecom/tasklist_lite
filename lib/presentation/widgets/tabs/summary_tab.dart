@@ -50,6 +50,7 @@ class SummaryTab extends StatelessWidget {
                               DueDateLabel(
                                 task: taskListController
                                     .taskListState.currentTask.value!,
+                                forStage: true,
                               )
                             ]),
                           ),

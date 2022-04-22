@@ -17,9 +17,14 @@ class TaskList extends StatelessWidget {
               vertical: 0, horizontal: isDisplayDesktop(context) ? 8 : 12),
           shrinkWrap: true,
           itemCount: controller.getTasks().length,
-          separatorBuilder: (BuildContext context, int index){
-            if (controller.getTasks()[index + 1].isClosed){
-              return Text("Завершенные задачи",textAlign: TextAlign.center,style: TextStyle(color: Colors.black45),);
+          separatorBuilder: (BuildContext context, int index) {
+            if (controller.getTasks()[index + 1].isClosed &&
+                !controller.getTasks()[index].isClosed) {
+              return Text(
+                "Завершенные задачи",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.black45),
+              );
             }
             return Divider(height: 0);
           },

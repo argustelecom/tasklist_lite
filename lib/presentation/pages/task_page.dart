@@ -18,6 +18,7 @@ import '../dialogs/adaptive_dialog.dart';
 import '../dialogs/close_task_dialog.dart';
 import '../dialogs/info_dialog.dart';
 import '../widgets/tabs/works_tab.dart';
+import '../widgets/timeIntervalLabel.dart';
 
 class TaskPage extends StatefulWidget {
   static const String routeName = 'task';
@@ -165,7 +166,11 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
                               Padding(
                                   padding: EdgeInsets.symmetric(vertical: 2),
                                   child: LimitedBox(
-                                    child: DueDateLabel(task: task),
+                                    child: task.isPlanned ? TimeIntervalLabel(task: task)
+                                        : DueDateLabel(
+                                      task: task,
+                                      forStage: false,
+                                    ),
                                     maxWidth: 350,
                                   )),
                             ],

@@ -5,34 +5,20 @@ import 'package:tasklist_lite/domain/entities/task.dart';
 /// нужен, чтобы не дублировать логику особого отображения КС(например, цвет)
 class DueDateLabel extends StatelessWidget {
   final Task task;
+  final bool forStage;
 
-  DueDateLabel({required this.task});
+  DueDateLabel({required this.task, required this.forStage});
 
   @override
   Widget build(BuildContext context) {
-    if (task.isPlanned == true) {
       return Text(
-            "c " +
-            task.getCreateDateFulltext() +
-            " по " +
-            task.getScheduledDateFulltext(),
-        maxLines: 3,
-        softWrap: true,
+        "КС: " +
+            "${forStage ? task.stage!.getDueDateFullText() : task.getDueDateFullText()}",
         style: TextStyle(
             inherit: false,
             fontSize: 14,
             color: task.isTaskOverdue() ? Colors.red : Colors.green),
         textAlign: TextAlign.left,
       );
-    } else {
-      return Text(
-        "КС: " + task.getDueDateFullText(),
-        style: TextStyle(
-            inherit: false,
-            fontSize: 14,
-            color: task.isTaskOverdue() ? Colors.red : Colors.green),
-        textAlign: TextAlign.left,
-      );
-    }
   }
 }

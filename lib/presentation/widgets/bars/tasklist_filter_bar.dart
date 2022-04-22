@@ -22,6 +22,8 @@ import '../../controllers/tasklist_controller.dart';
 /// state. (Под presentation здесь имеется ввиду "такаятохреньVisible или другаяфигняExpanded)
 class TasklistFiltersBar extends StatelessWidget
     implements PreferredSizeWidget {
+
+  final _searchNode =  FocusNode();
   @override
   Widget build(BuildContext context) {
     ThemeData themeData = Theme.of(context);
@@ -78,7 +80,7 @@ class TasklistFiltersBar extends StatelessWidget
                                       isCollapsed: false,
                                     ),
                                     onSubmitted: (value) {
-                                      FocusScope.of(context).unfocus();
+                                      FocusManager.instance.primaryFocus?.unfocus();
                                     },
                                     onChanged: (value) {
                                       taskListController.searchText = value;
