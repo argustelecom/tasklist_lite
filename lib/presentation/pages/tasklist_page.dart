@@ -92,6 +92,8 @@ class _TaskListPageState extends State<TaskListPage> {
                           onTap: () {
                             taskListController.calendarOpened =
                                 !taskListController.calendarOpened;
+                            taskListController.datePickerBarExpanded =
+                                !taskListController.datePickerBarExpanded;
                           },
                           child: null),
                     if (taskListController.calendarOpened) InlineCalendar()

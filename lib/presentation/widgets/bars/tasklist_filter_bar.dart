@@ -23,7 +23,6 @@ import '../../controllers/tasklist_controller.dart';
 class TasklistFiltersBar extends StatelessWidget
     implements PreferredSizeWidget {
 
-  final _searchNode =  FocusNode();
   @override
   Widget build(BuildContext context) {
     ThemeData themeData = Theme.of(context);
