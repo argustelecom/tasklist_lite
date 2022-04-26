@@ -36,6 +36,7 @@ class WorksTab extends StatefulWidget {
 
 class WorksTabState extends State<WorksTab> {
   TaskListController taskListController = Get.find();
+  TextEditingController textEditingController = new TextEditingController();
   ScrollController scrollController = new ScrollController();
   bool _isScrolling = false;
 
@@ -76,6 +77,11 @@ class WorksTabState extends State<WorksTab> {
     }
 
     return GetBuilder<TaskListController>(builder: (taskListController) {
+      textEditingController.value = TextEditingValue(
+          text: taskListController.searchWorksText,
+          selection: TextSelection.fromPosition(
+              TextPosition(offset: taskListController.searchWorksText.length)));
+
       return Padding(
           padding: EdgeInsets.symmetric(horizontal: 12),
           child: Column(children: [
@@ -83,6 +89,7 @@ class WorksTabState extends State<WorksTab> {
                 padding: EdgeInsets.symmetric(vertical: 8),
                 child: Card(
                   child: TextField(
+                    controller: textEditingController,
                     textAlign: TextAlign.center,
                     decoration: InputDecoration(
                       hintText: "Наименование работы",
@@ -99,6 +106,7 @@ class WorksTabState extends State<WorksTab> {
                               tooltip: 'Очистить',
                               icon: const Icon(Icons.clear),
                               onPressed: () {
+                                textEditingController.clear();
                                 taskListController.searchWorksText = "";
                               },
                             ),

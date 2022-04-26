@@ -141,7 +141,9 @@ class AdaptiveDialog extends StatelessWidget {
                           child: buttonBar)
                     ])))));
 
-    return isDisplayDesktop(context) ? desktopDialog : mobileDialog;
+    return GestureDetector(
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: isDisplayDesktop(context) ? desktopDialog : mobileDialog);
   }
 }
 

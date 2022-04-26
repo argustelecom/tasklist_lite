@@ -80,7 +80,8 @@ class TaskRepository extends GetxService {
       await new Future.delayed(const Duration(seconds: 3));
       int i = task.idleTimeList!.indexWhere((e) => e.endDate == null);
       IdleTime newIdleTime = task.idleTimeList![i];
-      newIdleTime.endDate = DateTime.now();
+      newIdleTime.startDate = beginTime;
+      newIdleTime.endDate = endTime;
       task.idleTimeList!.replaceRange(i, i + 1, [newIdleTime]);
       return task;
     }

@@ -11,6 +11,7 @@ import 'package:tasklist_lite/presentation/controllers/tasklist_controller.dart'
 import 'package:tasklist_lite/presentation/widgets/object_attach_widget/utils/file_converter.dart';
 import 'package:tasklist_lite/presentation/widgets/object_attach_widget/utils/file_manager.dart';
 
+import '../crazy_progress_dialog.dart';
 import 'attach_repository.dart';
 import 'model/object_attach.dart';
 
@@ -73,16 +74,22 @@ class ObjectAttachController extends GetxController {
   /// Обновляем список имеющихся у объекта вложений, перестраиваем компонент
   Future<void> refreshObjectAttachList() async {
     objectAttachList.value =
-        _attachRepository.getAttachmentsByObjectId(this.objectId);
+        await asyncShowProgressIndicatorOverlay(asyncFunction: () async {
+      return _attachRepository.getAttachmentsByObjectId(this.objectId);
+    });
     update();
   }
 
   /// позволяет сформировать список файлов с ограничениями по расширению файлов
   Future<void> pickFiles() async {
     List<ObjectAttach>? oaList =
-        await FileManager.instance.pickFiles(this.objectId);
+        await asyncShowProgressIndicatorOverlay(asyncFunction: () async {
+      return FileManager.instance.pickFiles(this.objectId);
+    });
     if (oaList != null) {
-      await _attachRepository.sendObjectAttaches(oaList);
+      await asyncShowProgressIndicatorOverlay(asyncFunction: () async {
+        _attachRepository.sendObjectAttaches(oaList);
+      });
     }
     refreshObjectAttachList();
 
@@ -95,7 +102,10 @@ class ObjectAttachController extends GetxController {
   Future<void> pickCamera() async {
     final ImagePicker _picker = ImagePicker();
 
-    final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
+    final XFile? photo =
+        await asyncShowProgressIndicatorOverlay(asyncFunction: () async {
+      return _picker.pickImage(source: ImageSource.camera);
+    });
 
     if (photo != null) {
       ObjectAttach attach =
@@ -111,7 +121,10 @@ class ObjectAttachController extends GetxController {
   Future<void> pickImage() async {
     final ImagePicker _picker = ImagePicker();
 
-    List<XFile>? selectedImages = await _picker.pickMultiImage();
+    List<XFile>? selectedImages =
+        await asyncShowProgressIndicatorOverlay(asyncFunction: () async {
+      return _picker.pickMultiImage();
+    });
     if (selectedImages != null) {
       List<ObjectAttach> objectAttaches = [];
       ObjectAttach object;
@@ -131,7 +144,9 @@ class ObjectAttachController extends GetxController {
 
   /// Удаление конкретного вложения
   Future<void> deleteAttach(ObjectAttach objectAttach) async {
-    await _attachRepository.deleteObjectAttach(objectAttach);
+    await asyncShowProgressIndicatorOverlay(asyncFunction: () async {
+      return _attachRepository.deleteObjectAttach(objectAttach);
+    });
     refreshObjectAttachList();
     // TODO: Убрать костыльную отправку коммента, когда перейдем на subscriptions
     objectAttachList.value.asStream().forEach((element) =>

@@ -44,7 +44,8 @@ class TaskListThemeData {
           contentTextStyle: _textTheme.subtitle1!.apply(color: Colors.white),
         ),
         floatingActionButtonTheme: _floatingActionButtonTheme,
-        cardTheme: _cardTheme);
+        cardTheme: _cardTheme,
+        checkboxTheme: _checkboxThemeData);
   }
 
   static const ColorScheme lightColorScheme = ColorScheme(
@@ -119,4 +120,7 @@ class TaskListThemeData {
           ));
 
   static final CardTheme _cardTheme = CardTheme(elevation: 2);
+
+  static final CheckboxThemeData _checkboxThemeData = CheckboxThemeData(
+      fillColor: MaterialStateProperty.all(Color(0xFF646363)));
 }

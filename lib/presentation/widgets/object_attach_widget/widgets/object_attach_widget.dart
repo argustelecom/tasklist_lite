@@ -27,7 +27,7 @@ class ObjectAttachWidget extends StatelessWidget {
             taskListController.taskListState.currentTask.value!.id),
         builder: (_) {
           return Padding(
-              padding: EdgeInsets.only(left: 12,right: 12,top: 8),
+              padding: EdgeInsets.only(left: 12, right: 12, top: 8),
               child: FutureBuilder(
                   future: _.objectAttachList.value,
                   builder: (context, ps) {
@@ -36,12 +36,17 @@ class ObjectAttachWidget extends StatelessWidget {
                       return Stack(children: <Widget>[
                         Align(
                             alignment: Alignment.topCenter,
-                            child: ListView.builder(
-                                itemCount: (ps.data as List).length,
-                                itemBuilder: (context, index) {
-                                  return FileCardWidget(
-                                      (ps.data as List)[index]);
-                                })),
+                            child: ((ps.data as List).isEmpty)
+                                ? Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 8),
+                                    child: Text("Вложения не найдены.",
+                                        textAlign: TextAlign.center))
+                                : ListView.builder(
+                                    itemCount: (ps.data as List).length,
+                                    itemBuilder: (context, index) {
+                                      return FileCardWidget(
+                                          (ps.data as List)[index]);
+                                    })),
                         Positioned(
                             bottom: 20,
                             right: 5,

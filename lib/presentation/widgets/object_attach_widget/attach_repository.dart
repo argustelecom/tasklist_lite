@@ -13,6 +13,7 @@ class AttachRepository extends GetxService {
   ApplicationState state = Get.find();
 
   late String basicAuth = authController.authState.authString.value!;
+
   //late String basicAuth = "Basic ZGV2ZWxvcGVyOmRldmVsb3Blcg==";
   late String serverAddress = authController.authState.serverAddress.value!;
 
@@ -39,6 +40,13 @@ class AttachRepository extends GetxService {
 
   /// Получение списка аттачей для известному id объекта
   Future<List<ObjectAttach>> getAttachmentsByObjectId(int objectId) async {
+    ApplicationState applicationState = Get.find();
+
+    /// если включен деморежим, возвращаем пустой список
+    if (applicationState.inDemonstrationMode.value) {
+      List<ObjectAttach> result = List.of({});
+      return result;
+    }
     ObjectAttachRemote objectAttachRemote =
         ObjectAttachRemote(basicAuth, serverAddress);
     Future<List<ObjectAttach>> result =

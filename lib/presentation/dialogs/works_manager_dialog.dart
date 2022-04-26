@@ -9,6 +9,7 @@ import '../../domain/entities/work.dart';
 import '../../domain/entities/worker.dart';
 import '../controllers/tasklist_controller.dart';
 import '../widgets/crazy_progress_dialog.dart';
+import '../widgets/text_field.dart';
 import 'adaptive_dialog.dart';
 
 class WorksManagerDialog extends StatefulWidget {
@@ -21,6 +22,8 @@ class WorksManagerDialog extends StatefulWidget {
 }
 
 class WorksManagerDialogState extends State<WorksManagerDialog> {
+  TextEditingController _textEditingController = new TextEditingController();
+
   // исходные данные о работе и отметках
   late Work _work;
 
@@ -92,6 +95,7 @@ class WorksManagerDialogState extends State<WorksManagerDialog> {
                     onChanged: (value) {
                       setState(() {
                         _notRequired = value;
+                        _error = null;
                       });
                     })
               ])),
@@ -102,14 +106,8 @@ class WorksManagerDialogState extends State<WorksManagerDialog> {
                     style: TextStyle(color: Colors.black54))),
             Container(
                 margin: EdgeInsets.symmetric(vertical: 8),
-                height: 40,
-                child: TextField(
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      focusedBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(width: 1, color: Color(0xFF287BF6)))),
-                  cursorWidth: 1,
+                child: CustomTextField(
+                  controller: _textEditingController,
                   keyboardType: TextInputType.numberWithOptions(decimal: true),
                   inputFormatters: [
                     FilteringTextInputFormatter.allow(RegExp(r'(^\d*\.?\d*)'))
@@ -132,7 +130,6 @@ class WorksManagerDialogState extends State<WorksManagerDialog> {
                 itemBuilder: (context, index) {
                   return CheckboxListTile(
                     contentPadding: EdgeInsets.all(0),
-                    activeColor: Color(0xFF646363),
                     value: _workers.contains(workers[index]),
                     onChanged: (value) {
                       if (value == true) {
