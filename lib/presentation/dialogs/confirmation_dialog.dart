@@ -32,7 +32,7 @@ class ConfirmationDialog extends StatelessWidget {
                     constraints: BoxConstraints(maxWidth: 300),
                     child: Column(mainAxisSize: MainAxisSize.min, children: [
                       Text(
-                        title!,
+                        title,
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       if (description != null) ...[

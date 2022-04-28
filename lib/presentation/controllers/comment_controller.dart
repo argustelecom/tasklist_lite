@@ -3,11 +3,13 @@ import 'dart:async';
 import 'package:get/get.dart';
 import 'package:tasklist_lite/presentation/controllers/auth_controller.dart';
 import 'package:tasklist_lite/presentation/controllers/tasklist_controller.dart';
+import 'package:tasklist_lite/presentation/state/tasklist_state.dart';
 
 import '../../core/resubscribe.dart';
 import '../../data/repositories/comments_repository.dart';
 import '../../domain/entities/comment.dart';
 import '../../domain/entities/task.dart';
+import '../state/application_state.dart';
 import '../state/auth_state.dart';
 
 class CommentController extends GetxController {
@@ -28,10 +30,7 @@ class CommentController extends GetxController {
   void onInit() {
     super.onInit();
 
-    ///Задержка стоит тут потому, что при обновлении страницы currentTask подгружается какое-то время,
-    ///и если мы будем вызывать метод commentRepository.streamComments() с currentTask = null,то получим пустой стрим
-    /// TODO: Понять надо ли это править?
-    Future.delayed(const Duration(milliseconds: 700), () {
+    taskListController.taskListState.initCompletedFuture.whenComplete(() {
       commentSubscription = resubscribe<List<Comment>>(
           commentSubscription,
           commentRepository.streamComments(

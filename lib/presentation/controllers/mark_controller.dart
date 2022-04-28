@@ -7,6 +7,7 @@ import 'package:tasklist_lite/data/repositories/mark_repository.dart';
 import 'package:tasklist_lite/domain/entities/mark.dart';
 import 'package:tasklist_lite/presentation/controllers/tasklist_controller.dart';
 
+import '../../core/resubscribe.dart';
 import '../state/auth_state.dart';
 
 class MarkController extends GetxController {
@@ -18,24 +19,18 @@ class MarkController extends GetxController {
   /// Подписка на комментарии
   StreamSubscription? markSubscription;
 
-  /// Метод переподписки, скидывает старый стрим и слушает новый
-  StreamSubscription resubscribe(StreamSubscription? streamSubscription,
-      Stream<List<Mark>> stream, void onData(List<Mark> event)) {
-    streamSubscription?.cancel();
-    return stream.listen(onData);
-  }
-
   /// Инициализируем список оценок
   @override
   void onInit() {
     super.onInit();
-
-    markSubscription = resubscribe(
-        markSubscription,
-        markRepository.streamMarks(
-            taskListController.taskListState.currentTask.value), (event) {
-      List<Mark> marks = event;
-      this.markList = marks;
+    taskListController.taskListState.initCompletedFuture.whenComplete(() {
+      markSubscription = resubscribe<List<Mark>>(
+          markSubscription,
+          markRepository.streamMarks(
+              taskListController.taskListState.currentTask.value), (event) {
+        List<Mark> marks = event;
+        this.markList = marks;
+      });
       update();
     });
   }

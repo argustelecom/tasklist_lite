@@ -30,7 +30,11 @@ class MarkRepository extends GetxService {
       return markFixtures.streamComments(task);
     }
     TaskRemoteClient taskRemoteClient = TaskRemoteClient();
-    Future<List<Mark>> result = taskRemoteClient.getMarks(task!.id);
-    return result.asStream();
+    if (task != null) {
+      Future<List<Mark>> result = taskRemoteClient.getMarks(task.id);
+      return result.asStream();
+    } else {
+      return Stream.empty();
+    }
   }
 }
