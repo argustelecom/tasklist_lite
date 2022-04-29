@@ -144,6 +144,7 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
           return AppBar(
               leading: TaskAppBarLeading(),
               titleSpacing: 0.0,
+              elevation: 0,
               toolbarHeight: 60,
               title: task != null
                   ? Row(

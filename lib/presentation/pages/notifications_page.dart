@@ -32,6 +32,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
             return ReflowingScaffold(
               appBar: AppBar(
                 title: new Text("Уведомления"),
+                toolbarHeight: 70,
                 leading: IconButton(
                   icon: Icon(Icons.chevron_left_outlined),
                   onPressed: () {
@@ -121,6 +122,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
             return ReflowingScaffold(
               appBar: AppBar(
                 title: new Text("Уведомления"),
+                toolbarHeight: 70,
                 leading: IconButton(
                   icon: Icon(Icons.chevron_left_outlined),
                   onPressed: () {

@@ -15,7 +15,7 @@ class ReportsPage extends StatelessWidget {
     return ReflowingScaffold(
         appBar: AppBar(
             title: new Text("Страница отчетов"),
-            toolbarHeight: 50,
+            toolbarHeight: 70,
             titleSpacing: 0.0,
             leading: IconButton(
                 icon: Icon(Icons.chevron_left_outlined),

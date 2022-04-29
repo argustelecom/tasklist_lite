@@ -121,6 +121,7 @@ class TopUserBar extends StatelessWidget implements PreferredSizeWidget {
           child: AppBar(
             leading: ProfileIconButton(),
             titleSpacing: 0.0,
+            elevation: 0,
             toolbarHeight: 100,
             title: UserInfoBar(),
             actions: [
