@@ -40,7 +40,6 @@ class ProfilePage extends StatelessWidget {
                   GetDelegate routerDelegate = Get.find();
                   routerDelegate.popRoute();
                 }),
-            titleTextStyle: TextStyle(fontFamily: "ABeeZee", fontSize: 20),
             leading: IconButton(
               icon: const Icon(Icons.chevron_left_outlined),
               onPressed: () {
@@ -49,7 +48,6 @@ class ProfilePage extends StatelessWidget {
               },
             ),
             toolbarHeight: 70,
-            elevation: 5.0,
             titleSpacing: 0.0,
             actions: [
               //Скопировано из TopUserBar

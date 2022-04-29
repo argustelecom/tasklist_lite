@@ -15,9 +15,7 @@ class TrunkPage extends StatelessWidget {
     return ReflowingScaffold(
         appBar: AppBar(
             title: new Text("Багажник выездного специалиста"),
-            titleTextStyle: TextStyle(fontFamily: "ABeeZee", fontSize: 20),
-            toolbarHeight: 50,
-            //elevation: 5.0,
+            toolbarHeight: 70,
             titleSpacing: 0.0,
             leading: IconButton(
                 icon: Icon(Icons.chevron_left_outlined),

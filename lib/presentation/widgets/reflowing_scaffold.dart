@@ -22,7 +22,7 @@ class WideScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
                 // соответствовали, приходится задавать разный opacity: 0.01 здесь и 0.1 ниже. Если задавать цвет без opacity,
                 // этой проблемы нет. Пока оставим так, будет с чем поразбираться в будущем.
                 backgroundColor:
-                    Theme.of(context).colorScheme.primary.withOpacity(0.01))),
+                    Theme.of(context).colorScheme.primary.withOpacity(0.01), elevation: 0)),
         child: Scaffold(
           body: Material(
             color: Theme.of(context).colorScheme.primary.withOpacity(0.1),

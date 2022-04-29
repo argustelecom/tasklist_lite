@@ -24,8 +24,12 @@ class TaskListThemeData {
         hintColor: hintColor,
         appBarTheme: AppBarTheme(
           backgroundColor: colorScheme.background,
-          elevation: 0,
+          elevation: 5,
           iconTheme: IconThemeData(color: colorScheme.onPrimary, size: 36),
+          titleTextStyle: TextStyle(
+              fontFamily: "ABeeZee",
+              fontSize: 20,
+              color: colorScheme.onPrimary),
         ),
         iconTheme: IconThemeData(color: colorScheme.onPrimary, size: 30),
         canvasColor: colorScheme.background,

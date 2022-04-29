@@ -16,9 +16,7 @@ class HelpPage extends StatelessWidget {
     return ReflowingScaffold(
         appBar: AppBar(
             title: new Text("Помощь"),
-            titleTextStyle: TextStyle(fontFamily: "ABeeZee", fontSize: 20),
             toolbarHeight: 70,
-            elevation: 5.0,
             titleSpacing: 0.0,
             leading: IconButton(
                 icon: Icon(Icons.chevron_left_outlined),

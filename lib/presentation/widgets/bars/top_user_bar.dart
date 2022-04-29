@@ -30,10 +30,13 @@ class UserInfoBar extends StatelessWidget {
               authController.authState.userInfo.value == null
                   ? ""
                   : authController.authState.userInfo.value!.userName + ",",
-              key: ValueKey('$TopUserBar' + '_username')),
-          Text(authController.authState.userInfo.value == null
-              ? ""
-              : authController.authState.userInfo.value!.homeRegionName),
+              key: ValueKey('$TopUserBar' + '_username'),
+              style: TextStyle(fontSize: 16)),
+          Text(
+              authController.authState.userInfo.value == null
+                  ? ""
+                  : authController.authState.userInfo.value!.homeRegionName,
+              style: TextStyle(fontSize: 16)),
         ],
       );
     });
