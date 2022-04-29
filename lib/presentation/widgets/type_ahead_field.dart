@@ -45,20 +45,26 @@ class CustomTypeAheadField<T> extends StatelessWidget {
               textFieldConfiguration: TextFieldConfiguration(
                 controller: controller,
                 decoration: InputDecoration(
-                    labelText: hint,
-                    filled: true,
-                    fillColor: themeData.cardColor,
-                    floatingLabelStyle:
-                        TextStyle(color: themeData.colorScheme.primary),
-                    border: OutlineInputBorder(
-                        borderSide: noBorder
-                            ? BorderSide.none
-                            : BorderSide(color: borderColor ?? Colors.black45),
-                        borderRadius: BorderRadius.circular(borderRadius)),
-                    focusedBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(color: themeData.colorScheme.primary),
-                        borderRadius: BorderRadius.circular(borderRadius))),
+                  labelText: hint,
+                  filled: true,
+                  fillColor: themeData.cardColor,
+                  border: OutlineInputBorder(
+                      borderSide: noBorder
+                          ? BorderSide.none
+                          : BorderSide(color: borderColor ?? Colors.black45),
+                      borderRadius: BorderRadius.circular(borderRadius)),
+                  focusedBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: themeData.colorScheme.primary),
+                      borderRadius: BorderRadius.circular(borderRadius)),
+                  labelStyle: TextStyle(color: Colors.black54),
+                  floatingLabelStyle: MaterialStateTextStyle.resolveWith(
+                      (Set<MaterialState> states) {
+                    return states.contains(MaterialState.focused)
+                        ? TextStyle(color: themeData.colorScheme.primary)
+                        : TextStyle(color: Colors.transparent); // было Colors.black54, но выглядит не очень
+                  }),
+                ),
               ),
               suggestionsCallback: (pattern) => suggestionsCallback(pattern),
               itemBuilder: itemBuilder,

@@ -59,11 +59,19 @@ class CustomTextField<T> extends StatelessWidget {
                     border: OutlineInputBorder(
                       borderSide: noBorder
                           ? BorderSide.none
-                          : BorderSide(color: borderColor ?? Color(0xFF287BF6)),
+                          : BorderSide(
+                              color:
+                                  borderColor ?? themeData.colorScheme.primary),
                       borderRadius: BorderRadius.circular(borderRadius),
                     ),
-                    floatingLabelStyle:
-                        TextStyle(color: themeData.colorScheme.primary),
+                    focusColor: themeData.colorScheme.primary,
+                    labelStyle: TextStyle(color: Colors.black54),
+                    floatingLabelStyle: MaterialStateTextStyle.resolveWith(
+                            (Set<MaterialState> states) {
+                          return states.contains(MaterialState.focused)
+                              ? TextStyle(color: themeData.colorScheme.primary)
+                              : TextStyle(color: Colors.transparent); // было Colors.black54, но выглядит не очень
+                        }),
                     focusedBorder: OutlineInputBorder(
                         borderSide:
                             BorderSide(color: themeData.colorScheme.primary),
