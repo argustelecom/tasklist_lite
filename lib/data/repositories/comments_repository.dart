@@ -19,18 +19,25 @@ class CommentRepository extends GetxService {
   }
 
   ///Возвращаем стрим с комментами
-  Stream<List<Comment>> streamComments(Task? task) {
+  Stream<List<Comment>> streamComments(Task? task) async* {
     CurrentAppInfo currentAppInfo = Get.find();
-    if (currentAppInfo.isAppInDemonstrationMode()) {
-      CommentsFixtures commentsFixtures = Get.find();
-      return commentsFixtures.streamComments(task);
-    }
+    // if (currentAppInfo.isAppInDemonstrationMode()) {
+    //   CommentsFixtures commentsFixtures = Get.find();
+    //   yield commentsFixtures.streamComments(task);
+    // }
+
     TaskRemoteClient taskRemoteClient = TaskRemoteClient();
-    if (task != null) {
-      Future<List<Comment>> result = taskRemoteClient.getCommentByTask(task.id);
-      return result.asStream();
-    } else {
-      return Stream.empty();
-    }
+      Future<List<Comment>> result = taskRemoteClient.getCommentByTask(task!.id);
+      // result.then((value) async* {
+      //   print('Сейчас будет вызываться yield');
+      //   yield value;
+      //   print('yield закончился');
+      // });
+    print('Сейчас будет вызываться yield');
+      yield await result;
+    print('yield закончился');
+    print('Начинается await');
+     await Future.delayed(Duration(seconds: 10));
+    print('Заканчивается await');
   }
 }

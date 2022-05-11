@@ -30,11 +30,11 @@ class CommentController extends GetxController {
   void onInit() {
     super.onInit();
 
-    taskListController.taskListState.initCompletedFuture.whenComplete(() {
-      commentSubscription = resubscribe<List<Comment>>(
+    taskListController.taskListState.initCompletedFuture.whenComplete(()  {
+      commentSubscription = resubscribe<List<Comment>> (
           commentSubscription,
-          commentRepository.streamComments(
-              taskListController.taskListState.currentTask.value), (event) {
+          commentRepository.streamComments (
+              taskListController.taskListState.currentTask.value) , (event) {
         List<Comment> comments = event;
         this.commentList = comments;
       });
