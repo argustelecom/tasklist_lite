@@ -1,6 +1,8 @@
+import 'package:async/async.dart' show StreamGroup;
 import 'package:get/get.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:logging/logging.dart';
 import 'package:tasklist_lite/core/exceptions.dart';
 import 'package:tasklist_lite/core/graphql/graphql_service.dart';
 import 'package:tasklist_lite/core/state/current_auth_info.dart';
@@ -283,7 +285,41 @@ class TaskRemoteClient {
     return result;
   }
 
+  // возвращает Stream, состоящий из результатов переодического вызова
+  //  graphql query на сервере.
+  Stream<List<Comment>> streamComments(Task task) async* {
+    // #TODO: debug code, kill`em
+    Logger log = Logger(this.runtimeType.toString());
+    log.info("!!!!!!!!!!!!!! streamComments called!!!");
+    // здесь yeld* обозначает "рекурсивный" возврат значения,
+    // то есть как будто бы мы говорим, что за нас будет возвращать
+    // значение функция, которую мы укажем. В этом случае ожидается,
+    // что функция будет возвращать Stream.
+    // Нас бы полностью устроил Stream.periodic, но вот беда -- сразу
+    // после подписки он сначала выполняет ожидание, и только потом,
+    // спустя период, возвращает значение. А нам надо вернуть значение
+    // сразу после подписки, а потом уже регулярно через период. Поэтому
+    // мержим здесь два потока, один из котороых -- просто future с результатом
+    // вызова операции.
+    yield* StreamGroup.merge(List.of({
+      Stream.fromFuture(getCommentByTask(task.id)),
+      Stream.periodic(
+        Duration(seconds: /* #TODO: [НК] */ 100),
+        (computationCount) {
+          log.info("!!!!!!!!!!!!!! before getCommentByTask call!!!");
+          return getCommentByTask(task.id);
+        },
+        // #TODO: нет, не понимаю, как это рааботает. Но НК обязательно разберется.
+        // https://stackoverflow.com/questions/57559823/how-to-call-async-functions-in-stream-periodic
+      ).asyncMap((event) async => await event)
+    }));
+  }
+
   Future<List<Comment>> getCommentByTask(int taskId) async {
+    // #TODO: debug code, kill`em
+    Logger log = Logger(this.runtimeType.toString());
+    log.info("!!!!!!!!!!!!!! getCommentByTask called!!!");
+
     String getCommentByTaskQuery = '''
  {  getCommentByTask (taskId:"$taskId") {
    $commentQuery
