@@ -31,7 +31,7 @@ class HistoryTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ThemeData themeData = Theme.of(context);
-    return GetBuilder<CommentController>(
+    return GetX<CommentController>(
         init: CommentController(),
         builder: (commentController) {
           return Padding(

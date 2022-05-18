@@ -20,7 +20,7 @@ class CommentController extends GetxController {
   AuthState authState = Get.find();
 
   /// Лист с историческими событиями по наряду
-  List<Comment> commentList = List.of({});
+   RxList<Comment> commentList = RxList.of({});
 
   /// Подписка на комментарии
   StreamSubscription? commentSubscription;
@@ -36,7 +36,7 @@ class CommentController extends GetxController {
           commentRepository.streamComments (
               taskListController.taskListState.currentTask.value) , (event) {
         List<Comment> comments = event;
-        this.commentList = comments;
+        this.commentList.value = comments;
       });
     });
     update();
