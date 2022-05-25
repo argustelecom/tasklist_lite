@@ -30,8 +30,7 @@ class TaskRepository extends GetxService {
     // в общем случае сюда могут прийти basicAuth и serverAddress равные null
     // но это только в деморежиме ( то есть до вызова remote не дойдет)
     TaskRemoteClient taskRemoteClient = TaskRemoteClient();
-    Future<List<Task>> result = taskRemoteClient.getOpenedTasks();
-    return result.asStream();
+    return taskRemoteClient.streamOpenedTasks();
   }
 
   ///****************************************************************************
@@ -45,9 +44,7 @@ class TaskRepository extends GetxService {
       return taskFixtures.streamClosedTasks(day);
     }
     TaskRemoteClient taskRemoteClient = TaskRemoteClient();
-    Future<List<Task>> result = taskRemoteClient.getClosedTasks(day);
-
-    return result.asStream();
+    return taskRemoteClient.streamClosedTasks(day);
   }
 
   Future<Task> registerIdle(Task task, IdleTimeReason reason,

@@ -14,12 +14,16 @@ class ApplicationState extends PersistentState implements CurrentAppInfo {
     "jboss5": "http://jboss5:8080"
   };
 
+  static const Duration _defaultRefreshInterval = const Duration(minutes: 10);
+
   final Rx<ThemeMode> themeMode = ThemeMode.system.obs;
 
   final Rx<bool> inDemonstrationMode = false.obs;
 
   final RxMap<String, String> possibleServers =
       RxMap.of(_defaultPossibleServers);
+
+  final Rx<Duration> refreshInterval = Rx(_defaultRefreshInterval);
 
   ApplicationState();
 
@@ -40,6 +44,8 @@ class ApplicationState extends PersistentState implements CurrentAppInfo {
     return dotenv.load(fileName: "config/app.env").whenComplete(() {
       possibleServers.value = Map.of(jsonDecode(dotenv.get('possibleServers')))
           .cast<String, String>();
+      refreshInterval.value =
+          Duration(minutes: int.parse(dotenv.get('refreshInterval')));
       return Future<void>.value(null);
     });
   }

@@ -1,9 +1,12 @@
 import 'package:get/get.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:logging/logging.dart';
 import 'package:tasklist_lite/core/graphql/graphql_service.dart';
 import 'package:tasklist_lite/core/state/current_auth_info.dart';
 import 'package:tasklist_lite/data/repositories/task_remote_client.dart';
 import 'package:tasklist_lite/domain/entities/notify.dart';
+import 'package:async/async.dart' show StreamGroup;
+import 'package:tasklist_lite/presentation/state/application_state.dart';
 
 /// Получает информацию о  задачах сотрудника по переданному basicAuth.
 /// Использует graphQL для получения информации
@@ -13,6 +16,7 @@ class NotifyRemoteClient {
       "/argus/graphql/support-service-thirdparty";
 
   late GraphQLService _graphQLService;
+  ApplicationState applicationState = Get.find();
 
   NotifyRemoteClient() {
     CurrentAuthInfo currentAuthInfo = Get.find();
@@ -24,6 +28,18 @@ class NotifyRemoteClient {
         basicAuth: currentAuthInfo.getCurrentAuthString(),
         url: urlForThirdParty,
         webSocketUrl: webSocketUrlForThirdParty);
+  }
+
+  Stream<List<Notify>> streamNotify() async* {
+    yield* StreamGroup.merge(List.of({
+      Stream.fromFuture(getNotify()),
+      Stream.periodic(
+        applicationState.refreshInterval.value,
+        (computationCount) {
+          return getNotify();
+        },
+      ).asyncMap((event) async => await event)
+    }));
   }
 
   Future<List<Notify>> getNotify() async {

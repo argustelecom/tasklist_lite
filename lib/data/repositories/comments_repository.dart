@@ -25,7 +25,6 @@ class CommentRepository extends GetxService {
       CommentsFixtures commentsFixtures = Get.find();
       return commentsFixtures.streamComments(task);
     }
-
     TaskRemoteClient taskRemoteClient = TaskRemoteClient();
     return taskRemoteClient.streamComments(task!);
   }

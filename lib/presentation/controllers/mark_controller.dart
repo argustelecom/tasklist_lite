@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
+import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:tasklist_lite/data/repositories/mark_repository.dart';
 import 'package:tasklist_lite/domain/entities/mark.dart';
@@ -28,8 +29,7 @@ class MarkController extends GetxController {
           markSubscription,
           markRepository.streamMarks(
               taskListController.taskListState.currentTask.value), (event) {
-        List<Mark> marks = event;
-        this.markList = marks;
+        this.markList.value = event;
       });
       update();
     });
@@ -43,7 +43,7 @@ class MarkController extends GetxController {
   }
 
   /// Лист с оценками по наряду
-  List<Mark> markList = List.of({});
+  RxList<Mark> markList = RxList.of({});
 
   /// Метод для получения оценок
   getMarks(int index) {

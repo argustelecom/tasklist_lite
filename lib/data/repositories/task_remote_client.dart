@@ -13,6 +13,7 @@ import 'package:tasklist_lite/domain/entities/work.dart';
 import '../../domain/entities/close_code.dart';
 import '../../domain/entities/mark.dart';
 import '../../domain/entities/task.dart';
+import '../../presentation/state/application_state.dart';
 
 /// Получает информацию о  задачах сотрудника по переданному basicAuth.
 /// Использует graphQL для получения информации
@@ -134,6 +135,7 @@ class TaskRemoteClient {
   ''';
 
   late GraphQLService _graphQLService;
+  ApplicationState applicationState = Get.find();
 
   TaskRemoteClient() {
     CurrentAuthInfo currentAuthInfo = Get.find();
@@ -147,6 +149,20 @@ class TaskRemoteClient {
         webSocketUrl: webSocketUrlForThirdParty);
   }
 
+//  возвращает Stream c открытыми тасками, состоящий из результатов переодического вызова
+//   graphql query на сервере.
+  Stream<List<Task>> streamOpenedTasks() async* {
+    yield* StreamGroup.merge(List.of({
+      Stream.fromFuture(getOpenedTasks()),
+      Stream.periodic(
+        applicationState.refreshInterval.value,
+        (computationCount) {
+          return getOpenedTasks();
+        },
+      ).asyncMap((event) async => await event)
+    }));
+  }
+
   Future<List<Task>> getOpenedTasks() async {
     // #TODO изменить генерацию запроса
     // TODO подумать про изменение схемы graphql (что бы был доступен вызов myTasks() и myTasks(day))
@@ -157,6 +173,20 @@ class TaskRemoteClient {
  }
 ''';
     return getTasks(myOpenedTasksQuery, "myOpenedTasks");
+  }
+
+//  возвращает Stream c закрытыми тасками, состоящий из результатов переодического вызова
+//   graphql query на сервере.
+  Stream<List<Task>> streamClosedTasks(DateTime day) async* {
+    yield* StreamGroup.merge(List.of({
+      Stream.fromFuture(getClosedTasks(day)),
+      Stream.periodic(
+        applicationState.refreshInterval.value,
+        (computationCount) {
+          return getClosedTasks(day);
+        },
+      ).asyncMap((event) async => await event)
+    }));
   }
 
   Future<List<Task>> getClosedTasks(DateTime day) async {
@@ -285,12 +315,9 @@ class TaskRemoteClient {
     return result;
   }
 
-  // возвращает Stream, состоящий из результатов переодического вызова
-  //  graphql query на сервере.
+//  возвращает Stream, состоящий из результатов переодического вызова
+//   graphql query на сервере.
   Stream<List<Comment>> streamComments(Task task) async* {
-    // #TODO: debug code, kill`em
-    Logger log = Logger(this.runtimeType.toString());
-    log.info("!!!!!!!!!!!!!! streamComments called!!!");
     // здесь yeld* обозначает "рекурсивный" возврат значения,
     // то есть как будто бы мы говорим, что за нас будет возвращать
     // значение функция, которую мы укажем. В этом случае ожидается,
@@ -304,9 +331,8 @@ class TaskRemoteClient {
     yield* StreamGroup.merge(List.of({
       Stream.fromFuture(getCommentByTask(task.id)),
       Stream.periodic(
-        Duration(seconds: /* #TODO: [НК] */ 100),
+        applicationState.refreshInterval.value,
         (computationCount) {
-          log.info("!!!!!!!!!!!!!! before getCommentByTask call!!!");
           return getCommentByTask(task.id);
         },
         // #TODO: нет, не понимаю, как это рааботает. Но НК обязательно разберется.
@@ -316,11 +342,7 @@ class TaskRemoteClient {
   }
 
   Future<List<Comment>> getCommentByTask(int taskId) async {
-    // #TODO: debug code, kill`em
-    Logger log = Logger(this.runtimeType.toString());
-    log.info("!!!!!!!!!!!!!! getCommentByTask called!!!");
-
-    String getCommentByTaskQuery = '''
+       String getCommentByTaskQuery = '''
  {  getCommentByTask (taskId:"$taskId") {
    $commentQuery
  }
@@ -454,6 +476,20 @@ class TaskRemoteClient {
       throw ExternalException("Ошибка обработки ответа: " + e.toString());
     });
     return result;
+  }
+
+//  возвращает Stream c баллами, состоящий из результатов переодического вызова
+//   graphql query на сервере.
+  Stream<List<Mark>> streamMarks(Task task) async* {
+    yield* StreamGroup.merge(List.of({
+      Stream.fromFuture(getMarks(task.id)),
+      Stream.periodic(
+        applicationState.refreshInterval.value,
+        (computationCount) {
+          return getMarks(task.id);
+        },
+      ).asyncMap((event) async => await event)
+    }));
   }
 
   Future<List<Mark>> getMarks(int taskId) async {
