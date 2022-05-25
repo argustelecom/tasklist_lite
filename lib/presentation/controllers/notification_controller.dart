@@ -7,7 +7,6 @@ import 'package:tasklist_lite/domain/entities/notify.dart';
 import 'package:tasklist_lite/presentation/controllers/tasklist_controller.dart';
 import 'package:tasklist_lite/presentation/state/auth_state.dart';
 
-
 import '../../core/resubscribe.dart';
 import '../state/application_state.dart';
 import 'auth_controller.dart';
@@ -17,7 +16,7 @@ class NotificationController extends GetxController {
   AuthState authState = Get.find();
 
   /// Список уведомлений, которые еще не прочитаны. Его будем выводить на UI
-  List<Notify> aliveNotifications = List.of({});
+  RxList<Notify> aliveNotifications = RxList.of({});
 
   /// Список уведомлений, которые уже прочитаны. Их пока просто храним.
   List<Notify> deadNotifications = List.of({});
@@ -66,7 +65,7 @@ class NotificationController extends GetxController {
     // еще до создания самого приложения в main.
     ApplicationState applicationState = Get.find();
     // Это для того чтобы вращать бублик, пока не загрузим все уведомления
-    applicationState.initCompletedFuture.whenComplete((){
+    applicationState.initCompletedFuture.whenComplete(() {
       return authState.initCompletedFuture.whenComplete(() {
         WidgetsBinding.instance!.addPostFrameCallback((_) {
           openedNotificationSubscription = resubscribe<List<Notify>>(
@@ -75,15 +74,14 @@ class NotificationController extends GetxController {
             //Только те, что отсутсвуют в deadNotifications
             List<Notify> newOpenNotify = event
                 .where((element) =>
-            !deadNotifications.map((e) => e.id).contains(element.id))
+                    !deadNotifications.map((e) => e.id).contains(element.id))
                 .toList();
-            this.aliveNotifications = newOpenNotify;
+            this.aliveNotifications.value = newOpenNotify;
             update();
           }, showProgress: true);
         });
       });
     });
-
   }
 
   /// Сбрасываем стрим

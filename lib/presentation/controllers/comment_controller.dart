@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:get/get.dart';
+import 'package:logging/logging.dart';
 import 'package:tasklist_lite/presentation/controllers/auth_controller.dart';
 import 'package:tasklist_lite/presentation/controllers/tasklist_controller.dart';
 import 'package:tasklist_lite/presentation/state/tasklist_state.dart';
@@ -20,7 +21,7 @@ class CommentController extends GetxController {
   AuthState authState = Get.find();
 
   /// Лист с историческими событиями по наряду
-  List<Comment> commentList = List.of({});
+  RxList<Comment> commentList = RxList.of({});
 
   /// Подписка на комментарии
   StreamSubscription? commentSubscription;
@@ -29,14 +30,13 @@ class CommentController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-
     taskListController.taskListState.initCompletedFuture.whenComplete(() {
       commentSubscription = resubscribe<List<Comment>>(
           commentSubscription,
           commentRepository.streamComments(
               taskListController.taskListState.currentTask.value), (event) {
         List<Comment> comments = event;
-        this.commentList = comments;
+        this.commentList.value = comments;
       });
     });
     update();

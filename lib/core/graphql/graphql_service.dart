@@ -29,7 +29,7 @@ class GraphQLService {
   Future<QueryResult> query(String query,
       {Map<String, dynamic> variables = const {}}) {
     return _graphQLClient
-        .query(QueryOptions(document: gql(query), variables: variables));
+        .query(QueryOptions(document: gql(query), fetchPolicy: FetchPolicy.networkOnly, variables: variables));
   }
 
   Future<QueryResult> mutate(String mutation,

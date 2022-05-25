@@ -26,11 +26,6 @@ class CommentRepository extends GetxService {
       return commentsFixtures.streamComments(task);
     }
     TaskRemoteClient taskRemoteClient = TaskRemoteClient();
-    if (task != null) {
-      Future<List<Comment>> result = taskRemoteClient.getCommentByTask(task.id);
-      return result.asStream();
-    } else {
-      return Stream.empty();
-    }
+    return taskRemoteClient.streamComments(task!);
   }
 }

@@ -15,8 +15,7 @@ class NotificationRepository extends GetxService {
       return notificationFixtures.streamOpenedNotification();
     }
     NotifyRemoteClient notifyRemoteClient = NotifyRemoteClient();
-    Future<List<Notify>> result = notifyRemoteClient.getNotify();
-    return result.asStream();
+    return notifyRemoteClient.streamNotify();
   }
 
   void readNotify(Notify notify) {

@@ -35,24 +35,27 @@ class HistoryTab extends StatelessWidget {
         init: CommentController(),
         builder: (commentController) {
           return Padding(
-              padding: EdgeInsets.only(left: 12, right: 12, bottom: 12,top: 8),
+              padding: EdgeInsets.only(left: 12, right: 12, bottom: 12, top: 8),
               child: Column(
                 children: [
                   commentController.getComments().length > 0
                       ? Expanded(
                           child: ListView.builder(
-                              itemCount: commentController.getComments().length,
+                              itemCount:
+                                  commentController.getComments().value.length,
                               controller: commentScrollController,
                               itemBuilder: (BuildContext context, int index) {
                                 return InkWell(
                                     child: CommentCard(
                                         maxLines: 3,
                                         comment: commentController
-                                            .getComments()[index]),
+                                            .getComments()
+                                            .value[index]),
                                     onTap: () {
                                       commentController.selectedComment =
                                           commentController
-                                              .getComments()[index];
+                                              .getComments()
+                                              .value[index];
                                       GetDelegate routerDelegate = Get.find();
                                       routerDelegate
                                           .toNamed(CommentPage.routeName);
