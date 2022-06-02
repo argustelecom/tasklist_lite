@@ -8,7 +8,7 @@ import 'package:tasklist_lite/domain/entities/user_info.dart';
 /// Использует graphQL для получения информации
 
 class AuthRemoteClient {
-  static const String envApiAddress = "/argus/graphql/env";
+  static const String envApiAddress = "/graphql/env";
 
   late GraphQLService _graphQLService;
 

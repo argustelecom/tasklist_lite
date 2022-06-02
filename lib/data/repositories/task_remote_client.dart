@@ -20,7 +20,7 @@ import '../../presentation/state/application_state.dart';
 
 class TaskRemoteClient {
   static const String thirdPartyApiAddress =
-      "/argus/graphql/support-service-thirdparty";
+      "/graphql/support-service-thirdparty";
 
   /// Причина простоя IdleTimeReason
   static const String idleTimeReasonQuery = '''

@@ -13,7 +13,7 @@ import 'package:tasklist_lite/presentation/state/application_state.dart';
 
 class NotifyRemoteClient {
   static const String thirdPartyApiAddress =
-      "/argus/graphql/support-service-thirdparty";
+      "/graphql/support-service-thirdparty";
 
   late GraphQLService _graphQLService;
   ApplicationState applicationState = Get.find();
