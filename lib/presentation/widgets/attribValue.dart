@@ -1,7 +1,9 @@
 import 'dart:collection';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
@@ -65,44 +67,51 @@ class AttribValue extends StatelessWidget {
                 Expanded(
                     child: Container(
                         padding: EdgeInsets.symmetric(vertical: 6),
-                        child: RichText(
-                            maxLines:
-                                attributes.keys.elementAt(index) == 'Примечание'
+                        child: GestureDetector(
+                            onLongPress: () {
+                              Clipboard.setData(ClipboardData(
+                                  text:
+                                      "${attributes.values.elementAt(index).toString()}"));
+                            },
+                            child: RichText(
+                                maxLines: attributes.keys.elementAt(index) ==
+                                        'Примечание'
                                     ? taskListController.maxLinesCommentary
                                     : attributes.keys.elementAt(index) ==
                                             'Адресное примечание'
                                         ? taskListController
                                             .maxLinesAddressCommentary
                                         : 3,
-                            overflow: TextOverflow.ellipsis,
-                            text: TextSpan(
-                                style: const TextStyle(
-                                    fontSize: 16.0,
-                                    color: Color(0xFF646363),
-                                    fontWeight: FontWeight.normal),
-                                children: <TextSpan>[
-                                  TextSpan(
-                                      text:
-                                          "${attributes.keys.elementAt(index)}:   "),
-                                  TextSpan(
-                                      text: attributes.values
-                                                  .elementAt(index) ==
-                                              null
-                                          ? ""
-                                          : (attributes.values
-                                                      .elementAt(index)
-                                                      .runtimeType ==
-                                                  DateTime
-                                              ? DateFormat("dd.MM.yyyy HH:mm")
-                                                  .format(DateTime.parse(
-                                                      attributes.values
+                                overflow: TextOverflow.ellipsis,
+                                text: TextSpan(
+                                    style: const TextStyle(
+                                        fontSize: 16.0,
+                                        color: Color(0xFF646363),
+                                        fontWeight: FontWeight.normal),
+                                    children: <TextSpan>[
+                                      TextSpan(
+                                          text:
+                                              "${attributes.keys.elementAt(index)}:   "),
+                                      TextSpan(
+                                          text: attributes.values
+                                                      .elementAt(index) ==
+                                                  null
+                                              ? ""
+                                              : (attributes.values
                                                           .elementAt(index)
-                                                          .toString()))
-                                              : attributes.values
-                                                  .elementAt(index)
-                                                  .toString()),
-                                      style: TextStyle(color: Colors.black))
-                                ]))))
+                                                          .runtimeType ==
+                                                      DateTime
+                                                  ? DateFormat(
+                                                          "dd.MM.yyyy HH:mm")
+                                                      .format(DateTime.parse(
+                                                          attributes.values
+                                                              .elementAt(index)
+                                                              .toString()))
+                                                  : attributes.values
+                                                      .elementAt(index)
+                                                      .toString()),
+                                          style: TextStyle(color: Colors.black))
+                                    ])))))
               ]),
             ]);
           });
