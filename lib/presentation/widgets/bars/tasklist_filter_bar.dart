@@ -22,6 +22,7 @@ import '../../controllers/tasklist_controller.dart';
 /// state. (Под presentation здесь имеется ввиду "такаятохреньVisible или другаяфигняExpanded)
 class TasklistFiltersBar extends StatelessWidget
     implements PreferredSizeWidget {
+  final searchBarFocusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -47,45 +48,57 @@ class TasklistFiltersBar extends StatelessWidget
                           margin: EdgeInsets.only(
                               left: isDisplayDesktop(context) ? 8 : 12,
                               right: 12),
-                          child: Focus(
-                            onFocusChange: (value) {
-                              taskListController.searchBarExpanded = value;
-                            },
-                            child: Padding(
-                                padding: EdgeInsets.only(
-                                    left: isDisplayDesktop(context) ? 8 : 12,
-                                    right: 12),
-                                child: TextSelectionTheme(
-                                  data: TextSelectionTheme.of(context).copyWith(
-                                    cursorColor: themeData.hintColor,
-                                  ),
-                                  child: TextField(
-                                    expands: true,
-                                    textInputAction: TextInputAction.search,
-                                    maxLines: null,
-                                    textAlign: TextAlign.center,
-                                    textAlignVertical: TextAlignVertical.center,
-                                    decoration: InputDecoration(
-                                      hintText: "Поиск",
-                                      fillColor: themeData.bottomAppBarColor,
-                                      border: InputBorder.none,
-                                      filled: true,
-                                      suffixIcon: IconButton(
-                                        tooltip: 'Поиск',
-                                        icon: const Icon(Icons.search_outlined),
-                                        color: themeData.hintColor,
-                                        onPressed: () {},
-                                      ),
-                                      isCollapsed: false,
-                                    ),
-                                    onSubmitted: (value) {
-                                      FocusManager.instance.primaryFocus?.unfocus();
-                                    },
-                                    onChanged: (value) {
-                                      taskListController.searchText = value;
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                                left: isDisplayDesktop(context) ? 8 : 12,
+                                right: 12),
+                            child: TextSelectionTheme(
+                              data: TextSelectionTheme.of(context).copyWith(
+                                cursorColor: themeData.hintColor,
+                              ),
+                              child: TextField(
+                                expands: true,
+                                textInputAction: TextInputAction.search,
+                                maxLines: null,
+                                focusNode: searchBarFocusNode,
+                                textAlign: TextAlign.center,
+                                textAlignVertical: TextAlignVertical.center,
+                                onTap: () {
+                                  taskListController.searchBarExpanded =
+                                      !taskListController.searchBarExpanded;
+                                  if (searchBarFocusNode.hasFocus) {
+                                    searchBarFocusNode.unfocus();
+                                  }
+                                },
+                                decoration: InputDecoration(
+                                  hintText: "Поиск",
+                                  fillColor: themeData.bottomAppBarColor,
+                                  border: InputBorder.none,
+                                  filled: true,
+                                  suffixIcon: IconButton(
+                                    tooltip: 'Поиск',
+                                    icon: const Icon(Icons.search_outlined),
+                                    color: themeData.hintColor,
+                                    onPressed: () {
+                                      searchBarFocusNode.unfocus();
                                     },
                                   ),
-                                )),
+                                  isCollapsed: false,
+                                ),
+
+                                /// FIXME:
+                                /// onSubmitted тут не работает т.к. для его работы нужно понимать какая строка последняя,
+                                /// чтобы по кнопке на клавиатуре делать не перенос строки, а submit.
+                                /// Тут противоречие т.к. перенос строк закончится тогда, когда мы достигнем последней строки,
+                                /// но в нашем случае может быть бесконечное кол-во строк, по этому submit для нас недостижим
+                                onSubmitted: (value) {
+                                  searchBarFocusNode.unfocus();
+                                },
+                                onChanged: (value) {
+                                  taskListController.searchText = value;
+                                },
+                              ),
+                            ),
                           ),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),

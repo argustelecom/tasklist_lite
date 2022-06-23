@@ -68,15 +68,14 @@ class ObjectAttachController extends GetxController {
   Future<void> onInit() async {
     super.onInit();
     // инициализируем список уже имеющимися вложениями
+
     refreshObjectAttachList();
   }
 
   /// Обновляем список имеющихся у объекта вложений, перестраиваем компонент
   Future<void> refreshObjectAttachList() async {
     objectAttachList.value =
-        await asyncShowProgressIndicatorOverlay(asyncFunction: () async {
-      return _attachRepository.getAttachmentsByObjectId(this.objectId);
-    });
+         _attachRepository.getAttachmentsByObjectId(this.objectId);
     update();
   }
 
@@ -88,14 +87,14 @@ class ObjectAttachController extends GetxController {
     });
     if (oaList != null) {
       await asyncShowProgressIndicatorOverlay(asyncFunction: () async {
-        _attachRepository.sendObjectAttaches(oaList);
+       return _attachRepository.sendObjectAttaches(oaList);
       });
+      /// добавляем усиленно комменты о том, что приложено вложение
+      for (ObjectAttach attach in oaList){
+        commentController.addAttachComment(attach.fileName);
+      }
     }
     refreshObjectAttachList();
-
-    // TODO: Убрать костыльную отправку коммента, когда перейдем на subscriptions
-    objectAttachList.value.asStream().forEach((element) =>
-        {commentController.addAttachComment(element.first.fileName)});
   }
 
   /// Позволяет запустить камеру, снимок прикладывается во вложения

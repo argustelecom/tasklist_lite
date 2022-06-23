@@ -7,7 +7,7 @@ import 'package:tasklist_lite/core/exceptions.dart';
 /// Получает информацию по вложениям объекта.
 /// Использует graphQL для получения информации
 class ObjectAttachRemote {
-  static const String envApiAddress = "/argus/graphql/env";
+  static const String envApiAddress = "/graphql/env";
 
   static const String objectAttachQuery = '''objectAttachmentId
         attachedToId

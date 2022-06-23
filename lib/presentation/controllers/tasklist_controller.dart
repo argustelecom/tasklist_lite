@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart' hide Worker;
 import 'package:tasklist_lite/data/fixture/task_fixtures.dart';
 import 'package:tasklist_lite/data/repositories/idle_time_reason_repository.dart';
@@ -145,6 +146,12 @@ class TaskListController extends GetxController {
           taskListState.openedTasks.value = event;
           update();
         }, showProgress: true);
+
+        /// добавлено чтобы провоцировать event в _currentDateSubscription при инициализации, т.к. в случае, если евент не случится
+        /// мы не доходим до _closedTasksSubscription
+        WidgetsBinding.instance!.addPostFrameCallback((Duration duration) {
+          taskListState.currentDate.refresh();
+        });
 
         _currentDateSubscription = resubscribe<DateTime>(
             _currentDateSubscription, taskListState.currentDate.stream,
