@@ -65,5 +65,6 @@ chromedrvier --port=4444
 ```
 flutter drive --driver=test_driver/integration_test.dart --target=integration_test/app_test.dart -d web-server
 ```
+Можно добавить в команду `--no-headless`, чтобы увидеть прогон тестов на экране.
 
 Официальная дока flutter по интеграционному тестированию: https://docs.flutter.dev/cookbook/testing/integration/introduction  
