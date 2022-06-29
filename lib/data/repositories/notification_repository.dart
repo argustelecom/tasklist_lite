@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:tasklist_lite/core/state/current_app_info.dart';
-import 'package:tasklist_lite/data/repositories/notify_remote_client.dart';
-import 'package:tasklist_lite/data/repositories/task_remote_client.dart';
+import 'package:tasklist_lite/data/remote/notify_remote_client.dart';
+import 'package:tasklist_lite/data/remote/task_remote_client.dart';
 import 'package:tasklist_lite/domain/entities/notify.dart';
 
 import '../fixture/notification_fixtures.dart';

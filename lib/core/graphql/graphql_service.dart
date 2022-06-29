@@ -22,14 +22,19 @@ class GraphQLService {
     // вебсокеты нужны для работы graphql subscription`ов
     // в примере flutter_movie это два разных url`а (для query/mutation и для subscription)
     WebSocketLink _webSocketLink = WebSocketLink(webSocketUrl);
-    Link webSocketLink = authLink.concat(_webSocketLink);
+    // kostd, 29.07.2022: почему не делаем здесь concat и как происходит аутентификация для вебсокетов, подробно описал в
+    // каменте над task_remote_client.dart/_wsAuthString
+    Link webSocketLink = _webSocketLink; //authLink.concat(_webSocketLink);
+
     _webSocketClient = GraphQLClient(link: webSocketLink, cache: cache);
   }
 
   Future<QueryResult> query(String query,
       {Map<String, dynamic> variables = const {}}) {
-    return _graphQLClient
-        .query(QueryOptions(document: gql(query), fetchPolicy: FetchPolicy.networkOnly, variables: variables));
+    return _graphQLClient.query(QueryOptions(
+        document: gql(query),
+        fetchPolicy: FetchPolicy.networkOnly,
+        variables: variables));
   }
 
   Future<QueryResult> mutate(String mutation,

@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:get/get.dart' hide Worker;
 import 'package:tasklist_lite/core/state/current_app_info.dart';
-import 'package:tasklist_lite/data/repositories/task_remote_client.dart';
+import 'package:tasklist_lite/data/remote/task_remote_client.dart';
 import 'package:tasklist_lite/domain/entities/worker.dart';
 
 import '../../domain/entities/close_code.dart';

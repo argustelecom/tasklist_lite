@@ -178,14 +178,14 @@ class Task {
       return DateFormat("dd.MM.yyyy HH:mm").format(dueDate!);
   }
 
-  String getScheduledDateFulltext(){
+  String getScheduledDateFulltext() {
     if (scheduledDate == null)
       return "";
     else
       return DateFormat("dd.MM.yyyy HH:mm").format(scheduledDate!);
   }
 
-  String getCreateDateFulltext(){
+  String getCreateDateFulltext() {
     if (createDate == null)
       return "";
     else
@@ -284,49 +284,77 @@ class Task {
   }
 
   factory Task.fromJson(Map<String, dynamic> json) {
-    Task task = Task(
-        id: int.parse(json['id']),
-        name: json['name'],
-        desc: json['desc'],
-        processTypeName: json['processTypeName'],
-        taskType: json['taskType'],
-        dueDate:
-            json['dueDate'] != null ? DateTime.parse(json['dueDate']) : null,
-        address: json['address'],
-        addressComment: json['addressComment'],
-        latitude: json['latitude'],
-        longitude: json['longitude'],
-        commentary: json['commentary'],
-        createDate: json['createDate'] != null
-            ? DateTime.parse(json['createDate'])
-            : null,
-        closeDate: json['closeDate'] != null
-            ? DateTime.parse(json['closeDate'])
-            : null,
-        isClosed: json['isClosed'],
-        isVisit: json['isVisit'],
-        isPlanned: json['isPlanned'],
-        isOutdoor: json['isOutdoor'],
-        scheduledDate: json['scheduledDate']!= null ? DateTime.parse(json['scheduledDate']) : null,
-        ttmsId: json['ttmsId'],
+    // kostd, 27.07.2022:  предварительное сохранение значений в переменные
+    // упрощает отладку в этом месте. Если fromJson завершился ошибкой, у нас будет
+    // только js-стек, по которому найти точное  место падения весьма затруднительно.
+    // Наличие переменных позволяет воткнуть промежуточный дебаг и отловить место падения.
 
-        // TODO
-        flexibleAttribs: LinkedHashMap<String, Object?>.fromIterable(
-            json['flexibleAttribute'],
-            key: (e) => e["key"],
-            value: (e) => e["value"]),
-        idleTimeList: json['idleTimePeriod'] != null
-            ? List<IdleTime>.from((json['idleTimePeriod'])
-                .map((e) => IdleTime.fromJson(e))
-                .toList())
-            : null,
-        stage: json['stage'] != null ? Stage.fromJson(json['stage']) : null,
-        assignee: List<Worker>.from(
-            (json['assignee']).map((e) => Worker.fromJson(e)).toList()),
-        works: json['works'] != null
-            ? List<Work>.from(
-                (json['works']).map((e) => Work.fromJson(e)).toList())
-            : null);
+    int id = int.parse(json['id']);
+    String name = json['name'];
+    String desc = json['desc'];
+    String processTypeName = json['processTypeName'];
+    String taskType = json['taskType'];
+    DateTime? dueDate =
+        json['dueDate'] != null ? DateTime.parse(json['dueDate']) : null;
+    String? address = json['address'];
+    String? addressComment = json['addressComment'];
+    String? latitude = json['latitude'];
+    String? longitude = json['longitude'];
+    String? commentary = json['commentary'];
+    DateTime? createDate =
+        json['createDate'] != null ? DateTime.parse(json['createDate']) : null;
+    DateTime? closeDate =
+        json['closeDate'] != null ? DateTime.parse(json['closeDate']) : null;
+    bool isClosed = json['isClosed'];
+    bool isVisit = json['isVisit'];
+    bool isPlanned = json['isPlanned'];
+    bool isOutdoor = json['isOutdoor'];
+    DateTime? scheduledDate = json['scheduledDate'] != null
+        ? DateTime.parse(json['scheduledDate'])
+        : null;
+    String? ttmsId = json['ttmsId'];
+
+    Map<String, Object?> flexibleAttribs =
+        LinkedHashMap<String, Object?>.fromIterable(json['flexibleAttribute'],
+            key: (e) => e["key"], value: (e) => e["value"]);
+
+    List<IdleTime>? idleTimeList = json['idleTimePeriod'] != null
+        ? List<IdleTime>.from(
+            (json['idleTimePeriod']).map((e) => IdleTime.fromJson(e)).toList())
+        : null;
+    Stage? stage = json['stage'] != null ? Stage.fromJson(json['stage']) : null;
+    List<Worker> assignee = List<Worker>.from(
+        (json['assignee']).map((e) => Worker.fromJson(e)).toList());
+
+    List<Work>? works = json['works'] != null
+        ? List<Work>.from((json['works']).map((e) => Work.fromJson(e)).toList())
+        : null;
+
+    Task task = Task(
+        id: id,
+        name: name,
+        desc: desc,
+        processTypeName: processTypeName,
+        taskType: taskType,
+        dueDate: dueDate,
+        address: address,
+        addressComment: addressComment,
+        latitude: latitude,
+        longitude: longitude,
+        commentary: commentary,
+        createDate: createDate,
+        closeDate: closeDate,
+        isClosed: isClosed,
+        isVisit: isVisit,
+        isPlanned: isPlanned,
+        isOutdoor: isOutdoor,
+        scheduledDate: scheduledDate,
+        ttmsId: ttmsId,
+        flexibleAttribs: flexibleAttribs,
+        idleTimeList: idleTimeList,
+        stage: stage,
+        assignee: assignee,
+        works: works);
     return task;
   }
 
@@ -352,7 +380,8 @@ class Task {
     data['isPlanned'] = this.isPlanned;
     data['isOutdoor'] = this.isOutdoor;
     data['ttmsId'] = this.ttmsId;
-    data['scheduledDate'] = this.scheduledDate != null ? this.scheduledDate.toString() : null;
+    data['scheduledDate'] =
+        this.scheduledDate != null ? this.scheduledDate.toString() : null;
     data['flexibleAttribute'] =
         this.flexibleAttribs.entries.map((e) => toMapJson(e)).toList();
     data['idleTimePeriod'] = this.idleTimeList != null

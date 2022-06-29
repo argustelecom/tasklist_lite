@@ -2,7 +2,6 @@ import 'package:async/async.dart' show StreamGroup;
 import 'package:get/get.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:logging/logging.dart';
 import 'package:tasklist_lite/core/exceptions.dart';
 import 'package:tasklist_lite/core/graphql/graphql_service.dart';
 import 'package:tasklist_lite/core/state/current_auth_info.dart';
@@ -21,6 +20,8 @@ import '../../presentation/state/application_state.dart';
 class TaskRemoteClient {
   static const String thirdPartyApiAddress =
       "/graphql/support-service-thirdparty";
+  static const String thirdPartyWebsocketApiAddress =
+      "/graphql/support-service-thirdparty/ws";
 
   /// Причина простоя IdleTimeReason
   static const String idleTimeReasonQuery = '''
@@ -137,30 +138,117 @@ class TaskRemoteClient {
   late GraphQLService _graphQLService;
   ApplicationState applicationState = Get.find();
 
+  static const String _httpProtoPrefix = "http://";
+  static const String _httpsProtoPrefix = "https://";
+  static const String _wsProtoPrefix = "ws://";
+  static const String _wssProtoPrefix = "wss://";
+
+  // kostd, 29.07.2022: тут с вебсокетами имеется странный момент, связанный с аутентифиацией.
+  // Первый реквест (handshake) для вебсокетов -- вполне себе обычный http с особыми заголовками.
+  // Логичным было бы для Basic-аутентификации просто добавить обычный header Authorization: Basic...
+  // (он у нас есть и хранится в currentAuthInfo.getCurrentAuthString()).
+  // Казалось бы, это можно сделать через concat с AuthLink, как это делаем для httpLink в GraphQLService
+  // Или через custom`ный link, как обсуждается в
+  // https://stackoverflow.com/questions/67195275/how-can-i-add-customised-header-on-http-request-for-authentication-when-using-fl
+  // Или даже пробросив SocketClientConfig с соответствующими headers в конструктор WebSocketLink (см. опять же GraphQLService).
+  // Но тут неожиданное -- похоже, graphql-фреймворк осознанно закрывает программисту возможность управлять заголовками
+  // для websocket handshake. Например, если пробрасывать заголовки через SocketCLientConfig, то в браузере это не будет
+  // работать (см. соообщение "The headers on the web are not supported", которое пишется в  в  platform_html.dart/defaultConnectPlatform())
+  // (На эту тему см.  WebSocketLink doesn't add headers from AuthLink #411
+  // https://github.com/zino-hofmann/graphql-flutter/issues/411?ysclid=l4zntly92s856417132?ysclid=l4zntly92s856417132
+  // см. также It’s not possible to provide custom headers when creating WebSocket connection in browser.
+  // https://github.com/apollographql/graphql-subscriptions/blob/master/.designs/authorization.md )
+  // Передаваемые  двумя другими способами header`ы также подавляются фреймворком. В итоге, единственный рабочий способ --
+  // это подсунуть credentials websocket-фреймворку прямо в uri, как предлагается в
+  // https://websockets.readthedocs.io/en/stable/topics/authentication.html#machine-to-machine-authentication
+  // При этом, как и написано, будет именно Basic. То есть, фреймворк разберет uri, добавит нужный нам header
+  // (КД лично проверил это в developer tools), а в рексвест пойдет uri уже без credentials. Почему так странно -- фиг его
+  // поймет. Можно лишь отметить, что разработчики graphql_flutter кивают по этому вопросу в сторону нижележащего фреймворка
+  // apollo
+  // #TODO[НК]: Сейчас КД задал _wsAuthString константой. То есть для подключения по вебсокету будут игнорироваться credentials,
+  //  введенные пользователем, и вместо этого будут использоваться забитые хардкодом. Это надо переделать. Получается, нужно maintain`ить
+  // строчку вида "login@password" так же, как сейчас maintain`им значение в currentAuthInfo.getCurrentAuthString() (заполнять в том же
+  // месте логина, так же хранить и доставать).
+
+  static const String _wsAuthString = "developer:developer@";
+
   TaskRemoteClient() {
     CurrentAuthInfo currentAuthInfo = Get.find();
     String urlForThirdParty =
         currentAuthInfo.getCurrentServerAddress() + thirdPartyApiAddress;
+    // для вебсокетов подменим протокол в url, если он был явно указан.
+    // #TODO[НК]: а если протокол не был явно указан?
+    String webSocketUrlPrefix = currentAuthInfo
+            .getCurrentServerAddress()
+            .toLowerCase()
+            .startsWith(_httpProtoPrefix)
+        ? _wsProtoPrefix +
+            _wsAuthString +
+            currentAuthInfo
+                .getCurrentServerAddress()
+                .substring(_httpProtoPrefix.length)
+        : currentAuthInfo
+                .getCurrentServerAddress()
+                .toLowerCase()
+                .startsWith(_httpsProtoPrefix)
+            ? _wssProtoPrefix +
+                _wsAuthString +
+                currentAuthInfo
+                    .getCurrentServerAddress()
+                    .substring(_httpsProtoPrefix.length)
+            : _wsAuthString + currentAuthInfo.getCurrentServerAddress();
     String webSocketUrlForThirdParty =
-        currentAuthInfo.getCurrentServerAddress() + thirdPartyApiAddress;
+        // в итоге после всех преобразований должно получиться что-то вроде
+        // "ws://developer:developer@192.168.100.47:8080/argus/graphql/support-service-thirdparty/ws";
+        webSocketUrlPrefix + thirdPartyWebsocketApiAddress;
+
     this._graphQLService = GraphQLService(
         basicAuth: currentAuthInfo.getCurrentAuthString(),
         url: urlForThirdParty,
         webSocketUrl: webSocketUrlForThirdParty);
   }
 
-//  возвращает Stream c открытыми тасками, состоящий из результатов переодического вызова
-//   graphql query на сервере.
   Stream<List<Task>> streamOpenedTasks() async* {
-    yield* StreamGroup.merge(List.of({
-      Stream.fromFuture(getOpenedTasks()),
-      Stream.periodic(
-        applicationState.refreshInterval.value,
-        (computationCount) {
-          return getOpenedTasks();
-        },
-      ).asyncMap((event) async => await event)
-    }));
+    // #TODO[НК]: здесь должна быть проверка условия по настройке subscriptionsEnabled
+    if (1 == 1) {
+      // режим подписок включен, подписываемся
+      yield* subscribeOnOpenedTasks();
+    } else {
+      // режим query, то есть периодически вызываем query и возвращаем результат,
+      // используя тот же "потоковый" подход, что и при подписках.
+      yield* StreamGroup.merge(List.of({
+        Stream.fromFuture(getOpenedTasks()),
+        Stream.periodic(
+          applicationState.refreshInterval.value,
+          (computationCount) {
+            return getOpenedTasks();
+          },
+        ).asyncMap((event) async => await event)
+      }));
+    }
+  }
+
+  Stream<List<Task>> subscribeOnOpenedTasks() {
+    String queryString = '''
+    subscription {
+      myOpenedTasksSubscription {
+      $taskGraphqlQuery
+    }
+    }''';
+    return _graphQLService.subscribe(queryString).map((event) {
+      if (event.hasException) {
+        checkError(event.exception!);
+      }
+      List<Task> result = List.of({});
+      if (event.data == null) {
+        return result;
+      }
+      List.from(event.data!["myOpenedTasksSubscription"]).forEach((element) {
+        result.add(Task.fromJson(element));
+      });
+
+      return result;
+    });
   }
 
   Future<List<Task>> getOpenedTasks() async {
@@ -175,18 +263,50 @@ class TaskRemoteClient {
     return getTasks(myOpenedTasksQuery, "myOpenedTasks");
   }
 
-//  возвращает Stream c закрытыми тасками, состоящий из результатов переодического вызова
-//   graphql query на сервере.
   Stream<List<Task>> streamClosedTasks(DateTime day) async* {
-    yield* StreamGroup.merge(List.of({
-      Stream.fromFuture(getClosedTasks(day)),
-      Stream.periodic(
-        applicationState.refreshInterval.value,
-        (computationCount) {
-          return getClosedTasks(day);
-        },
-      ).asyncMap((event) async => await event)
-    }));
+    // #TODO[НК]: здесь должна быть проверка условия по настройке subscriptionsEnabled
+    if (1 == 1) {
+      // режим подписок включен, подписываемся
+      yield* subscribeOnClosedTasks(day);
+    } else {
+      // режим query, то есть периодически вызываем query и возвращаем результат,
+      // используя тот же "потоковый" подход, что и при подписках.
+
+      yield* StreamGroup.merge(List.of({
+        Stream.fromFuture(getClosedTasks(day)),
+        Stream.periodic(
+          applicationState.refreshInterval.value,
+          (computationCount) {
+            return getClosedTasks(day);
+          },
+        ).asyncMap((event) async => await event)
+      }));
+    }
+  }
+
+  Stream<List<Task>> subscribeOnClosedTasks(DateTime day) {
+    String date = DateFormat('dd.MM.yyyy').format(day);
+    String queryString = '''
+ subscription {  
+   myClosedTasksSubscription(day: "$date") {
+    $taskGraphqlQuery
+   }
+ }''';
+    // #TODO[НК]: устранить дублирование кода (@see subscribeOnOpenedTasks)
+    return _graphQLService.subscribe(queryString).map((event) {
+      if (event.hasException) {
+        checkError(event.exception!);
+      }
+      List<Task> result = List.of({});
+      if (event.data == null) {
+        return result;
+      }
+      List.from(event.data!["myClosedTasksSubscription"]).forEach((element) {
+        result.add(Task.fromJson(element));
+      });
+
+      return result;
+    });
   }
 
   Future<List<Task>> getClosedTasks(DateTime day) async {
@@ -342,7 +462,7 @@ class TaskRemoteClient {
   }
 
   Future<List<Comment>> getCommentByTask(int taskId) async {
-       String getCommentByTaskQuery = '''
+    String getCommentByTaskQuery = '''
  {  getCommentByTask (taskId:"$taskId") {
    $commentQuery
  }
