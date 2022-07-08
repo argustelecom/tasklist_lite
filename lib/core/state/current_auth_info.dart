@@ -5,4 +5,6 @@ abstract class CurrentAuthInfo {
   String getCurrentAuthString();
 
   String getCurrentServerAddress();
+
+  String getCurrentAuthStringForWS();
 }

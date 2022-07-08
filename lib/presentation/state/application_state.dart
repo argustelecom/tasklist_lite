@@ -16,6 +16,8 @@ class ApplicationState extends PersistentState implements CurrentAppInfo {
 
   static const Duration _defaultRefreshInterval = const Duration(minutes: 10);
 
+  static const bool _defaultSubscriptionEnabled =  true;
+
   final Rx<ThemeMode> themeMode = ThemeMode.system.obs;
 
   final Rx<bool> inDemonstrationMode = false.obs;
@@ -24,6 +26,8 @@ class ApplicationState extends PersistentState implements CurrentAppInfo {
       RxMap.of(_defaultPossibleServers);
 
   final Rx<Duration> refreshInterval = Rx(_defaultRefreshInterval);
+
+  final Rx<bool> subscriptionEnabled = Rx(_defaultSubscriptionEnabled);
 
   ApplicationState();
 
@@ -46,6 +50,7 @@ class ApplicationState extends PersistentState implements CurrentAppInfo {
           .cast<String, String>();
       refreshInterval.value =
           Duration(minutes: int.parse(dotenv.get('refreshInterval')));
+      int.parse(dotenv.get('subscriptionEnabled')) == 1 ? subscriptionEnabled.value = true : subscriptionEnabled.value = false;
       return Future<void>.value(null);
     });
   }

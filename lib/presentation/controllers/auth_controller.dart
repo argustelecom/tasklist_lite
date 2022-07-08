@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:get/get.dart';
 import 'package:tasklist_lite/data/auth/auth_service.dart';
+import 'package:tasklist_lite/presentation/state/application_state.dart';
 
 import '../state/auth_state.dart';
 
@@ -10,7 +11,7 @@ import '../state/auth_state.dart';
 ///*******************************************************************************
 class AuthController extends GetxController {
   AuthState authState = Get.find();
-
+  ApplicationState applicationState = Get.find();
   /// в случае, если при попытке входа была ошибка, она будет сохранена суда, и будет отображена
   /// в нижней части LoginPage
   String? _errorText;
@@ -39,6 +40,9 @@ class AuthController extends GetxController {
             "Basic " + base64Encode(utf8.encode('$login:$password'));
 
         authState.authString.value = basicAuth;
+        if (applicationState.subscriptionEnabled.value) {
+          authState.authStringForWS.value = '$login:$password@';
+        }
         await authService.login().whenComplete(() => null).then(
           (value) {
             authState.userInfo.value = value;

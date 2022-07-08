@@ -8,6 +8,7 @@ import 'package:tasklist_lite/core/state/current_auth_info.dart';
 import 'package:tasklist_lite/domain/entities/comment.dart';
 import 'package:tasklist_lite/domain/entities/idle_time.dart';
 import 'package:tasklist_lite/domain/entities/work.dart';
+import 'package:tasklist_lite/presentation/state/auth_state.dart';
 
 import '../../domain/entities/close_code.dart';
 import '../../domain/entities/mark.dart';
@@ -172,6 +173,7 @@ class TaskRemoteClient {
 
   static const String _wsAuthString = "developer:developer@";
 
+
   TaskRemoteClient() {
     CurrentAuthInfo currentAuthInfo = Get.find();
     String urlForThirdParty =
@@ -183,7 +185,7 @@ class TaskRemoteClient {
             .toLowerCase()
             .startsWith(_httpProtoPrefix)
         ? _wsProtoPrefix +
-            _wsAuthString +
+        currentAuthInfo.getCurrentAuthStringForWS() +
             currentAuthInfo
                 .getCurrentServerAddress()
                 .substring(_httpProtoPrefix.length)
@@ -192,11 +194,11 @@ class TaskRemoteClient {
                 .toLowerCase()
                 .startsWith(_httpsProtoPrefix)
             ? _wssProtoPrefix +
-                _wsAuthString +
+        currentAuthInfo.getCurrentAuthStringForWS() +
                 currentAuthInfo
                     .getCurrentServerAddress()
                     .substring(_httpsProtoPrefix.length)
-            : _wsAuthString + currentAuthInfo.getCurrentServerAddress();
+            : currentAuthInfo.getCurrentAuthStringForWS() + currentAuthInfo.getCurrentServerAddress();
     String webSocketUrlForThirdParty =
         // в итоге после всех преобразований должно получиться что-то вроде
         // "ws://developer:developer@192.168.100.47:8080/argus/graphql/support-service-thirdparty/ws";
@@ -210,7 +212,7 @@ class TaskRemoteClient {
 
   Stream<List<Task>> streamOpenedTasks() async* {
     // #TODO[НК]: здесь должна быть проверка условия по настройке subscriptionsEnabled
-    if (1 == 1) {
+    if (applicationState.subscriptionEnabled.value) {
       // режим подписок включен, подписываемся
       yield* subscribeOnOpenedTasks();
     } else {
@@ -265,7 +267,7 @@ class TaskRemoteClient {
 
   Stream<List<Task>> streamClosedTasks(DateTime day) async* {
     // #TODO[НК]: здесь должна быть проверка условия по настройке subscriptionsEnabled
-    if (1 == 1) {
+    if (applicationState.subscriptionEnabled.value) {
       // режим подписок включен, подписываемся
       yield* subscribeOnClosedTasks(day);
     } else {

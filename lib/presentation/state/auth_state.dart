@@ -21,6 +21,8 @@ class AuthState extends PersistentState implements CurrentAuthInfo {
 
   final Rx<String?> authString = Rxn<String?>();
 
+  final Rx<String?> authStringForWS = Rxn<String?>();
+
   final Rx<String?> serverAddress = Rxn<String?>();
 
   final Rx<List<String>?> serverAddressSuggestions = Rxn<List<String>?>();
@@ -77,6 +79,11 @@ class AuthState extends PersistentState implements CurrentAuthInfo {
   String getCurrentAuthString() {
     // вызывающий должен позаботиться о проверке на null
     return authString.value!;
+  }
+
+  @override
+  String getCurrentAuthStringForWS(){
+    return authStringForWS.value!;
   }
 
   @override
